@@ -1,0 +1,5 @@
+PLL_Name	mypll2:inst15|altpll:altpll_component|mypll2_altpll:auto_generated|pll1
+PLLJITTER	NA
+PLLSPEmax	84
+PLLSPEmin	-53
+
