@@ -6,3 +6,8 @@ max10_adc_firmware/output_files/
 max10_adc_firmware/simulation/
 eagle/max10adc.b#*
 eagle/max10adc.s#*
+eagle/max10adc_mf.*
+eagle/max10adc*.job
+eagle/max10adc*.pro
+
+

@@ -18959,8 +18959,12 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <attribute name="MPN" value="MF-RES-0805-1K"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="PIN_DISPLAY" library="Seeed-Connector" library_urn="urn:adsk.eagle:library:478" deviceset="DIP-YELLOW-FEMALE-HEADER-VERT(10P-2.54)" device="" package3d_urn="urn:adsk.eagle:package:33117/1" value="YELLOW-10P-2.54"/>
-<part name="PIN_IO_1" library="Seeed-Connector" library_urn="urn:adsk.eagle:library:478" deviceset="DIP-YELLOW-FEMALE-HEADER-VERT(10P-2.54)" device="" package3d_urn="urn:adsk.eagle:package:33117/1" value="YELLOW-10P-2.54"/>
+<part name="PIN_DISPLAY" library="Seeed-Connector" library_urn="urn:adsk.eagle:library:478" deviceset="DIP-YELLOW-FEMALE-HEADER-VERT(10P-2.54)" device="" package3d_urn="urn:adsk.eagle:package:33117/1" value="YELLOW-10P-2.54">
+<attribute name="MPN" value=""/>
+</part>
+<part name="PIN_IO_1" library="Seeed-Connector" library_urn="urn:adsk.eagle:library:478" deviceset="DIP-YELLOW-FEMALE-HEADER-VERT(10P-2.54)" device="" package3d_urn="urn:adsk.eagle:package:33117/1" value="YELLOW-10P-2.54">
+<attribute name="MPN" value=""/>
+</part>
 <part name="P+7" library="supply1" deviceset="+5V" device=""/>
 <part name="GND68" library="supply1" deviceset="GND" device=""/>
 <part name="GND69" library="supply1" deviceset="GND" device=""/>
@@ -19001,6 +19005,17 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <part name="ACR4" library="resistor" deviceset="R-EU_" device="R0805" value="560">
 <attribute name="MF" value=""/>
 <attribute name="MPN" value="MF-RES-0805-560"/>
+<attribute name="OC_NEWARK" value="unknown"/>
+</part>
+<part name="GND71" library="supply1" deviceset="GND" device=""/>
+<part name="RLED5" library="resistor" deviceset="R-EU_" device="R0805" value="560">
+<attribute name="MF" value=""/>
+<attribute name="MPN" value="MF-RES-0805-560"/>
+<attribute name="OC_NEWARK" value="unknown"/>
+</part>
+<part name="LED5" library="led" deviceset="LED" device="SML0805" value="MF-LED-0805-RED">
+<attribute name="MF" value=""/>
+<attribute name="MPN" value="MF-LED-0805-RED"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 </parts>
@@ -19120,10 +19135,11 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <attribute name="MF" x="-60.96" y="119.38" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="-60.96" y="119.38" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="LED1" gate="G$1" x="-60.96" y="111.76">
-<attribute name="OC_NEWARK" x="-60.96" y="111.76" size="1.778" layer="96" display="off"/>
-<attribute name="MF" x="-60.96" y="111.76" size="1.778" layer="96" display="off"/>
-<attribute name="MPN" x="-60.96" y="111.76" size="1.778" layer="96" display="off"/>
+<instance part="LED1" gate="G$1" x="-60.96" y="109.22" smashed="yes" rot="R180">
+<attribute name="OC_NEWARK" x="-60.96" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MF" x="-60.96" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MPN" x="-60.96" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="NAME" x="-64.516" y="113.792" size="1.778" layer="95" rot="R270"/>
 </instance>
 <instance part="GND26" gate="1" x="-434.34" y="-55.88"/>
 <instance part="REG" gate="G$1" x="-558.8" y="-66.04" smashed="yes">
@@ -19141,20 +19157,22 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <attribute name="MF" x="-71.12" y="119.38" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="-71.12" y="119.38" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="LED2" gate="G$1" x="-71.12" y="111.76">
-<attribute name="OC_NEWARK" x="-71.12" y="111.76" size="1.778" layer="96" display="off"/>
-<attribute name="MF" x="-71.12" y="111.76" size="1.778" layer="96" display="off"/>
-<attribute name="MPN" x="-71.12" y="111.76" size="1.778" layer="96" display="off"/>
+<instance part="LED2" gate="G$1" x="-71.12" y="109.22" smashed="yes" rot="R180">
+<attribute name="OC_NEWARK" x="-71.12" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MF" x="-71.12" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MPN" x="-71.12" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="NAME" x="-74.676" y="113.792" size="1.778" layer="95" rot="R270"/>
 </instance>
 <instance part="RLED3" gate="G$1" x="-81.28" y="119.38" rot="R90">
 <attribute name="OC_NEWARK" x="-81.28" y="119.38" size="1.778" layer="96" display="off"/>
 <attribute name="MF" x="-81.28" y="119.38" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="-81.28" y="119.38" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="LED3" gate="G$1" x="-81.28" y="111.76">
-<attribute name="OC_NEWARK" x="-81.28" y="111.76" size="1.778" layer="96" display="off"/>
-<attribute name="MF" x="-81.28" y="111.76" size="1.778" layer="96" display="off"/>
-<attribute name="MPN" x="-81.28" y="111.76" size="1.778" layer="96" display="off"/>
+<instance part="LED3" gate="G$1" x="-81.28" y="109.22" smashed="yes" rot="R180">
+<attribute name="OC_NEWARK" x="-81.28" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MF" x="-81.28" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MPN" x="-81.28" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="NAME" x="-84.836" y="113.792" size="1.778" layer="95" rot="R270"/>
 </instance>
 <instance part="PIN_ANALOG" gate="G$1" x="-495.3" y="13.97" smashed="yes" rot="R180">
 <attribute name="NAME" x="-500.38" y="15.24" size="1.27" layer="95" ratio="10" rot="R270"/>
@@ -19236,10 +19254,11 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <attribute name="MF" x="-91.44" y="119.38" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="-91.44" y="119.38" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="LED4" gate="G$1" x="-91.44" y="111.76">
-<attribute name="OC_NEWARK" x="-91.44" y="111.76" size="1.778" layer="96" display="off"/>
-<attribute name="MF" x="-91.44" y="111.76" size="1.778" layer="96" display="off"/>
-<attribute name="MPN" x="-91.44" y="111.76" size="1.778" layer="96" display="off"/>
+<instance part="LED4" gate="G$1" x="-91.44" y="109.22" smashed="yes" rot="R180">
+<attribute name="OC_NEWARK" x="-91.44" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MF" x="-91.44" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MPN" x="-91.44" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="NAME" x="-94.996" y="113.792" size="1.778" layer="95" rot="R270"/>
 </instance>
 <instance part="P+2" gate="1" x="-314.96" y="-66.04" smashed="yes" rot="R90">
 <attribute name="VALUE" x="-317.5" y="-66.04" size="1.778" layer="96" rot="R180"/>
@@ -19672,6 +19691,18 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <attribute name="OC_NEWARK" x="-121.92" y="-111.76" size="1.778" layer="96" display="off"/>
 <attribute name="MF" x="-121.92" y="-111.76" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="-121.92" y="-111.76" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="GND71" gate="1" x="-76.2" y="127" rot="R180"/>
+<instance part="RLED5" gate="G$1" x="-101.6" y="119.38" rot="R90">
+<attribute name="OC_NEWARK" x="-101.6" y="119.38" size="1.778" layer="96" display="off"/>
+<attribute name="MF" x="-101.6" y="119.38" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="-101.6" y="119.38" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="LED5" gate="G$1" x="-101.6" y="109.22" smashed="yes" rot="R180">
+<attribute name="OC_NEWARK" x="-101.6" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MF" x="-101.6" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MPN" x="-101.6" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="NAME" x="-105.156" y="113.792" size="1.778" layer="95" rot="R270"/>
 </instance>
 </instances>
 <busses>
@@ -20220,6 +20251,24 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <pinref part="GND57" gate="1" pin="GND"/>
 <wire x1="-121.92" y1="-99.06" x2="-121.92" y2="-101.6" width="0.1524" layer="91"/>
 </segment>
+<segment>
+<pinref part="RLED1" gate="G$1" pin="2"/>
+<pinref part="RLED2" gate="G$1" pin="2"/>
+<wire x1="-60.96" y1="124.46" x2="-71.12" y2="124.46" width="0.1524" layer="91"/>
+<pinref part="RLED3" gate="G$1" pin="2"/>
+<wire x1="-71.12" y1="124.46" x2="-76.2" y2="124.46" width="0.1524" layer="91"/>
+<junction x="-71.12" y="124.46"/>
+<pinref part="RLED4" gate="G$1" pin="2"/>
+<wire x1="-76.2" y1="124.46" x2="-81.28" y2="124.46" width="0.1524" layer="91"/>
+<wire x1="-81.28" y1="124.46" x2="-91.44" y2="124.46" width="0.1524" layer="91"/>
+<junction x="-81.28" y="124.46"/>
+<junction x="-91.44" y="124.46"/>
+<junction x="-60.96" y="124.46"/>
+<pinref part="GND71" gate="1" pin="GND"/>
+<junction x="-76.2" y="124.46"/>
+<pinref part="RLED5" gate="G$1" pin="2"/>
+<wire x1="-101.6" y1="124.46" x2="-91.44" y2="124.46" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="+3V3" class="2">
 <segment>
@@ -20699,17 +20748,12 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <pinref part="SW_RESET" gate="G$1" pin="P$4"/>
 </segment>
 </net>
-<net name="N$34" class="0">
-<segment>
-<pinref part="RLED1" gate="G$1" pin="1"/>
-<pinref part="LED1" gate="G$1" pin="A"/>
-</segment>
-</net>
 <net name="LED1" class="0">
 <segment>
-<pinref part="LED1" gate="G$1" pin="C"/>
-<wire x1="-60.96" y1="106.68" x2="-60.96" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="-63.5" y1="106.68" x2="-60.96" y2="96.52" width="0.1524" layer="91"/>
 <label x="-58.42" y="96.52" size="1.778" layer="95" rot="R90"/>
+<pinref part="LED1" gate="G$1" pin="A"/>
+<wire x1="-63.5" y1="106.68" x2="-60.96" y2="106.68" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="IOEXPAND_0X24_TOP" gate="G$1" pin="GPA0"/>
@@ -20977,23 +21021,12 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <label x="-571.5" y="-142.24" size="1.778" layer="95" rot="R180"/>
 </segment>
 </net>
-<net name="N$95" class="0">
-<segment>
-<pinref part="RLED2" gate="G$1" pin="1"/>
-<pinref part="LED2" gate="G$1" pin="A"/>
-</segment>
-</net>
-<net name="N$97" class="0">
-<segment>
-<pinref part="RLED3" gate="G$1" pin="1"/>
-<pinref part="LED3" gate="G$1" pin="A"/>
-</segment>
-</net>
 <net name="LED3" class="0">
 <segment>
-<pinref part="LED3" gate="G$1" pin="C"/>
-<wire x1="-81.28" y1="106.68" x2="-81.28" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="-83.82" y1="106.68" x2="-81.28" y2="96.52" width="0.1524" layer="91"/>
 <label x="-78.74" y="96.52" size="1.778" layer="95" rot="R90"/>
+<pinref part="LED3" gate="G$1" pin="A"/>
+<wire x1="-83.82" y1="106.68" x2="-81.28" y2="106.68" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="IOEXPAND_0X24_TOP" gate="G$1" pin="GPA2"/>
@@ -21003,9 +21036,10 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 </net>
 <net name="LED2" class="0">
 <segment>
-<pinref part="LED2" gate="G$1" pin="C"/>
-<wire x1="-71.12" y1="96.52" x2="-71.12" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="-71.12" y1="96.52" x2="-73.66" y2="106.68" width="0.1524" layer="91"/>
 <label x="-68.58" y="96.52" size="1.778" layer="95" rot="R90"/>
+<pinref part="LED2" gate="G$1" pin="A"/>
+<wire x1="-73.66" y1="106.68" x2="-71.12" y2="106.68" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="IOEXPAND_0X24_TOP" gate="G$1" pin="GPA1"/>
@@ -21391,8 +21425,9 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <net name="LED4" class="0">
 <segment>
 <label x="-88.9" y="96.52" size="1.778" layer="95" rot="R90"/>
-<pinref part="LED4" gate="G$1" pin="C"/>
-<wire x1="-91.44" y1="96.52" x2="-91.44" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="-91.44" y1="96.52" x2="-93.98" y2="106.68" width="0.1524" layer="91"/>
+<pinref part="LED4" gate="G$1" pin="A"/>
+<wire x1="-93.98" y1="106.68" x2="-91.44" y2="106.68" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="IOEXPAND_0X24_TOP" gate="G$1" pin="GPA3"/>
@@ -21532,12 +21567,6 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <label x="-312.42" y="12.7" size="1.778" layer="95"/>
 <pinref part="PIN_RIGHT" gate="G$1" pin="2"/>
 <junction x="-304.8" y="-91.44"/>
-</segment>
-</net>
-<net name="N$1" class="0">
-<segment>
-<pinref part="RLED4" gate="G$1" pin="1"/>
-<pinref part="LED4" gate="G$1" pin="A"/>
 </segment>
 </net>
 <net name="5VINFROMUSB" class="3">
@@ -22227,26 +22256,17 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <label x="-20.32" y="99.06" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
-<net name="LEDBASE" class="0">
+<net name="LED5" class="0">
 <segment>
 <pinref part="IOEXPAND_0X24_TOP" gate="G$1" pin="GPA4"/>
 <wire x1="-144.78" y1="111.76" x2="-134.62" y2="111.76" width="0.1524" layer="91"/>
 <label x="-139.7" y="111.76" size="1.778" layer="95"/>
 </segment>
 <segment>
-<label x="-106.68" y="121.92" size="1.778" layer="95"/>
-<wire x1="-91.44" y1="124.46" x2="-106.68" y2="124.46" width="0.1524" layer="91"/>
-<pinref part="RLED1" gate="G$1" pin="2"/>
-<pinref part="RLED2" gate="G$1" pin="2"/>
-<wire x1="-60.96" y1="124.46" x2="-71.12" y2="124.46" width="0.1524" layer="91"/>
-<pinref part="RLED3" gate="G$1" pin="2"/>
-<wire x1="-71.12" y1="124.46" x2="-81.28" y2="124.46" width="0.1524" layer="91"/>
-<junction x="-71.12" y="124.46"/>
-<pinref part="RLED4" gate="G$1" pin="2"/>
-<wire x1="-81.28" y1="124.46" x2="-91.44" y2="124.46" width="0.1524" layer="91"/>
-<junction x="-81.28" y="124.46"/>
-<junction x="-91.44" y="124.46"/>
-<junction x="-60.96" y="124.46"/>
+<wire x1="-101.6" y1="96.52" x2="-104.14" y2="106.68" width="0.1524" layer="91"/>
+<pinref part="LED5" gate="G$1" pin="A"/>
+<wire x1="-101.6" y1="106.68" x2="-104.14" y2="106.68" width="0.1524" layer="91"/>
+<label x="-99.06" y="96.52" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="E_24_A5" class="0">
@@ -23073,6 +23093,36 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <pinref part="K4" gate="G$1" pin="A"/>
 <pinref part="ACR4" gate="G$1" pin="2"/>
 <junction x="-121.92" y="-106.68"/>
+</segment>
+</net>
+<net name="N$1" class="0">
+<segment>
+<pinref part="RLED4" gate="G$1" pin="1"/>
+<pinref part="LED4" gate="G$1" pin="C"/>
+</segment>
+</net>
+<net name="N$12" class="0">
+<segment>
+<pinref part="RLED3" gate="G$1" pin="1"/>
+<pinref part="LED3" gate="G$1" pin="C"/>
+</segment>
+</net>
+<net name="N$13" class="0">
+<segment>
+<pinref part="RLED2" gate="G$1" pin="1"/>
+<pinref part="LED2" gate="G$1" pin="C"/>
+</segment>
+</net>
+<net name="N$14" class="0">
+<segment>
+<pinref part="RLED1" gate="G$1" pin="1"/>
+<pinref part="LED1" gate="G$1" pin="C"/>
+</segment>
+</net>
+<net name="N$17" class="0">
+<segment>
+<pinref part="RLED5" gate="G$1" pin="1"/>
+<pinref part="LED5" gate="G$1" pin="C"/>
 </segment>
 </net>
 </nets>
