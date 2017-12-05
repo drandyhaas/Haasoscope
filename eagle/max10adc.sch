@@ -18265,9 +18265,9 @@ COMPLIANT TO JEDEC STANDARDS MO-187BA</description>
 <attribute name="OC_NEWARK" value="05M4535"/>
 </part>
 <part name="GND25" library="supply1" deviceset="GND" device=""/>
-<part name="RLED1" library="resistor" deviceset="R-EU_" device="R0805" value="220">
+<part name="RLED1" library="resistor" deviceset="R-EU_" device="R0805" value="560">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-220"/>
+<attribute name="MPN" value="MF-RES-0805-560"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="LED1" library="led" deviceset="LED" device="SML0805" value="MF-LED-0805-RED">
@@ -18284,9 +18284,9 @@ COMPLIANT TO JEDEC STANDARDS MO-187BA</description>
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
-<part name="RLED2" library="resistor" deviceset="R-EU_" device="R0805" value="220">
+<part name="RLED2" library="resistor" deviceset="R-EU_" device="R0805" value="560">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-220"/>
+<attribute name="MPN" value="MF-RES-0805-560"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="LED2" library="led" deviceset="LED" device="SML0805" value="MF-LED-0805-RED">
@@ -18294,9 +18294,9 @@ COMPLIANT TO JEDEC STANDARDS MO-187BA</description>
 <attribute name="MPN" value="MF-LED-0805-RED"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="RLED3" library="resistor" deviceset="R-EU_" device="R0805" value="220">
+<part name="RLED3" library="resistor" deviceset="R-EU_" device="R0805" value="560">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-220"/>
+<attribute name="MPN" value="MF-RES-0805-560"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="LED3" library="led" deviceset="LED" device="SML0805" value="MF-LED-0805-RED">
@@ -18371,9 +18371,9 @@ COMPLIANT TO JEDEC STANDARDS MO-187BA</description>
 <part name="P+1" library="supply1" deviceset="+5V" device=""/>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
 <part name="GND13" library="supply1" deviceset="GND" device=""/>
-<part name="RLED4" library="resistor" deviceset="R-EU_" device="R0805" value="220">
+<part name="RLED4" library="resistor" deviceset="R-EU_" device="R0805" value="560">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-220"/>
+<attribute name="MPN" value="MF-RES-0805-560"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="LED4" library="led" deviceset="LED" device="SML0805" value="MF-LED-0805-RED">

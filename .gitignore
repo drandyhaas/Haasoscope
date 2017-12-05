@@ -4,3 +4,5 @@ max10_adc_firmware/db/
 max10_adc_firmware/incremental_db/
 max10_adc_firmware/output_files/
 max10_adc_firmware/simulation/
+eagle/max10adc.b#*
+eagle/max10adc.s#*

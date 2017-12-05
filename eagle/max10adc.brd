@@ -4942,9 +4942,9 @@ design rules under a new name.
 <attribute name="NAME" x="9.72" y="52.23" size="0.8128" layer="21" font="vector" rot="R90"/>
 <attribute name="OC_NEWARK" value="unknown" x="9.42" y="57.03" size="1.778" layer="27" rot="R90" display="off"/>
 </element>
-<element name="RLED1" library="resistor" package="R0805" value="220" x="5.53" y="56.44" smashed="yes" rot="R180">
+<element name="RLED1" library="resistor" package="R0805" value="560" x="5.53" y="56.44" smashed="yes" rot="R180">
 <attribute name="MF" value="" x="5.53" y="56.44" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="MPN" value="MF-RES-0805-220" x="5.53" y="56.44" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="MPN" value="MF-RES-0805-560" x="5.53" y="56.44" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="OC_NEWARK" value="unknown" x="5.53" y="56.44" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="VALUE" x="4.5826" y="58.33" size="0.8128" layer="21" font="vector"/>
 </element>
@@ -5008,9 +5008,9 @@ design rules under a new name.
 <element name="CREF1" library="rcl" package="C0805K" value="0.1uF" x="58.08" y="20.8" smashed="yes">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF" x="58.08" y="20.8" size="1.778" layer="27" display="off"/>
 </element>
-<element name="RLED2" library="resistor" package="R0805" value="220" x="5.52" y="53.44" smashed="yes" rot="R180">
+<element name="RLED2" library="resistor" package="R0805" value="560" x="5.52" y="53.44" smashed="yes" rot="R180">
 <attribute name="MF" value="" x="5.52" y="53.44" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="MPN" value="MF-RES-0805-220" x="5.52" y="53.44" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="MPN" value="MF-RES-0805-560" x="5.52" y="53.44" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="OC_NEWARK" value="unknown" x="5.52" y="53.44" size="1.778" layer="27" rot="R180" display="off"/>
 </element>
 <element name="LED2" library="led" package="SML0805" value="MF-LED-0805-RED" x="11.52" y="57.02" smashed="yes" rot="R90">
@@ -5019,9 +5019,9 @@ design rules under a new name.
 <attribute name="NAME" x="11.92" y="52.22" size="0.8128" layer="21" font="vector" rot="R90"/>
 <attribute name="OC_NEWARK" value="unknown" x="11.52" y="57.02" size="1.778" layer="27" rot="R90" display="off"/>
 </element>
-<element name="RLED3" library="resistor" package="R0805" value="220" x="5.51" y="50.64" smashed="yes" rot="R180">
+<element name="RLED3" library="resistor" package="R0805" value="560" x="5.51" y="50.64" smashed="yes" rot="R180">
 <attribute name="MF" value="" x="5.51" y="50.64" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="MPN" value="MF-RES-0805-220" x="5.51" y="50.64" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="MPN" value="MF-RES-0805-560" x="5.51" y="50.64" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="OC_NEWARK" value="unknown" x="5.51" y="50.64" size="1.778" layer="27" rot="R180" display="off"/>
 </element>
 <element name="LED3" library="led" package="SML0805" value="MF-LED-0805-RED" x="13.62" y="57.01" smashed="yes" rot="R90">
@@ -5091,9 +5091,9 @@ design rules under a new name.
 <attribute name="NAME" x="33.97" y="50.495" size="0.8128" layer="21" font="vector" rot="R180"/>
 <attribute name="NAME" x="29.135" y="52" size="0.3048" layer="33" ratio="10" rot="R180"/>
 </element>
-<element name="RLED4" library="resistor" package="R0805" value="220" x="5.5" y="47.8" smashed="yes" rot="R180">
+<element name="RLED4" library="resistor" package="R0805" value="560" x="5.5" y="47.8" smashed="yes" rot="R180">
 <attribute name="MF" value="" x="5.5" y="47.8" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="MPN" value="MF-RES-0805-220" x="5.5" y="47.8" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="MPN" value="MF-RES-0805-560" x="5.5" y="47.8" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="OC_NEWARK" value="unknown" x="5.5" y="47.8" size="1.778" layer="27" rot="R180" display="off"/>
 </element>
 <element name="LED4" library="led" package="SML0805" value="MF-LED-0805-RED" x="15.7" y="57" smashed="yes" rot="R90">
