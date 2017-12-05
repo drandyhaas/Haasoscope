@@ -18446,7 +18446,9 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 </part>
 <part name="GND16" library="supply1" deviceset="GND" device=""/>
 <part name="+3V2" library="supply1" deviceset="+3V3" device=""/>
-<part name="C_OSC" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF"/>
+<part name="C_OSC" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF">
+<attribute name="MFN" value="MF-CAP-0603-0.01uF"/>
+</part>
 <part name="+3V4" library="supply1" deviceset="+3V3" device=""/>
 <part name="CV11" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
@@ -18744,7 +18746,9 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 </part>
 <part name="GND55" library="supply1" deviceset="GND" device=""/>
 <part name="+3V21" library="supply1" deviceset="+3V3" device=""/>
-<part name="C_AC1" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF"/>
+<part name="C_AC1" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF">
+<attribute name="MFN" value="MF-CAP-0603-0.01uF"/>
+</part>
 <part name="GND34" library="supply1" deviceset="GND" device=""/>
 <part name="IOEXPAND_0X20_BOT" library="microchip" deviceset="MCP23017" device="SS"/>
 <part name="IOEXPAND_0X24_TOP" library="microchip" deviceset="MCP23017" device="SS"/>
@@ -18843,12 +18847,18 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <part name="R50-16" library="rcl@1" deviceset="R-US_" device="R0805" value="200"/>
 <part name="U340G" library="usb-serial" deviceset="CH340G" device=""/>
 <part name="Y1" library="SparkFun-FreqCtrl" deviceset="CRYSTAL" device="HC49US" value="ABL-12.000MHZ-B2"/>
-<part name="C_OSC1" library="rcl@1" deviceset="C-US" device="C0603" value="22pF"/>
-<part name="C_OSC2" library="rcl@1" deviceset="C-US" device="C0603" value="22pF"/>
+<part name="C_OSC1" library="rcl@1" deviceset="C-US" device="C0603" value="22pF">
+<attribute name="MFN" value="MF-CAP-0603-22pF"/>
+</part>
+<part name="C_OSC2" library="rcl@1" deviceset="C-US" device="C0603" value="22pF">
+<attribute name="MFN" value="MF-CAP-0603-22pF"/>
+</part>
 <part name="GND66" library="supply1" deviceset="GND" device=""/>
 <part name="+3V30" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND67" library="supply1" deviceset="GND" device=""/>
-<part name="DAC1" library="Luca Eagle-Library" deviceset="MCP4728" device=""/>
+<part name="DAC1" library="Luca Eagle-Library" deviceset="MCP4728" device="">
+<attribute name="MFN" value="MCP4728-E/UN"/>
+</part>
 <part name="GND39" library="supply1" deviceset="GND" device=""/>
 <part name="GND43" library="supply1" deviceset="GND" device=""/>
 <part name="+3V31" library="supply1" deviceset="+3V3" device=""/>
@@ -18859,12 +18869,22 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <part name="5VBEAD" library="rcl" deviceset="FB" device="-0603">
 <attribute name="MPN" value="BK0603HS330-T"/>
 </part>
-<part name="C_5V_10NF" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF"/>
+<part name="C_5V_10NF" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF">
+<attribute name="MFN" value="MF-CAP-0603-0.01uF"/>
+</part>
 <part name="GND45" library="supply1" deviceset="GND" device=""/>
-<part name="CIN1" library="rcl@1" deviceset="C-US" device="C0603" value="10pF"/>
-<part name="CIN2" library="rcl@1" deviceset="C-US" device="C0603" value="10pF"/>
-<part name="CIN3" library="rcl@1" deviceset="C-US" device="C0603" value="10pF"/>
-<part name="CIN4" library="rcl@1" deviceset="C-US" device="C0603" value="10pF"/>
+<part name="CIN1" library="rcl@1" deviceset="C-US" device="C0603" value="10pF">
+<attribute name="MFN" value="MF-CAP-0603-10pF"/>
+</part>
+<part name="CIN2" library="rcl@1" deviceset="C-US" device="C0603" value="10pF">
+<attribute name="MFN" value="MF-CAP-0603-10pF"/>
+</part>
+<part name="CIN3" library="rcl@1" deviceset="C-US" device="C0603" value="10pF">
+<attribute name="MFN" value="MF-CAP-0603-10pF"/>
+</part>
+<part name="CIN4" library="rcl@1" deviceset="C-US" device="C0603" value="10pF">
+<attribute name="MFN" value="MF-CAP-0603-10pF"/>
+</part>
 <part name="CGAIN2_1" library="rcl@1" deviceset="C-US" device="C0603" value="5pF">
 <attribute name="MPN" value="C1608C0G1H050C080AA"/>
 </part>
@@ -18972,17 +18992,23 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <part name="K1" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
 <attribute name="MPN" value="AQY210S"/>
 </part>
-<part name="C_AC2" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF"/>
+<part name="C_AC2" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF">
+<attribute name="MFN" value="MF-CAP-0603-0.01uF"/>
+</part>
 <part name="GND35" library="supply1" deviceset="GND" device=""/>
 <part name="K2" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
 <attribute name="MPN" value="AQY210S"/>
 </part>
-<part name="C_AC3" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF"/>
+<part name="C_AC3" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF">
+<attribute name="MFN" value="MF-CAP-0603-0.01uF"/>
+</part>
 <part name="GND56" library="supply1" deviceset="GND" device=""/>
 <part name="K3" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
 <attribute name="MPN" value="AQY210S"/>
 </part>
-<part name="C_AC4" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF"/>
+<part name="C_AC4" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF">
+<attribute name="MFN" value="MF-CAP-0603-0.01uF"/>
+</part>
 <part name="GND57" library="supply1" deviceset="GND" device=""/>
 <part name="K4" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
 <attribute name="MPN" value="AQY210S"/>
@@ -19064,6 +19090,7 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <instance part="+3V2" gate="G$1" x="-561.34" y="-12.7"/>
 <instance part="C_OSC" gate="G$1" x="-561.34" y="-22.86" smashed="yes">
 <attribute name="NAME" x="-565.15" y="-21.59" size="1.27" layer="95" ratio="10"/>
+<attribute name="MFN" x="-561.34" y="-22.86" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="+3V4" gate="G$1" x="-287.02" y="63.5"/>
 <instance part="CV11" gate="G$1" x="-281.94" y="55.88">
@@ -19381,6 +19408,7 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <instance part="+3V21" gate="G$1" x="-45.72" y="48.26"/>
 <instance part="C_AC1" gate="G$1" x="-242.57" y="-106.68" smashed="yes" rot="R180">
 <attribute name="NAME" x="-238.76" y="-107.95" size="1.27" layer="95" ratio="10" rot="R180"/>
+<attribute name="MFN" x="-242.57" y="-106.68" size="1.778" layer="96" rot="R180" display="off"/>
 </instance>
 <instance part="GND34" gate="1" x="-218.44" y="-96.52" rot="R180"/>
 <instance part="IOEXPAND_0X20_BOT" gate="G$1" x="-223.52" y="101.6"/>
@@ -19504,16 +19532,20 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <instance part="Y1" gate="G$1" x="-444.5" y="-162.56"/>
 <instance part="C_OSC1" gate="G$1" x="-447.04" y="-172.72" smashed="yes">
 <attribute name="NAME" x="-450.85" y="-171.45" size="1.27" layer="95" ratio="10"/>
+<attribute name="MFN" x="-447.04" y="-172.72" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="C_OSC2" gate="G$1" x="-439.42" y="-172.72" smashed="yes">
 <attribute name="NAME" x="-443.23" y="-171.45" size="1.27" layer="95" ratio="10"/>
+<attribute name="MFN" x="-439.42" y="-172.72" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="GND66" gate="1" x="-447.04" y="-187.96"/>
 <instance part="+3V30" gate="G$1" x="-383.54" y="-142.24" smashed="yes" rot="R270">
 <attribute name="VALUE" x="-388.62" y="-144.78" size="1.778" layer="96"/>
 </instance>
 <instance part="GND67" gate="1" x="-419.1" y="-139.7" rot="R180"/>
-<instance part="DAC1" gate="G$1" x="-538.48" y="-144.78"/>
+<instance part="DAC1" gate="G$1" x="-538.48" y="-144.78">
+<attribute name="MFN" x="-538.48" y="-144.78" size="1.778" layer="96" display="off"/>
+</instance>
 <instance part="GND39" gate="1" x="-520.7" y="-137.16" rot="R180"/>
 <instance part="GND43" gate="1" x="-561.34" y="-147.32" rot="R270"/>
 <instance part="+3V31" gate="G$1" x="-568.96" y="-137.16" smashed="yes">
@@ -19530,19 +19562,24 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 </instance>
 <instance part="C_5V_10NF" gate="G$1" x="-337.82" y="-132.08" smashed="yes">
 <attribute name="NAME" x="-334.01" y="-138.43" size="1.27" layer="95" ratio="10" rot="R90"/>
+<attribute name="MFN" x="-337.82" y="-132.08" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="GND45" gate="1" x="-337.82" y="-142.24"/>
 <instance part="CIN1" gate="G$1" x="-227.33" y="-124.46" smashed="yes">
 <attribute name="NAME" x="-231.14" y="-123.19" size="1.27" layer="95" ratio="10"/>
+<attribute name="MFN" x="-227.33" y="-124.46" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="CIN2" gate="G$1" x="-194.31" y="-124.46" smashed="yes">
 <attribute name="NAME" x="-198.12" y="-123.19" size="1.27" layer="95" ratio="10"/>
+<attribute name="MFN" x="-194.31" y="-124.46" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="CIN3" gate="G$1" x="-161.29" y="-124.46" smashed="yes">
 <attribute name="NAME" x="-165.1" y="-123.19" size="1.27" layer="95" ratio="10"/>
+<attribute name="MFN" x="-161.29" y="-124.46" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="CIN4" gate="G$1" x="-130.81" y="-124.46" smashed="yes">
 <attribute name="NAME" x="-134.62" y="-123.19" size="1.27" layer="95" ratio="10"/>
+<attribute name="MFN" x="-130.81" y="-124.46" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="CGAIN2_1" gate="G$1" x="-320.04" y="-163.83" smashed="yes" rot="R90">
 <attribute name="NAME" x="-321.31" y="-167.64" size="1.27" layer="95" ratio="10" rot="R90"/>
@@ -19659,16 +19696,19 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <instance part="K1" gate="G$1" x="-228.6" y="-104.14" rot="R180"/>
 <instance part="C_AC2" gate="G$1" x="-209.55" y="-106.68" smashed="yes" rot="R180">
 <attribute name="NAME" x="-205.74" y="-107.95" size="1.27" layer="95" ratio="10" rot="R180"/>
+<attribute name="MFN" x="-209.55" y="-106.68" size="1.778" layer="96" rot="R180" display="off"/>
 </instance>
 <instance part="GND35" gate="1" x="-185.42" y="-96.52" rot="R180"/>
 <instance part="K2" gate="G$1" x="-195.58" y="-104.14" rot="R180"/>
 <instance part="C_AC3" gate="G$1" x="-176.53" y="-106.68" smashed="yes" rot="R180">
 <attribute name="NAME" x="-172.72" y="-107.95" size="1.27" layer="95" ratio="10" rot="R180"/>
+<attribute name="MFN" x="-176.53" y="-106.68" size="1.778" layer="96" rot="R180" display="off"/>
 </instance>
 <instance part="GND56" gate="1" x="-152.4" y="-96.52" rot="R180"/>
 <instance part="K3" gate="G$1" x="-162.56" y="-104.14" rot="R180"/>
 <instance part="C_AC4" gate="G$1" x="-146.05" y="-106.68" smashed="yes" rot="R180">
 <attribute name="NAME" x="-142.24" y="-107.95" size="1.27" layer="95" ratio="10" rot="R180"/>
+<attribute name="MFN" x="-146.05" y="-106.68" size="1.778" layer="96" rot="R180" display="off"/>
 </instance>
 <instance part="GND57" gate="1" x="-121.92" y="-96.52" rot="R180"/>
 <instance part="K4" gate="G$1" x="-132.08" y="-104.14" rot="R180"/>

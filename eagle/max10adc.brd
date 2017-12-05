@@ -4975,7 +4975,9 @@ design rules under a new name.
 <attribute name="MPN" value="MF-CAP-1206-10uF" x="32.3" y="43.88" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="VALUE" x="28.82" y="45.5" size="0.8128" layer="21" font="vector" rot="R270"/>
 </element>
-<element name="C_OSC" library="rcl@1" package="C0603" value="0.01uF" x="43.36" y="15.22" smashed="yes" rot="R90"/>
+<element name="C_OSC" library="rcl@1" package="C0603" value="0.01uF" x="43.36" y="15.22" smashed="yes" rot="R90">
+<attribute name="MFN" value="MF-CAP-0603-0.01uF" x="43.36" y="15.22" size="1.778" layer="27" rot="R90" display="off"/>
+</element>
 <element name="LED1" library="led" package="SML0805" value="MF-LED-0805-RED" x="7.42" y="56.03" smashed="yes" rot="R90">
 <attribute name="MF" value="" x="7.42" y="56.03" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MPN" value="MF-LED-0805-RED" x="7.42" y="56.03" size="1.778" layer="27" rot="R90" display="off"/>
@@ -5250,6 +5252,7 @@ design rules under a new name.
 <attribute name="MPN" value="MF-CAP-0805-0.1uF" x="45" y="31.8" size="1.778" layer="27" rot="R270" display="off"/>
 </element>
 <element name="C_AC1" library="rcl@1" package="C0603" value="0.01uF" x="75" y="11.2" smashed="yes" rot="R180">
+<attribute name="MFN" value="MF-CAP-0603-0.01uF" x="75" y="11.2" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="VALUE" x="76.895" y="14.635" size="0.8128" layer="21" font="vector" rot="R270"/>
 </element>
 <element name="IOEXPAND_0X20_BOT" library="microchip" package="SSOP28" value="MCP23017SS" x="-0.8" y="11.5" smashed="yes" rot="R90">
@@ -5367,9 +5370,14 @@ design rules under a new name.
 <element name="R50-16" library="rcl@1" package="R0805" value="200" x="82.9" y="54.7" smashed="yes" rot="MR0"/>
 <element name="U340G" library="usb-serial" package="SOIC16" value="CH340G" x="0" y="41" rot="R180"/>
 <element name="Y1" library="SparkFun-FreqCtrl" package="HC49US" value="ABL-12.000MHZ-B2" x="-2.5" y="52.6" smashed="yes" rot="R90"/>
-<element name="C_OSC1" library="rcl@1" package="C0603" value="22pF" x="1" y="50" smashed="yes" rot="R90"/>
-<element name="C_OSC2" library="rcl@1" package="C0603" value="22pF" x="1" y="54" smashed="yes" rot="R270"/>
+<element name="C_OSC1" library="rcl@1" package="C0603" value="22pF" x="1" y="50" smashed="yes" rot="R90">
+<attribute name="MFN" value="MF-CAP-0603-22pF" x="1" y="50" size="1.778" layer="27" rot="R90" display="off"/>
+</element>
+<element name="C_OSC2" library="rcl@1" package="C0603" value="22pF" x="1" y="54" smashed="yes" rot="R270">
+<attribute name="MFN" value="MF-CAP-0603-22pF" x="1" y="54" size="1.778" layer="27" rot="R270" display="off"/>
+</element>
 <element name="DAC1" library="Luca Eagle-Library" package="MSOP10" value="MCP4728" x="73.8" y="29.5" smashed="yes" rot="R90">
+<attribute name="MFN" value="MCP4728-E/UN" x="73.8" y="29.5" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="VALUE" x="78.202" y="26.86" size="0.8128" layer="21" font="vector" rot="R90"/>
 </element>
 <element name="COFFSET" library="rcl" package="C0805K" value="0.1uF" x="79.3" y="29.5" smashed="yes" rot="R270">
@@ -5380,21 +5388,26 @@ design rules under a new name.
 <attribute name="VALUE" x="56.77" y="58.3875" size="0.8128" layer="21" font="vector" rot="R180"/>
 </element>
 <element name="C_5V_10NF" library="rcl@1" package="C0603" value="0.01uF" x="51.7" y="53.6" smashed="yes" rot="R270">
+<attribute name="MFN" value="MF-CAP-0603-0.01uF" x="51.7" y="53.6" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="VALUE" x="52.895" y="55.735" size="0.8128" layer="21" font="vector" rot="R270"/>
 </element>
 <element name="CIN1" library="rcl@1" package="C0603" value="10pF" x="71" y="11" smashed="yes" rot="MR270">
+<attribute name="MFN" value="MF-CAP-0603-10pF" x="71" y="11" size="1.778" layer="28" rot="MR270" display="off"/>
 <attribute name="NAME" x="69.765" y="12.335" size="0.8128" layer="22" font="vector" rot="MR270"/>
 <attribute name="VALUE" x="73.005" y="12.335" size="0.8128" layer="22" font="vector" rot="MR270"/>
 </element>
 <element name="CIN2" library="rcl@1" package="C0603" value="10pF" x="71" y="15" smashed="yes" rot="MR90">
+<attribute name="MFN" value="MF-CAP-0603-10pF" x="71" y="15" size="1.778" layer="28" rot="MR90" display="off"/>
 <attribute name="NAME" x="69.765" y="16.135" size="0.8128" layer="22" font="vector" rot="MR270"/>
 <attribute name="VALUE" x="73.005" y="16.335" size="0.8128" layer="22" font="vector" rot="MR270"/>
 </element>
 <element name="CIN3" library="rcl@1" package="C0603" value="10pF" x="71" y="43" smashed="yes" rot="MR270">
+<attribute name="MFN" value="MF-CAP-0603-10pF" x="71" y="43" size="1.778" layer="28" rot="MR270" display="off"/>
 <attribute name="NAME" x="69.365" y="44.635" size="0.8128" layer="22" font="vector" rot="MR270"/>
 <attribute name="VALUE" x="72.905" y="44.635" size="0.8128" layer="22" font="vector" rot="MR270"/>
 </element>
 <element name="CIN4" library="rcl@1" package="C0603" value="10pF" x="71" y="47" smashed="yes" rot="MR270">
+<attribute name="MFN" value="MF-CAP-0603-10pF" x="71" y="47" size="1.778" layer="28" rot="MR270" display="off"/>
 <attribute name="NAME" x="69.365" y="48.635" size="0.8128" layer="22" font="vector" rot="MR270"/>
 <attribute name="VALUE" x="72.905" y="48.635" size="0.8128" layer="22" font="vector" rot="MR270"/>
 </element>
@@ -5519,7 +5532,9 @@ design rules under a new name.
 <attribute name="OC_FARNELL" value="unknown" x="76" y="10" size="1.778" layer="28" rot="MR270" display="off"/>
 <attribute name="OC_NEWARK" value="unknown" x="76" y="10" size="1.778" layer="28" rot="MR270" display="off"/>
 </element>
-<element name="C_AC2" library="rcl@1" package="C0603" value="0.01uF" x="75" y="14" smashed="yes" rot="R180"/>
+<element name="C_AC2" library="rcl@1" package="C0603" value="0.01uF" x="75" y="14" smashed="yes" rot="R180">
+<attribute name="MFN" value="MF-CAP-0603-0.01uF" x="75" y="14" size="1.778" layer="27" rot="R180" display="off"/>
+</element>
 <element name="K2" library="relay" library_urn="urn:adsk.eagle:library:339" package="SOP04" package3d_urn="urn:adsk.eagle:package:24376/1" value="AQY21SOP" x="76" y="15" smashed="yes" rot="MR270">
 <attribute name="MF" value="" x="69" y="24" size="1.778" layer="28" rot="MR270" display="off"/>
 <attribute name="MPN" value="AQY210S" x="69" y="24" size="1.778" layer="28" rot="MR270" display="off"/>
@@ -5527,6 +5542,7 @@ design rules under a new name.
 <attribute name="OC_NEWARK" value="unknown" x="69" y="24" size="1.778" layer="28" rot="MR270" display="off"/>
 </element>
 <element name="C_AC3" library="rcl@1" package="C0603" value="0.01uF" x="75" y="44" smashed="yes" rot="R180">
+<attribute name="MFN" value="MF-CAP-0603-0.01uF" x="75" y="44" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="VALUE" x="76.895" y="47.535" size="0.8128" layer="21" font="vector" rot="R270"/>
 </element>
 <element name="K3" library="relay" library_urn="urn:adsk.eagle:library:339" package="SOP04" package3d_urn="urn:adsk.eagle:package:24376/1" value="AQY21SOP" x="76" y="43" smashed="yes" rot="MR270">
@@ -5535,7 +5551,9 @@ design rules under a new name.
 <attribute name="OC_FARNELL" value="unknown" x="68" y="52" size="1.778" layer="28" rot="MR270" display="off"/>
 <attribute name="OC_NEWARK" value="unknown" x="68" y="52" size="1.778" layer="28" rot="MR270" display="off"/>
 </element>
-<element name="C_AC4" library="rcl@1" package="C0603" value="0.01uF" x="75" y="47" smashed="yes" rot="R180"/>
+<element name="C_AC4" library="rcl@1" package="C0603" value="0.01uF" x="75" y="47" smashed="yes" rot="R180">
+<attribute name="MFN" value="MF-CAP-0603-0.01uF" x="75" y="47" size="1.778" layer="27" rot="R180" display="off"/>
+</element>
 <element name="K4" library="relay" library_urn="urn:adsk.eagle:library:339" package="SOP04" package3d_urn="urn:adsk.eagle:package:24376/1" value="AQY21SOP" x="76" y="48" smashed="yes" rot="MR270">
 <attribute name="MF" value="" x="68" y="57" size="1.778" layer="28" rot="MR270" display="off"/>
 <attribute name="MPN" value="AQY210S" x="68" y="57" size="1.778" layer="28" rot="MR270" display="off"/>
