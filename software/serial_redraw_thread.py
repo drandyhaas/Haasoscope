@@ -13,7 +13,7 @@ num_board = 1 # Number of Haasoscope boards to read out
 clkrate=125.0 # ADC sample rate in MHz
 ram_width = 12 # width in bits of sample ram to use (9==512 samples, 12(max)==4096 samples)
 max10adcchans = [] #[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1 (triggered by main ADC!), 111=pin6, ..., 118=pin14, 119=temp
-sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
+sendincrement=10 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
 
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
 num_samples = pow(2,ram_width)/pow(2,sendincrement) # num samples per channel, max is pow(2,ram_width)/pow(2,0)=4096
@@ -41,7 +41,7 @@ class DynamicUpdate():
     dogrid=True #redraw the grid
     chanforscreen=0 #channel to draw on the mini-display
     triggertimethresh=8 #samples for which the trigger must be over/under threshold
-    downsample=0 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
+    downsample=7 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
     dofft=False #drawing the FFT plot
     oversample02=False #do oversampling, merging channels 0 and 2
     oversample13=False #do oversampling, merging channels 1 and 3
@@ -55,7 +55,7 @@ class DynamicUpdate():
     dolockinplot=True # plot the lockin info
     lockinanalyzedataboard=0 # the board to analyze lockin info from
     debuglockin=False #debugging of lockin calculations #True #False
-    reffreq = 0.25 #MHz of reference signal on chan 3 for lockin calculations
+    reffreq = 0.008 #MHz of reference signal on chan 3 for lockin calculations
     
     doI2C=False
     doDAC=False
@@ -305,7 +305,7 @@ class DynamicUpdate():
         if self.gain[chan]==1:
             self.gain[chan]=0
             if self.doDAC: self.setPWMlevel(chan,self.highdaclevel)
-            else: self.setPWMlevel_old(chan,58)
+            else: self.setPWMlevel_old(chan,0) #58 for x2 (1k resistor), 0 for x200 (100k resistor)
             origline.set_label("chan "+str(chan)+" x10")
             self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x10")
         else:
@@ -342,7 +342,7 @@ class DynamicUpdate():
             twoforoversampling=1
             uspersample=(1.0/clkrate)*pow(2,self.downsample)/twoforoversampling # us per sample = 10 ns * 2^downsample
             numtoshiftf= 1.0/self.reffreq/4.0 / uspersample
-            print "would like to shift by",round(numtoshiftf,4),"samples"
+            print "would like to shift by",round(numtoshiftf,4),"samples, and uspersample is",uspersample
             self.numtoshift = int(round(numtoshiftf,0))+0 # shift by 90 deg
             self.telllockinnumtoshift(self.numtoshift)
         else:
@@ -592,6 +592,9 @@ class DynamicUpdate():
         else:
             for l in np.arange(num_chan_per_board):
                 if (self.db): print "drawing adc line",l+board*num_chan_per_board
+                if len(theydata)<=l:
+                    print "don't have channel",l
+                    return
                 xdatanew = (self.xdata-num_samples/2.)*(1000.0*pow(2,self.downsample)/clkrate/self.xscaling)
                 ydatanew=(127-theydata[l])*(10./256.) # got to flip it, since it's a negative feedback op amp
                 if self.sincresample:
@@ -678,7 +681,7 @@ class DynamicUpdate():
     
     lockindrawn=False
     def plot_lockin(self):
-        trange=200
+        trange=100
         t=np.arange(trange)
         if not self.lockindrawn: # just the first time, do some setup
             self.lockiny1=np.zeros(trange)
@@ -701,8 +704,9 @@ class DynamicUpdate():
         else: # redrawing
             self.lockiny1=np.roll(self.lockiny1,-1)
             self.lockiny2=np.roll(self.lockiny2,-1)
-            self.lockiny1[trange-1]=self.lockinamp
-            self.lockiny2[trange-1]=self.lockinphase
+            if hasattr(self,'lockinamp'):
+                self.lockiny1[trange-1]=self.lockinamp
+                self.lockiny2[trange-1]=self.lockinphase
             if self.debuglockin:
                 self.lockiny1o=np.roll(self.lockiny1o,-1)
                 self.lockiny2o=np.roll(self.lockiny2o,-1)
@@ -968,7 +972,7 @@ class DynamicUpdate():
             self.setbacktoserialreadout()
             self.resetchans()
             if self.autorearm: self.toggleautorearm()
-            if self.doDAC: self.setPWMlevel(0,self.lowdaclevel)
+            if self.doDAC: self.setPWMlevel(0,self.lowdaclevel) #TODO adjust for all channels
             print "Done with main loop"
 
 #For setting up serial and USB connections
