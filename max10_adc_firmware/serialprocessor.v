@@ -82,8 +82,8 @@ rdaddress2);
   input [11:0] adcramdata;
   reg writebyte;//whether we're sending the first or second byte (since it's 12 bits from the Max10 ADC)
   integer bytesread, byteswanted;
-  reg thecounterbit;
-  integer clockbitstowait = 5; //wait 2^clockbitstowait (8?) ticks before sending each data byte
+  reg thecounterbit, thecounterbitlockin;
+  integer clockbitstowait=5, clockbitstowaitlockin=3; //wait 2^clockbitstowait (8?) ticks before sending each data byte
   reg [3:0] sendincrement = 0; //skip 2**sendincrement bytes each time
   reg [ram_width-1:0] samplestosend = 0;
   reg [7:0] chanforscreen=0;
@@ -342,6 +342,7 @@ rdaddress2);
 				else begin
 					if (extradata[0]>30) extradata[0]=30;
 					downsample=extradata[0];
+					clockbitstowaitlockin = extradata[0]-2; // TODO - seems to work OK
 					state=READ;
 				end
 			end
@@ -483,7 +484,7 @@ rdaddress2);
 					i2cdata[0]=extradata[2];
 					i2cdata[1]=extradata[3];
 					i2cdata[2]=extradata[4];
-					i2cdata[3]=extradata[5];
+					//i2cdata[3]=extradata[5];
 					//i2cdata[4]=extradata[6];
 					//i2cdata[5]=extradata[7];
 					//i2cdata[6]=extradata[8];
@@ -499,7 +500,7 @@ rdaddress2);
 				state=READ;
 			end
 			else if (readdata==138) begin
-				byteswanted=2;//wait for next byte which is the lockinnumtoshift
+				byteswanted=2;//wait for next bytes which are the lockinnumtoshift
 				comdata=readdata;
 				newcomdata=1; //pass it on
 				if (bytesread<byteswanted) state=READMORE;
@@ -532,6 +533,7 @@ rdaddress2);
 				rdaddress = wraddress_triggerpoint - triggerpoint;// - 1;
 				rdaddress2 = rdaddress;
 				thecounterbit=thecounter[clockbitstowait];
+				thecounterbitlockin=thecounter[clockbitstowaitlockin];
 				if (lockinnumtoshift>0) begin
 					lockinresult1=0;
 					lockinresult2=0;
@@ -554,6 +556,7 @@ rdaddress2);
 		end
 		LOCKIN1: begin
 			rden = 1;
+			if ( (thecounter[clockbitstowaitlockin]!=thecounterbitlockin) ) begin
 			case(SendCount[ram_width+1:ram_width]) // we go through the samples 4 times
 				0: begin
 					// first time through we calculate the means
@@ -587,17 +590,13 @@ rdaddress2);
 			if (SendCount[ram_width+1:ram_width]==1) rdaddress2=rdaddress-lockinnumtoshift;
 			else rdaddress2=rdaddress;
 			state=LOCKIN2;
+			end // the counter
 		end
-		LOCKIN2: begin			
-			if(SendCount==0) begin 
-				ioCount = 0;
-				state=LOCKINWRITE1;
-			end
-			else begin
-				state=LOCKIN3;
-			end
+		LOCKIN2: begin	
+			state=LOCKIN3;
 		end
-		LOCKIN3: begin			
+		LOCKIN3: begin
+			if ( (thecounter[clockbitstowaitlockin]==thecounterbitlockin) ) begin
 			if(SendCount==0) begin 
 				ioCount = 0;
 				state=LOCKINWRITE1;
@@ -605,6 +604,7 @@ rdaddress2);
 			else begin
 				state=LOCKIN1;
 			end
+			end // the counter
 		end
 		LOCKINWRITE1: begin
        if (!txBusy) begin
