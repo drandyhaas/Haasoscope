@@ -1,0 +1,21 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+entity signed_adder is 
+	generic ( DATA_WIDTH : natural := 127);	
+	port (	a : in signed ((DATA_WIDTH-1) downto 0);
+					b	: in signed ((DATA_WIDTH-1) downto 0); 
+					cin : in std_logic; 
+					cout : out std_logic; 
+					result : out signed ((DATA_WIDTH-1) downto 0) ); 
+end entity; 
+architecture rtl of signed_adder is 
+begin 
+PROCESS (cin, a, b) 
+	VARIABLE s : signed ((DATA_WIDTH) downto 0); 
+	BEGIN 
+		s := ('0' & a) + ('0' & b) + ('0' & cin); 
+		result<=s((DATA_WIDTH-1) downto 0); 
+		cout <= s(DATA_WIDTH); 
+	END process;
+end rtl; 
