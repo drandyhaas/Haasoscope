@@ -13,7 +13,7 @@ num_board = 1 # Number of Haasoscope boards to read out
 clkrate=125.0 # ADC sample rate in MHz
 ram_width = 12 # width in bits of sample ram to use (9==512 samples, 12(max)==4096 samples)
 max10adcchans = [] #[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1 (triggered by main ADC!), 111=pin6, ..., 118=pin14, 119=temp
-sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
+sendincrement=10 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
 
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
 num_samples = pow(2,ram_width)/pow(2,sendincrement) # num samples per channel, max is pow(2,ram_width)/pow(2,0)=4096
@@ -40,22 +40,24 @@ class DynamicUpdate():
     rising=True #trigger on rising edge (or else falling edge)
     dogrid=True #redraw the grid
     chanforscreen=0 #channel to draw on the mini-display
-    triggertimethresh=1 #samples for which the trigger must be over/under threshold
-    downsample=3 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
+    triggertimethresh=8 #samples for which the trigger must be over/under threshold
+    downsample=7 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
     dofft=False #drawing the FFT plot
+    oversample02=False #do oversampling, merging channels 0 and 2
+    oversample13=False #do oversampling, merging channels 1 and 3
     dousb=False #whether to use USB2 output
     sincresample=0 # amount of resampling to do (sinx/x)
     dogetotherdata=False # whether to read other claculated data like TDC
     domaindrawing=True # whether to update the main window data and redraw it
     db = False #debugging #True #False
 
-    dolockin=False # read lockin info
+    dolockin=True # read lockin info
     dolockinplot=True # plot the lockin info
     lockinanalyzedataboard=0 # the board to analyze lockin info from
     debuglockin=False #debugging of lockin calculations #True #False
     reffreq = 0.008 #MHz of reference signal on chan 3 for lockin calculations
     
-    doI2C=True
+    doI2C=False
     doDAC=False
     lowdaclevel=1200
     highdaclevel=1500
@@ -186,6 +188,7 @@ class DynamicUpdate():
             print "Set PWM rate to",level," : ",b1,b0,256*b0+b1
         
     def setPWMlevel(self,chan,level):
+        chan=0 # TODO: This is temporary until the DAC works for all channels!
         self.setdac(chan,level)
         print "DAC level set for channel",chan,"to",level
     
@@ -223,33 +226,8 @@ class DynamicUpdate():
         print "Tell SPI setup:",format(myb[0],'02x'),format(myb[1],'02x')
         #time.sleep(.1) #pause to make sure other SPI wriitng is done
     
-    #These hold the state of the IO expanders
-    a20= int('f0',16) # oversamp (set first char to 0 to send 0->2 and 1->3) / gain (set second char to 0 for low gain)
-    b20= int('0f',16)  # shdn (set first char to 0 to turn on) / ac coupling (?)
-    a21= int('f0',16) # ledbase / leds
-    b21= int('00',16)# free pins
-    
-    # testBit() returns a nonzero result, 2**offset, if the bit at 'offset' is one.
-    def testBit(self,int_type, offset):
-        mask = 1 << offset
-        return(int_type & mask)
-    # setBit() returns an integer with the bit at 'offset' set to 1.
-    def setBit(self,int_type, offset):
-        mask = 1 << offset
-        return(int_type | mask)
-    # clearBit() returns an integer with the bit at 'offset' cleared.
-    def clearBit(self,int_type, offset):
-        mask = ~(1 << offset)
-        return(int_type & mask)
-    # toggleBit() returns an integer with the bit at 'offset' inverted, 0 -> 1 and 1 -> 0.
-    def toggleBit(self,int_type, offset):
-        mask = 1 << offset
-        return(int_type ^ mask)
-  
     def sendi2c(self,whattosend):
-        if not self.doI2C: 
-            print "not doing I2C! ", whattosend
-            return # not doing i2c for now? Will hang boards that don't have it!
+        if not self.doI2C: return # not doing i2c for now? Will hang boards that don't have it!
         myb=bytearray.fromhex(whattosend)
         ser.write(chr(136))
         datacounttosend=len(myb)-1 #number of bytes of info to send, not counting the address
@@ -257,19 +235,13 @@ class DynamicUpdate():
         for b in np.arange(len(myb)): ser.write(chr(myb[b]))
         for b in np.arange(4-len(myb)): 
             ser.write(chr(255)) # pad with extra bytes since the command expects a total of 5 bytes (numtosend, addr, and 3 more bytes)
-            #print 255
+            print 255
         print "Tell i2c:","bytestosend:",datacounttosend," and address/data:",whattosend
     
     def setupi2c(self):
-        self.sendi2c("20 00 00") #port A on IOexp 1 are outputs
-        self.sendi2c("20 01 00") #port B on IOexp 1 are outputs
-        self.sendi2c("21 00 00") #port A on IOexp 2 are outputs
-        self.sendi2c("21 01 00") #port B on IOexp 2 are outputs
-        self.sendi2c("20 12 "+ ('%0*x' % (2,self.a20)) ) #port A of IOexp 1
-        self.sendi2c("20 13 "+ ('%0*x' % (2,self.b20)) ) #port B of IOexp 1
-        self.sendi2c("21 12 "+ ('%0*x' % (2,self.a21)) ) #port A of IOexp 2
-        self.sendi2c("21 13 "+ ('%0*x' % (2,self.b21)) ) #port B of IOexp 2
-            
+        self.sendi2c("20 00 00"); #port A are outputs    
+        self.sendi2c("20 01 00"); #port B are outputs    
+    
     def setdac(self,chan,val):        
         if chan==0: c="50"
         elif chan==1: c="52"
@@ -284,25 +256,20 @@ class DynamicUpdate():
         self.sendi2c("60 "+c+" 0"+('%0*x' % (3,val))) #DAC, can go from 000 to 0fff in last 12 bits
         
     def testi2c(self):
-        print "test i2c"
-        dotest=2 # what to test
+        dotest=1 # what to test
         if dotest==0:
-            # IO expander 1            
-            self.sendi2c("20 12 ff") #turn on all port A of IOexp 1 (12 means A, ff is which of the 8 bits to turn on)
-            self.sendi2c("20 13 ff") #turn on all port B of IOexp 1 (13 means B, ff is which of the 8 bits to turn on)
+            # IO expander 1
+            
+            self.sendi2c("20 12 ff");#turn on all port A (12 means A, ff is which of the 8 bits to turn on)
+            self.sendi2c("20 13 ff"); #turn on all port B (13 means B, ff is which of the 8 bits to turn on)
             time.sleep(3)
-            self.sendi2c("20 12 00") #turn off all port A of IOexp 1
-            self.sendi2c("20 13 00") #turn off all port B of IOexp 1
-        elif dotest==1:
+            self.sendi2c("20 12 00"); #turn off all port A
+            self.sendi2c("20 13 00"); #turn off all port B
+        if dotest==1:
             #Test the DAC
             self.setdac(0,4095)
             time.sleep(3)
             self.setdac(0,0)
-        elif dotest==2:
-            #toggle led 1, at 0x21 a0
-            self.a21=self.setBit(self.a21,0); self.sendi2c("21 12 "+ ('%0*x' % (2,self.a21)) )
-            time.sleep(3)
-            self.a21=self.clearBit(self.a21,0); self.sendi2c("21 12 "+ ('%0*x' % (2,self.a21)) )
 
     def toggledousb(self):#toggle whether to read over FT232H USB or not
         if not "usbser" in globals(): 
@@ -321,15 +288,17 @@ class DynamicUpdate():
         ser.write(chr(130))
         self.writefirmchan(tp)
         self.trigsactive[tp] = not self.trigsactive[tp]
-        origline,legline,channum = self.lined[tp]
-        if self.trigsactive[tp]: self.leg.get_texts()[tp].set_color('#000000')
-        else: self.leg.get_texts()[tp].set_color('#aFaFaF')
+        if hasattr(self,'lined'): 
+            origline,legline,channum = self.lined[tp]
+            if self.trigsactive[tp]: self.leg.get_texts()[tp].set_color('#000000')
+            else: self.leg.get_texts()[tp].set_color('#aFaFaF')
+            self.figure.canvas.draw()
         print "Trigger toggled for channel",tp
-        self.figure.canvas.draw()
+        
 
     autorearm=False
     def toggleautorearm(self):
-        #tell it to toggle the auto rearm of the tirgger after readout
+        #tell it to toggle the auto raem of the tirgger after readout
         ser.write(chr(139))
         self.autorearm = not self.autorearm
         print "Trigger auto rearm now",self.autorearm
@@ -342,29 +311,23 @@ class DynamicUpdate():
         #tell it to switch the gain of a channel
         ser.write(chr(134))
         self.writefirmchan(chan)
-        origline,legline,channum = self.lined[chan]
+        if hasattr(self,'lined'): origline,legline,channum = self.lined[chan]
         if self.gain[chan]==1:
             self.gain[chan]=0
             if self.doDAC: self.setPWMlevel(chan,self.highdaclevel)
-            else: self.setPWMlevel_old(chan,60) #58 for x2 (1k resistor), 0 for x200 (100k resistor)
-            origline.set_label("chan "+str(chan)+" x10")
-            self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x10")
+            else: self.setPWMlevel_old(chan,0) #58 for x2 (1k resistor), 0 for x200 (100k resistor)
+            if hasattr(self,'lined'): 
+                origline.set_label("chan "+str(chan)+" x10")
+                self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x10")
         else:
             self.gain[chan]=1
             if self.doDAC: self.setPWMlevel(chan,self.lowdaclevel)
-            else: self.setPWMlevel_old(chan,65)
-            origline.set_label("chan "+str(chan))
-            self.leg.get_texts()[chan].set_text("chan "+str(chan))
-        self.figure.canvas.draw()
+            else: self.setPWMlevel_old(chan,22)
+            if hasattr(self,'lined'): 
+                origline.set_label("chan "+str(chan))
+                self.leg.get_texts()[chan].set_text("chan "+str(chan))
+        if hasattr(self,'lined'): self.figure.canvas.draw()
         print "Gain switched for channel",chan,"to",self.gain[chan]
-
-    oversample02=False #do oversampling, merging channels 0 and 2
-    oversample13=False #do oversampling, merging channels 1 and 3
-    def oversamp(self,chan):
-        #tell it to toggle oversampling for this channel
-        ser.write(chr(141))
-        self.writefirmchan(chan)
-        print "Oversampling toggled for channel",chan
 
     def resetchans(self):
         for chan in np.arange(num_board*num_chan_per_board):
@@ -372,8 +335,6 @@ class DynamicUpdate():
                 self.tellswitchgain(chan) # set all gains back to low gain
             if  self.trigsactive[chan]==0:
                 self.toggletriggerchan(chan) # set all trigger channels back to active
-        if self.oversample02: self.oversamp(0)
-        if self.oversample13: self.oversamp(1)
     
     def setbacktoserialreadout(self):
         if self.dousb:    
@@ -541,7 +502,7 @@ class DynamicUpdate():
                 if event.key=="enter":
                     self.keyLevel=False
                     s=self.leveltemp.split(",")
-                    #print "Got",int(s[0]),int(s[1])
+                    print "Got",int(s[0]),int(s[1])
                     if self.doDAC: self.setPWMlevel(int(s[0]),int(s[1]))
                     else: self.setPWMlevel_old(int(s[0]),int(s[1]))
                     return
@@ -554,8 +515,8 @@ class DynamicUpdate():
             elif event.key=="a": self.average = not self.average;print "average",self.average; return
             elif event.key=="A": self.toggleautorearm(); return
             elif event.key=="U": self.toggledousb(); return
-            elif event.key=="0": self.oversample02 = not self.oversample02;print "oversample02 is now",self.oversample02; self.oversamp(0); return # TODO: allow for more boards
-            elif event.key=="1": self.oversample13 = not self.oversample13;print "oversample13 is now",self.oversample13; self.oversamp(1); return 
+            elif event.key=="0": self.oversample02 = not self.oversample02;print "oversample02 is now",self.oversample02; return 
+            elif event.key=="1": self.oversample13 = not self.oversample13;print "oversample13 is now",self.oversample13; return 
             elif event.key=="c": self.keychanneltrig=True;self.keychanneltrigtemp=0;print "now enter channel to toggle trigger for";return
             elif event.key=="R": self.keyResample=True;print "now enter amount to sinc resample (0-9)";return
             elif event.key=="d": self.keychanneldisplay=True;print "now enter channel to show on miniscreen";return
@@ -1006,7 +967,14 @@ class DynamicUpdate():
             self.tellSPIsetup(11) #offset binary output
             #tellSPIsetup(12) #offset binary output and divide clock by 2
             self.tellSPIsetup(32) # non-multiplexed output
-            self.setupi2c() # sets all ports to be outputs
+            self.setupi2c() # sets both ports to be outputs
+            if not self.doDAC: #TODO - because they cause noise
+                self.setPWMlevel_old(0,0) 
+                self.setPWMlevel_old(1,0)
+                self.tellswitchgain(2)
+                self.toggletriggerchan(0)
+                self.toggletriggerchan(1)
+                self.toggletriggerchan(2)
             self.on_launch()
             x=0; oldtime=time.clock(); tinterval=100.
             while 1:

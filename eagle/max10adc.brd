@@ -9057,7 +9057,7 @@ design rules under a new name.
 <wire x1="15.3" y1="40.2" x2="15.3" y2="40.25" width="0.1524" layer="15"/>
 <via x="21.2" y="28.5" extent="1-16" drill="0.3048"/>
 </signal>
-<signal name="L128">
+<signal name="L127">
 <contactref element="FPGA" pad="127"/>
 <contactref element="PIN_DISPLAY" pad="9"/>
 <wire x1="19.7" y1="29.9" x2="20.2" y2="29.9" width="0.1524" layer="1"/>

@@ -60,6 +60,7 @@ rdaddress2,trigthresh2);
 	input [3:0] SPIstate;
 	output wire[3:0] offset;
 	output reg[3:0] gainsw;
+	reg[3:0] oversamp;
 	
 	output reg i2c_ena;
 	output reg [6:0] i2c_addr;
@@ -70,12 +71,14 @@ rdaddress2,trigthresh2);
 	input i2c_ackerror;
 	reg [7:0] i2cdata[8];//up to 8 bytes of data to send
 	reg [3:0] i2c_datacounttosend,i2c_datacount;
+	reg i2cgo=0;
 
   localparam READ=0, SOLVING=1, WAITING=2, WRITE_EXT1=3, WRITE_EXT2=4, WAIT_ADC1=5, WAIT_ADC2=6, WRITE_BYTE1=7, WRITE_BYTE2=8, READMORE=9, 
 	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15,WRITEUSB1=16,WRITEUSB2=17, LOCKIN1=18,LOCKIN2=19,LOCKIN3=20,LOCKINWRITE1=21,LOCKINWRITE2=22;
-  integer state;
+  integer state,i2cstate;
 
   reg [7:0] myid;
+  assign imthefirst = (myid==0);
   reg [7:0] extradata[10];//to store command extra data, like arguemnts (up to 10 bytes)
   reg [ram_width+1:0] SendCount;
   integer nsamp = 6;
@@ -88,12 +91,14 @@ rdaddress2,trigthresh2);
   reg [ram_width-1:0] samplestosend = 0;
   reg [7:0] chanforscreen=0;
   reg autorearm=0;
- 
-	reg do_usb=0;
-	input usb_clk60;
-	output reg [7:0] usb_dataio;
-	input usb_txe_busy;
-	output reg usb_wr;
+  integer thecounter;
+  integer theoldcounter;
+
+  reg do_usb=0;
+  input usb_clk60;
+  output reg [7:0] usb_dataio;
+  input usb_txe_busy;
+  output reg usb_wr;
   
   //TODO: use memory bits for this, not register space??
   reg [5:0] screencolumndata [128]; //all the screen data, 128 columns of (8 rows of 8 dots)
@@ -114,6 +119,7 @@ rdaddress2,trigthresh2);
   
   initial begin
     state<=READ;
+	 i2cstate<=READ;
 	 myid<=200;
 	 master_clock<=2'b00;//start as my own master
 	 imthelast<=0;//probably not last
@@ -122,30 +128,23 @@ rdaddress2,trigthresh2);
 	 downsample<=1;
 	 serial_passthrough<=0;
 	 ledbase<=1;
-	 gainsw[0]<=0;//1 is for 1k resistor (gain 2), 0 is for 100 Ohm resistor (gain .2)
-	 gainsw[1]<=0;
-	 gainsw[2]<=0;
-	 gainsw[3]<=0;
+	 gainsw<=4'b0000;//1 is for 1k resistor (gain 2), 0 is for 100 Ohm resistor (gain .2)
+	 oversamp<=4'b0011;//1 is for _no_ oversampling (and only matters for bits 0 and 1)
   end
   
-  assign imthefirst = (myid==0);
-  
-  integer thecounter;
-  integer theoldcounter;
   //set the LEDs to indicate my ID
   always @(posedge clk) begin
 	thecounter<=thecounter+1;
 	
-	if (state==READ) led4<=1;
-	else led4<=0;
-  
+	led4<=0; //on
+   
    if ( imthelast & thecounter[26]==1'b1 ) begin //flash every few seconds
 		led1<=0;		led2<=0;		led3<=0;//all on
 	end
-	else if (txStart) begin
-	//if (trigDebug) begin		
-		led1<=0;		led2<=0;		led3<=0;//all on
-	end
+	//else if (txStart) begin
+	//else if (trigDebug) begin		
+		//led1<=0;		led2<=0;		led3<=0;//all on
+	//end
 	else if (myid==0) begin	   
 		led1<=1;		led2<=1;		led3<=1;//all off
 	end
@@ -162,10 +161,10 @@ rdaddress2,trigthresh2);
 		led1<=1;		led2<=1;		led3<=0;//binary 4
 	end
 	else begin		
-		led1<=1;		led2<=1;		led3<=1;
+		led1<=0;		led2<=0;		led3<=0;//all on
 	end
   end
-  
+  reg oldled1,oldled2,oldled3,oldled4;
   
    //reg [7:0] PWMoffset = 23; //9.1%  *256;
 	reg [7:0] PWMoffset0 = 58; //22.7% *256;
@@ -188,6 +187,46 @@ rdaddress2,trigthresh2);
 	assign offset[1] = (PWMoffset1 > pwmcounter);  // comparators
 	assign offset[2] = (PWMoffset2 > pwmcounter);  // comparators
 	assign offset[3] = (PWMoffset3 > pwmcounter);  // comparators
+	
+	always @(posedge clk) begin
+   case (i2cstate)
+		//I2C, from https://eewiki.net/pages/viewpage.action?pageId=10125324
+		READ: begin
+			i2c_ena<=0;
+			if (i2cgo) begin
+				i2cstate=I2CWAIT;
+			end
+		end
+		I2CWAIT: begin
+			if (~i2c_busy) begin
+				//i2c_addr set elsewhere first
+				i2c_rw = 0;
+				i2c_datawr = i2cdata[0];
+				//i2c_datacounttosend set elsewhere first
+				i2c_datacount=1;
+				//i2c_datard = 
+				i2cstate=I2CSEND1;
+			end
+		end
+		I2CSEND1: begin
+			i2c_ena = 1;
+			if (i2c_datacount >= i2c_datacounttosend) begin
+				i2cstate=READ; //sets i2c_ena back to 0
+			end
+			else if (i2c_busy) begin
+				i2c_datawr = i2cdata[i2c_datacount];
+				i2cstate=I2CSEND2;
+			end
+		end
+		I2CSEND2: begin
+			if (~i2c_busy) begin
+				//i2c_ackerror
+				i2c_datacount = i2c_datacount+1;
+				i2cstate=I2CSEND1;
+			end
+		end
+	endcase
+	end
   
   always @(posedge clk) begin
     case (state)
@@ -201,11 +240,25 @@ rdaddress2,trigthresh2);
 		  byteswanted<=0;
 		  newcomdata<=0;
 		  SPIsend<=0;
-		  i2c_ena<=0;
+		  i2cgo=0;
         if (rxReady) begin
 			 readdata = rxData;
           state = SOLVING;
         end
+		  if (oldled1!=led1 || oldled2!=led2 || oldled3!=led3 || oldled4!=led4) begin
+			 oldled1=led1; oldled2=led2; oldled3=led3; oldled4=led4;
+			 //now send to i2c
+			 i2c_datacounttosend=2;//how many bytes of info to send (not counting address)
+			 i2c_addr=8'h21; // the second mcp io expander
+			 i2cdata[0]=8'h12; // port a
+			 i2cdata[1][0]=led1; i2cdata[1][1]=led2; i2cdata[1][2]=led3; i2cdata[1][3]=led4; // set the low 4 bits to be correct for the leds
+			 i2cdata[1][7:4]=4'b0001; // set the high 4 bits for the ledbase
+			 i2cdata[2]=0; // not used for mcp io expanders
+			 if (i2cstate==READ) begin // if it's busy, we'll do nothing, oh well
+			   i2cgo=1;
+				//state=READ;
+			 end
+		  end
       end
 		
 		READMORE: begin
@@ -451,7 +504,17 @@ rdaddress2,trigthresh2);
 					if (extradata[0]/4 ==myid) begin //I have this channel
 						gainsw[extradata[0]%4]=~gainsw[extradata[0]%4];//switch the gain of the channel
 					end
-					state=READ;
+					//now send to i2c
+					i2c_datacounttosend=2;//how many bytes of info to send (not counting address)
+					i2c_addr=8'h20; // the first mcp io expander
+					i2cdata[0]=8'h12; // port a
+					i2cdata[1][3:0]=gainsw; // set the low 4 bits to be correct for the gain
+					i2cdata[1][7:4]=oversamp; // set the high 4 bits to be correct for the oversampling
+					i2cdata[2]=0; // not used for mcp io expanders
+					if (i2cstate==READ) begin
+						i2cgo=1;
+						state=READ;
+					end
 				end
 			end
 			else if (readdata==135) begin
@@ -476,20 +539,17 @@ rdaddress2,trigthresh2);
 				if (bytesread<byteswanted) state=READMORE;
 				else begin
 					//i2c_addr = 7'b0100000;// 0x20 // for all 3 pins of (last 3 digits) to GND of MCP23017
-					//i2c_addr = 7'b0100111;// 0x27 // for all 3 pins (last 3 digits) to VCC of MCP23017
+					//i2c_addr = 7'b0100001;// 0x21 // for all a pin to VCC of MCP23017
 					//i2c_addr = 7'b1100000;// 0x60 // for MCP4728
 					i2c_datacounttosend=extradata[0];//how many bytes of info to send (not counting address)
 					i2c_addr=extradata[1]; // get address to write to
-					//send over i2c!
 					i2cdata[0]=extradata[2];
 					i2cdata[1]=extradata[3];
 					i2cdata[2]=extradata[4];
-					//i2cdata[3]=extradata[5];
-					//i2cdata[4]=extradata[6];
-					//i2cdata[5]=extradata[7];
-					//i2cdata[6]=extradata[8];
-					//i2cdata[7]=extradata[9];
-					state=I2CWAIT;
+					if (i2cstate==READ) begin
+						i2cgo=1;
+						state=READ;
+					end
 				end
 			end
 			else if (137==readdata) begin
@@ -524,6 +584,28 @@ rdaddress2,trigthresh2);
 				else begin
 					trigthresh2 = extradata[0];
 					state=READ;
+				end
+			end
+			else if (readdata==141) begin
+				byteswanted=1;//wait for next byte which is the channel to toggle oversampling for
+				comdata=readdata;
+				newcomdata=1; //pass it on
+				if (bytesread<byteswanted) state=READMORE;
+				else begin
+					if (extradata[0]/4 ==myid) begin //I have this channel
+						oversamp[extradata[0]%4]=~oversamp[extradata[0]%4];//switch the oversampling of the channel
+					end
+					//now send to i2c
+					i2c_datacounttosend=2;//how many bytes of info to send (not counting address)
+					i2c_addr=8'h20; // the first mcp io expander
+					i2cdata[0]=8'h12; // port a
+					i2cdata[1][3:0]=gainsw; // set the low 4 bits to be correct for the gain
+					i2cdata[1][7:4]=oversamp; // set the high 4 bits to be correct for the oversampling
+					i2cdata[2]=0; // not used for mcp io expanders
+					if (i2cstate==READ) begin
+						i2cgo=1;
+						state=READ;
+					end
 				end
 			end
 			else state=READ; // if we got some other command, just ignore it
@@ -794,37 +876,6 @@ rdaddress2,trigthresh2);
           state = READ;
         end
       end
-
-		//I2C, from https://eewiki.net/pages/viewpage.action?pageId=10125324
-		I2CWAIT: begin
-			newcomdata<=0; //set this back, to just send out data once
-			if (~i2c_busy) begin
-				//i2c_addr set elsewhere first
-				i2c_rw = 0;
-				i2c_datawr = i2cdata[0];
-				//i2c_datacounttosend set elsewhere first
-				i2c_datacount=1;
-				//i2c_datard = 
-				state=I2CSEND1;
-			end
-		end
-		I2CSEND1: begin
-			i2c_ena = 1;
-			if (i2c_datacount >= i2c_datacounttosend) begin
-				state=READ; //sets i2c_ena back to 0
-			end
-			else if (i2c_busy) begin
-				i2c_datawr = i2cdata[i2c_datacount];
-				state=I2CSEND2;
-			end
-		end
-		I2CSEND2: begin
-			if (~i2c_busy) begin
-				//i2c_ackerror
-				i2c_datacount = i2c_datacount+1;
-				state=I2CSEND1;
-			end
-		end
 		
     endcase
 	 

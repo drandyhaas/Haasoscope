@@ -22512,7 +22512,7 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <label x="-459.74" y="66.04" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
-<net name="L128" class="0">
+<net name="L127" class="0">
 <segment>
 <pinref part="FPGA" gate="G$1" pin="IO8_127"/>
 <wire x1="-419.1" y1="68.58" x2="-419.1" y2="78.74" width="0.1524" layer="91"/>
