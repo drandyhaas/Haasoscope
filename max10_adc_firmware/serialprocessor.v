@@ -478,7 +478,7 @@ rdaddress2,trigthresh2);
 					//i2c_addr = 7'b0100000;// 0x20 // for all 3 pins of (last 3 digits) to GND of MCP23017
 					//i2c_addr = 7'b0100111;// 0x27 // for all 3 pins (last 3 digits) to VCC of MCP23017
 					//i2c_addr = 7'b1100000;// 0x60 // for MCP4728
-					i2c_datacounttosend=extradata[0];//how mayn bytes of info to send (not counting address)
+					i2c_datacounttosend=extradata[0];//how many bytes of info to send (not counting address)
 					i2c_addr=extradata[1]; // get address to write to
 					//send over i2c!
 					i2cdata[0]=extradata[2];
