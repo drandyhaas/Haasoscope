@@ -13,7 +13,7 @@ num_board = 1 # Number of Haasoscope boards to read out
 clkrate=125.0 # ADC sample rate in MHz
 ram_width = 12 # width in bits of sample ram to use (9==512 samples, 12(max)==4096 samples)
 max10adcchans = [] #[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1 (triggered by main ADC!), 111=pin6, ..., 118=pin14, 119=temp
-sendincrement=10 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
+sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
 
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
 num_samples = pow(2,ram_width)/pow(2,sendincrement) # num samples per channel, max is pow(2,ram_width)/pow(2,0)=4096
@@ -51,7 +51,7 @@ class DynamicUpdate():
     domaindrawing=True # whether to update the main window data and redraw it
     db = False #debugging #True #False
 
-    dolockin=True # read lockin info
+    dolockin=False # read lockin info
     dolockinplot=True # plot the lockin info
     lockinanalyzedataboard=0 # the board to analyze lockin info from
     debuglockin=False #debugging of lockin calculations #True #False
@@ -140,6 +140,13 @@ class DynamicUpdate():
         tp=255-tp # need to flip it due to op amp
         ser.write(chr(tp))
         print "Trigger threshold is",tp
+        
+    def settriggerthresh2(self,tp):
+        #tell it the high trigger threshold (must be below this to trigger)
+        ser.write(chr(140))
+        tp=255-tp # need to flip it due to op amp
+        ser.write(chr(tp))
+        print "Trigger high threshold is",tp
     
     def settriggertype(self,tp):
         #tell it the trigger type: rising, falling, either, ...
@@ -406,6 +413,12 @@ class DynamicUpdate():
     
     def onclick(self,event):
         try:            
+            if event.button==2: #middle click                
+                self.settriggerthresh2(int(  event.ydata/(10./256.) + 127  ))                
+                self.hline2 = event.ydata
+                otherline , = self.ax.plot( [self.min_x, self.max_x], [self.hline2, self.hline2], 'k:', lw=1) # horizontal line showing trigger threshold
+                self.otherlines[2]=otherline
+                return
             if event.button==3: #right click
                 self.settriggerpoint(int(  (event.xdata / (1000.0*pow(2,self.downsample)/clkrate/self.xscaling)) +num_samples/2  ))
                 self.settriggerthresh(int(  event.ydata/(10./256.) + 127  ))
@@ -555,6 +568,9 @@ class DynamicUpdate():
         self.otherlines.append(otherline)
         self.hline = 0
         otherline , = self.ax.plot( [-2, 2], [self.hline, self.hline], 'k--', lw=1)
+        self.otherlines.append(otherline)
+        self.hline2 = 0
+        otherline , = self.ax.plot( [-2, 2], [self.hline2, self.hline2], 'k:', lw=1)
         self.otherlines.append(otherline)
         self.figure.canvas.mpl_connect('button_press_event', self.onclick)
         self.figure.canvas.mpl_connect('key_press_event', self.onpress)

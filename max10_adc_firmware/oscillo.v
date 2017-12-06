@@ -1,7 +1,7 @@
 module oscillo(clk, startTrigger, clk_flash, data_flash1, data_flash2, data_flash3, data_flash4, pwr1, pwr2, shdn_out, spen_out, trig_in, trig_out, rden, rdaddress, 
 data_ready, wraddress_triggerpoint, imthelast, imthefirst,rollingtrigger,trigDebug,triggerpoint,downsample,
 trigthresh,trigchannels,triggertype,triggertot,format_sdin_out,div_sclk_out,outsel_cs_out,clk_spi,SPIsend,SPIsenddata,
-wraddress,Acquiring,SPIstate,clk_flash2);
+wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2);
 input clk,clk_spi;
 input startTrigger;
 input [1:0] trig_in;
@@ -26,7 +26,7 @@ output reg data_ready;
 input wire imthelast, imthefirst;
 input wire rollingtrigger;
 output reg trigDebug;
-input [7:0] trigthresh;
+input [7:0] trigthresh, trigthresh2;
 input [3:0] trigchannels;
 input [ram_width-1:0] triggerpoint;
 input [4:0] downsample; // only record 1 out of every 2^downsample samples
@@ -135,10 +135,11 @@ always @(posedge clk_flash) begin
 	i=0;
 	while (i<4) begin
 		if (trigchannels[i]) begin
-			if (i==0) Threshold1[i] <= data_flash1_reg>=trigthresh; // above threshold now?
-			if (i==1) Threshold1[i] <= data_flash2_reg>=trigthresh;
-			if (i==2) Threshold1[i] <= data_flash3_reg>=trigthresh;
-			if (i==3) Threshold1[i] <= data_flash4_reg>=trigthresh;
+			// above threshold now?
+			if (i==0) Threshold1[i] <= (data_flash1_reg>=trigthresh && data_flash1_reg<=trigthresh2);
+			if (i==1) Threshold1[i] <= (data_flash2_reg>=trigthresh && data_flash2_reg<=trigthresh2);
+			if (i==2) Threshold1[i] <= (data_flash3_reg>=trigthresh && data_flash3_reg<=trigthresh2);
+			if (i==3) Threshold1[i] <= (data_flash4_reg>=trigthresh && data_flash4_reg<=trigthresh2);
 			Threshold2[i] <= Threshold1[i]; // was above threshold?
 			
 			if (triggertype[0]) begin // if positive edge, trigger! (possibly after demanding a timeout)

@@ -6,7 +6,7 @@ adcdata,adcready,getadcdata,getadcadr,adcvalid,adcreset,adcramdata,writesamp,wri
 triggerpoint,downsample, screendata,screenwren,screenaddr,screenreset,trigthresh,trigchannels,triggertype,triggertot,
 SPIsend,SPIsenddata,delaycounter,carrycounter,ledbase,SPIstate,offset,gainsw,led4,
 i2c_ena,i2c_addr,i2c_rw,i2c_datawr,i2c_datard,i2c_busy,i2c_ackerror,   usb_clk60,usb_dataio,usb_txe_busy,usb_wr,
-rdaddress2);
+rdaddress2,trigthresh2);
    input clk;
 	input[7:0] rxData;
    input rxReady;
@@ -49,7 +49,7 @@ rdaddress2);
 	output reg screenwren=0;
 	output reg [9:0] screenaddr = 10'd0;
 	output reg screenreset=0;
-	output reg [7:0] trigthresh = 8'h80;
+	output reg [7:0] trigthresh = 8'h80, trigthresh2=8'hff; // the normal and high trigger thresholds
 	output reg [3:0] trigchannels = 4'b1111;
 	output reg [3:0] triggertype = 4'b0001;//rising edge on, falling edge off, other off
    output reg [ram_width:0] triggertot;
@@ -515,6 +515,16 @@ rdaddress2);
 				comdata=readdata;
 				newcomdata=1; //pass it on
 				state=READ;
+			end
+			else if (readdata==140) begin
+				byteswanted=1;//wait for next byte which is the high trigger threshold (must be below this to trigger)
+				comdata=readdata;
+				newcomdata=1; //pass it on
+				if (bytesread<byteswanted) state=READMORE;
+				else begin
+					trigthresh2 = extradata[0];
+					state=READ;
+				end
 			end
 			else state=READ; // if we got some other command, just ignore it
       end

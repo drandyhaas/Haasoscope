@@ -500,6 +500,13 @@ agreement for further details.
 		(text "rdaddress2[ram_width-1..0]" (rect 232 731 339 743)(font "Arial" ))
 		(line (pt 360 736)(pt 344 736)(line_width 3))
 	)
+	(port
+		(pt 360 752)
+		(output)
+		(text "trigthresh2[7..0]" (rect 0 0 61 12)(font "Arial" ))
+		(text "trigthresh2[7..0]" (rect 278 747 339 759)(font "Arial" ))
+		(line (pt 360 752)(pt 344 752)(line_width 3))
+	)
 	(parameter
 		"ram_width"
 		"12"

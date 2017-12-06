@@ -186,6 +186,13 @@ agreement for further details.
 		(line (pt 0 384)(pt 16 384)(line_width 1))
 	)
 	(port
+		(pt 0 400)
+		(input)
+		(text "trigthresh2[7..0]" (rect 0 0 61 12)(font "Arial" ))
+		(text "trigthresh2[7..0]" (rect 21 395 82 407)(font "Arial" ))
+		(line (pt 0 400)(pt 16 400)(line_width 3))
+	)
+	(port
 		(pt 360 32)
 		(output)
 		(text "pwr1" (rect 0 0 17 12)(font "Arial" ))
