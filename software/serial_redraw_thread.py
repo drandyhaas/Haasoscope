@@ -226,8 +226,33 @@ class DynamicUpdate():
         print "Tell SPI setup:",format(myb[0],'02x'),format(myb[1],'02x')
         #time.sleep(.1) #pause to make sure other SPI wriitng is done
     
+    #These hold the state of the IO expanders
+    a20= int('00',16)
+    b20= int('00',16)
+    a24= int('00',16)    
+    b24= int('00',16)
+    
+    # testBit() returns a nonzero result, 2**offset, if the bit at 'offset' is one.
+    def testBit(self,int_type, offset):
+        mask = 1 << offset
+        return(int_type & mask)
+    # setBit() returns an integer with the bit at 'offset' set to 1.
+    def setBit(self,int_type, offset):
+        mask = 1 << offset
+        return(int_type | mask)
+    # clearBit() returns an integer with the bit at 'offset' cleared.
+    def clearBit(self,int_type, offset):
+        mask = ~(1 << offset)
+        return(int_type & mask)
+    # toggleBit() returns an integer with the bit at 'offset' inverted, 0 -> 1 and 1 -> 0.
+    def toggleBit(self,int_type, offset):
+        mask = 1 << offset
+        return(int_type ^ mask)
+  
     def sendi2c(self,whattosend):
-        if not self.doI2C: return # not doing i2c for now? Will hang boards that don't have it!
+        if not self.doI2C: 
+            print "not doing I2C! ", whattosend
+            return # not doing i2c for now? Will hang boards that don't have it!
         myb=bytearray.fromhex(whattosend)
         ser.write(chr(136))
         datacounttosend=len(myb)-1 #number of bytes of info to send, not counting the address
@@ -239,9 +264,11 @@ class DynamicUpdate():
         print "Tell i2c:","bytestosend:",datacounttosend," and address/data:",whattosend
     
     def setupi2c(self):
-        self.sendi2c("20 00 00"); #port A are outputs    
-        self.sendi2c("20 01 00"); #port B are outputs    
-    
+        self.sendi2c("20 00 00") #port A on IOexp 1 are outputs    
+        self.sendi2c("20 01 00") #port B on IOexp 1 are outputs    
+        self.sendi2c("24 00 00") #port A on IOexp 2 are outputs    
+        self.sendi2c("24 01 00") #port B on IOexp 2 are outputs    
+            
     def setdac(self,chan,val):        
         if chan==0: c="50"
         elif chan==1: c="52"
@@ -256,19 +283,29 @@ class DynamicUpdate():
         self.sendi2c("60 "+c+" 0"+('%0*x' % (3,val))) #DAC, can go from 000 to 0fff in last 12 bits
         
     def testi2c(self):
-        dotest=1 # what to test
+        print "test i2c"
+        dotest=2 # what to test
         if dotest==0:
-            # IO expander 1
-            self.sendi2c("20 12 ff");#turn on all port A (12 means A, ff is which of the 8 bits to turn on)
-            self.sendi2c("20 13 ff"); #turn on all port B (13 means B, ff is which of the 8 bits to turn on)
+            # IO expander 1            
+            self.sendi2c("20 12 ff") #turn on all port A (12 means A, ff is which of the 8 bits to turn on)
+            self.sendi2c("20 13 ff") #turn on all port B (13 means B, ff is which of the 8 bits to turn on)
             time.sleep(3)
-            self.sendi2c("20 12 00"); #turn off all port A
-            self.sendi2c("20 13 00"); #turn off all port B
-        if dotest==1:
+            self.sendi2c("20 12 00") #turn off all port A
+            self.sendi2c("20 13 00") #turn off all port B
+        elif dotest==1:
             #Test the DAC
             self.setdac(0,4095)
             time.sleep(3)
             self.setdac(0,0)
+        elif dotest==2:
+            #toggle led 1, at 0x24 a0
+            self.a24=self.clearBit(self.a24,0)
+            self.sendi2c("24 12 "+(hex(self.a24).replace('0x','')) )
+            time.sleep(3)
+            self.a24=self.setBit(self.a24,0)
+            self.sendi2c("24 12 "+(hex(self.a24).replace('0x','')) )
+        else:
+            print "huh 123"
 
     def toggledousb(self):#toggle whether to read over FT232H USB or not
         if not "usbser" in globals(): 
