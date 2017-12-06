@@ -86,9 +86,9 @@ set_location_assignment PIN_81 -to din4[2]
 set_location_assignment PIN_84 -to din4[1]
 set_location_assignment PIN_85 -to din4[0]
 set_location_assignment PIN_96 -to 232_out2
-set_location_assignment PIN_120 -to led1
-set_location_assignment PIN_121 -to led2
-set_location_assignment PIN_124 -to led3
+set_location_assignment PIN_120 -to led1 -disable
+set_location_assignment PIN_121 -to led2 -disable
+set_location_assignment PIN_124 -to led3 -disable
 set_location_assignment PIN_28 -to outclk_pin
 set_location_assignment PIN_86 -to trig_in_towards_left
 set_location_assignment PIN_87 -to trig_out_to_right
@@ -118,18 +118,18 @@ set_global_assignment -name EDA_USER_COMPILED_SIMULATION_LIBRARY_DIRECTORY "C:\\
 set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST ON -section_id eda_simulation
 set_location_assignment PIN_110 -to carryin -disable
 set_location_assignment PIN_111 -to carryout -disable
-set_location_assignment PIN_130 -to ledbase
+set_location_assignment PIN_130 -to ledbase -disable
 set_location_assignment PIN_98 -to 232_in2
 set_location_assignment PIN_88 -to offset[0]
 set_location_assignment PIN_89 -to offset[1]
 set_location_assignment PIN_90 -to offset[2]
 set_location_assignment PIN_91 -to offset[3]
-set_location_assignment PIN_21 -to gainsw[0]
-set_location_assignment PIN_29 -to gainsw[1]
-set_location_assignment PIN_100 -to gainsw[2]
-set_location_assignment PIN_101 -to gainsw[3]
+set_location_assignment PIN_21 -to gainsw[0] -disable
+set_location_assignment PIN_29 -to gainsw[1] -disable
+set_location_assignment PIN_100 -to gainsw[2] -disable
+set_location_assignment PIN_101 -to gainsw[3] -disable
 set_parameter -name ADC_RAM_WIDTH 12
-set_location_assignment PIN_127 -to led4
+set_location_assignment PIN_127 -to led4 -disable
 set_location_assignment PIN_32 -to clk_flash_out_2
 set_global_assignment -name BDF_FILE serial1.bdf
 set_global_assignment -name VERILOG_FILE ring_counter.v
@@ -147,8 +147,8 @@ set_global_assignment -name QIP_FILE ram1.qip
 set_global_assignment -name QIP_FILE dpram2.qip
 set_global_assignment -name QIP_FILE lp_ram_dp.qip
 set_global_assignment -name QIP_FILE myadc/synthesis/myadc.qip
-set_location_assignment PIN_118 -to i2c_sda
-set_location_assignment PIN_119 -to i2c_scl
+set_location_assignment PIN_21 -to i2c_sda
+set_location_assignment PIN_141 -to i2c_scl
 set_location_assignment PIN_110 -to usb_dataio[0] -disable
 set_location_assignment PIN_111 -to usb_dataio[1] -disable
 set_location_assignment PIN_113 -to usb_dataio[2] -disable
