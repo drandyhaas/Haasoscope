@@ -2160,111 +2160,6 @@ agreement for further details.
 	)
 )
 (symbol
-	(rect 1488 72 1704 184)
-	(text "chain_delay" (rect 5 0 64 12)(font "Arial" ))
-	(text "inst10" (rect 8 96 37 108)(font "Arial" ))
-	(port
-		(pt 0 32)
-		(input)
-		(text "clk" (rect 0 0 14 12)(font "Arial" ))
-		(text "clk" (rect 21 27 35 39)(font "Arial" ))
-		(line (pt 0 32)(pt 16 32))
-	)
-	(port
-		(pt 0 48)
-		(input)
-		(text "start" (rect 0 0 22 12)(font "Arial" ))
-		(text "start" (rect 21 43 43 55)(font "Arial" ))
-		(line (pt 0 48)(pt 16 48))
-	)
-	(port
-		(pt 0 64)
-		(input)
-		(text "stop" (rect 0 0 21 12)(font "Arial" ))
-		(text "stop" (rect 21 59 42 71)(font "Arial" ))
-		(line (pt 0 64)(pt 16 64))
-	)
-	(port
-		(pt 216 32)
-		(output)
-		(text "result[CHAIN_LEN-1..0]" (rect 0 0 119 12)(font "Arial" ))
-		(text "result[CHAIN_LEN-1..0]" (rect 95 27 214 39)(font "Arial" ))
-		(line (pt 216 32)(pt 200 32)(line_width 3))
-	)
-	(parameter
-		"CHAIN_LEN"
-		"350"
-		""
-		(type "PARAMETER_UNSIGNED_DEC")	)
-	(drawing
-		(rectangle (rect 16 16 200 96))
-	)
-	(annotation_block (parameter)(rect 1488 192 1685 220))
-)
-(symbol
-	(rect 1488 -80 1736 32)
-	(text "ring_counter" (rect 5 0 65 12)(font "Arial" ))
-	(text "inst8" (rect 8 96 31 108)(font "Arial" ))
-	(port
-		(pt 0 32)
-		(input)
-		(text "clk" (rect 0 0 14 12)(font "Arial" ))
-		(text "clk" (rect 21 27 35 39)(font "Arial" ))
-		(line (pt 0 32)(pt 16 32))
-	)
-	(port
-		(pt 0 48)
-		(input)
-		(text "carryin" (rect 0 0 34 12)(font "Arial" ))
-		(text "carryin" (rect 21 43 55 55)(font "Arial" ))
-		(line (pt 0 48)(pt 16 48))
-	)
-	(port
-		(pt 0 64)
-		(input)
-		(text "delayin[DELAY-1..0]" (rect 0 0 101 12)(font "Arial" ))
-		(text "delayin[DELAY-1..0]" (rect 21 59 122 71)(font "Arial" ))
-		(line (pt 0 64)(pt 16 64)(line_width 3))
-	)
-	(port
-		(pt 248 32)
-		(output)
-		(text "out_carry[7..0]" (rect 0 0 73 12)(font "Arial" ))
-		(text "out_carry[7..0]" (rect 166 27 239 39)(font "Arial" ))
-		(line (pt 248 32)(pt 232 32)(line_width 3))
-	)
-	(port
-		(pt 248 48)
-		(output)
-		(text "carryout" (rect 0 0 41 12)(font "Arial" ))
-		(text "carryout" (rect 193 43 234 55)(font "Arial" ))
-		(line (pt 248 48)(pt 232 48))
-	)
-	(port
-		(pt 248 64)
-		(output)
-		(text "start" (rect 0 0 22 12)(font "Arial" ))
-		(text "start" (rect 209 59 231 71)(font "Arial" ))
-		(line (pt 248 64)(pt 232 64))
-	)
-	(port
-		(pt 248 80)
-		(output)
-		(text "out_delay[7..0]" (rect 0 0 74 12)(font "Arial" ))
-		(text "out_delay[7..0]" (rect 165 75 239 87)(font "Arial" ))
-		(line (pt 248 80)(pt 232 80)(line_width 3))
-	)
-	(parameter
-		"DELAY"
-		"350"
-		""
-		(type "PARAMETER_UNSIGNED_DEC")	)
-	(drawing
-		(rectangle (rect 16 16 232 96))
-	)
-	(annotation_block (parameter)(rect 1488 -120 1684 -92))
-)
-(symbol
 	(rect 1312 -528 1464 -432)
 	(text "altclkctrl" (rect 52 0 109 16)(font "Arial" (font_size 10)))
 	(text "inst6" (rect 8 80 31 92)(font "Arial" ))
@@ -3281,6 +3176,111 @@ agreement for further details.
 		(rectangle (rect 16 16 344 416))
 	)
 	(annotation_block (parameter)(rect 568 144 751 172))
+)
+(symbol
+	(rect 1488 -80 1736 32)
+	(text "ring_counter" (rect 5 0 65 12)(font "Arial" ))
+	(text "inst8" (rect 8 96 31 108)(font "Arial" ))
+	(port
+		(pt 0 32)
+		(input)
+		(text "clk" (rect 0 0 14 12)(font "Arial" ))
+		(text "clk" (rect 21 27 35 39)(font "Arial" ))
+		(line (pt 0 32)(pt 16 32))
+	)
+	(port
+		(pt 0 48)
+		(input)
+		(text "carryin" (rect 0 0 34 12)(font "Arial" ))
+		(text "carryin" (rect 21 43 55 55)(font "Arial" ))
+		(line (pt 0 48)(pt 16 48))
+	)
+	(port
+		(pt 0 64)
+		(input)
+		(text "delayin[DELAY-1..0]" (rect 0 0 101 12)(font "Arial" ))
+		(text "delayin[DELAY-1..0]" (rect 21 59 122 71)(font "Arial" ))
+		(line (pt 0 64)(pt 16 64)(line_width 3))
+	)
+	(port
+		(pt 248 32)
+		(output)
+		(text "out_carry[7..0]" (rect 0 0 73 12)(font "Arial" ))
+		(text "out_carry[7..0]" (rect 166 27 239 39)(font "Arial" ))
+		(line (pt 248 32)(pt 232 32)(line_width 3))
+	)
+	(port
+		(pt 248 48)
+		(output)
+		(text "carryout" (rect 0 0 41 12)(font "Arial" ))
+		(text "carryout" (rect 193 43 234 55)(font "Arial" ))
+		(line (pt 248 48)(pt 232 48))
+	)
+	(port
+		(pt 248 64)
+		(output)
+		(text "start" (rect 0 0 22 12)(font "Arial" ))
+		(text "start" (rect 209 59 231 71)(font "Arial" ))
+		(line (pt 248 64)(pt 232 64))
+	)
+	(port
+		(pt 248 80)
+		(output)
+		(text "out_delay[7..0]" (rect 0 0 74 12)(font "Arial" ))
+		(text "out_delay[7..0]" (rect 165 75 239 87)(font "Arial" ))
+		(line (pt 248 80)(pt 232 80)(line_width 3))
+	)
+	(parameter
+		"DELAY"
+		"30"
+		""
+		(type "PARAMETER_UNSIGNED_DEC")	)
+	(drawing
+		(rectangle (rect 16 16 232 96))
+	)
+	(annotation_block (parameter)(rect 1488 -120 1684 -92))
+)
+(symbol
+	(rect 1488 72 1704 184)
+	(text "chain_delay" (rect 5 0 64 12)(font "Arial" ))
+	(text "inst10" (rect 8 96 37 108)(font "Arial" ))
+	(port
+		(pt 0 32)
+		(input)
+		(text "clk" (rect 0 0 14 12)(font "Arial" ))
+		(text "clk" (rect 21 27 35 39)(font "Arial" ))
+		(line (pt 0 32)(pt 16 32))
+	)
+	(port
+		(pt 0 48)
+		(input)
+		(text "start" (rect 0 0 22 12)(font "Arial" ))
+		(text "start" (rect 21 43 43 55)(font "Arial" ))
+		(line (pt 0 48)(pt 16 48))
+	)
+	(port
+		(pt 0 64)
+		(input)
+		(text "stop" (rect 0 0 21 12)(font "Arial" ))
+		(text "stop" (rect 21 59 42 71)(font "Arial" ))
+		(line (pt 0 64)(pt 16 64))
+	)
+	(port
+		(pt 216 32)
+		(output)
+		(text "result[CHAIN_LEN-1..0]" (rect 0 0 119 12)(font "Arial" ))
+		(text "result[CHAIN_LEN-1..0]" (rect 95 27 214 39)(font "Arial" ))
+		(line (pt 216 32)(pt 200 32)(line_width 3))
+	)
+	(parameter
+		"CHAIN_LEN"
+		"30"
+		""
+		(type "PARAMETER_UNSIGNED_DEC")	)
+	(drawing
+		(rectangle (rect 16 16 200 96))
+	)
+	(annotation_block (parameter)(rect 1488 192 1685 220))
 )
 (connector
 	(pt 16 408)
