@@ -1028,6 +1028,8 @@ class DynamicUpdate():
             self.resetchans()
             if self.autorearm: self.toggleautorearm()
             if self.doDAC: self.setPWMlevel(0,self.lowdaclevel) #TODO adjust for all channels
+            self.b20= int('ff',16)  # shdn (set first char to f to turn off) / ac coupling (?)
+            self.sendi2c("20 13 "+ ('%0*x' % (2,self.b20)) ) #port B of IOexp 1
             print "Done with main loop"
 
 #For setting up serial and USB connections
