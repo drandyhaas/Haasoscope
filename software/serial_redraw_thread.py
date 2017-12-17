@@ -40,7 +40,7 @@ class DynamicUpdate():
     rising=True #trigger on rising edge (or else falling edge)
     dogrid=True #redraw the grid
     chanforscreen=0 #channel to draw on the mini-display
-    triggertimethresh=1 #samples for which the trigger must be over/under threshold
+    triggertimethresh=5 #samples for which the trigger must be over/under threshold
     downsample=3 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
     dofft=False #drawing the FFT plot
     dousb=False #whether to use USB2 output
@@ -56,7 +56,7 @@ class DynamicUpdate():
     reffreq = 0.008 #MHz of reference signal on chan 3 for lockin calculations
     
     doI2C=True
-    doDAC=False
+    doDAC=True
     lowdaclevel=1200
     highdaclevel=1500
         
@@ -225,7 +225,7 @@ class DynamicUpdate():
     
     #These hold the state of the IO expanders
     a20= int('f0',16) # oversamp (set first char to 0 to send 0->2 and 1->3) / gain (set second char to 0 for low gain)
-    b20= int('0f',16)  # shdn (set first char to 0 to turn on) / ac coupling (?)
+    b20= int('0f',16)  # shdn (set first char to 0 to turn on) / ac coupling (f is DC, 0 is AC)
     a21= int('f0',16) # ledbase / leds
     b21= int('00',16)# free pins
     
@@ -278,14 +278,17 @@ class DynamicUpdate():
         else:
             print "channel",chan,"out of range 0-3"
             return
+        #d="0" # Vdd ref (0-3.3V, but noisy?)
+        d="8" #internal ref, gain=1 (0-2V)
+        #d="9" #internal ref, gain=2 (0-4V)
         if val>=4096 or val<0:
             print "value",val,"out of range 0-4095"
             return
-        self.sendi2c("60 "+c+" 0"+('%0*x' % (3,val))) #DAC, can go from 000 to 0fff in last 12 bits
+        self.sendi2c("60 "+c+d+('%0*x' % (3,val))) #DAC, can go from 000 to 0fff in last 12 bits
         
     def testi2c(self):
         print "test i2c"
-        dotest=2 # what to test
+        dotest=1 # what to test
         if dotest==0:
             # IO expander 1            
             self.sendi2c("20 12 ff") #turn on all port A of IOexp 1 (12 means A, ff is which of the 8 bits to turn on)
@@ -295,9 +298,9 @@ class DynamicUpdate():
             self.sendi2c("20 13 00") #turn off all port B of IOexp 1
         elif dotest==1:
             #Test the DAC
-            self.setdac(0,4095)
-            time.sleep(3)
             self.setdac(0,0)
+            time.sleep(3)
+            self.setdac(0,1200)
         elif dotest==2:
             #toggle led 1, at 0x21 a0
             self.a21=self.setBit(self.a21,0); self.sendi2c("21 12 "+ ('%0*x' % (2,self.a21)) )
@@ -1036,10 +1039,12 @@ class DynamicUpdate():
 port=""; usbport=""; port_description=""; usbport_description="";
 ports = list(serial.tools.list_ports.comports())
 for port_no, description, address in ports:
-    if 'UART' in description or 'SERIAL' in description and port=="":
-        port = port_no; port_description = description
+    if 'UART' in description or 'SERIAL' in description:
+        #if port=="":
+            port = port_no; port_description = description
     if "USB Serial" in description:
-        usbport=port_no; usbport_description = description
+        #if usbport=="":
+            usbport=port_no; usbport_description = description
 if port!="":
     ser = Serial(port,brate,timeout=btimeout)
     print "connected serial to",port,":",port_description,": timeout",btimeout,"seconds"

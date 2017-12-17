@@ -18,7 +18,7 @@ sendincrement=10 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 i
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
 num_samples = pow(2,ram_width)/pow(2,sendincrement) # num samples per channel, max is pow(2,ram_width)/pow(2,0)=4096
 num_bytes = num_samples*num_chan_per_board #num B per board
-brate = 1500000 #serial baud rate #1500000 #115200
+brate = 115200 #serial baud rate #1500000 #115200
 btimeout = 3.0 #time to wait for serial response #3.0, num_bytes*8*10.0/brate, or None
 Nsamp=pow(2,ram_width)-1 #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
 print "num main ADC bytes for all boards",num_bytes*num_board

@@ -120,10 +120,10 @@ set_location_assignment PIN_110 -to carryin -disable
 set_location_assignment PIN_111 -to carryout -disable
 set_location_assignment PIN_130 -to ledbase -disable
 set_location_assignment PIN_98 -to 232_in2
-set_location_assignment PIN_120 -to offset[0]
-set_location_assignment PIN_121 -to offset[1]
-set_location_assignment PIN_124 -to offset[2]
-set_location_assignment PIN_127 -to offset[3]
+set_location_assignment PIN_120 -to offset[0] -disable
+set_location_assignment PIN_121 -to offset[1] -disable
+set_location_assignment PIN_124 -to offset[2] -disable
+set_location_assignment PIN_127 -to offset[3] -disable
 set_location_assignment PIN_21 -to gainsw[0] -disable
 set_location_assignment PIN_29 -to gainsw[1] -disable
 set_location_assignment PIN_100 -to gainsw[2] -disable

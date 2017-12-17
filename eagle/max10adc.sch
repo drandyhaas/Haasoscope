@@ -9,34 +9,34 @@
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
-<layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
-<layer number="3" name="Route3" color="4" fill="3" visible="no" active="no"/>
-<layer number="4" name="Route4" color="1" fill="4" visible="no" active="no"/>
-<layer number="5" name="Route5" color="4" fill="4" visible="no" active="no"/>
-<layer number="6" name="Route6" color="1" fill="8" visible="no" active="no"/>
-<layer number="7" name="Route7" color="4" fill="8" visible="no" active="no"/>
-<layer number="8" name="Route8" color="1" fill="2" visible="no" active="no"/>
-<layer number="9" name="Route9" color="4" fill="2" visible="no" active="no"/>
-<layer number="10" name="Route10" color="1" fill="7" visible="no" active="no"/>
-<layer number="11" name="Route11" color="4" fill="7" visible="no" active="no"/>
-<layer number="12" name="Route12" color="1" fill="5" visible="no" active="no"/>
-<layer number="13" name="Route13" color="4" fill="5" visible="no" active="no"/>
-<layer number="14" name="Route14" color="1" fill="6" visible="no" active="no"/>
-<layer number="15" name="Route15" color="4" fill="6" visible="no" active="no"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
-<layer number="17" name="Pads" color="2" fill="1" visible="no" active="no"/>
-<layer number="18" name="Vias" color="2" fill="1" visible="no" active="no"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="no"/>
-<layer number="20" name="Dimension" color="15" fill="1" visible="no" active="no"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="no"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="no" active="no"/>
-<layer number="28" name="bValues" color="7" fill="1" visible="no" active="no"/>
+<layer number="1" name="Top" color="4" fill="1" visible="yes" active="no"/>
+<layer number="2" name="Route2" color="58" fill="10" visible="yes" active="no"/>
+<layer number="3" name="Route3" color="4" fill="3" visible="yes" active="no"/>
+<layer number="4" name="Route4" color="1" fill="4" visible="yes" active="no"/>
+<layer number="5" name="Route5" color="4" fill="4" visible="yes" active="no"/>
+<layer number="6" name="Route6" color="1" fill="8" visible="yes" active="no"/>
+<layer number="7" name="Route7" color="4" fill="8" visible="yes" active="no"/>
+<layer number="8" name="Route8" color="1" fill="2" visible="yes" active="no"/>
+<layer number="9" name="Route9" color="4" fill="2" visible="yes" active="no"/>
+<layer number="10" name="Route10" color="1" fill="7" visible="yes" active="no"/>
+<layer number="11" name="Route11" color="4" fill="7" visible="yes" active="no"/>
+<layer number="12" name="Route12" color="1" fill="5" visible="yes" active="no"/>
+<layer number="13" name="Route13" color="4" fill="5" visible="yes" active="no"/>
+<layer number="14" name="Route14" color="1" fill="6" visible="yes" active="no"/>
+<layer number="15" name="Route15" color="13" fill="1" visible="yes" active="no"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="no"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="no"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="no"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="no"/>
+<layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="no"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="no"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="no"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="no"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="no"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="no"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="no"/>
@@ -45,8 +45,8 @@
 <layer number="34" name="bFinish" color="6" fill="6" visible="no" active="no"/>
 <layer number="35" name="tGlue" color="7" fill="4" visible="no" active="no"/>
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="no"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="no" active="no"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="no" active="no"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="no"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="no"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="no" active="no"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="no" active="no"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="no" active="no"/>
@@ -54,19 +54,19 @@
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="no"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="no"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="no"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="no"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="no"/>
-<layer number="48" name="Document" color="7" fill="1" visible="no" active="no"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="no" active="no"/>
-<layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="no"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="no"/>
-<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
-<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
-<layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
-<layer number="57" name="tCAD" color="7" fill="1" visible="no" active="no"/>
-<layer number="59" name="tCarbon" color="7" fill="1" visible="no" active="no"/>
-<layer number="60" name="bCarbon" color="7" fill="1" visible="no" active="no"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="no"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="no"/>
+<layer number="48" name="Document" color="7" fill="1" visible="yes" active="no"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="no"/>
+<layer number="50" name="dxf" color="7" fill="1" visible="yes" active="no"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="no"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="no"/>
+<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="yes" active="no"/>
+<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="yes" active="no"/>
+<layer number="56" name="wert" color="7" fill="1" visible="yes" active="no"/>
+<layer number="57" name="tCAD" color="7" fill="1" visible="yes" active="no"/>
+<layer number="59" name="tCarbon" color="7" fill="1" visible="yes" active="no"/>
+<layer number="60" name="bCarbon" color="7" fill="1" visible="yes" active="no"/>
 <layer number="90" name="Modules" color="5" fill="1" visible="yes" active="yes"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
@@ -9842,10 +9842,6 @@ Source: www.kingbright.com</description>
 <wire x1="2.75" y1="-2.75" x2="2.75" y2="2.75" width="0.254" layer="21"/>
 <wire x1="2.75" y1="2.75" x2="-2.75" y2="2.75" width="0.254" layer="21"/>
 <circle x="-2.25" y="2.25" radius="0.354" width="0" layer="21"/>
-<circle x="-4.2" y="-4.2" radius="0.5" width="0" layer="29"/>
-<circle x="-4.2" y="-4.2" radius="0.5" width="0" layer="31"/>
-<circle x="4.2" y="4.2" radius="0.5" width="0" layer="29"/>
-<circle x="4.2" y="4.2" radius="0.5" width="0" layer="31"/>
 <smd name="1" x="-3.5" y="2.75" dx="0.8" dy="0.3" layer="1"/>
 <smd name="2" x="-3.5" y="2.25" dx="0.8" dy="0.3" layer="1"/>
 <smd name="3" x="-3.5" y="1.75" dx="0.8" dy="0.3" layer="1"/>
@@ -18914,8 +18910,6 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="P+5" library="supply1" deviceset="+5V" device=""/>
-<part name="P+6" library="supply1" deviceset="+5V" device=""/>
 <part name="C5VOPAMP2" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
@@ -19097,7 +19091,7 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
 <part name="5VBEAD" library="rcl" deviceset="FB" device="-0603">
-<attribute name="MPN" value="BK0603HS330-T"/>
+<attribute name="MPN" value="BK1608HS330-T"/>
 </part>
 <part name="C_5V_10NF" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF">
 <attribute name="MFN" value="MF-CAP-0603-0.01uF"/>
@@ -19344,6 +19338,64 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <attribute name="MF" value=""/>
 <attribute name="MPN" value="MF-LED-0805-RED"/>
 <attribute name="OC_NEWARK" value="unknown"/>
+</part>
+<part name="HGR1" library="resistor" deviceset="R-EU_" device="R0805" value="560">
+<attribute name="MF" value=""/>
+<attribute name="MPN" value="MF-RES-0805-560"/>
+<attribute name="OC_NEWARK" value="unknown"/>
+</part>
+<part name="HGR2" library="resistor" deviceset="R-EU_" device="R0805" value="560">
+<attribute name="MF" value=""/>
+<attribute name="MPN" value="MF-RES-0805-560"/>
+<attribute name="OC_NEWARK" value="unknown"/>
+</part>
+<part name="HGR3" library="resistor" deviceset="R-EU_" device="R0805" value="560">
+<attribute name="MF" value=""/>
+<attribute name="MPN" value="MF-RES-0805-560"/>
+<attribute name="OC_NEWARK" value="unknown"/>
+</part>
+<part name="HGR4" library="resistor" deviceset="R-EU_" device="R0805" value="560">
+<attribute name="MF" value=""/>
+<attribute name="MPN" value="MF-RES-0805-560"/>
+<attribute name="OC_NEWARK" value="unknown"/>
+</part>
+<part name="+3V3" library="supply1" deviceset="+3V3" device=""/>
+<part name="+3V23" library="supply1" deviceset="+3V3" device=""/>
+<part name="CIN1NF_1" library="rcl@1" deviceset="C-US" device="C0603" value="1nF">
+<attribute name="MFN" value="MF-CAP-0603-1nF"/>
+</part>
+<part name="CIN56_1" library="rcl@1" deviceset="C-US" device="C0603" value="56pF">
+<attribute name="MPN" value="06035A560FAT2A"/>
+</part>
+<part name="CIN56_2" library="rcl@1" deviceset="C-US" device="C0603" value="56pF">
+<attribute name="MPN" value="06035A560FAT2A"/>
+</part>
+<part name="CIN1NF_2" library="rcl@1" deviceset="C-US" device="C0603" value="1nF">
+<attribute name="MFN" value="MF-CAP-0603-1nF"/>
+</part>
+<part name="CIN56_3" library="rcl@1" deviceset="C-US" device="C0603" value="56pF">
+<attribute name="MPN" value="06035A560FAT2A"/>
+</part>
+<part name="CIN56_4" library="rcl@1" deviceset="C-US" device="C0603" value="56pF">
+<attribute name="MPN" value="06035A560FAT2A"/>
+</part>
+<part name="CIN1NF_3" library="rcl@1" deviceset="C-US" device="C0603" value="1nF">
+<attribute name="MFN" value="MF-CAP-0603-1nF"/>
+</part>
+<part name="CIN56_5" library="rcl@1" deviceset="C-US" device="C0603" value="56pF">
+<attribute name="MPN" value="06035A560FAT2A"/>
+</part>
+<part name="CIN56_6" library="rcl@1" deviceset="C-US" device="C0603" value="56pF">
+<attribute name="MPN" value="06035A560FAT2A"/>
+</part>
+<part name="CIN1NF_4" library="rcl@1" deviceset="C-US" device="C0603" value="1nF">
+<attribute name="MFN" value="MF-CAP-0603-1nF"/>
+</part>
+<part name="CIN56_7" library="rcl@1" deviceset="C-US" device="C0603" value="56pF">
+<attribute name="MPN" value="06035A560FAT2A"/>
+</part>
+<part name="CIN56_8" library="rcl@1" deviceset="C-US" device="C0603" value="56pF">
+<attribute name="MPN" value="06035A560FAT2A"/>
 </part>
 </parts>
 <sheets>
@@ -19626,8 +19678,6 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <attribute name="MF" x="-142.24" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="MPN" x="-142.24" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
 </instance>
-<instance part="P+5" gate="1" x="-190.5" y="-198.12"/>
-<instance part="P+6" gate="1" x="-109.22" y="-198.12"/>
 <instance part="C5VOPAMP2" gate="G$1" x="-106.68" y="-200.66" smashed="yes" rot="R90">
 <attribute name="MPN" x="-106.68" y="-200.66" size="1.778" layer="96" rot="R90" display="off"/>
 <attribute name="VALUE" x="-101.981" y="-199.136" size="1.778" layer="96" rot="R90"/>
@@ -20102,6 +20152,76 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <attribute name="MPN" x="-109.22" y="111.76" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="-112.776" y="116.332" size="1.778" layer="95" rot="R270"/>
 </instance>
+<instance part="HGR1" gate="G$1" x="-213.36" y="-139.7" rot="R90">
+<attribute name="OC_NEWARK" x="-213.36" y="-139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MF" x="-213.36" y="-139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="-213.36" y="-139.7" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="HGR2" gate="G$1" x="-180.34" y="-139.7" rot="R90">
+<attribute name="OC_NEWARK" x="-180.34" y="-139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MF" x="-180.34" y="-139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="-180.34" y="-139.7" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="HGR3" gate="G$1" x="-149.86" y="-139.7" rot="R90">
+<attribute name="OC_NEWARK" x="-149.86" y="-139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MF" x="-149.86" y="-139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="-149.86" y="-139.7" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="HGR4" gate="G$1" x="-116.84" y="-139.7" rot="R90">
+<attribute name="OC_NEWARK" x="-116.84" y="-139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MF" x="-116.84" y="-139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="-116.84" y="-139.7" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="+3V3" gate="G$1" x="-190.5" y="-193.04"/>
+<instance part="+3V23" gate="G$1" x="-109.22" y="-193.04"/>
+<instance part="CIN1NF_1" gate="G$1" x="-227.33" y="-142.24" smashed="yes">
+<attribute name="NAME" x="-231.14" y="-140.97" size="1.27" layer="95" ratio="10"/>
+<attribute name="MFN" x="-227.33" y="-142.24" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="CIN56_1" gate="G$1" x="-224.79" y="-144.78" smashed="yes">
+<attribute name="NAME" x="-228.6" y="-143.51" size="1.27" layer="95" ratio="10"/>
+<attribute name="MPN" x="-224.79" y="-144.78" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="CIN56_2" gate="G$1" x="-222.25" y="-147.32" smashed="yes">
+<attribute name="NAME" x="-226.06" y="-146.05" size="1.27" layer="95" ratio="10"/>
+<attribute name="MPN" x="-222.25" y="-147.32" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="CIN1NF_2" gate="G$1" x="-194.31" y="-142.24" smashed="yes">
+<attribute name="NAME" x="-198.12" y="-140.97" size="1.27" layer="95" ratio="10"/>
+<attribute name="MFN" x="-194.31" y="-142.24" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="CIN56_3" gate="G$1" x="-191.77" y="-144.78" smashed="yes">
+<attribute name="NAME" x="-195.58" y="-143.51" size="1.27" layer="95" ratio="10"/>
+<attribute name="MPN" x="-191.77" y="-144.78" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="CIN56_4" gate="G$1" x="-189.23" y="-147.32" smashed="yes">
+<attribute name="NAME" x="-193.04" y="-146.05" size="1.27" layer="95" ratio="10"/>
+<attribute name="MPN" x="-189.23" y="-147.32" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="CIN1NF_3" gate="G$1" x="-163.83" y="-142.24" smashed="yes">
+<attribute name="NAME" x="-167.64" y="-140.97" size="1.27" layer="95" ratio="10"/>
+<attribute name="MFN" x="-163.83" y="-142.24" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="CIN56_5" gate="G$1" x="-161.29" y="-144.78" smashed="yes">
+<attribute name="NAME" x="-165.1" y="-143.51" size="1.27" layer="95" ratio="10"/>
+<attribute name="MPN" x="-161.29" y="-144.78" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="CIN56_6" gate="G$1" x="-158.75" y="-147.32" smashed="yes">
+<attribute name="NAME" x="-162.56" y="-146.05" size="1.27" layer="95" ratio="10"/>
+<attribute name="MPN" x="-158.75" y="-147.32" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="CIN1NF_4" gate="G$1" x="-130.81" y="-142.24" smashed="yes">
+<attribute name="NAME" x="-134.62" y="-140.97" size="1.27" layer="95" ratio="10"/>
+<attribute name="MFN" x="-130.81" y="-142.24" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="CIN56_7" gate="G$1" x="-128.27" y="-144.78" smashed="yes">
+<attribute name="NAME" x="-132.08" y="-143.51" size="1.27" layer="95" ratio="10"/>
+<attribute name="MPN" x="-128.27" y="-144.78" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="CIN56_8" gate="G$1" x="-125.73" y="-147.32" smashed="yes">
+<attribute name="NAME" x="-129.54" y="-146.05" size="1.27" layer="95" ratio="10"/>
+<attribute name="MPN" x="-125.73" y="-147.32" size="1.778" layer="96" display="off"/>
+</instance>
 </instances>
 <busses>
 </busses>
@@ -20128,20 +20248,6 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <pinref part="P+1" gate="1" pin="+5V"/>
 <wire x1="-431.8" y1="-93.98" x2="-447.04" y2="-93.98" width="0.1524" layer="91"/>
 <junction x="-447.04" y="-93.98"/>
-</segment>
-<segment>
-<pinref part="U1" gate="A" pin="V+"/>
-<pinref part="P+5" gate="1" pin="+5V"/>
-<wire x1="-190.5" y1="-200.66" x2="-190.5" y2="-205.74" width="0.1524" layer="91"/>
-<pinref part="C5VOPAMP1" gate="G$1" pin="1"/>
-<junction x="-190.5" y="-200.66"/>
-</segment>
-<segment>
-<pinref part="U2" gate="A" pin="V+"/>
-<pinref part="P+6" gate="1" pin="+5V"/>
-<wire x1="-109.22" y1="-200.66" x2="-109.22" y2="-205.74" width="0.1524" layer="91"/>
-<pinref part="C5VOPAMP2" gate="G$1" pin="1"/>
-<junction x="-109.22" y="-200.66"/>
 </segment>
 <segment>
 <pinref part="5VBEAD" gate="G$1" pin="1"/>
@@ -20680,18 +20786,22 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <segment>
 <pinref part="K5" gate="G$1" pin="K"/>
 <pinref part="GND70" gate="1" pin="GND"/>
+<junction x="-213.36" y="-129.54"/>
 </segment>
 <segment>
 <pinref part="K6" gate="G$1" pin="K"/>
 <pinref part="GND72" gate="1" pin="GND"/>
+<junction x="-180.34" y="-129.54"/>
 </segment>
 <segment>
 <pinref part="K7" gate="G$1" pin="K"/>
 <pinref part="GND73" gate="1" pin="GND"/>
+<junction x="-149.86" y="-129.54"/>
 </segment>
 <segment>
 <pinref part="K8" gate="G$1" pin="K"/>
 <pinref part="GND74" gate="1" pin="GND"/>
+<junction x="-116.84" y="-129.54"/>
 </segment>
 </net>
 <net name="+3V3" class="2">
@@ -21059,6 +21169,22 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <pinref part="+3V22" gate="G$1" pin="+3V3"/>
 <pinref part="PIN_DISPLAY" gate="G$1" pin="2"/>
 <wire x1="-474.98" y1="71.12" x2="-474.98" y2="81.534" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="U1" gate="A" pin="V+"/>
+<wire x1="-190.5" y1="-195.58" x2="-190.5" y2="-205.74" width="0.1524" layer="91"/>
+<pinref part="C5VOPAMP1" gate="G$1" pin="1"/>
+<pinref part="+3V3" gate="G$1" pin="+3V3"/>
+<junction x="-190.5" y="-195.58"/>
+<wire x1="-190.5" y1="-195.58" x2="-190.5" y2="-200.66" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="U2" gate="A" pin="V+"/>
+<wire x1="-109.22" y1="-195.58" x2="-109.22" y2="-205.74" width="0.1524" layer="91"/>
+<pinref part="C5VOPAMP2" gate="G$1" pin="1"/>
+<pinref part="+3V23" gate="G$1" pin="+3V3"/>
+<junction x="-109.22" y="-195.58"/>
+<wire x1="-109.22" y1="-195.58" x2="-109.22" y2="-200.66" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="TCK" class="0">
@@ -22302,6 +22428,15 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <wire x1="-205.74" y1="-127" x2="-205.74" y2="-152.4" width="0.1524" layer="91"/>
 <wire x1="-205.74" y1="-152.4" x2="-200.66" y2="-152.4" width="0.1524" layer="91"/>
 <junction x="-200.66" y="-152.4"/>
+<junction x="-200.66" y="-144.78"/>
+<pinref part="CIN56_4" gate="G$1" pin="2"/>
+<pinref part="CIN56_3" gate="G$1" pin="2"/>
+<wire x1="-189.23" y1="-152.4" x2="-191.77" y2="-149.86" width="0.1524" layer="91"/>
+<pinref part="CIN1NF_2" gate="G$1" pin="2"/>
+<wire x1="-191.77" y1="-149.86" x2="-194.31" y2="-147.32" width="0.1524" layer="91"/>
+<junction x="-191.77" y="-149.86"/>
+<junction x="-194.31" y="-147.32"/>
+<wire x1="-200.66" y1="-152.4" x2="-194.31" y2="-147.32" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="INBMINUS2" class="0">
@@ -22332,6 +22467,15 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <wire x1="-142.24" y1="-152.4" x2="-137.16" y2="-152.4" width="0.1524" layer="91"/>
 <junction x="-142.24" y="-127"/>
 <junction x="-137.16" y="-152.4"/>
+<junction x="-137.16" y="-144.78"/>
+<pinref part="CIN56_8" gate="G$1" pin="2"/>
+<pinref part="CIN56_7" gate="G$1" pin="2"/>
+<wire x1="-125.73" y1="-152.4" x2="-128.27" y2="-149.86" width="0.1524" layer="91"/>
+<pinref part="CIN1NF_4" gate="G$1" pin="2"/>
+<wire x1="-128.27" y1="-149.86" x2="-130.81" y2="-147.32" width="0.1524" layer="91"/>
+<junction x="-128.27" y="-149.86"/>
+<junction x="-130.81" y="-147.32"/>
+<wire x1="-137.16" y1="-152.4" x2="-130.81" y2="-147.32" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="DCLKA1" class="0">
@@ -22454,6 +22598,15 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <wire x1="-233.68" y1="-144.78" x2="-233.68" y2="-152.4" width="0.1524" layer="91"/>
 <junction x="-233.68" y="-152.4"/>
 <junction x="-242.57" y="-124.46"/>
+<junction x="-233.68" y="-144.78"/>
+<pinref part="CIN56_2" gate="G$1" pin="2"/>
+<pinref part="CIN56_1" gate="G$1" pin="2"/>
+<wire x1="-222.25" y1="-152.4" x2="-224.79" y2="-149.86" width="0.1524" layer="91"/>
+<pinref part="CIN1NF_1" gate="G$1" pin="2"/>
+<wire x1="-224.79" y1="-149.86" x2="-227.33" y2="-147.32" width="0.1524" layer="91"/>
+<junction x="-224.79" y="-149.86"/>
+<wire x1="-227.33" y1="-147.32" x2="-233.68" y2="-152.4" width="0.1524" layer="91"/>
+<junction x="-227.33" y="-147.32"/>
 </segment>
 </net>
 <net name="OFFSET2" class="0">
@@ -23420,6 +23573,14 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <pinref part="RIN1_10K" gate="G$1" pin="1"/>
 <pinref part="K5" gate="G$1" pin="DS1"/>
 <junction x="-233.68" y="-134.62"/>
+<pinref part="CIN1NF_1" gate="G$1" pin="1"/>
+<wire x1="-227.33" y1="-139.7" x2="-233.68" y2="-134.62" width="0.1524" layer="91"/>
+<pinref part="CIN56_1" gate="G$1" pin="1"/>
+<wire x1="-227.33" y1="-139.7" x2="-224.79" y2="-142.24" width="0.1524" layer="91"/>
+<junction x="-227.33" y="-139.7"/>
+<pinref part="CIN56_2" gate="G$1" pin="1"/>
+<wire x1="-224.79" y1="-142.24" x2="-222.25" y2="-144.78" width="0.1524" layer="91"/>
+<junction x="-224.79" y="-142.24"/>
 </segment>
 </net>
 <net name="N$38" class="0">
@@ -23427,42 +23588,14 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <pinref part="RIN2_10K" gate="G$1" pin="1"/>
 <pinref part="K6" gate="G$1" pin="DS1"/>
 <junction x="-200.66" y="-134.62"/>
-</segment>
-</net>
-<net name="INAMINUS2" class="0">
-<segment>
-<pinref part="RIN3_10K" gate="G$1" pin="2"/>
-<wire x1="-170.18" y1="-144.78" x2="-170.18" y2="-152.4" width="0.1524" layer="91"/>
-<pinref part="U2" gate="A" pin="-INA"/>
-<label x="-154.94" y="-187.96" size="1.778" layer="95" rot="R90"/>
-<wire x1="-165.1" y1="-208.28" x2="-154.94" y2="-208.28" width="0.1524" layer="91"/>
-<wire x1="-154.94" y1="-208.28" x2="-154.94" y2="-233.68" width="0.1524" layer="91"/>
-<wire x1="-160.02" y1="-233.68" x2="-160.02" y2="-242.316" width="0.1524" layer="91"/>
-<wire x1="-160.02" y1="-242.316" x2="-160.02" y2="-242.57" width="0.1524" layer="91"/>
-<wire x1="-160.02" y1="-242.57" x2="-160.02" y2="-248.92" width="0.1524" layer="91"/>
-<wire x1="-160.02" y1="-248.92" x2="-160.02" y2="-256.286" width="0.1524" layer="91"/>
-<wire x1="-160.02" y1="-256.286" x2="-160.02" y2="-256.54" width="0.1524" layer="91"/>
-<wire x1="-160.02" y1="-256.54" x2="-160.02" y2="-265.43" width="0.1524" layer="91"/>
-<wire x1="-154.94" y1="-233.68" x2="-160.02" y2="-233.68" width="0.1524" layer="91"/>
-<pinref part="CGAIN2_3" gate="G$1" pin="1"/>
-<junction x="-160.02" y="-242.316"/>
-<pinref part="RGAIN1_3" gate="G$1" pin="2"/>
-<junction x="-160.02" y="-248.92"/>
-<junction x="-160.02" y="-256.286"/>
-<pinref part="RGAIN2_3" gate="G$1" pin="2"/>
-<junction x="-160.02" y="-256.54"/>
-<pinref part="CGAIN1_3" gate="G$1" pin="1"/>
-<junction x="-160.02" y="-242.57"/>
-<wire x1="-154.94" y1="-208.28" x2="-154.94" y2="-152.4" width="0.1524" layer="91"/>
-<junction x="-154.94" y="-208.28"/>
-<wire x1="-170.18" y1="-152.4" x2="-154.94" y2="-152.4" width="0.1524" layer="91"/>
-<pinref part="RIN3" gate="G$1" pin="2"/>
-<pinref part="CIN3" gate="G$1" pin="2"/>
-<wire x1="-176.53" y1="-124.46" x2="-172.72" y2="-127" width="0.1524" layer="91"/>
-<wire x1="-172.72" y1="-127" x2="-172.72" y2="-152.4" width="0.1524" layer="91"/>
-<wire x1="-172.72" y1="-152.4" x2="-170.18" y2="-152.4" width="0.1524" layer="91"/>
-<junction x="-172.72" y="-127"/>
-<junction x="-170.18" y="-152.4"/>
+<pinref part="CIN1NF_2" gate="G$1" pin="1"/>
+<pinref part="CIN56_3" gate="G$1" pin="1"/>
+<wire x1="-194.31" y1="-139.7" x2="-191.77" y2="-142.24" width="0.1524" layer="91"/>
+<junction x="-194.31" y="-139.7"/>
+<pinref part="CIN56_4" gate="G$1" pin="1"/>
+<wire x1="-191.77" y1="-142.24" x2="-189.23" y2="-144.78" width="0.1524" layer="91"/>
+<junction x="-191.77" y="-142.24"/>
+<wire x1="-200.66" y1="-134.62" x2="-194.31" y2="-139.7" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$39" class="0">
@@ -23488,6 +23621,15 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <segment>
 <pinref part="RIN3_10K" gate="G$1" pin="1"/>
 <pinref part="K7" gate="G$1" pin="DS1"/>
+<junction x="-170.18" y="-134.62"/>
+<pinref part="CIN1NF_3" gate="G$1" pin="1"/>
+<pinref part="CIN56_5" gate="G$1" pin="1"/>
+<wire x1="-163.83" y1="-139.7" x2="-161.29" y2="-142.24" width="0.1524" layer="91"/>
+<junction x="-163.83" y="-139.7"/>
+<pinref part="CIN56_6" gate="G$1" pin="1"/>
+<wire x1="-161.29" y1="-142.24" x2="-158.75" y2="-144.78" width="0.1524" layer="91"/>
+<junction x="-161.29" y="-142.24"/>
+<wire x1="-170.18" y1="-134.62" x2="-163.83" y2="-139.7" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$41" class="0">
@@ -23514,13 +23656,22 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <pinref part="RIN4_10K" gate="G$1" pin="1"/>
 <pinref part="K8" gate="G$1" pin="DS1"/>
 <junction x="-137.16" y="-134.62"/>
+<pinref part="CIN1NF_4" gate="G$1" pin="1"/>
+<pinref part="CIN56_7" gate="G$1" pin="1"/>
+<wire x1="-130.81" y1="-139.7" x2="-128.27" y2="-142.24" width="0.1524" layer="91"/>
+<junction x="-130.81" y="-139.7"/>
+<pinref part="CIN56_8" gate="G$1" pin="1"/>
+<wire x1="-128.27" y1="-142.24" x2="-125.73" y2="-144.78" width="0.1524" layer="91"/>
+<junction x="-128.27" y="-142.24"/>
+<wire x1="-137.16" y1="-134.62" x2="-130.81" y2="-139.7" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="E_HIGHGAIN1" class="0">
 <segment>
-<label x="-213.36" y="-147.32" size="1.778" layer="95" rot="R90"/>
-<pinref part="K5" gate="G$1" pin="A"/>
-<wire x1="-213.36" y1="-134.62" x2="-213.36" y2="-144.78" width="0.1524" layer="91"/>
+<label x="-213.36" y="-160.02" size="1.778" layer="95" rot="R90"/>
+<wire x1="-213.36" y1="-144.78" x2="-213.36" y2="-160.02" width="0.1524" layer="91"/>
+<pinref part="HGR1" gate="G$1" pin="1"/>
+<junction x="-213.36" y="-144.78"/>
 </segment>
 <segment>
 <pinref part="IOEXPAND_0X20_BOT" gate="G$1" pin="GPA4"/>
@@ -23530,9 +23681,10 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 </net>
 <net name="E_HIGHGAIN2" class="0">
 <segment>
-<label x="-180.34" y="-147.32" size="1.778" layer="95" rot="R90"/>
-<pinref part="K6" gate="G$1" pin="A"/>
-<wire x1="-180.34" y1="-134.62" x2="-180.34" y2="-144.78" width="0.1524" layer="91"/>
+<label x="-180.34" y="-160.02" size="1.778" layer="95" rot="R90"/>
+<wire x1="-180.34" y1="-144.78" x2="-180.34" y2="-160.02" width="0.1524" layer="91"/>
+<pinref part="HGR2" gate="G$1" pin="1"/>
+<junction x="-180.34" y="-144.78"/>
 </segment>
 <segment>
 <pinref part="IOEXPAND_0X20_BOT" gate="G$1" pin="GPA5"/>
@@ -23542,9 +23694,10 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 </net>
 <net name="E_HIGHGAIN3" class="0">
 <segment>
-<label x="-149.86" y="-147.32" size="1.778" layer="95" rot="R90"/>
-<pinref part="K7" gate="G$1" pin="A"/>
-<wire x1="-149.86" y1="-134.62" x2="-149.86" y2="-144.78" width="0.1524" layer="91"/>
+<label x="-149.86" y="-160.02" size="1.778" layer="95" rot="R90"/>
+<wire x1="-149.86" y1="-144.78" x2="-149.86" y2="-160.02" width="0.1524" layer="91"/>
+<pinref part="HGR3" gate="G$1" pin="1"/>
+<junction x="-149.86" y="-144.78"/>
 </segment>
 <segment>
 <pinref part="IOEXPAND_0X20_BOT" gate="G$1" pin="GPA6"/>
@@ -23554,9 +23707,10 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 </net>
 <net name="E_HIGHGAIN4" class="0">
 <segment>
-<label x="-116.84" y="-147.32" size="1.778" layer="95" rot="R90"/>
-<pinref part="K8" gate="G$1" pin="A"/>
-<wire x1="-116.84" y1="-134.62" x2="-116.84" y2="-144.78" width="0.1524" layer="91"/>
+<label x="-116.84" y="-160.02" size="1.778" layer="95" rot="R90"/>
+<wire x1="-116.84" y1="-144.78" x2="-116.84" y2="-160.02" width="0.1524" layer="91"/>
+<pinref part="HGR4" gate="G$1" pin="1"/>
+<junction x="-116.84" y="-144.78"/>
 </segment>
 <segment>
 <pinref part="IOEXPAND_0X20_BOT" gate="G$1" pin="GPA7"/>
@@ -23619,6 +23773,80 @@ Source: http://www.panasonic-electric-works.com/catalogues/downloads/photomos/ds
 <pinref part="IOEXPAND_0X24_TOP" gate="G$1" pin="GPA5"/>
 <wire x1="-144.78" y1="109.22" x2="-134.62" y2="109.22" width="0.1524" layer="91"/>
 <label x="-139.7" y="109.22" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="N$34" class="0">
+<segment>
+<pinref part="K5" gate="G$1" pin="A"/>
+<pinref part="HGR1" gate="G$1" pin="2"/>
+<junction x="-213.36" y="-134.62"/>
+</segment>
+</net>
+<net name="N$36" class="0">
+<segment>
+<pinref part="K6" gate="G$1" pin="A"/>
+<pinref part="HGR2" gate="G$1" pin="2"/>
+<junction x="-180.34" y="-134.62"/>
+</segment>
+</net>
+<net name="N$37" class="0">
+<segment>
+<pinref part="K7" gate="G$1" pin="A"/>
+<pinref part="HGR3" gate="G$1" pin="2"/>
+<junction x="-149.86" y="-134.62"/>
+</segment>
+</net>
+<net name="N$43" class="0">
+<segment>
+<pinref part="K8" gate="G$1" pin="A"/>
+<pinref part="HGR4" gate="G$1" pin="2"/>
+<junction x="-116.84" y="-134.62"/>
+</segment>
+</net>
+<net name="INAMINUS2" class="0">
+<segment>
+<pinref part="CIN56_6" gate="G$1" pin="2"/>
+<pinref part="CIN56_5" gate="G$1" pin="2"/>
+<wire x1="-158.75" y1="-152.4" x2="-161.29" y2="-149.86" width="0.1524" layer="91"/>
+<pinref part="CIN1NF_3" gate="G$1" pin="2"/>
+<wire x1="-161.29" y1="-149.86" x2="-163.83" y2="-147.32" width="0.1524" layer="91"/>
+<junction x="-161.29" y="-149.86"/>
+<wire x1="-163.83" y1="-147.32" x2="-167.64" y2="-152.4" width="0.1524" layer="91"/>
+<junction x="-163.83" y="-147.32"/>
+<pinref part="RIN3_10K" gate="G$1" pin="2"/>
+<wire x1="-170.18" y1="-144.78" x2="-170.18" y2="-154.94" width="0.1524" layer="91"/>
+<pinref part="U2" gate="A" pin="-INA"/>
+<label x="-154.94" y="-187.96" size="1.778" layer="95" rot="R90"/>
+<wire x1="-165.1" y1="-208.28" x2="-154.94" y2="-208.28" width="0.1524" layer="91"/>
+<wire x1="-154.94" y1="-208.28" x2="-154.94" y2="-233.68" width="0.1524" layer="91"/>
+<wire x1="-160.02" y1="-233.68" x2="-160.02" y2="-242.316" width="0.1524" layer="91"/>
+<wire x1="-160.02" y1="-242.316" x2="-160.02" y2="-242.57" width="0.1524" layer="91"/>
+<wire x1="-160.02" y1="-242.57" x2="-160.02" y2="-248.92" width="0.1524" layer="91"/>
+<wire x1="-160.02" y1="-248.92" x2="-160.02" y2="-256.286" width="0.1524" layer="91"/>
+<wire x1="-160.02" y1="-256.286" x2="-160.02" y2="-256.54" width="0.1524" layer="91"/>
+<wire x1="-160.02" y1="-256.54" x2="-160.02" y2="-265.43" width="0.1524" layer="91"/>
+<wire x1="-154.94" y1="-233.68" x2="-160.02" y2="-233.68" width="0.1524" layer="91"/>
+<pinref part="CGAIN2_3" gate="G$1" pin="1"/>
+<junction x="-160.02" y="-242.316"/>
+<pinref part="RGAIN1_3" gate="G$1" pin="2"/>
+<junction x="-160.02" y="-248.92"/>
+<junction x="-160.02" y="-256.286"/>
+<pinref part="RGAIN2_3" gate="G$1" pin="2"/>
+<junction x="-160.02" y="-256.54"/>
+<pinref part="CGAIN1_3" gate="G$1" pin="1"/>
+<junction x="-160.02" y="-242.57"/>
+<wire x1="-154.94" y1="-208.28" x2="-154.94" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-154.94" y="-208.28"/>
+<wire x1="-170.18" y1="-154.94" x2="-154.94" y2="-154.94" width="0.1524" layer="91"/>
+<pinref part="RIN3" gate="G$1" pin="2"/>
+<pinref part="CIN3" gate="G$1" pin="2"/>
+<wire x1="-176.53" y1="-124.46" x2="-172.72" y2="-127" width="0.1524" layer="91"/>
+<wire x1="-172.72" y1="-127" x2="-172.72" y2="-154.94" width="0.1524" layer="91"/>
+<wire x1="-172.72" y1="-154.94" x2="-170.18" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-172.72" y="-127"/>
+<junction x="-170.18" y="-154.94"/>
+<junction x="-170.18" y="-144.78"/>
+<wire x1="-167.64" y1="-152.4" x2="-170.18" y2="-154.94" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
