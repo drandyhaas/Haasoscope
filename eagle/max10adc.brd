@@ -216,7 +216,6 @@
 <text x="70.6" y="53" size="0.8128" layer="22" font="vector" rot="MR90">1uF</text>
 <text x="68.6" y="21" size="0.8128" layer="22" font="vector" rot="MR90">0.1uF</text>
 <text x="68.6" y="35" size="0.8128" layer="22" font="vector" rot="MR90">0.1uF</text>
-<text x="68.6" y="53" size="0.8128" layer="22" font="vector" rot="MR90">0.1uF</text>
 <text x="-6.71" y="43.41" size="0.8128" layer="21" font="vector" rot="R90">22pF</text>
 <text x="2.1" y="14.2" size="0.8128" layer="21" font="vector" rot="R90">560 Ohm</text>
 <text x="63.9" y="13.9" size="0.8128" layer="22" font="vector" rot="MR270">10k</text>
@@ -5313,26 +5312,14 @@ design rules under a new name.
 <element name="OVSAMP2" library="74xx-little-us@1" package="DBV_R-PDSO-G6" value="741G3157DBVR" x="54.3" y="29.4" smashed="yes" rot="R180">
 <attribute name="MPN" value="SN74LVC1G3157DBV" x="54.3" y="29.4" size="1.778" layer="27" rot="R180" display="off"/>
 </element>
-<element name="COFFSETB5" library="rcl" package="C0805K" value="10uF" x="71" y="7" smashed="yes" rot="MR90">
-<attribute name="MPN" value="MF-CAP-0805-10uF" x="71" y="7" size="1.778" layer="28" rot="MR90" display="off"/>
-</element>
 <element name="COFFSETB6" library="rcl" package="C0805K" value="0.1uF" x="68.8" y="7" smashed="yes" rot="MR90">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF" x="68.8" y="7" size="1.778" layer="28" rot="MR90" display="off"/>
-</element>
-<element name="COFFSETB7" library="rcl" package="C0805K" value="10uF" x="71" y="18.7" smashed="yes" rot="MR270">
-<attribute name="MPN" value="MF-CAP-0805-10uF" x="71" y="18.7" size="1.778" layer="28" rot="MR270" display="off"/>
 </element>
 <element name="COFFSETB8" library="rcl" package="C0805K" value="0.1uF" x="68.9" y="18.7" smashed="yes" rot="MR270">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF" x="68.9" y="18.7" size="1.778" layer="28" rot="MR270" display="off"/>
 </element>
-<element name="COFFSETB9" library="rcl" package="C0805K" value="10uF" x="71" y="39" smashed="yes" rot="MR90">
-<attribute name="MPN" value="MF-CAP-0805-10uF" x="77" y="39" size="1.778" layer="28" rot="MR90" display="off"/>
-</element>
 <element name="COFFSETB10" library="rcl" package="C0805K" value="0.1uF" x="69.2" y="39" smashed="yes" rot="MR90">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF" x="63.2" y="39" size="1.778" layer="28" rot="MR90" display="off"/>
-</element>
-<element name="COFFSETB11" library="rcl" package="C0805K" value="10uF" x="69" y="51" smashed="yes" rot="MR270">
-<attribute name="MPN" value="MF-CAP-0805-10uF" x="69" y="51" size="1.778" layer="28" rot="MR270" display="off"/>
 </element>
 <element name="COFFSETB12" library="rcl" package="C0805K" value="0.1uF" x="71" y="51" smashed="yes" rot="MR270">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF" x="71" y="51" size="1.778" layer="28" rot="MR270" display="off"/>
@@ -5794,6 +5781,22 @@ design rules under a new name.
 <attribute name="MPN" value="MF-CAP-0805-1uF" x="56" y="58.6" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="VALUE" x="57.8" y="59.9" size="0.8128" layer="27" font="vector" rot="R270"/>
 </element>
+<element name="COFFSETA6" library="rcl@1" package="C1206" value="10uF" x="70.9" y="6.1" smashed="yes" rot="MR270">
+<attribute name="MPN" value="MF-CAP-1206-10uF" x="70.9" y="6.1" size="1.778" layer="28" rot="MR270" display="off"/>
+<attribute name="VALUE" x="72.94" y="7.67" size="0.8128" layer="28" font="vector" rot="MR270"/>
+</element>
+<element name="COFFSETA1" library="rcl@1" package="C1206" value="10uF" x="71.3" y="19.6" smashed="yes" rot="MR270">
+<attribute name="MPN" value="MF-CAP-1206-10uF" x="71.3" y="19.6" size="1.778" layer="28" rot="MR270" display="off"/>
+<attribute name="VALUE" x="73.84" y="20.87" size="0.8128" layer="28" font="vector" rot="MR270"/>
+</element>
+<element name="COFFSETA2" library="rcl@1" package="C1206" value="10uF" x="71.5" y="38.4" smashed="yes" rot="MR90">
+<attribute name="MPN" value="MF-CAP-1206-10uF" x="71.5" y="38.4" size="1.778" layer="28" rot="MR90" display="off"/>
+<attribute name="VALUE" x="68.96" y="37.13" size="0.8128" layer="28" font="vector" rot="MR90"/>
+</element>
+<element name="COFFSETA3" library="rcl@1" package="C1206" value="10uF" x="69" y="51" smashed="yes" rot="MR270">
+<attribute name="MPN" value="MF-CAP-1206-10uF" x="69" y="51" size="1.778" layer="28" rot="MR270" display="off"/>
+<attribute name="VALUE" x="71.54" y="52.27" size="0.8128" layer="28" font="vector" rot="MR270"/>
+</element>
 </elements>
 <signals>
 <signal name="+5V" class="3">
@@ -5946,13 +5949,9 @@ design rules under a new name.
 <contactref element="R10M_4" pad="1"/>
 <contactref element="OVSAMP1" pad="2"/>
 <contactref element="OVSAMP2" pad="2"/>
-<contactref element="COFFSETB5" pad="1"/>
 <contactref element="COFFSETB6" pad="1"/>
-<contactref element="COFFSETB7" pad="1"/>
 <contactref element="COFFSETB8" pad="1"/>
-<contactref element="COFFSETB9" pad="1"/>
 <contactref element="COFFSETB10" pad="1"/>
-<contactref element="COFFSETB11" pad="1"/>
 <contactref element="COFFSETB12" pad="1"/>
 <contactref element="IOEXPAND_0X24_TOP" pad="10"/>
 <contactref element="IOEXPAND_0X24_TOP" pad="17"/>
@@ -6045,11 +6044,8 @@ design rules under a new name.
 <wire x1="59.1" y1="23.8" x2="59.1" y2="22.3" width="0.3048" layer="1"/>
 <wire x1="59.1" y1="22.3" x2="59.1" y2="20.8" width="0.3048" layer="1"/>
 <wire x1="59.1" y1="20.8" x2="59.08" y2="20.8" width="0.3048" layer="1"/>
-<wire x1="71" y1="6" x2="68.8" y2="6" width="0.3048" layer="16"/>
-<wire x1="71" y1="19.7" x2="68.9" y2="19.7" width="0.3048" layer="16"/>
 <wire x1="58.1" y1="17.7" x2="58.1" y2="15.7" width="0.3048" layer="1"/>
 <wire x1="58.1" y1="17.7" x2="58.08" y2="17.74" width="0.3048" layer="1"/>
-<wire x1="71" y1="52" x2="69" y2="52" width="0.3048" layer="16"/>
 <wire x1="58.1" y1="34.9" x2="58.1" y2="32.9" width="0.3048" layer="1"/>
 <wire x1="82" y1="38.8" x2="82" y2="36.6" width="0.3048" layer="16"/>
 <wire x1="82" y1="36.6" x2="81.95" y2="36.6" width="0.3048" layer="16"/>
@@ -6070,7 +6066,6 @@ design rules under a new name.
 <wire x1="77.8" y1="54.7" x2="77.8" y2="52.6" width="0.3048" layer="16"/>
 <wire x1="77.8" y1="52.6" x2="77.75" y2="52.6" width="0.3048" layer="16"/>
 <wire x1="77.8" y1="54.7" x2="77.75" y2="54.7" width="0.3048" layer="16"/>
-<wire x1="71" y1="38" x2="69.2" y2="38" width="0.3048" layer="16"/>
 <wire x1="82.2" y1="5.6" x2="82.2" y2="3.5" width="0.3048" layer="16"/>
 <wire x1="82.2" y1="3.5" x2="82.15" y2="3.5" width="0.3048" layer="16"/>
 <wire x1="82.2" y1="5.6" x2="82.15" y2="5.6" width="0.3048" layer="16"/>
@@ -6224,8 +6219,6 @@ design rules under a new name.
 <wire x1="82.2" y1="6.8" x2="82.2" y2="5.7" width="0.3048" layer="16"/>
 <wire x1="82.3" y1="6.9" x2="82.2" y2="6.8" width="0.3048" layer="16"/>
 <wire x1="82.2" y1="5.7" x2="82.15" y2="5.6" width="0.3048" layer="16"/>
-<wire x1="72.3" y1="38" x2="71" y2="38" width="0.3048" layer="16"/>
-<wire x1="72.8" y1="38.5" x2="72.3" y2="38" width="0.3048" layer="16"/>
 <wire x1="77.8" y1="56" x2="77.8" y2="54.8" width="0.3048" layer="16"/>
 <wire x1="77.8" y1="54.8" x2="77.75" y2="54.7" width="0.3048" layer="16"/>
 <wire x1="82" y1="55.5" x2="82" y2="54.8" width="0.3048" layer="16"/>
@@ -6243,13 +6236,10 @@ design rules under a new name.
 <wire x1="82.5" y1="35.3" x2="82" y2="35.8" width="0.3048" layer="16"/>
 <wire x1="82" y1="36.5" x2="81.95" y2="36.6" width="0.3048" layer="16"/>
 <wire x1="58.1" y1="36.2" x2="58.1" y2="34.9" width="0.3048" layer="1"/>
-<wire x1="67.7" y1="52" x2="69" y2="52" width="0.3048" layer="16"/>
 <wire x1="47.5" y1="52.8" x2="45.9" y2="52.8" width="0.3048" layer="1"/>
 <wire x1="45.9" y1="52.8" x2="45.835" y2="52.826" width="0.3048" layer="1"/>
 <wire x1="58.1" y1="19" x2="58.1" y2="17.8" width="0.3048" layer="1"/>
 <wire x1="58.1" y1="17.8" x2="58.08" y2="17.74" width="0.3048" layer="1"/>
-<wire x1="72.6" y1="19.7" x2="71" y2="19.7" width="0.3048" layer="16"/>
-<wire x1="72.3" y1="6" x2="71" y2="6" width="0.3048" layer="16"/>
 <wire x1="43.2" y1="6.2" x2="44.4" y2="6.2" width="0.4064" layer="1"/>
 <wire x1="43.1" y1="6.1" x2="43.2" y2="6.2" width="0.4064" layer="1"/>
 <wire x1="24.3" y1="15.3" x2="23.1" y2="15.3" width="0.3048" layer="1"/>
@@ -6351,7 +6341,6 @@ design rules under a new name.
 <via x="34.9" y="46" extent="1-16" drill="0.3048"/>
 <via x="78" y="6.9" extent="1-16" drill="0.3048"/>
 <via x="82.3" y="6.9" extent="1-16" drill="0.3048"/>
-<via x="72.8" y="38.5" extent="1-16" drill="0.3048"/>
 <via x="77.8" y="56" extent="1-16" drill="0.3048"/>
 <via x="82.5" y="56" extent="1-16" drill="0.3048"/>
 <via x="49.6" y="31.8" extent="1-16" drill="0.3048"/>
@@ -6360,11 +6349,8 @@ design rules under a new name.
 <via x="77.8" y="40.1" extent="1-16" drill="0.3048"/>
 <via x="82.5" y="35.3" extent="1-16" drill="0.3048"/>
 <via x="58.1" y="36.2" extent="1-16" drill="0.3048"/>
-<via x="67.7" y="52" extent="1-16" drill="0.3048"/>
 <via x="47.5" y="52.8" extent="1-16" drill="0.3048"/>
 <via x="58.1" y="19" extent="1-16" drill="0.3048"/>
-<via x="72.6" y="19.7" extent="1-16" drill="0.3048"/>
-<via x="72.3" y="6" extent="1-16" drill="0.3048"/>
 <via x="59.1" y="22.3" extent="1-16" drill="0.3048"/>
 <via x="43.1" y="6.1" extent="1-16" drill="0.3048"/>
 <via x="24.3" y="15.3" extent="1-16" drill="0.3048"/>
@@ -6402,6 +6388,37 @@ design rules under a new name.
 <wire x1="16.3" y1="0.2" x2="16.3" y2="-1.1" width="0.3048" layer="1"/>
 <wire x1="16.3" y1="0.2" x2="16.28" y2="0.26" width="0.3048" layer="1"/>
 <via x="-8.7" y="48.4" extent="1-16" drill="0.3048"/>
+<contactref element="COFFSETA6" pad="1"/>
+<contactref element="COFFSETA1" pad="1"/>
+<contactref element="COFFSETA2" pad="1"/>
+<contactref element="COFFSETA3" pad="1"/>
+<wire x1="69.7" y1="19.7" x2="68.9" y2="19.7" width="0.3048" layer="16"/>
+<wire x1="70.5" y1="20.5" x2="69.7" y2="19.7" width="0.3048" layer="16"/>
+<wire x1="70.5" y1="20.9" x2="70.5" y2="20.5" width="0.3048" layer="16"/>
+<wire x1="70.6" y1="21" x2="70.5" y2="20.9" width="0.3048" layer="16"/>
+<wire x1="71.3" y1="21" x2="70.6" y2="21" width="0.3048" layer="16"/>
+<wire x1="70.2" y1="52" x2="71" y2="52" width="0.3048" layer="16"/>
+<wire x1="69.8" y1="52.4" x2="70.2" y2="52" width="0.3048" layer="16"/>
+<wire x1="69" y1="52.4" x2="69.8" y2="52.4" width="0.3048" layer="16"/>
+<wire x1="67.5" y1="6" x2="68.8" y2="6" width="0.3048" layer="16"/>
+<wire x1="70" y1="38" x2="69.2" y2="38" width="0.3048" layer="16"/>
+<wire x1="70.1" y1="37.9" x2="70" y2="38" width="0.3048" layer="16"/>
+<wire x1="70.1" y1="37.1" x2="70.1" y2="37.9" width="0.3048" layer="16"/>
+<wire x1="70.2" y1="37" x2="70.1" y2="37.1" width="0.3048" layer="16"/>
+<wire x1="71.5" y1="37" x2="70.2" y2="37" width="0.3048" layer="16"/>
+<wire x1="70.1" y1="37.1" x2="69.2" y2="36.2" width="0.3048" layer="16"/>
+<wire x1="70.3" y1="7.5" x2="70.9" y2="7.5" width="0.3048" layer="16"/>
+<wire x1="70.2" y1="7.4" x2="70.3" y2="7.5" width="0.3048" layer="16"/>
+<wire x1="70.2" y1="6.5" x2="70.2" y2="7.4" width="0.3048" layer="16"/>
+<wire x1="69.7" y1="6" x2="70.2" y2="6.5" width="0.3048" layer="16"/>
+<wire x1="68.8" y1="6" x2="69.7" y2="6" width="0.3048" layer="16"/>
+<wire x1="72.7" y1="52" x2="71" y2="52" width="0.3048" layer="16"/>
+<wire x1="70.6" y1="22.3" x2="70.6" y2="21.1" width="0.3048" layer="16"/>
+<wire x1="70.6" y1="21.1" x2="71.3" y2="21" width="0.3048" layer="16"/>
+<via x="67.5" y="6" extent="1-16" drill="0.3048"/>
+<via x="69.2" y="36.2" extent="1-16" drill="0.3048"/>
+<via x="72.7" y="52" extent="1-16" drill="0.3048"/>
+<via x="70.6" y="22.3" extent="1-16" drill="0.3048"/>
 </signal>
 <signal name="+3V3" class="2" airwireshidden="yes">
 <contactref element="OSC" pad="4"/>
@@ -8986,10 +9003,8 @@ design rules under a new name.
 </signal>
 <signal name="OFFSET1">
 <contactref element="U1" pad="3"/>
-<contactref element="COFFSETB5" pad="2"/>
 <contactref element="COFFSETB6" pad="2"/>
 <contactref element="ROFFSET1" pad="1"/>
-<wire x1="71" y1="8" x2="68.8" y2="8" width="0.1524" layer="16"/>
 <wire x1="71" y1="28.5" x2="71.7" y2="28.5" width="0.1524" layer="16"/>
 <wire x1="71" y1="25.8" x2="71" y2="28.5" width="0.1524" layer="16"/>
 <wire x1="71" y1="25.6" x2="71" y2="25.8" width="0.1524" layer="15"/>
@@ -9001,7 +9016,7 @@ design rules under a new name.
 <wire x1="66.5" y1="10.5" x2="66.5" y2="11.8" width="0.1524" layer="1"/>
 <wire x1="71.7" y1="28.5" x2="71.7" y2="28.45" width="0.1524" layer="16"/>
 <wire x1="66.5" y1="10.5" x2="66.535" y2="10.4362" width="0.1524" layer="1"/>
-<wire x1="68" y1="8" x2="68.8" y2="8" width="0.1524" layer="16"/>
+<wire x1="68" y1="8" x2="68.4" y2="8" width="0.1524" layer="16"/>
 <wire x1="67.3" y1="8.7" x2="68" y2="8" width="0.1524" layer="16"/>
 <wire x1="66.9" y1="9.1" x2="67.3" y2="8.7" width="0.1524" layer="1"/>
 <wire x1="66.6" y1="9.1" x2="66.9" y2="9.1" width="0.1524" layer="1"/>
@@ -9011,23 +9026,26 @@ design rules under a new name.
 <via x="71" y="25.8" extent="1-16" drill="0.3048"/>
 <via x="66.6" y="11.9" extent="1-16" drill="0.3048"/>
 <via x="67.3" y="8.7" extent="1-16" drill="0.3048"/>
+<contactref element="COFFSETA6" pad="2"/>
+<wire x1="68" y1="4.7" x2="70.9" y2="4.7" width="0.1524" layer="16"/>
+<wire x1="66.9" y1="5.8" x2="68" y2="4.7" width="0.1524" layer="16"/>
+<wire x1="66.9" y1="6.5" x2="66.9" y2="5.8" width="0.1524" layer="16"/>
+<wire x1="68.4" y1="8" x2="66.9" y2="6.5" width="0.1524" layer="16"/>
+<wire x1="68.4" y1="8" x2="68.8" y2="8" width="0.1524" layer="16"/>
 </signal>
 <signal name="OFFSET2">
 <contactref element="U1" pad="5"/>
-<contactref element="COFFSETB7" pad="2"/>
 <contactref element="COFFSETB8" pad="2"/>
 <contactref element="ROFFSET2" pad="1"/>
 <wire x1="70.2" y1="28.5" x2="69.5" y2="28.5" width="0.1524" layer="16"/>
-<wire x1="70.2" y1="24.2" x2="70.2" y2="28.5" width="0.1524" layer="16"/>
-<wire x1="72.8" y1="21.6" x2="70.2" y2="24.2" width="0.1524" layer="16"/>
-<wire x1="73.9" y1="21.6" x2="72.8" y2="21.6" width="0.1524" layer="16"/>
+<wire x1="70.2" y1="24.1" x2="70.2" y2="28.5" width="0.1524" layer="16"/>
+<wire x1="72.9" y1="22.1" x2="70.2" y2="24.1" width="0.1524" layer="16"/>
+<wire x1="73.9" y1="21.6" x2="72.9" y2="22.1" width="0.1524" layer="16"/>
 <wire x1="74.4" y1="21.1" x2="73.9" y2="21.6" width="0.1524" layer="16"/>
 <wire x1="74.4" y1="19.7" x2="74.4" y2="21.1" width="0.1524" layer="16"/>
 <wire x1="72.4" y1="17.7" x2="72.55" y2="17.85" width="0.1524" layer="16"/>
 <wire x1="72.55" y1="17.85" x2="74.4" y2="19.7" width="0.1524" layer="16"/>
-<wire x1="71" y1="17.7" x2="72.4" y2="17.7" width="0.1524" layer="16"/>
 <wire x1="69.5" y1="28.5" x2="69.5" y2="28.45" width="0.1524" layer="16"/>
-<wire x1="71" y1="17.7" x2="68.9" y2="17.7" width="0.1524" layer="16"/>
 <wire x1="68.6" y1="15.4" x2="67.9" y2="15.4" width="0.1524" layer="1"/>
 <wire x1="70.2" y1="15.4" x2="68.6" y2="15.4" width="0.1524" layer="15"/>
 <wire x1="72.6" y1="17.8" x2="70.2" y2="15.4" width="0.1524" layer="15"/>
@@ -9035,11 +9053,15 @@ design rules under a new name.
 <wire x1="72.6" y1="17.8" x2="72.55" y2="17.85" width="0.1524" layer="16"/>
 <via x="68.6" y="15.4" extent="1-16" drill="0.3048"/>
 <via x="72.6" y="17.8" extent="1-16" drill="0.3048"/>
+<contactref element="COFFSETA1" pad="2"/>
+<wire x1="72.4" y1="17.7" x2="71.3" y2="17.7" width="0.1524" layer="16"/>
+<wire x1="71.3" y1="17.7" x2="68.9" y2="17.7" width="0.1524" layer="16"/>
+<wire x1="72.4" y1="17.7" x2="72.6" y2="17.8" width="0.1524" layer="16"/>
+<wire x1="71.3" y1="17.7" x2="71.3" y2="18.2" width="0.1524" layer="16"/>
 </signal>
 <signal name="OFFSET3">
 <contactref element="U2" pad="3"/>
 <contactref element="COFFSETB10" pad="2"/>
-<contactref element="COFFSETB9" pad="2"/>
 <contactref element="ROFFSET3" pad="1"/>
 <wire x1="68" y1="28.5" x2="67.3" y2="28.5" width="0.1524" layer="16"/>
 <wire x1="68.1" y1="28.6" x2="68" y2="28.5" width="0.1524" layer="16"/>
@@ -9049,11 +9071,11 @@ design rules under a new name.
 <wire x1="68" y1="33.6" x2="68.3" y2="33.3" width="0.1524" layer="16"/>
 <wire x1="68" y1="37.1" x2="68" y2="33.6" width="0.1524" layer="16"/>
 <wire x1="68.1" y1="37.2" x2="68" y2="37.1" width="0.1524" layer="16"/>
-<wire x1="68.1" y1="39.9" x2="68.1" y2="37.2" width="0.1524" layer="16"/>
+<wire x1="68.1" y1="39.9" x2="68.1" y2="39.8" width="0.1524" layer="16"/>
+<wire x1="68.1" y1="39.8" x2="68.1" y2="37.2" width="0.1524" layer="16"/>
 <wire x1="68.2" y1="40" x2="68.1" y2="39.9" width="0.1524" layer="16"/>
 <wire x1="68.7" y1="40" x2="68.2" y2="40" width="0.1524" layer="16"/>
 <wire x1="67.3" y1="28.5" x2="67.3" y2="28.45" width="0.1524" layer="16"/>
-<wire x1="69.2" y1="40" x2="71" y2="40" width="0.1524" layer="16"/>
 <wire x1="66.6" y1="44" x2="66.6" y2="42.6" width="0.1524" layer="1"/>
 <wire x1="68.7" y1="41.9" x2="66.6" y2="44" width="0.1524" layer="15"/>
 <wire x1="68.7" y1="40" x2="68.7" y2="41.9" width="0.1524" layer="16"/>
@@ -9061,13 +9083,13 @@ design rules under a new name.
 <wire x1="68.7" y1="40" x2="69.2" y2="40" width="0.1524" layer="16"/>
 <via x="66.6" y="44" extent="1-16" drill="0.3048"/>
 <via x="68.7" y="41.9" extent="1-16" drill="0.3048"/>
+<contactref element="COFFSETA2" pad="2"/>
+<wire x1="68.1" y1="39.8" x2="71.5" y2="39.8" width="0.1524" layer="16"/>
 </signal>
 <signal name="OFFSET4">
 <contactref element="U2" pad="5"/>
 <contactref element="COFFSETB12" pad="2"/>
-<contactref element="COFFSETB11" pad="2"/>
 <contactref element="ROFFSET4" pad="1"/>
-<wire x1="71" y1="50" x2="69" y2="50" width="0.1524" layer="16"/>
 <wire x1="63.7" y1="28.5" x2="65.1" y2="28.5" width="0.1524" layer="16"/>
 <wire x1="63.7" y1="32.1" x2="63.7" y2="28.5" width="0.1524" layer="15"/>
 <wire x1="63.3" y1="32.5" x2="63.7" y2="32.1" width="0.1524" layer="15"/>
@@ -9078,7 +9100,6 @@ design rules under a new name.
 <wire x1="67.9" y1="47.4" x2="67.9" y2="46.1" width="0.1524" layer="1"/>
 <wire x1="65.1" y1="28.5" x2="65.1" y2="28.45" width="0.1524" layer="16"/>
 <wire x1="67.9" y1="47.4" x2="67.905" y2="47.4638" width="0.1524" layer="1"/>
-<wire x1="67.8" y1="50" x2="69" y2="50" width="0.1524" layer="16"/>
 <wire x1="67.4" y1="50.4" x2="67.8" y2="50" width="0.1524" layer="16"/>
 <wire x1="66.1" y1="49.1" x2="67.4" y2="50.4" width="0.1524" layer="15"/>
 <wire x1="66.1" y1="45.8" x2="66.1" y2="49.1" width="0.1524" layer="15"/>
@@ -9086,6 +9107,10 @@ design rules under a new name.
 <via x="63.7" y="28.5" extent="1-16" drill="0.3048"/>
 <via x="67.3" y="45.5" extent="1-16" drill="0.3048"/>
 <via x="67.4" y="50.4" extent="1-16" drill="0.3048"/>
+<contactref element="COFFSETA3" pad="2"/>
+<wire x1="67.8" y1="50" x2="69" y2="50" width="0.1524" layer="16"/>
+<wire x1="69" y1="50" x2="71" y2="50" width="0.1524" layer="16"/>
+<wire x1="69" y1="50" x2="69" y2="49.6" width="0.1524" layer="16"/>
 </signal>
 <signal name="N$24">
 <contactref element="SW_TERM1" pad="3"/>
@@ -10259,8 +10284,8 @@ design rules under a new name.
 <contactref element="GAINSW2" pad="3"/>
 <wire x1="67.1" y1="21" x2="67.1" y2="19.85" width="0.1524" layer="16"/>
 <wire x1="67.2" y1="21.1" x2="67.1" y2="21" width="0.1524" layer="16"/>
-<wire x1="70.3" y1="21.1" x2="67.2" y2="21.1" width="0.1524" layer="16"/>
-<wire x1="70.4" y1="21" x2="70.3" y2="21.1" width="0.1524" layer="1"/>
+<wire x1="69.9" y1="21.2" x2="67.2" y2="21.1" width="0.1524" layer="16"/>
+<wire x1="70.4" y1="21" x2="69.9" y2="21.2" width="0.1524" layer="1"/>
 <wire x1="70.4" y1="20.2" x2="70.4" y2="21" width="0.1524" layer="1"/>
 <wire x1="70.5" y1="20.1" x2="70.4" y2="20.2" width="0.1524" layer="1"/>
 <wire x1="71.3" y1="20.1" x2="70.5" y2="20.1" width="0.1524" layer="1"/>
@@ -10280,7 +10305,7 @@ design rules under a new name.
 <wire x1="66.6" y1="21.7" x2="65.6" y2="21.7" width="0.1524" layer="16"/>
 <wire x1="67.2" y1="21.1" x2="66.6" y2="21.7" width="0.1524" layer="16"/>
 <wire x1="61" y1="20.7" x2="60.95" y2="20.69" width="0.1524" layer="1"/>
-<via x="70.3" y="21.1" extent="1-16" drill="0.3048"/>
+<via x="69.9" y="21.2" extent="1-16" drill="0.3048"/>
 <via x="61.1" y="24.3" extent="1-16" drill="0.3048"/>
 <via x="65.6" y="21.7" extent="1-16" drill="0.3048"/>
 </signal>
@@ -10343,15 +10368,15 @@ design rules under a new name.
 <wire x1="67.1" y1="36.9" x2="65" y2="36.9" width="0.1524" layer="15"/>
 <wire x1="67.1" y1="38.15" x2="67.1" y2="36.9" width="0.1524" layer="16"/>
 <wire x1="61" y1="40.4" x2="60.95" y2="40.49" width="0.1524" layer="1"/>
-<wire x1="72.8" y1="39.9" x2="71.5" y2="39.9" width="0.1524" layer="1"/>
-<wire x1="69.8" y1="36.9" x2="72.8" y2="39.9" width="0.1524" layer="15"/>
+<wire x1="73" y1="39.9" x2="71.5" y2="39.9" width="0.1524" layer="1"/>
+<wire x1="69.8" y1="36.9" x2="73" y2="39.9" width="0.1524" layer="15"/>
 <wire x1="67.1" y1="36.9" x2="69.8" y2="36.9" width="0.1524" layer="15"/>
 <wire x1="71.5" y1="39.9" x2="71.5" y2="39.85" width="0.1524" layer="1"/>
 <via x="61" y="39.1" extent="1-16" drill="0.3048"/>
 <via x="62.7" y="36.9" extent="1-16" drill="0.3048"/>
 <via x="65" y="36.9" extent="1-16" drill="0.3048"/>
 <via x="67.1" y="36.9" extent="1-16" drill="0.3048"/>
-<via x="72.8" y="39.9" extent="1-16" drill="0.3048"/>
+<via x="73" y="39.9" extent="1-16" drill="0.3048"/>
 </signal>
 <signal name="CGAIN6">
 <contactref element="RGAIN4_3" pad="1"/>
@@ -10607,8 +10632,8 @@ design rules under a new name.
 <wire x1="69.2" y1="24.3" x2="69.2" y2="24.6" width="0.1524" layer="16"/>
 <wire x1="70.1" y1="23.4" x2="69.2" y2="24.3" width="0.1524" layer="16"/>
 <wire x1="70.5" y1="23.4" x2="70.1" y2="23.4" width="0.1524" layer="16"/>
-<wire x1="72.7" y1="21.2" x2="70.5" y2="23.4" width="0.1524" layer="16"/>
-<wire x1="73" y1="21.2" x2="72.7" y2="21.2" width="0.1524" layer="16"/>
+<wire x1="72.2" y1="22.2" x2="70.5" y2="23.4" width="0.1524" layer="16"/>
+<wire x1="73" y1="21.2" x2="72.2" y2="22.2" width="0.1524" layer="16"/>
 <wire x1="73.5" y1="20.7" x2="73" y2="21.2" width="0.1524" layer="16"/>
 <wire x1="73.5" y1="20.7" x2="73.54" y2="20.7" width="0.1524" layer="16"/>
 <via x="73.1" y="14.6" extent="1-16" drill="0.3048"/>

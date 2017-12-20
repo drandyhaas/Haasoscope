@@ -19471,30 +19471,18 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </part>
 <part name="GND60" library="supply1" deviceset="GND" device=""/>
 <part name="GND61" library="supply1" deviceset="GND" device=""/>
-<part name="COFFSETB5" library="rcl" deviceset="C-EU" device="C0805K" value="10uF">
-<attribute name="MPN" value="MF-CAP-0805-10uF"/>
-</part>
 <part name="COFFSETB6" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
 <part name="GND58" library="supply1" deviceset="GND" device=""/>
-<part name="COFFSETB7" library="rcl" deviceset="C-EU" device="C0805K" value="10uF">
-<attribute name="MPN" value="MF-CAP-0805-10uF"/>
-</part>
 <part name="COFFSETB8" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
 <part name="GND59" library="supply1" deviceset="GND" device=""/>
-<part name="COFFSETB9" library="rcl" deviceset="C-EU" device="C0805K" value="10uF">
-<attribute name="MPN" value="MF-CAP-0805-10uF"/>
-</part>
 <part name="COFFSETB10" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
 <part name="GND62" library="supply1" deviceset="GND" device=""/>
-<part name="COFFSETB11" library="rcl" deviceset="C-EU" device="C0805K" value="10uF">
-<attribute name="MPN" value="MF-CAP-0805-10uF"/>
-</part>
 <part name="COFFSETB12" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
@@ -19906,6 +19894,18 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <attribute name="MPN" value="MF-CAP-0805-1uF"/>
 </part>
 <part name="P+6" library="supply1" deviceset="+5V" device=""/>
+<part name="COFFSETA6" library="rcl@1" deviceset="C-US" device="C1206" value="10uF">
+<attribute name="MPN" value="MF-CAP-1206-10uF"/>
+</part>
+<part name="COFFSETA1" library="rcl@1" deviceset="C-US" device="C1206" value="10uF">
+<attribute name="MPN" value="MF-CAP-1206-10uF"/>
+</part>
+<part name="COFFSETA2" library="rcl@1" deviceset="C-US" device="C1206" value="10uF">
+<attribute name="MPN" value="MF-CAP-1206-10uF"/>
+</part>
+<part name="COFFSETA3" library="rcl@1" deviceset="C-US" device="C1206" value="10uF">
+<attribute name="MPN" value="MF-CAP-1206-10uF"/>
+</part>
 </parts>
 <sheets>
 <sheet>
@@ -20288,44 +20288,24 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <instance part="OVSAMP1" gate="P" x="-96.52" y="63.5"/>
 <instance part="GND60" gate="1" x="-96.52" y="30.48"/>
 <instance part="GND61" gate="1" x="-96.52" y="53.34"/>
-<instance part="COFFSETB5" gate="G$1" x="-254" y="-215.9" smashed="yes" rot="R180">
-<attribute name="MPN" x="-254" y="-215.9" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="NAME" x="-250.444" y="-221.361" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="-255.524" y="-211.201" size="1.778" layer="96" rot="R180"/>
-</instance>
 <instance part="COFFSETB6" gate="G$1" x="-261.62" y="-215.9" smashed="yes" rot="R180">
 <attribute name="MPN" x="-261.62" y="-215.9" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="-258.064" y="-218.821" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="-263.144" y="-211.201" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="GND58" gate="1" x="-254" y="-223.52"/>
-<instance part="COFFSETB7" gate="G$1" x="-182.88" y="-218.44" smashed="yes" rot="R180">
-<attribute name="MPN" x="-182.88" y="-218.44" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="NAME" x="-179.324" y="-223.901" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="-184.404" y="-213.741" size="1.778" layer="96" rot="R180"/>
-</instance>
 <instance part="COFFSETB8" gate="G$1" x="-190.5" y="-218.44" smashed="yes" rot="R180">
 <attribute name="MPN" x="-190.5" y="-218.44" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="-186.944" y="-221.361" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="-192.024" y="-213.741" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="GND59" gate="1" x="-182.88" y="-226.06"/>
-<instance part="COFFSETB9" gate="G$1" x="-170.18" y="-215.9" smashed="yes" rot="R180">
-<attribute name="MPN" x="-170.18" y="-215.9" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="NAME" x="-166.624" y="-221.361" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="-171.704" y="-211.201" size="1.778" layer="96" rot="R180"/>
-</instance>
 <instance part="COFFSETB10" gate="G$1" x="-177.8" y="-215.9" smashed="yes" rot="R180">
 <attribute name="MPN" x="-177.8" y="-215.9" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="-174.244" y="-218.821" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="-179.324" y="-211.201" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="GND62" gate="1" x="-170.18" y="-223.52"/>
-<instance part="COFFSETB11" gate="G$1" x="-96.52" y="-218.44" smashed="yes" rot="R180">
-<attribute name="MPN" x="-96.52" y="-218.44" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="NAME" x="-92.964" y="-223.901" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="-98.044" y="-213.741" size="1.778" layer="96" rot="R180"/>
-</instance>
 <instance part="COFFSETB12" gate="G$1" x="-104.14" y="-218.44" smashed="yes" rot="R180">
 <attribute name="MPN" x="-104.14" y="-218.44" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="-100.584" y="-221.361" size="1.778" layer="95" rot="R180"/>
@@ -20766,6 +20746,18 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <attribute name="MPN" x="-596.9" y="-60.96" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="P+6" gate="1" x="-480.06" y="73.66" rot="R90"/>
+<instance part="COFFSETA6" gate="G$1" x="-254" y="-215.9" rot="R180">
+<attribute name="MPN" x="-254" y="-215.9" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="COFFSETA1" gate="G$1" x="-182.88" y="-218.44" rot="R180">
+<attribute name="MPN" x="-182.88" y="-218.44" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="COFFSETA2" gate="G$1" x="-170.18" y="-215.9" rot="R180">
+<attribute name="MPN" x="-170.18" y="-215.9" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="COFFSETA3" gate="G$1" x="-96.52" y="-218.44" rot="R180">
+<attribute name="MPN" x="-96.52" y="-218.44" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
 </instances>
 <busses>
 </busses>
@@ -21182,35 +21174,35 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="GND61" gate="1" pin="GND"/>
 </segment>
 <segment>
-<pinref part="COFFSETB5" gate="G$1" pin="1"/>
 <pinref part="GND58" gate="1" pin="GND"/>
 <wire x1="-254" y1="-220.98" x2="-254" y2="-218.44" width="0.1524" layer="91"/>
 <pinref part="COFFSETB6" gate="G$1" pin="1"/>
 <wire x1="-261.62" y1="-218.44" x2="-254" y2="-218.44" width="0.1524" layer="91"/>
+<pinref part="COFFSETA6" gate="G$1" pin="1"/>
 <junction x="-254" y="-218.44"/>
 </segment>
 <segment>
-<pinref part="COFFSETB7" gate="G$1" pin="1"/>
 <pinref part="GND59" gate="1" pin="GND"/>
 <wire x1="-182.88" y1="-223.52" x2="-182.88" y2="-220.98" width="0.1524" layer="91"/>
 <pinref part="COFFSETB8" gate="G$1" pin="1"/>
 <wire x1="-190.5" y1="-220.98" x2="-182.88" y2="-220.98" width="0.1524" layer="91"/>
+<pinref part="COFFSETA1" gate="G$1" pin="1"/>
 <junction x="-182.88" y="-220.98"/>
 </segment>
 <segment>
-<pinref part="COFFSETB9" gate="G$1" pin="1"/>
 <pinref part="GND62" gate="1" pin="GND"/>
 <wire x1="-170.18" y1="-220.98" x2="-170.18" y2="-218.44" width="0.1524" layer="91"/>
 <pinref part="COFFSETB10" gate="G$1" pin="1"/>
 <wire x1="-177.8" y1="-218.44" x2="-170.18" y2="-218.44" width="0.1524" layer="91"/>
+<pinref part="COFFSETA2" gate="G$1" pin="1"/>
 <junction x="-170.18" y="-218.44"/>
 </segment>
 <segment>
-<pinref part="COFFSETB11" gate="G$1" pin="1"/>
 <pinref part="GND63" gate="1" pin="GND"/>
 <wire x1="-96.52" y1="-223.52" x2="-96.52" y2="-220.98" width="0.1524" layer="91"/>
 <pinref part="COFFSETB12" gate="G$1" pin="1"/>
 <wire x1="-104.14" y1="-220.98" x2="-96.52" y2="-220.98" width="0.1524" layer="91"/>
+<pinref part="COFFSETA3" gate="G$1" pin="1"/>
 <junction x="-96.52" y="-220.98"/>
 </segment>
 <segment>
@@ -23029,15 +23021,15 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </net>
 <net name="OFFSET1" class="0">
 <segment>
-<wire x1="-246.38" y1="-210.82" x2="-254" y2="-210.82" width="0.1524" layer="91"/>
 <label x="-264.16" y="-210.82" size="1.778" layer="95"/>
 <pinref part="U1" gate="A" pin="+INA"/>
-<pinref part="COFFSETB5" gate="G$1" pin="2"/>
-<wire x1="-254" y1="-210.82" x2="-261.62" y2="-210.82" width="0.1524" layer="91"/>
-<junction x="-254" y="-210.82"/>
+<wire x1="-246.38" y1="-210.82" x2="-254" y2="-210.82" width="0.1524" layer="91"/>
 <pinref part="COFFSETB6" gate="G$1" pin="2"/>
 <junction x="-261.62" y="-210.82"/>
+<wire x1="-254" y1="-210.82" x2="-261.62" y2="-210.82" width="0.1524" layer="91"/>
 <wire x1="-261.62" y1="-210.82" x2="-264.16" y2="-210.82" width="0.1524" layer="91"/>
+<pinref part="COFFSETA6" gate="G$1" pin="2"/>
+<junction x="-254" y="-210.82"/>
 </segment>
 <segment>
 <wire x1="-510.54" y1="-149.86" x2="-500.38" y2="-149.86" width="0.1524" layer="91"/>
@@ -23092,11 +23084,11 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="U1" gate="A" pin="+INB"/>
 <wire x1="-190.5" y1="-213.36" x2="-182.88" y2="-213.36" width="0.1524" layer="91"/>
 <label x="-193.04" y="-213.36" size="1.778" layer="95"/>
-<pinref part="COFFSETB7" gate="G$1" pin="2"/>
 <pinref part="COFFSETB8" gate="G$1" pin="2"/>
 <junction x="-190.5" y="-213.36"/>
-<junction x="-182.88" y="-213.36"/>
+<pinref part="COFFSETA1" gate="G$1" pin="2"/>
 <wire x1="-182.88" y1="-213.36" x2="-180.34" y2="-213.36" width="0.1524" layer="91"/>
+<junction x="-182.88" y="-213.36"/>
 </segment>
 <segment>
 <wire x1="-510.54" y1="-147.32" x2="-500.38" y2="-147.32" width="0.1524" layer="91"/>
@@ -23108,13 +23100,13 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <net name="OFFSET3" class="0">
 <segment>
 <pinref part="U2" gate="A" pin="+INA"/>
-<wire x1="-165.1" y1="-210.82" x2="-170.18" y2="-210.82" width="0.1524" layer="91"/>
 <label x="-182.88" y="-210.82" size="1.778" layer="95"/>
 <pinref part="COFFSETB10" gate="G$1" pin="2"/>
 <junction x="-177.8" y="-210.82"/>
+<wire x1="-165.1" y1="-210.82" x2="-170.18" y2="-210.82" width="0.1524" layer="91"/>
 <wire x1="-170.18" y1="-210.82" x2="-177.8" y2="-210.82" width="0.1524" layer="91"/>
 <wire x1="-177.8" y1="-210.82" x2="-182.88" y2="-210.82" width="0.1524" layer="91"/>
-<pinref part="COFFSETB9" gate="G$1" pin="2"/>
+<pinref part="COFFSETA2" gate="G$1" pin="2"/>
 <junction x="-170.18" y="-210.82"/>
 </segment>
 <segment>
@@ -23132,9 +23124,9 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="COFFSETB12" gate="G$1" pin="2"/>
 <junction x="-104.14" y="-213.36"/>
 <wire x1="-104.14" y1="-213.36" x2="-96.52" y2="-213.36" width="0.1524" layer="91"/>
-<pinref part="COFFSETB11" gate="G$1" pin="2"/>
-<junction x="-96.52" y="-213.36"/>
+<pinref part="COFFSETA3" gate="G$1" pin="2"/>
 <wire x1="-96.52" y1="-213.36" x2="-93.98" y2="-213.36" width="0.1524" layer="91"/>
+<junction x="-96.52" y="-213.36"/>
 </segment>
 <segment>
 <wire x1="-500.38" y1="-142.24" x2="-510.54" y2="-142.24" width="0.1524" layer="91"/>
