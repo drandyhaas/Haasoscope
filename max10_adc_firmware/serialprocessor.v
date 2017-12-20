@@ -4,9 +4,9 @@ module processor(clk, rxReady, rxData, txBusy, txStart, txData, readdata, get_ex
 newcomdata,comdata,led1,led2,led3,serial_passthrough,master_clock, imthelast,imthefirst,rollingtrigger,trigDebug, 
 adcdata,adcready,getadcdata,getadcadr,adcvalid,adcreset,adcramdata,writesamp,writeadc,adctestout,
 triggerpoint,downsample, screendata,screenwren,screenaddr,screenreset,trigthresh,trigchannels,triggertype,triggertot,
-SPIsend,SPIsenddata,delaycounter,carrycounter,ledbase,SPIstate,offset,gainsw,led4,
+SPIsend,SPIsenddata,delaycounter,carrycounter,usb_siwu,SPIstate,offset,gainsw,led4,
 i2c_ena,i2c_addr,i2c_rw,i2c_datawr,i2c_datard,i2c_busy,i2c_ackerror,   usb_clk60,usb_dataio,usb_txe_busy,usb_wr,
-rdaddress2,trigthresh2);
+rdaddress2,trigthresh2, high,low);
    input clk;
 	input[7:0] rxData;
    input rxReady;
@@ -14,7 +14,7 @@ rdaddress2,trigthresh2);
    output reg txStart;
    output reg[7:0] txData;
    output reg[7:0] readdata;//first byte we got
-   output reg led1,led2,led3,led4,ledbase;
+   output reg led1,led2,led3,led4;
   	output reg get_ext_data;
 	input ext_data_ready;
 	parameter ram_width=12;//9 is 512 samples
@@ -61,6 +61,7 @@ rdaddress2,trigthresh2);
 	output wire[3:0] offset;
 	output reg[3:0] gainsw;
 	reg[3:0] oversamp;
+	output reg high,low;
 	
 	output reg i2c_ena;
 	output reg [6:0] i2c_addr;
@@ -98,7 +99,7 @@ rdaddress2,trigthresh2);
   input usb_clk60;
   output reg [7:0] usb_dataio;
   input usb_txe_busy;
-  output reg usb_wr;
+  output reg usb_wr, usb_siwu;
   
   //TODO: use memory bits for this, not register space??
   reg [5:0] screencolumndata [128]; //all the screen data, 128 columns of (8 rows of 8 dots)
@@ -127,7 +128,9 @@ rdaddress2,trigthresh2);
 	 triggerpoint<=(2**(ram_width-2));// 1/4 of the screen
 	 downsample<=1;
 	 serial_passthrough<=0;
-	 ledbase<=1;
+	 usb_siwu<=1;
+	 high<=1;
+	 low<=1;
 	 gainsw<=4'b0000;//1 is for 1k resistor (gain 2), 0 is for 100 Ohm resistor (gain .2)
 	 oversamp<=4'b0011;//1 is for _no_ oversampling (and only matters for bits 0 and 1)
   end
