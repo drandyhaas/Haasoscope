@@ -461,6 +461,7 @@ class DynamicUpdate():
         return text
     
     firstdrawtext=True
+    needtoredrawtext=False
     def drawtext(self):
         height = 0.2 # height up from bottom to start drawing text
         if self.firstdrawtext:
@@ -470,6 +471,7 @@ class DynamicUpdate():
             self.texts[0].remove()
             self.texts[0]=(self.ax.text(1.01, height, self.chantext(),horizontalalignment='left', verticalalignment='top',transform=self.ax.transAxes))
             #for txt in self.ax.texts: print txt # debugging
+        self.needtoredrawtext=True
         plt.draw()
     
     def togglechannel(self,theline):
@@ -665,14 +667,14 @@ class DynamicUpdate():
                 if board%3==0: c=(1-0.2*maxchan,0,0)
                 if board%3==1: c=(0,1-0.2*maxchan,0)
                 if board%3==2: c=(0,0,1-0.2*maxchan)
-                line, = self.ax.plot([],[], '-', label=str(max10adcchans[maxchan]), color=c, linewidth=1.0)
+                line, = self.ax.plot([],[], '-', label=str(max10adcchans[maxchan]), color=c, linewidth=0.5, alpha=.5)
             else: 
                 board=l/4
                 chan=l%4
                 if board%3==0: c=(1-0.2*chan,0,0)
                 if board%3==1: c=(0,1-0.2*chan,0)
                 if board%3==2: c=(0,0,1-0.2*chan)
-                line, = self.ax.plot([],[], '-', label="chan "+str(l), color=c, linewidth=2.0)
+                line, = self.ax.plot([],[], '-', label="chan "+str(l), color=c, linewidth=1.0, alpha=.9)
             self.lines.append(line)
         #Other stuff
         self.ax.grid()
@@ -725,13 +727,10 @@ class DynamicUpdate():
         else:
             for l in np.arange(num_chan_per_board):
                 if (self.db): print "drawing adc line",l+board*num_chan_per_board
-                if len(theydata)<=l:
-                    print "don't have channel",l
-                    return
+                if len(theydata)<=l: print "don't have channel",l; return
                 xdatanew = (self.xdata-num_samples/2.)*(1000.0*pow(2,self.downsample)/clkrate/self.xscaling)
                 ydatanew=(127-theydata[l])*(10./256.) # got to flip it, since it's a negative feedback op amp
-                if self.sincresample:
-                    (ydatanew,xdatanew) = resample(ydatanew, num_samples*self.sincresample, t = xdatanew)
+                if self.sincresample: (ydatanew,xdatanew) = resample(ydatanew, num_samples*self.sincresample, t = xdatanew)
                 self.lines[l+(num_board-board-1)*num_chan_per_board].set_xdata(xdatanew)
                 self.lines[l+(num_board-board-1)*num_chan_per_board].set_ydata(ydatanew) 
     
@@ -743,7 +742,8 @@ class DynamicUpdate():
                 if (self.dogrid):
                     [self.ax.draw_artist(gl) for gl in self.ax.xaxis.get_gridlines()]
                     [self.ax.draw_artist(gl) for gl in self.ax.yaxis.get_gridlines()]
-                [self.ax.draw_artist(l) for l in self.texts]
+                if self.needtoredrawtext: [self.ax.draw_artist(l) for l in self.texts]
+                self.needtoredrawtext=False
                 [self.ax.draw_artist(l) for l in self.lines]
                 [self.ax.draw_artist(l) for l in self.otherlines]
                 self.figure.canvas.update() #needs Qt4Agg backend
