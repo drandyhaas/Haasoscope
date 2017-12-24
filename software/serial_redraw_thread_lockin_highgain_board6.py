@@ -12,13 +12,13 @@ import serial.tools.list_ports
 num_board = 1 # Number of Haasoscope boards to read out
 clkrate=125.0 # ADC sample rate in MHz
 ram_width = 12 # width in bits of sample ram to use (9==512 samples, 12(max)==4096 samples)
-max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1 (triggered by main ADC!), 111=pin6, ..., 118=pin14, 119=temp
-sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
+max10adcchans = [] #[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1 (triggered by main ADC!), 111=pin6, ..., 118=pin14, 119=temp
+sendincrement=10 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
 
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
 num_samples = pow(2,ram_width)/pow(2,sendincrement) # num samples per channel, max is pow(2,ram_width)/pow(2,0)=4096
 num_bytes = num_samples*num_chan_per_board #num B per board
-brate = 1500000 #serial baud rate #1500000 #115200
+brate = 115200 #serial baud rate #1500000 #115200
 btimeout = 3.0 #time to wait for serial response #3.0, num_bytes*8*10.0/brate, or None
 Nsamp=pow(2,ram_width)-1 #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
 print "num main ADC bytes for all boards",num_bytes*num_board
@@ -28,7 +28,6 @@ print "rate theoretically",round(brate/10./(num_bytes*num_board+len(max10adcchan
 class DynamicUpdate():
     lines = []
     otherlines = []
-    texts = []
     xdata=np.arange(num_samples)
     ydata = []
     ysampdatat=np.zeros(Nsamp*len(max10adcchans))
@@ -41,28 +40,27 @@ class DynamicUpdate():
     rising=True #trigger on rising edge (or else falling edge)
     dogrid=True #redraw the grid
     chanforscreen=0 #channel to draw on the mini-display
-    triggertimethresh=5 #samples for which the trigger must be over/under threshold
-    downsample=3 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
+    triggertimethresh=8 #samples for which the trigger must be over/under threshold
+    downsample=7 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
     dofft=False #drawing the FFT plot
+    oversample02=False #do oversampling, merging channels 0 and 2
+    oversample13=False #do oversampling, merging channels 1 and 3
     dousb=False #whether to use USB2 output
     sincresample=0 # amount of resampling to do (sinx/x)
-    dogetotherdata=False # whether to read other calculated data like TDC
+    dogetotherdata=False # whether to read other claculated data like TDC
     domaindrawing=True # whether to update the main window data and redraw it
-    selectedchannel=0 #what channel some actions apply to
-    selectedmax10channel=0 #what max10 channel is selected
     db = False #debugging #True #False
 
-    dolockin=False # read lockin info
+    dolockin=True # read lockin info
     dolockinplot=True # plot the lockin info
     lockinanalyzedataboard=0 # the board to analyze lockin info from
     debuglockin=False #debugging of lockin calculations #True #False
     reffreq = 0.008 #MHz of reference signal on chan 3 for lockin calculations
     
-    doI2C=True
-    doDAC=True
+    doI2C=False
+    doDAC=False
     lowdaclevel=1200
     highdaclevel=1500
-    chanlevel=np.ones(num_board*num_chan_per_board)*lowdaclevel
         
     #will grab the next keys as input
     keychanneltrig=False
@@ -75,9 +73,6 @@ class DynamicUpdate():
     keyi2c=False
     keyLevel=False
     keyResample=False
-    keyShift=False
-    keyAlt=False
-    keyControl=False
     
     def tellrolltrig(self,rt):
         #tell them to roll the trigger (a self-trigger each ~second), or not
@@ -127,10 +122,8 @@ class DynamicUpdate():
         ser.write(chr(sendincrement))
         print "send increment is",sendincrement
     
-    def telltickstowait(self): #usually downsample+4
+    def telltickstowait(self,ds): #usually downsample+4
         #tell it the number of clock ticks to wait, log2, between sending bytes
-        ds=self.downsample/3
-        if self.dousb: ds=2
         ser.write(chr(125))
         ser.write(chr(ds))
         print "clockbitstowait is",ds
@@ -195,15 +188,8 @@ class DynamicUpdate():
             print "Set PWM rate to",level," : ",b1,b0,256*b0+b1
         
     def setPWMlevel(self,chan,level):
-        if level>=4096: 
-            print "level can't be bigger than 2**12-1=4095"
-            level=4095
-        if level<0: 
-            print "level can't be less than 0"
-            level=0
+        chan=0 # TODO: This is temporary until the DAC works for all channels!
         self.setdac(chan,level)
-        self.chanlevel[chan]=level
-        if not self.firstdrawtext: self.drawtext()
         print "DAC level set for channel",chan,"to",level
     
     def tellSPIsetup(self,what):
@@ -240,33 +226,8 @@ class DynamicUpdate():
         print "Tell SPI setup:",format(myb[0],'02x'),format(myb[1],'02x')
         #time.sleep(.1) #pause to make sure other SPI wriitng is done
     
-    #These hold the state of the IO expanders
-    a20= int('0f',16) # supergain (set first char to 0 for normal gain) / gain (set second char to 0 for low gain)
-    b20= int('4f',16)  # shdn (set first bit to 0 to turn on) and oversamp (set bits 1,2 to 0 to send 0->2 and 1->3) / ac coupling (f is DC, 0 is AC)
-    a21= int('00',16) # leds (on is 1)
-    b21= int('00',16)# free pins
-    
-    # testBit() returns a nonzero result, 2**offset, if the bit at 'offset' is one.
-    def testBit(self,int_type, offset):
-        mask = 1 << offset
-        return(int_type & mask)
-    # setBit() returns an integer with the bit at 'offset' set to 1.
-    def setBit(self,int_type, offset):
-        mask = 1 << offset
-        return(int_type | mask)
-    # clearBit() returns an integer with the bit at 'offset' cleared.
-    def clearBit(self,int_type, offset):
-        mask = ~(1 << offset)
-        return(int_type & mask)
-    # toggleBit() returns an integer with the bit at 'offset' inverted, 0 -> 1 and 1 -> 0.
-    def toggleBit(self,int_type, offset):
-        mask = 1 << offset
-        return(int_type ^ mask)
-  
     def sendi2c(self,whattosend):
-        if not self.doI2C: 
-            print "not doing I2C! ", whattosend
-            return # not doing i2c for now? Will hang boards that don't have it!
+        if not self.doI2C: return # not doing i2c for now? Will hang boards that don't have it!
         myb=bytearray.fromhex(whattosend)
         ser.write(chr(136))
         datacounttosend=len(myb)-1 #number of bytes of info to send, not counting the address
@@ -274,20 +235,13 @@ class DynamicUpdate():
         for b in np.arange(len(myb)): ser.write(chr(myb[b]))
         for b in np.arange(4-len(myb)): 
             ser.write(chr(255)) # pad with extra bytes since the command expects a total of 5 bytes (numtosend, addr, and 3 more bytes)
-            #print 255
+            print 255
         print "Tell i2c:","bytestosend:",datacounttosend," and address/data:",whattosend
     
     def setupi2c(self):
-        self.sendi2c("20 00 00") #port A on IOexp 1 are outputs
-        self.sendi2c("20 01 00") #port B on IOexp 1 are outputs
-        self.sendi2c("21 00 00") #port A on IOexp 2 are outputs
-        self.sendi2c("21 01 00") #port B on IOexp 2 are outputs
-        self.sendi2c("20 12 "+ ('%0*x' % (2,self.a20)) ) #port A of IOexp 1
-        self.sendi2c("20 13 "+ ('%0*x' % (2,self.b20)) ) #port B of IOexp 1
-        self.sendi2c("21 12 "+ ('%0*x' % (2,self.a21)) ) #port A of IOexp 2
-        self.sendi2c("21 13 "+ ('%0*x' % (2,self.b21)) ) #port B of IOexp 2
-        print "initialized all i2c ports and set to starting values"
-            
+        self.sendi2c("20 00 00"); #port A are outputs    
+        self.sendi2c("20 01 00"); #port B are outputs    
+    
     def setdac(self,chan,val):        
         if chan==0: c="50"
         elif chan==1: c="52"
@@ -296,39 +250,26 @@ class DynamicUpdate():
         else:
             print "channel",chan,"out of range 0-3"
             return
-        #d="0" # Vdd ref (0-3.3V, but noisy?)
-        d="8" #internal ref, gain=1 (0-2V)
-        #d="9" #internal ref, gain=2 (0-4V)
         if val>=4096 or val<0:
             print "value",val,"out of range 0-4095"
             return
-        self.sendi2c("60 "+c+d+('%0*x' % (3,val))) #DAC, can go from 000 to 0fff in last 12 bits
-    
-    def shutdownadcs(self):
-        self.b20= int('ff',16)  # shdn (set first char to f to turn off) / ac coupling (?)
-        self.sendi2c("20 13 "+ ('%0*x' % (2,self.b20)) ) #port B of IOexp 1
-        print "shut down adcs"
+        self.sendi2c("60 "+c+" 0"+('%0*x' % (3,val))) #DAC, can go from 000 to 0fff in last 12 bits
         
     def testi2c(self):
-        print "test i2c"
         dotest=1 # what to test
         if dotest==0:
-            # IO expander 1            
-            self.sendi2c("20 12 ff") #turn on all port A of IOexp 1 (12 means A, ff is which of the 8 bits to turn on)
-            self.sendi2c("20 13 ff") #turn on all port B of IOexp 1 (13 means B, ff is which of the 8 bits to turn on)
+            # IO expander 1
+            
+            self.sendi2c("20 12 ff");#turn on all port A (12 means A, ff is which of the 8 bits to turn on)
+            self.sendi2c("20 13 ff"); #turn on all port B (13 means B, ff is which of the 8 bits to turn on)
             time.sleep(3)
-            self.sendi2c("20 12 00") #turn off all port A of IOexp 1
-            self.sendi2c("20 13 00") #turn off all port B of IOexp 1
-        elif dotest==1:
+            self.sendi2c("20 12 00"); #turn off all port A
+            self.sendi2c("20 13 00"); #turn off all port B
+        if dotest==1:
             #Test the DAC
+            self.setdac(0,4095)
+            time.sleep(3)
             self.setdac(0,0)
-            time.sleep(3)
-            self.setdac(0,1200)
-        elif dotest==2:
-            #toggle led 1, at 0x21 a0
-            self.a21=self.setBit(self.a21,0); self.sendi2c("21 12 "+ ('%0*x' % (2,self.a21)) )
-            time.sleep(3)
-            self.a21=self.clearBit(self.a21,0); self.sendi2c("21 12 "+ ('%0*x' % (2,self.a21)) )
 
     def toggledousb(self):#toggle whether to read over FT232H USB or not
         if not "usbser" in globals(): 
@@ -336,9 +277,10 @@ class DynamicUpdate():
             print "usb connection not available"
         else:
             self.dousb = not self.dousb
+            if (self.dousb): self.telltickstowait(self.downsample+5)
+            else: self.telltickstowait(self.downsample+4)
             ser.write(chr(137))
             print "dousb toggled to",self.dousb
-            self.telltickstowait()
     
     trigsactive=np.ones(num_board*num_chan_per_board, dtype=int)
     def toggletriggerchan(self,tp):
@@ -346,15 +288,17 @@ class DynamicUpdate():
         ser.write(chr(130))
         self.writefirmchan(tp)
         self.trigsactive[tp] = not self.trigsactive[tp]
-        origline,legline,channum = self.lined[tp]
-        if self.trigsactive[tp]: self.leg.get_texts()[tp].set_color('#000000')
-        else: self.leg.get_texts()[tp].set_color('#aFaFaF')
+        if hasattr(self,'lined'): 
+            origline,legline,channum = self.lined[tp]
+            if self.trigsactive[tp]: self.leg.get_texts()[tp].set_color('#000000')
+            else: self.leg.get_texts()[tp].set_color('#aFaFaF')
+            self.figure.canvas.draw()
         print "Trigger toggled for channel",tp
-        self.figure.canvas.draw()
+        
 
     autorearm=False
     def toggleautorearm(self):
-        #tell it to toggle the auto rearm of the tirgger after readout
+        #tell it to toggle the auto raem of the tirgger after readout
         ser.write(chr(139))
         self.autorearm = not self.autorearm
         print "Trigger auto rearm now",self.autorearm
@@ -362,34 +306,28 @@ class DynamicUpdate():
         if (self.db): time.sleep(.1)
         ser.write(chr(100)) # prime the trigger one last time
         
-    gain=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is low gain, 0 is high gain (x10)
+    gain=np.ones(num_board*num_chan_per_board, dtype=int)
     def tellswitchgain(self,chan):
         #tell it to switch the gain of a channel
         ser.write(chr(134))
         self.writefirmchan(chan)
-        origline,legline,channum = self.lined[chan]
+        if hasattr(self,'lined'): origline,legline,channum = self.lined[chan]
         if self.gain[chan]==1:
             self.gain[chan]=0
             if self.doDAC: self.setPWMlevel(chan,self.highdaclevel)
-            else: self.setPWMlevel_old(chan,26) #0 for x200 (100k resistor)
-            origline.set_label("chan "+str(chan)+" x10")
-            self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x10")
+            else: self.setPWMlevel_old(chan,0) #58 for x2 (1k resistor), 0 for x200 (100k resistor)
+            if hasattr(self,'lined'): 
+                origline.set_label("chan "+str(chan)+" x10")
+                self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x10")
         else:
             self.gain[chan]=1
             if self.doDAC: self.setPWMlevel(chan,self.lowdaclevel)
-            else: self.setPWMlevel_old(chan,59)
-            origline.set_label("chan "+str(chan))
-            self.leg.get_texts()[chan].set_text("chan "+str(chan))
-        self.figure.canvas.draw()
+            else: self.setPWMlevel_old(chan,22)
+            if hasattr(self,'lined'): 
+                origline.set_label("chan "+str(chan))
+                self.leg.get_texts()[chan].set_text("chan "+str(chan))
+        if hasattr(self,'lined'): self.figure.canvas.draw()
         print "Gain switched for channel",chan,"to",self.gain[chan]
-
-    oversample02=False #do oversampling, merging channels 0 and 2
-    oversample13=False #do oversampling, merging channels 1 and 3
-    def oversamp(self,chan):
-        #tell it to toggle oversampling for this channel
-        ser.write(chr(141))
-        self.writefirmchan(chan)
-        print "Oversampling toggled for channel",chan
 
     def resetchans(self):
         for chan in np.arange(num_board*num_chan_per_board):
@@ -397,8 +335,6 @@ class DynamicUpdate():
                 self.tellswitchgain(chan) # set all gains back to low gain
             if  self.trigsactive[chan]==0:
                 self.toggletriggerchan(chan) # set all trigger channels back to active
-        if self.oversample02: self.oversamp(0)
-        if self.oversample13: self.oversamp(1)
     
     def setbacktoserialreadout(self):
         if self.dousb:    
@@ -408,7 +344,7 @@ class DynamicUpdate():
     
     def telldownsample(self,ds):
         #tell it the amount to downsample, log2... so 0 (none), 1(factor 2), 2(factor 4), etc.
-        if ds>20: print "downsample >20 doesn't work well..."; return False
+        if ds>13: print "downsample >13 doesn't work well..."; return False
         if ds<0: print "downsample can't be <0 !"; return False
         ser.write(chr(124))
         ser.write(chr(ds))
@@ -423,7 +359,7 @@ class DynamicUpdate():
             self.telllockinnumtoshift(self.numtoshift)
         else:
             self.telllockinnumtoshift(0) # tells the FPGA to not send lockin info    
-        self.telltickstowait()
+        self.telltickstowait(self.downsample+4)
         self.setxaxis()
         return True # successful (parameter within OK range)
 
@@ -458,34 +394,13 @@ class DynamicUpdate():
         nticks=10
         self. ax.yaxis.set_ticks(np.arange( self.min_y, self.max_y+0.1, (self.max_y-self.min_y)/nticks ) )
         #self.ax.set_autoscaley_on(True)
-        self.figure.canvas.draw()    
-        
-    def chantext(self):
-        text = "chan: "+str(self.selectedchannel)
-        text +="\nlevel="+str(self.chanlevel[self.selectedchannel])
-        #text+="\n"
-        #text+="\nmax10chan: "+str(self.selectedmax10channel)
-        return text
+        self.figure.canvas.draw()
     
-    firstdrawtext=True
-    needtoredrawtext=False
-    def drawtext(self):
-        height = 0.2 # height up from bottom to start drawing text
-        if self.firstdrawtext:
-            self.texts.append(self.ax.text(1.01, height, self.chantext(),horizontalalignment='left', verticalalignment='top',transform=self.ax.transAxes))
-            self.firstdrawtext=False
-        else:
-            self.texts[0].remove()
-            self.texts[0]=(self.ax.text(1.01, height, self.chantext(),horizontalalignment='left', verticalalignment='top',transform=self.ax.transAxes))
-            #for txt in self.ax.texts: print txt # debugging
-        self.needtoredrawtext=True
-        plt.draw()
-    
-    def togglechannel(self,theline):
+    def pickline(self,theline):
         # on the pick event, find the orig line corresponding to the
         # legend proxy line, and toggle the visibility
         origline,legline,channum = self.lined[theline]
-        print "toggle",theline,"for channum",channum                
+        print "picked",theline,"for channum",channum                
         vis = not origline.get_visible()
         origline.set_visible(vis)
         if channum < num_board*num_chan_per_board: # it's an ADC channel (not a max10adc channel or other thing)
@@ -496,65 +411,31 @@ class DynamicUpdate():
         if vis: legline.set_alpha(1.0); legline.set_linewidth(2)
         else: legline.set_alpha(0.2); legline.set_linewidth(1)
     
-    def pickline(self,theline):
-        # on the pick event, find the orig line corresponding to the
-        # legend proxy line, and toggle the visibility
-        origline,legline,channum = self.lined[theline]
-        print "picked",theline,"for channum",channum        
-        if channum < num_board*num_chan_per_board: # it's an ADC channel (not a max10adc channel or other thing)
-            #print "a real ADC channel"
-            self.selectedchannel=channum        
-            self.drawtext()
-        else:
-            print "picked a max10 ADC channel"
-            self.selectedmax10channel=channum - num_board*num_chan_per_board
-            self.drawtext()
-
     def onpick(self,event):
         if event.mouseevent.button==1: #left click
-            if self.keyControl: self.togglechannel(event.artist)
-            else:self.pickline(event.artist)
-            plt.draw()
+            self.pickline(event.artist)
+            self.figure.canvas.draw()
     
     def onclick(self,event):
-        try:
-            if event.button==1: #left click                
-                pass
+        try:            
             if event.button==2: #middle click                
                 self.settriggerthresh2(int(  event.ydata/(10./256.) + 127  ))                
                 self.hline2 = event.ydata
-                self.otherlines[2].set_data( [self.min_x, self.max_x], [self.hline2, self.hline2] )
+                otherline , = self.ax.plot( [self.min_x, self.max_x], [self.hline2, self.hline2], 'k:', lw=1) # horizontal line showing trigger threshold
+                self.otherlines[2]=otherline
+                return
             if event.button==3: #right click
                 self.settriggerpoint(int(  (event.xdata / (1000.0*pow(2,self.downsample)/clkrate/self.xscaling)) +num_samples/2  ))
                 self.settriggerthresh(int(  event.ydata/(10./256.) + 127  ))
                 self.vline = event.xdata
-                self.otherlines[0].set_data( [self.vline, self.vline], [self.min_y, self.max_y] ) # vertical line showing trigger time
+                otherline , = self.ax.plot([self.vline, self.vline], [self.min_y, self.max_y], 'k--', lw=1) # vertical line showing trigger time
+                self.otherlines[0]=otherline
                 self.hline = event.ydata
-                self.otherlines[1].set_data( [self.min_x, self.max_x], [self.hline, self.hline] ) # horizontal line showing trigger threshold
-            print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' % ('double' if event.dblclick else 'single', event.button, event.x, event.y, event.xdata, event.ydata))
-            return
+                otherline , = self.ax.plot( [self.min_x, self.max_x], [self.hline, self.hline], 'k--', lw=1) # horizontal line showing trigger threshold
+                self.otherlines[1]=otherline
+                return
+            print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' % (event.button, event.x, event.y, event.xdata, event.ydata))
         except TypeError: pass
-    
-    def adjustvertical(self,up):
-         amount=10
-         if self.keyShift: amount*=5
-         if self.gain[self.selectedchannel]==1: #low gain
-             amount*=10
-         if up:
-             self.chanlevel = self.chanlevel - amount
-         else:
-             self.chanlevel = self.chanlevel + amount
-         self.setPWMlevel(self.selectedchannel,self.chanlevel[self.selectedchannel])
-    
-    def onscroll(self,event):
-         #print event
-         if event.button=='up': self.adjustvertical(True)
-         else: self.adjustvertical(False)
-        
-    def onrelease(self,event): # a key was released
-        if event.key=="shift": self.keyShift=False;return
-        elif event.key=="alt": self.keyAlt=False;return
-        elif event.key=="control": self.keyControl=False; return
     
     def onpress(self,event): # a key was pressed
         try:
@@ -621,7 +502,7 @@ class DynamicUpdate():
                 if event.key=="enter":
                     self.keyLevel=False
                     s=self.leveltemp.split(",")
-                    #print "Got",int(s[0]),int(s[1])
+                    print "Got",int(s[0]),int(s[1])
                     if self.doDAC: self.setPWMlevel(int(s[0]),int(s[1]))
                     else: self.setPWMlevel_old(int(s[0]),int(s[1]))
                     return
@@ -634,8 +515,8 @@ class DynamicUpdate():
             elif event.key=="a": self.average = not self.average;print "average",self.average; return
             elif event.key=="A": self.toggleautorearm(); return
             elif event.key=="U": self.toggledousb(); return
-            elif event.key=="0": self.oversample02 = not self.oversample02;print "oversample02 is now",self.oversample02; self.oversamp(0); return # TODO: allow for more boards
-            elif event.key=="1": self.oversample13 = not self.oversample13;print "oversample13 is now",self.oversample13; self.oversamp(1); return 
+            elif event.key=="0": self.oversample02 = not self.oversample02;print "oversample02 is now",self.oversample02; return 
+            elif event.key=="1": self.oversample13 = not self.oversample13;print "oversample13 is now",self.oversample13; return 
             elif event.key=="c": self.keychanneltrig=True;self.keychanneltrigtemp=0;print "now enter channel to toggle trigger for";return
             elif event.key=="R": self.keyResample=True;print "now enter amount to sinc resample (0-9)";return
             elif event.key=="d": self.keychanneldisplay=True;print "now enter channel to show on miniscreen";return
@@ -645,8 +526,6 @@ class DynamicUpdate():
             elif event.key=="g": self.dogrid=not self.dogrid;print "dogrid toggled",self.dogrid; return
             elif event.key=="right": self.telldownsample(self.downsample+1); return
             elif event.key=="left": self.telldownsample(self.downsample-1); return
-            elif event.key=="up": self.adjustvertical(True); return
-            elif event.key=="down": self.adjustvertical(False); return
             elif event.key=="D": self.keydownsample=True;self.tempdownsample=0;print "now enter downsample amount, then enter";return
             elif event.key=="S": self.keySPI=True;self.SPIval=0;print "now enter SPI code, then enter";return
             elif event.key=="F": self.keyFFT=True;self.fftchantemp=0;print "now enter channel to fft, then enter:";return
@@ -654,12 +533,9 @@ class DynamicUpdate():
             elif event.key=="I": self.testi2c(); return 
             elif event.key=="W": self.domaindrawing=not self.domaindrawing; return
             elif event.key=="L": self.keyLevel=True;self.leveltemp="";print "now enter [channel to set level for, level] then enter:";return
-            elif event.key=="shift": self.keyShift=True;return
-            elif event.key=="alt": self.keyAlt=True;return
-            elif event.key=="control": self.keyControl=True;return
             elif event.key=="tab":
                 for l in self.lines:
-                    self.togglechannel(l)
+                    self.pickline(l)
                 self.figure.canvas.draw()
                 return;
             print 'key=%s' % (event.key)
@@ -680,32 +556,30 @@ class DynamicUpdate():
                 if board%3==0: c=(1-0.2*maxchan,0,0)
                 if board%3==1: c=(0,1-0.2*maxchan,0)
                 if board%3==2: c=(0,0,1-0.2*maxchan)
-                line, = self.ax.plot([],[], '-', label=str(max10adcchans[maxchan]), color=c, linewidth=0.5, alpha=.5)
+                line, = self.ax.plot([],[], '-', label=str(max10adcchans[maxchan]), color=c, linewidth=1.0)
             else: 
                 board=l/4
                 chan=l%4
                 if board%3==0: c=(1-0.2*chan,0,0)
                 if board%3==1: c=(0,1-0.2*chan,0)
                 if board%3==2: c=(0,0,1-0.2*chan)
-                line, = self.ax.plot([],[], '-', label="chan "+str(l), color=c, linewidth=1.0, alpha=.9)
+                line, = self.ax.plot([],[], '-', label="chan "+str(l), color=c, linewidth=2.0)
             self.lines.append(line)
         #Other stuff
         self.ax.grid()
         self.setxaxis(); self.setyaxis();
         self.vline=0
-        otherline , = self.ax.plot([self.vline, self.vline], [-2, 2], 'k--', lw=1)#,label='trigger time vert')
+        otherline , = self.ax.plot([self.vline, self.vline], [-2, 2], 'k--', lw=1)
         self.otherlines.append(otherline)
         self.hline = 0
-        otherline , = self.ax.plot( [-2, 2], [self.hline, self.hline], 'k--', lw=1)#,label='trigger thresh horiz')
+        otherline , = self.ax.plot( [-2, 2], [self.hline, self.hline], 'k--', lw=1)
         self.otherlines.append(otherline)
         self.hline2 = 0
-        otherline , = self.ax.plot( [-2, 2], [self.hline2, self.hline2], 'k--', lw=1, color='blue')#, label='trigger2 thresh horiz')
+        otherline , = self.ax.plot( [-2, 2], [self.hline2, self.hline2], 'k:', lw=1)
         self.otherlines.append(otherline)
         self.figure.canvas.mpl_connect('button_press_event', self.onclick)
         self.figure.canvas.mpl_connect('key_press_event', self.onpress)
-        self.figure.canvas.mpl_connect('key_release_event', self.onrelease)
         self.figure.canvas.mpl_connect('pick_event', self.onpick)
-        self.figure.canvas.mpl_connect('scroll_event', self.onscroll)
         self.leg = self.ax.legend(loc='upper left', bbox_to_anchor=(1.02, 1),
               ncol=1, borderaxespad=0, fancybox=False, shadow=False, fontsize=10)
         self.leg.get_frame().set_alpha(0.4)
@@ -725,7 +599,6 @@ class DynamicUpdate():
             self.lined[origline] = (origline,legline,channum)
             self.lined[channum] = (origline,legline,channum)
             channum+=1        
-        self.drawtext()
         self.figure.canvas.draw()
         #plt.show(block=False)
     
@@ -740,10 +613,13 @@ class DynamicUpdate():
         else:
             for l in np.arange(num_chan_per_board):
                 if (self.db): print "drawing adc line",l+board*num_chan_per_board
-                if len(theydata)<=l: print "don't have channel",l; return
+                if len(theydata)<=l:
+                    print "don't have channel",l
+                    return
                 xdatanew = (self.xdata-num_samples/2.)*(1000.0*pow(2,self.downsample)/clkrate/self.xscaling)
                 ydatanew=(127-theydata[l])*(10./256.) # got to flip it, since it's a negative feedback op amp
-                if self.sincresample: (ydatanew,xdatanew) = resample(ydatanew, num_samples*self.sincresample, t = xdatanew)
+                if self.sincresample:
+                    (ydatanew,xdatanew) = resample(ydatanew, num_samples*self.sincresample, t = xdatanew)
                 self.lines[l+(num_board-board-1)*num_chan_per_board].set_xdata(xdatanew)
                 self.lines[l+(num_board-board-1)*num_chan_per_board].set_ydata(ydatanew) 
     
@@ -755,8 +631,6 @@ class DynamicUpdate():
                 if (self.dogrid):
                     [self.ax.draw_artist(gl) for gl in self.ax.xaxis.get_gridlines()]
                     [self.ax.draw_artist(gl) for gl in self.ax.yaxis.get_gridlines()]
-                if self.needtoredrawtext: [self.ax.draw_artist(l) for l in self.texts]
-                self.needtoredrawtext=False
                 [self.ax.draw_artist(l) for l in self.lines]
                 [self.ax.draw_artist(l) for l in self.otherlines]
                 self.figure.canvas.update() #needs Qt4Agg backend
@@ -1087,13 +961,20 @@ class DynamicUpdate():
             self.tellsamplesmax10adc()
             self.tellsamplessend()
             self.tellbytesskip()
-            self.telldownsample(self.downsample); self.telltickstowait()
+            self.telldownsample(self.downsample); self.telltickstowait(self.downsample+4)
             self.settriggertime(self.triggertimethresh)
             self.tellSPIsetup(0) #0.9V CM but not connected
             self.tellSPIsetup(11) #offset binary output
             #tellSPIsetup(12) #offset binary output and divide clock by 2
             self.tellSPIsetup(32) # non-multiplexed output
-            self.setupi2c() # sets all ports to be outputs
+            self.setupi2c() # sets both ports to be outputs
+            if not self.doDAC: #TODO - because they cause noise
+                self.setPWMlevel_old(0,0) 
+                self.setPWMlevel_old(1,0)
+                self.tellswitchgain(2)
+                self.toggletriggerchan(0)
+                self.toggletriggerchan(1)
+                self.toggletriggerchan(2)
             self.on_launch()
             x=0; oldtime=time.clock(); tinterval=100.
             while 1:
@@ -1116,22 +997,17 @@ class DynamicUpdate():
             self.setbacktoserialreadout()
             self.resetchans()
             if self.autorearm: self.toggleautorearm()
-            if self.doDAC: 
-                for c in np.arange(0,num_board*num_chan_per_board):
-                    self.setPWMlevel(c,self.lowdaclevel)
-            self.shutdownadcs()
+            if self.doDAC: self.setPWMlevel(0,self.lowdaclevel) #TODO adjust for all channels
             print "Done with main loop"
 
 #For setting up serial and USB connections
 port=""; usbport=""; port_description=""; usbport_description="";
 ports = list(serial.tools.list_ports.comports())
 for port_no, description, address in ports:
-    if 'UART' in description or 'SERIAL' in description:
-        #if port=="":
-            port = port_no; port_description = description
+    if 'UART' in description or 'SERIAL' in description and port=="":
+        port = port_no; port_description = description
     if "USB Serial" in description:
-        #if usbport=="":
-            usbport=port_no; usbport_description = description
+        usbport=port_no; usbport_description = description
 if port!="":
     ser = Serial(port,brate,timeout=btimeout)
     print "connected serial to",port,":",port_description,": timeout",btimeout,"seconds"
