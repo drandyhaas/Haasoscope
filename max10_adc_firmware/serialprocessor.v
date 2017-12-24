@@ -6,7 +6,7 @@ adcdata,adcready,getadcdata,getadcadr,adcvalid,adcreset,adcramdata,writesamp,wri
 triggerpoint,downsample, screendata,screenwren,screenaddr,screenreset,trigthresh,trigchannels,triggertype,triggertot,
 SPIsend,SPIsenddata,delaycounter,carrycounter,usb_siwu,SPIstate,offset,gainsw,led4,
 i2c_ena,i2c_addr,i2c_rw,i2c_datawr,i2c_datard,i2c_busy,i2c_ackerror,   usb_clk60,usb_dataio,usb_txe_busy,usb_wr,
-rdaddress2,trigthresh2, high,low);
+rdaddress2,trigthresh2, debug1,debug2);
    input clk;
 	input[7:0] rxData;
    input rxReady;
@@ -61,7 +61,7 @@ rdaddress2,trigthresh2, high,low);
 	output wire[3:0] offset;
 	output reg[3:0] gainsw;
 	reg[3:0] oversamp;
-	output reg high,low;
+	output reg debug1,debug2;
 	
 	output reg i2c_ena;
 	output reg [6:0] i2c_addr;
@@ -75,7 +75,8 @@ rdaddress2,trigthresh2, high,low);
 	reg i2cgo=0;
 
   localparam READ=0, SOLVING=1, WAITING=2, WRITE_EXT1=3, WRITE_EXT2=4, WAIT_ADC1=5, WAIT_ADC2=6, WRITE_BYTE1=7, WRITE_BYTE2=8, READMORE=9, 
-	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15,WRITEUSB1=16,WRITEUSB2=17, LOCKIN1=18,LOCKIN2=19,LOCKIN3=20,LOCKINWRITE1=21,LOCKINWRITE2=22;
+	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15,WRITEUSB1=16,WRITEUSB2=17, LOCKIN1=18,LOCKIN2=19,LOCKIN3=20,LOCKINWRITE1=21,LOCKINWRITE2=22,
+	WRITE_USB_EXT1=33, WRITE_USB_EXT2=34, WRITE_USB_EXT3=35, WRITE_USB_EXT4=36;
   integer state,i2cstate;
 
   reg [7:0] myid;
@@ -129,18 +130,16 @@ rdaddress2,trigthresh2, high,low);
 	 downsample<=1;
 	 serial_passthrough<=0;
 	 usb_siwu<=1;
-	 high<=1;
-	 low<=1;
+	 debug1<=1;
+	 debug2<=1;
 	 gainsw<=4'b0000;//1 is for 1k resistor (gain 2), 0 is for 100 Ohm resistor (gain .2)
 	 oversamp<=4'b0011;//1 is for _no_ oversampling (and only matters for bits 0 and 1)
   end
   
   //set the LEDs to indicate my ID
   always @(posedge clk) begin
-	thecounter<=thecounter+1;
-	
-	led4<=0; //on
-   
+	thecounter<=thecounter+1;	
+	led4<=0; //on   
    if ( imthelast & thecounter[26]==1'b1 ) begin //flash every few seconds
 		led1<=0;		led2<=0;		led3<=0;//all on
 	end
@@ -169,67 +168,26 @@ rdaddress2,trigthresh2, high,low);
   end
   reg oldled1,oldled2,oldled3,oldled4;
   
-   //reg [7:0] PWMoffset = 23; //9.1%  *256;
-	reg [7:0] PWMoffset0 = 58; //22.7% *256;
-	reg [7:0] PWMoffset1 = 58; //22.7% *256;
-	reg [7:0] PWMoffset2 = 58; //22.7% *256;
-	reg [7:0] PWMoffset3 = 58; //22.7% *256;
-	reg [7:0] pwmcounter;
-	//For 1k and 0.1uF, freq=1.6kHz
-	//For 1k and 1uF, freq=160Hz
-	integer PWMratecounter=0;
-	integer PWMrate=2;//how fast we count the pwm clock
-   always @(posedge clk) begin
-		if (PWMratecounter>=PWMrate) begin
-			pwmcounter <= pwmcounter + 1'b1;  // free-running counter
-			PWMratecounter=0;
-		end
-		else PWMratecounter=PWMratecounter+1;
-	end
-	assign offset[0] = (PWMoffset0 > pwmcounter);  // comparators
-	assign offset[1] = (PWMoffset1 > pwmcounter);  // comparators
-	assign offset[2] = (PWMoffset2 > pwmcounter);  // comparators
-	assign offset[3] = (PWMoffset3 > pwmcounter);  // comparators
-	
-	always @(posedge clk) begin
-   case (i2cstate)
-		//I2C, from https://eewiki.net/pages/viewpage.action?pageId=10125324
-		READ: begin
-			i2c_ena<=0;
-			if (i2cgo) begin
-				i2cstate=I2CWAIT;
-			end
-		end
-		I2CWAIT: begin
-			if (~i2c_busy) begin
-				//i2c_addr set elsewhere first
-				i2c_rw = 0;
-				i2c_datawr = i2cdata[0];
-				//i2c_datacounttosend set elsewhere first
-				i2c_datacount=1;
-				//i2c_datard = 
-				i2cstate=I2CSEND1;
-			end
-		end
-		I2CSEND1: begin
-			i2c_ena = 1;
-			if (i2c_datacount >= i2c_datacounttosend) begin
-				i2cstate=READ; //sets i2c_ena back to 0
-			end
-			else if (i2c_busy) begin
-				i2c_datawr = i2cdata[i2c_datacount];
-				i2cstate=I2CSEND2;
-			end
-		end
-		I2CSEND2: begin
-			if (~i2c_busy) begin
-				//i2c_ackerror
-				i2c_datacount = i2c_datacount+1;
-				i2cstate=I2CSEND1;
-			end
-		end
-	endcase
-	end
+//	reg [7:0] PWMoffset0 = 58; //22.7% *256;
+//	reg [7:0] PWMoffset1 = 58; //22.7% *256;
+//	reg [7:0] PWMoffset2 = 58; //22.7% *256;
+//	reg [7:0] PWMoffset3 = 58; //22.7% *256;
+//	reg [7:0] pwmcounter;
+//	//For 1k and 0.1uF, freq=1.6kHz
+//	//For 1k and 1uF, freq=160Hz
+//	integer PWMratecounter=0;
+//	integer PWMrate=2;//how fast we count the pwm clock
+//   always @(posedge clk) begin
+//		if (PWMratecounter>=PWMrate) begin
+//			pwmcounter <= pwmcounter + 1'b1;  // free-running counter
+//			PWMratecounter=0;
+//		end
+//		else PWMratecounter=PWMratecounter+1;
+//	end
+//	assign offset[0] = (PWMoffset0 > pwmcounter);  // comparators
+//	assign offset[1] = (PWMoffset1 > pwmcounter);  // comparators
+//	assign offset[2] = (PWMoffset2 > pwmcounter);  // comparators
+//	assign offset[3] = (PWMoffset3 > pwmcounter);  // comparators
   
   always @(posedge clk) begin
     case (state)
@@ -244,6 +202,7 @@ rdaddress2,trigthresh2, high,low);
 		  newcomdata<=0;
 		  SPIsend<=0;
 		  i2cgo=0;
+		  usb_wr<=1;
         if (rxReady) begin
 			 readdata = rxData;
           state = SOLVING;
@@ -255,7 +214,7 @@ rdaddress2,trigthresh2, high,low);
 			 i2c_addr=8'h21; // the second mcp io expander
 			 i2cdata[0]=8'h12; // port a
 			 i2cdata[1][0]=led1; i2cdata[1][1]=led2; i2cdata[1][2]=led3; i2cdata[1][3]=led4; // set the low 4 bits to be correct for the leds
-			 i2cdata[1][7:4]=4'b0001; // set the high 4 bits for the ledbase
+			 i2cdata[1][7:4]=4'b1111; // set the high 4 bits on to light the leds
 			 i2cdata[2]=0; // not used for mcp io expanders
 			 if (i2cstate==READ) begin // if it's busy, we'll do nothing, oh well
 			   i2cgo=1;
@@ -527,10 +486,10 @@ rdaddress2,trigthresh2, high,low);
 				if (bytesread<byteswanted) state=READMORE;
 				else begin
 					if (extradata[0]/4 ==myid) begin //I have this channel
-						if (extradata[0]%4==0) PWMoffset0 = extradata[1];//set the PWM value for the channel (fraction of 256 of which to be on for, *3.3V)
-						if (extradata[0]%4==1) PWMoffset1 = extradata[1];
-						if (extradata[0]%4==2) PWMoffset2 = extradata[1];
-						if (extradata[0]%4==3) PWMoffset3 = extradata[1];
+						//if (extradata[0]%4==0) PWMoffset0 = extradata[1];//set the PWM value for the channel (fraction of 256 of which to be on for, *3.3V)
+						//if (extradata[0]%4==1) PWMoffset1 = extradata[1];
+						//if (extradata[0]%4==2) PWMoffset2 = extradata[1];
+						//if (extradata[0]%4==3) PWMoffset3 = extradata[1];
 					end
 					state=READ;
 				end
@@ -638,7 +597,8 @@ rdaddress2,trigthresh2, high,low);
 					state=LOCKIN1;
 				end
 				else begin
-					state=WRITE_EXT1;
+					if (do_usb) state=WRITE_USB_EXT1;
+					else state=WRITE_EXT1;
 				end
 			end
 			if ( (thecounter-theoldcounter) > 100000000 ) begin
@@ -734,32 +694,21 @@ rdaddress2,trigthresh2, high,low);
 				rdaddress = wraddress_triggerpoint - triggerpoint;// - 1;
 				rdaddress2 = rdaddress;
 				thecounterbit=thecounter[clockbitstowait];
-				state=WRITE_EXT1;
+				if (do_usb) state=WRITE_USB_EXT1;
+				else state=WRITE_EXT1;
         end
       end
 		WRITE_EXT1: begin
 			rden = 1;
-			if( (!txBusy||do_usb) && (!usb_txe_busy||!do_usb) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles??
+			if( (!txBusy) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles??
 				//rotate through the 4 outputs
 				case(SendCount[ram_width+1:ram_width])
-				0: begin
-					txData<=ram_output1;
-					usb_dataio<=ram_output1;	
-				end
-				1: begin
-					txData<=ram_output2;
-					usb_dataio<=ram_output2;	
-				end
-				2: begin
-					txData<=ram_output3;
-					usb_dataio<=ram_output3;	
-				end
-				3: begin
-					txData<=ram_output4;
-					usb_dataio<=ram_output4;	
-				end
+				0: txData<=ram_output1;
+				1: txData<=ram_output2;
+				2: txData<=ram_output3;
+				3: txData<=ram_output4;
 				endcase
-				if (do_usb) usb_wr<= 1; else txStart<= 1;				
+				txStart<= 1;				
 				SendCount = SendCount + (2**sendincrement);
 				rdaddress = rdaddress + (2**sendincrement);
 				rdaddress2 = rdaddress;
@@ -777,8 +726,8 @@ rdaddress2,trigthresh2, high,low);
 			end
 		end
 		WRITE_EXT2: begin
-			if( !do_usb || (thecounter[clockbitstowait]==thecounterbit) ) begin // wait a few clock cycles in usb mode??
-				if (do_usb) usb_wr<= 0; else txStart<= 0;			
+			if( thecounter[clockbitstowait]==thecounterbit ) begin // wait a few clock cycles??
+				txStart<= 0;			
 				if(SendCount==0) begin 
 					rden = 0;
 					if (autorearm) begin
@@ -793,6 +742,57 @@ rdaddress2,trigthresh2, high,low);
 						screenwren = 1;
 					end
 					state=WRITE_EXT1;
+				end
+			end
+		end
+		
+		WRITE_USB_EXT1: begin
+			rden = 1;
+			if( (!usb_txe_busy) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles??
+				//rotate through the 4 outputs
+				case(SendCount[ram_width+1:ram_width])
+				0: usb_dataio<=ram_output1;	
+				1: usb_dataio<=ram_output2;	
+				2: usb_dataio<=ram_output3;
+				3: usb_dataio<=ram_output4;	
+				endcase
+				SendCount = SendCount + (2**sendincrement);
+				rdaddress = rdaddress + (2**sendincrement);
+				rdaddress2 = rdaddress;
+				if (samplestosend>0 && SendCount[ram_width-1:0]>=samplestosend) begin
+					SendCount[ram_width-1:0]=0;
+					SendCount[ram_width+1:ram_width] = (SendCount[ram_width+1:ram_width] + 1);
+					rdaddress = wraddress_triggerpoint - triggerpoint;// - 1;
+					rdaddress2 = rdaddress;
+				end
+				state=WRITE_USB_EXT2;
+			end
+			if ( (thecounter-theoldcounter) > 100000000 ) begin
+				rden = 0;
+				state=READ;//timeout!
+			end
+		end
+		WRITE_USB_EXT2: begin
+				usb_wr<= 0;			
+				state=WRITE_USB_EXT3;
+		end
+		WRITE_USB_EXT3: begin
+			if( thecounter[clockbitstowait]!=thecounterbit ) begin // wait a few clock cycles??
+				usb_wr<= 1;	
+				if(SendCount==0) begin 
+					rden = 0;
+					if (autorearm) begin
+						//tell them all to prime the trigger
+						get_ext_data=1;
+					end
+					state=READ;
+				end
+				else begin
+					if ( (rdaddress- wraddress_triggerpoint-64)>=0 && (rdaddress-wraddress_triggerpoint+64)<128 ) begin //update display // - triggerpoint ??
+						if (SendCount[ram_width+1:ram_width]==chanforscreen) screencolumndata[rdaddress - wraddress_triggerpoint - 64]=(63-txData[7:2]);//store most significant 6 bits
+						screenwren = 1;
+					end
+					state=WRITE_USB_EXT1;
 				end
 			end
 		end
@@ -882,7 +882,47 @@ rdaddress2,trigthresh2, high,low);
 		
     endcase
 	 
-  end
+  end  
+  
+  //I2C, from https://eewiki.net/pages/viewpage.action?pageId=10125324
+  always @(posedge clk) begin
+   case (i2cstate)
+		READ: begin
+			i2c_ena<=0;
+			if (i2cgo) begin
+				i2cstate=I2CWAIT;
+			end
+		end
+		I2CWAIT: begin
+			if (~i2c_busy) begin
+				//i2c_addr set elsewhere first
+				i2c_rw = 0;
+				i2c_datawr = i2cdata[0];
+				//i2c_datacounttosend set elsewhere first
+				i2c_datacount=1;
+				//i2c_datard = 
+				i2cstate=I2CSEND1;
+			end
+		end
+		I2CSEND1: begin
+			i2c_ena = 1;
+			if (i2c_datacount >= i2c_datacounttosend) begin
+				i2cstate=READ; //sets i2c_ena back to 0
+			end
+			else if (i2c_busy) begin
+				i2c_datawr = i2cdata[i2c_datacount];
+				i2cstate=I2CSEND2;
+			end
+		end
+		I2CSEND2: begin
+			if (~i2c_busy) begin
+				//i2c_ackerror
+				i2c_datacount = i2c_datacount+1;
+				i2cstate=I2CSEND1;
+			end
+		end
+	endcase
+	end
   
   	//update display
 	reg [5:0] columndata;
@@ -920,8 +960,7 @@ rdaddress2,trigthresh2, high,low);
 		end
 		if (row==6 & !trigDebug) begin
 			if (myid>=screenaddr[6:1] && !screenaddr[0]) screendata = 8'hfa;
-		end
-	
+		end	
 	end
 	
 endmodule

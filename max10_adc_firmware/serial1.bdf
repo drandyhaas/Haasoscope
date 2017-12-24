@@ -687,7 +687,7 @@ agreement for further details.
 	(output)
 	(rect 752 1104 928 1120)
 	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
-	(text "high" (rect 90 0 110 12)(font "Arial" ))
+	(text "debug1" (rect 90 0 125 12)(font "Arial" ))
 	(pt 0 8)
 	(drawing
 		(line (pt 0 8)(pt 52 8))
@@ -703,7 +703,7 @@ agreement for further details.
 	(output)
 	(rect 752 1120 928 1136)
 	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
-	(text "low" (rect 90 0 105 12)(font "Arial" ))
+	(text "debug2" (rect 90 0 125 12)(font "Arial" ))
 	(pt 0 8)
 	(drawing
 		(line (pt 0 8)(pt 52 8))
@@ -3307,15 +3307,15 @@ agreement for further details.
 	(port
 		(pt 360 768)
 		(output)
-		(text "high" (rect 0 0 20 12)(font "Arial" ))
-		(text "high" (rect 323 763 339 775)(font "Arial" ))
+		(text "debug1" (rect 0 0 35 12)(font "Arial" ))
+		(text "debug1" (rect 310 763 339 775)(font "Arial" ))
 		(line (pt 360 768)(pt 344 768))
 	)
 	(port
 		(pt 360 784)
 		(output)
-		(text "low" (rect 0 0 15 12)(font "Arial" ))
-		(text "low" (rect 327 779 339 791)(font "Arial" ))
+		(text "debug2" (rect 0 0 35 12)(font "Arial" ))
+		(text "debug2" (rect 310 779 339 791)(font "Arial" ))
 		(line (pt 360 784)(pt 344 784))
 	)
 	(parameter
