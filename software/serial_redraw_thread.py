@@ -12,7 +12,7 @@ import serial.tools.list_ports
 num_board = 1 # Number of Haasoscope boards to read out
 clkrate=125.0 # ADC sample rate in MHz
 ram_width = 12 # width in bits of sample ram to use (9==512 samples, 12(max)==4096 samples)
-max10adcchans = [(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1 (triggered by main ADC!), 111=pin6, ..., 118=pin14, 119=temp
+max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1 (triggered by main ADC!), 111=pin6, ..., 118=pin14, 119=temp
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
 
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
@@ -127,8 +127,10 @@ class DynamicUpdate():
         ser.write(chr(sendincrement))
         print "send increment is",sendincrement
     
-    def telltickstowait(self,ds): #usually downsample+4
+    def telltickstowait(self): #usually downsample+4
         #tell it the number of clock ticks to wait, log2, between sending bytes
+        ds=self.downsample/3
+        if self.dousb: ds=2
         ser.write(chr(125))
         ser.write(chr(ds))
         print "clockbitstowait is",ds
@@ -193,6 +195,12 @@ class DynamicUpdate():
             print "Set PWM rate to",level," : ",b1,b0,256*b0+b1
         
     def setPWMlevel(self,chan,level):
+        if level>=4096: 
+            print "level can't be bigger than 2**12-1=4095"
+            level=4095
+        if level<0: 
+            print "level can't be less than 0"
+            level=0
         self.setdac(chan,level)
         self.chanlevel[chan]=level
         if not self.firstdrawtext: self.drawtext()
@@ -233,9 +241,9 @@ class DynamicUpdate():
         #time.sleep(.1) #pause to make sure other SPI wriitng is done
     
     #These hold the state of the IO expanders
-    a20= int('f0',16) # oversamp (set first char to 0 to send 0->2 and 1->3) / gain (set second char to 0 for low gain)
-    b20= int('0f',16)  # shdn (set first char to 0 to turn on) / ac coupling (f is DC, 0 is AC)
-    a21= int('f0',16) # ledbase / leds
+    a20= int('0f',16) # supergain (set first char to 0 for normal gain) / gain (set second char to 0 for low gain)
+    b20= int('4f',16)  # shdn (set first bit to 0 to turn on) and oversamp (set bits 1,2 to 0 to send 0->2 and 1->3) / ac coupling (f is DC, 0 is AC)
+    a21= int('00',16) # leds (on is 1)
     b21= int('00',16)# free pins
     
     # testBit() returns a nonzero result, 2**offset, if the bit at 'offset' is one.
@@ -328,10 +336,9 @@ class DynamicUpdate():
             print "usb connection not available"
         else:
             self.dousb = not self.dousb
-            if (self.dousb): self.telltickstowait(self.downsample+5)
-            else: self.telltickstowait(self.downsample+4)
             ser.write(chr(137))
             print "dousb toggled to",self.dousb
+            self.telltickstowait()
     
     trigsactive=np.ones(num_board*num_chan_per_board, dtype=int)
     def toggletriggerchan(self,tp):
@@ -401,7 +408,7 @@ class DynamicUpdate():
     
     def telldownsample(self,ds):
         #tell it the amount to downsample, log2... so 0 (none), 1(factor 2), 2(factor 4), etc.
-        if ds>13: print "downsample >13 doesn't work well..."; return False
+        if ds>20: print "downsample >20 doesn't work well..."; return False
         if ds<0: print "downsample can't be <0 !"; return False
         ser.write(chr(124))
         ser.write(chr(ds))
@@ -416,7 +423,7 @@ class DynamicUpdate():
             self.telllockinnumtoshift(self.numtoshift)
         else:
             self.telllockinnumtoshift(0) # tells the FPGA to not send lockin info    
-        self.telltickstowait(self.downsample+4)
+        self.telltickstowait()
         self.setxaxis()
         return True # successful (parameter within OK range)
 
@@ -528,17 +535,21 @@ class DynamicUpdate():
             return
         except TypeError: pass
     
-    def onscroll(self,event):
-         #print event
+    def adjustvertical(self,up):
          amount=10
          if self.keyShift: amount*=5
          if self.gain[self.selectedchannel]==1: #low gain
              amount*=10
-         if event.button=='up':
+         if up:
              self.chanlevel = self.chanlevel - amount
          else:
              self.chanlevel = self.chanlevel + amount
          self.setPWMlevel(self.selectedchannel,self.chanlevel[self.selectedchannel])
+    
+    def onscroll(self,event):
+         #print event
+         if event.button=='up': self.adjustvertical(True)
+         else: self.adjustvertical(False)
         
     def onrelease(self,event): # a key was released
         if event.key=="shift": self.keyShift=False;return
@@ -634,6 +645,8 @@ class DynamicUpdate():
             elif event.key=="g": self.dogrid=not self.dogrid;print "dogrid toggled",self.dogrid; return
             elif event.key=="right": self.telldownsample(self.downsample+1); return
             elif event.key=="left": self.telldownsample(self.downsample-1); return
+            elif event.key=="up": self.adjustvertical(True); return
+            elif event.key=="down": self.adjustvertical(False); return
             elif event.key=="D": self.keydownsample=True;self.tempdownsample=0;print "now enter downsample amount, then enter";return
             elif event.key=="S": self.keySPI=True;self.SPIval=0;print "now enter SPI code, then enter";return
             elif event.key=="F": self.keyFFT=True;self.fftchantemp=0;print "now enter channel to fft, then enter:";return
@@ -1074,7 +1087,7 @@ class DynamicUpdate():
             self.tellsamplesmax10adc()
             self.tellsamplessend()
             self.tellbytesskip()
-            self.telldownsample(self.downsample); self.telltickstowait(self.downsample+4)
+            self.telldownsample(self.downsample); self.telltickstowait()
             self.settriggertime(self.triggertimethresh)
             self.tellSPIsetup(0) #0.9V CM but not connected
             self.tellSPIsetup(11) #offset binary output
