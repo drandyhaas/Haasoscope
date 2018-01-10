@@ -98,11 +98,11 @@ set_global_assignment -name FLOW_ENABLE_POWER_ANALYZER ON
 set_global_assignment -name POWER_DEFAULT_INPUT_IO_TOGGLE_RATE "12.5 %"
 set_location_assignment PIN_27 -to clock_ext_osc
 set_location_assignment PIN_26 -to clock_in
-set_location_assignment PIN_131 -to CD -disable
-set_location_assignment PIN_140 -to CLKO -disable
-set_location_assignment PIN_132 -to CS -disable
-set_location_assignment PIN_135 -to DO -disable
-set_location_assignment PIN_134 -to RSTO -disable
+set_location_assignment PIN_114 -to CD -disable
+set_location_assignment PIN_110 -to CLKO -disable
+set_location_assignment PIN_118 -to CS -disable
+set_location_assignment PIN_111 -to DO -disable
+set_location_assignment PIN_113 -to RSTO -disable
 set_parameter -name SERIAL_BAUD_RATE 1500000
 set_parameter -name SERIAL_BAUD_RATE_ARDUINO 9600
 set_location_assignment PIN_22 -to outsel_out

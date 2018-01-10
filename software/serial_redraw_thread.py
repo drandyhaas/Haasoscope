@@ -60,8 +60,8 @@ class DynamicUpdate():
     
     doI2C=True
     doDAC=True
-    lowdaclevel=1200
-    highdaclevel=1500
+    lowdaclevel=1900
+    highdaclevel=2380
     chanlevel=np.ones(num_board*num_chan_per_board)*lowdaclevel
         
     #will grab the next keys as input
@@ -78,6 +78,12 @@ class DynamicUpdate():
     keyShift=False
     keyAlt=False
     keyControl=False
+    
+    #These hold the state of the IO expanders
+    a20= int('f0',16) # oversamp (set bits 0,1 to 0 to send 0->2 and 1->3) / gain (set second char to 0 for low gain)
+    b20= int('0f',16)  # shdn (set first char to 0 to turn on) / ac coupling (set second char to f for DC, 0 for AC)
+    a21= int('00',16) # leds (on is 1)
+    b21= int('00',16)# free pins
     
     def tellrolltrig(self,rt):
         #tell them to roll the trigger (a self-trigger each ~second), or not
@@ -239,12 +245,6 @@ class DynamicUpdate():
         ser.write(chr(myb[0])); ser.write(chr(myb[1])); #write it!
         print "Tell SPI setup:",format(myb[0],'02x'),format(myb[1],'02x')
         #time.sleep(.1) #pause to make sure other SPI wriitng is done
-    
-    #These hold the state of the IO expanders
-    a20= int('0f',16) # supergain (set first char to 0 for normal gain) / gain (set second char to 0 for low gain)
-    b20= int('4f',16)  # shdn (set first bit to 0 to turn on) and oversamp (set bits 1,2 to 0 to send 0->2 and 1->3) / ac coupling (f is DC, 0 is AC)
-    a21= int('00',16) # leds (on is 1)
-    b21= int('00',16)# free pins
     
     # testBit() returns a nonzero result, 2**offset, if the bit at 'offset' is one.
     def testBit(self,int_type, offset):
@@ -1094,6 +1094,9 @@ class DynamicUpdate():
             #tellSPIsetup(12) #offset binary output and divide clock by 2
             self.tellSPIsetup(32) # non-multiplexed output
             self.setupi2c() # sets all ports to be outputs
+            if self.doDAC: 
+                for c in np.arange(0,num_board*num_chan_per_board):
+                    self.setPWMlevel(c,self.lowdaclevel)
             self.on_launch()
             x=0; oldtime=time.clock(); tinterval=100.
             while 1:
