@@ -4147,31 +4147,9 @@ agreement for further details.
 	(pt 312 96)
 )
 (connector
-	(text "clk_mainadc2" (rect 802 -512 869 -500)(font "Arial" ))
-	(pt 792 -496)
-	(pt 864 -496)
-)
-(connector
-	(text "din2[7..0]" (rect -78 -608 -32 -596)(font "Arial" ))
-	(pt -16 -592)
-	(pt -88 -592)
-	(bus)
-)
-(connector
-	(text "din4[7..0]" (rect 802 -608 848 -596)(font "Arial" ))
-	(pt 792 -592)
-	(pt 864 -592)
-	(bus)
-)
-(connector
 	(text "clk_mainadc2" (rect 362 -512 429 -500)(font "Arial" ))
 	(pt 424 -496)
 	(pt 352 -496)
-)
-(connector
-	(text "clk_mainadc" (rect -78 -512 -17 -500)(font "Arial" ))
-	(pt -16 -496)
-	(pt -88 -496)
 )
 (connector
 	(pt 1344 376)
@@ -4468,6 +4446,28 @@ agreement for further details.
 (connector
 	(pt 752 1128)
 	(pt 872 1128)
+)
+(connector
+	(text "din1[7..0]" (rect -78 -608 -32 -596)(font "Arial" ))
+	(pt -16 -592)
+	(pt -88 -592)
+	(bus)
+)
+(connector
+	(text "din3[7..0]" (rect 802 -608 848 -596)(font "Arial" ))
+	(pt 792 -592)
+	(pt 864 -592)
+	(bus)
+)
+(connector
+	(text "clk_mainadc2" (rect -78 -512 -11 -500)(font "Arial" ))
+	(pt -16 -496)
+	(pt -88 -496)
+)
+(connector
+	(text "clk_mainadc" (rect 802 -512 863 -500)(font "Arial" ))
+	(pt 792 -496)
+	(pt 864 -496)
 )
 (junction (pt 56 328))
 (junction (pt 56 392))

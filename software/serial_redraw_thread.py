@@ -136,7 +136,7 @@ class DynamicUpdate():
     def telltickstowait(self): #usually downsample+4
         #tell it the number of clock ticks to wait, log2, between sending bytes
         ds=self.downsample/3
-        if self.dousb: ds=2
+        if self.dousb: ds=1
         ser.write(chr(125))
         ser.write(chr(ds))
         print "clockbitstowait is",ds
@@ -538,6 +538,7 @@ class DynamicUpdate():
     def adjustvertical(self,up):
          amount=10
          if self.keyShift: amount*=5
+         if self.keyControl: amount/=10
          if self.gain[self.selectedchannel]==1: #low gain
              amount*=10
          if up:
@@ -964,8 +965,7 @@ class DynamicUpdate():
         
     def getdata(self,board):
         ser.write(chr(10+board))
-        if (self.db): print "asked for data from board",board,time.clock()
-        
+        if (self.db): print "asked for data from board",board,time.clock()        
         if self.dolockin: 
             rslt = ser.read(16)
             byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
@@ -991,8 +991,12 @@ class DynamicUpdate():
                 if False:
                     print ampl_fpga.round(2), phase_fpga.round(2), "<------ fpga "
             else: print "getdata asked for",16,"lockin bytes and got",len(rslt),"from board",board        
-        if self.dousb: rslt = usbser.read(num_bytes)
-        else: rslt = ser.read(num_bytes)
+        if self.dousb:
+            rslt = usbser.read(num_bytes)
+            #usbser.flushInput() #just in case
+        else:
+            rslt = ser.read(num_bytes)
+            #ser.flushInput() #just in case
         if (self.db): print "getdata wanted",num_bytes,"bytes and got",len(rslt),"from board",board,time.clock()
         byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
         if (len(rslt)==num_bytes):
@@ -1092,7 +1096,8 @@ class DynamicUpdate():
             self.tellSPIsetup(0) #0.9V CM but not connected
             self.tellSPIsetup(11) #offset binary output
             #tellSPIsetup(12) #offset binary output and divide clock by 2
-            self.tellSPIsetup(32) # non-multiplexed output
+            self.tellSPIsetup(30) # multiplexed output
+            #self.tellSPIsetup(32) # non-multiplexed output
             self.setupi2c() # sets all ports to be outputs
             if self.doDAC: 
                 for c in np.arange(0,num_board*num_chan_per_board):
@@ -1108,7 +1113,7 @@ class DynamicUpdate():
                     if x%tinterval==0:
                         lastrate = round(tinterval/(time.clock()-oldtime),2)
                         print x,"events,",lastrate,"Hz"; oldtime=time.clock()
-                        if lastrate>100: tinterval=1000.
+                        if lastrate>100: tinterval=200.
                         else: tinterval=100.
                         x=0
                     if self.getone: self.paused=True

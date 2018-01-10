@@ -93,14 +93,15 @@ rdaddress2,trigthresh2, debug1,debug2);
   reg [ram_width-1:0] samplestosend = 0;
   reg [7:0] chanforscreen=0;
   reg autorearm=0;
-  integer thecounter;
-  integer theoldcounter;
-
+  integer thecounter, timeoutcounter;
+  
+  reg [7:0] usb2counter;
   reg do_usb=0;
   input usb_clk60;
   output reg [7:0] usb_dataio;
   input usb_txe_busy;
   output reg usb_wr, usb_siwu;
+  reg usb_txe_not_busy;
   
   //TODO: use memory bits for this, not register space??
   reg [5:0] screencolumndata [128]; //all the screen data, 128 columns of (8 rows of 8 dots)
@@ -130,15 +131,16 @@ rdaddress2,trigthresh2, debug1,debug2);
 	 downsample<=1;
 	 serial_passthrough<=0;
 	 usb_siwu<=1;
-	 debug1<=1;
-	 debug2<=1;
 	 gainsw<=4'b0000;//1 is for 1k resistor (gain 2), 0 is for 100 Ohm resistor (gain .2)
 	 oversamp<=4'b0011;//1 is for _no_ oversampling (and only matters for bits 0 and 1)
+  	 debug1<=0; debug2<=0;
   end
   
   //set the LEDs to indicate my ID
   always @(posedge clk) begin
-	thecounter<=thecounter+1;	
+	thecounter<=thecounter+1;
+	usb_txe_not_busy <= ~usb_txe_busy;
+	debug1 <= usb_txe_not_busy;
 	led4<=0; //on   
    if ( imthelast & thecounter[26]==1'b1 ) begin //flash every few seconds
 		led1<=0;		led2<=0;		led3<=0;//all on
@@ -250,7 +252,7 @@ rdaddress2,trigthresh2, debug1,debug2);
 				if (myid==(readdata-10)) begin
 					//read me out
 					serial_passthrough=0;
-					theoldcounter=thecounter;//start the clock
+					timeoutcounter=0;//start the clock
 					state=WAITING;
 				end
 				else begin
@@ -582,6 +584,7 @@ rdaddress2,trigthresh2, debug1,debug2);
 		end
 		
 		WAITING: begin
+			timeoutcounter=timeoutcounter+1;
 			if (ext_data_ready) begin // can read out
 				SendCount= 0;
 				rdaddress = wraddress_triggerpoint - triggerpoint;// - 1;
@@ -601,12 +604,11 @@ rdaddress2,trigthresh2, debug1,debug2);
 					else state=WRITE_EXT1;
 				end
 			end
-			if ( (thecounter-theoldcounter) > 100000000 ) begin
-				//state=READ;//timeout!
-				ioCount = 0;
-				data[0] = 8'hfb;//send message indicating timeout
-				if (do_usb) state=WRITEUSB1;
-				else state=WRITE1;
+			if ( timeoutcounter > 100000000 ) begin
+				state=READ;//timeout!
+				//ioCount = 0;
+				//data[0] = 8'hfb;//send message indicating timeout
+				//state=WRITE1;
 			end
 		end
 		LOCKIN1: begin
@@ -699,8 +701,9 @@ rdaddress2,trigthresh2, debug1,debug2);
         end
       end
 		WRITE_EXT1: begin
+			timeoutcounter=timeoutcounter+1;
 			rden = 1;
-			if( (!txBusy) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles??
+			if( (!txBusy) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles
 				//rotate through the 4 outputs
 				case(SendCount[ram_width+1:ram_width])
 				0: txData<=ram_output1;
@@ -720,13 +723,13 @@ rdaddress2,trigthresh2, debug1,debug2);
 				end
 				state=WRITE_EXT2;
 			end
-			if ( (thecounter-theoldcounter) > 100000000 ) begin
+			if ( timeoutcounter > 100000000 ) begin
 				rden = 0;
 				state=READ;//timeout!
 			end
 		end
 		WRITE_EXT2: begin
-			if( thecounter[clockbitstowait]==thecounterbit ) begin // wait a few clock cycles??
+			if( thecounter[clockbitstowait]==thecounterbit ) begin
 				txStart<= 0;			
 				if(SendCount==0) begin 
 					rden = 0;
@@ -747,15 +750,24 @@ rdaddress2,trigthresh2, debug1,debug2);
 		end
 		
 		WRITE_USB_EXT1: begin
+			if (usb_txe_not_busy) begin
+				state=WRITE_USB_EXT2;
+				usb2counter<=0;
+			end
+			debug2<=1;
 			rden = 1;
-			if( (!usb_txe_busy) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles??
-				//rotate through the 4 outputs
-				case(SendCount[ram_width+1:ram_width])
-				0: usb_dataio<=ram_output1;	
-				1: usb_dataio<=ram_output2;	
+		end
+		WRITE_USB_EXT2: begin
+			debug2<=0;
+			usb2counter<=usb2counter+1;
+			//rotate through the 4 outputs
+			case(SendCount[ram_width+1:ram_width])
+				0: usb_dataio<=ram_output1;
+				1: usb_dataio<=ram_output2;
 				2: usb_dataio<=ram_output3;
-				3: usb_dataio<=ram_output4;	
-				endcase
+				3: usb_dataio<=ram_output4;
+			endcase
+			if(usb2counter>clockbitstowait) begin // wait a few clock cycles (usb2counter was set to 0 in last state)
 				SendCount = SendCount + (2**sendincrement);
 				rdaddress = rdaddress + (2**sendincrement);
 				rdaddress2 = rdaddress;
@@ -765,19 +777,17 @@ rdaddress2,trigthresh2, debug1,debug2);
 					rdaddress = wraddress_triggerpoint - triggerpoint;// - 1;
 					rdaddress2 = rdaddress;
 				end
-				state=WRITE_USB_EXT2;
-			end
-			if ( (thecounter-theoldcounter) > 100000000 ) begin
-				rden = 0;
-				state=READ;//timeout!
-			end
-		end
-		WRITE_USB_EXT2: begin
-				usb_wr<= 0;			
 				state=WRITE_USB_EXT3;
+			end
 		end
 		WRITE_USB_EXT3: begin
-			if( thecounter[clockbitstowait]!=thecounterbit ) begin // wait a few clock cycles??
+			usb_wr<= 0;
+			usb2counter<=0;
+			state=WRITE_USB_EXT4;
+		end
+		WRITE_USB_EXT4: begin
+			usb2counter<=usb2counter+1;
+			if( (usb2counter>clockbitstowait) ) begin // wait a few clock cycles (usb2counter was set to 0 in last state)
 				usb_wr<= 1;	
 				if(SendCount==0) begin 
 					rden = 0;
@@ -788,11 +798,11 @@ rdaddress2,trigthresh2, debug1,debug2);
 					state=READ;
 				end
 				else begin
+					state=WRITE_USB_EXT1;
 					if ( (rdaddress- wraddress_triggerpoint-64)>=0 && (rdaddress-wraddress_triggerpoint+64)<128 ) begin //update display // - triggerpoint ??
 						if (SendCount[ram_width+1:ram_width]==chanforscreen) screencolumndata[rdaddress - wraddress_triggerpoint - 64]=(63-txData[7:2]);//store most significant 6 bits
 						screenwren = 1;
 					end
-					state=WRITE_USB_EXT1;
 				end
 			end
 		end
@@ -863,7 +873,7 @@ rdaddress2,trigthresh2, debug1,debug2);
 		//just writng out some data bytes over USB
 		WRITEUSB1: begin
 		  newcomdata<=0; //set this back, to just send out data once
-        if (!usb_txe_busy) begin
+        if (usb_txe_not_busy) begin
           usb_dataio = data[ioCount];
 			 usb_wr = 1;
           state = WRITEUSB2;
