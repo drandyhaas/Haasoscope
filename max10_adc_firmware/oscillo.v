@@ -118,12 +118,12 @@ always @(posedge clk_flash) begin
 end
 
 reg [7:0] data_flash1_reg; always @(posedge clk_flash) data_flash1_reg <= data_flash1;
-//reg [7:0] data_flash2_reg; always @(posedge clk_flash) data_flash2_reg <= data_flash2; // no multiplexing
-reg [7:0] data_flash2_reg; always @(negedge clk_flash) data_flash2_reg <= data_flash1; // for multiplexing
+reg [7:0] data_flash2_reg; always @(posedge clk_flash) data_flash2_reg <= data_flash2; // no multiplexing
+//reg [7:0] data_flash2_reg; always @(negedge clk_flash) data_flash2_reg <= data_flash1; // for multiplexing
 
 reg [7:0] data_flash3_reg; always @(posedge clk_flash2) data_flash3_reg <= data_flash3;
-//reg [7:0] data_flash4_reg; always @(posedge clk_flash2) data_flash4_reg <= data_flash4; // no multiplexing
-reg [7:0] data_flash4_reg; always @(negedge clk_flash2) data_flash4_reg <= data_flash3; // for multiplexing
+reg [7:0] data_flash4_reg; always @(posedge clk_flash2) data_flash4_reg <= data_flash4; // no multiplexing
+//reg [7:0] data_flash4_reg; always @(negedge clk_flash2) data_flash4_reg <= data_flash3; // for multiplexing
 
 reg [ram_width-1:0] samplecount;
 output reg [ram_width-1:0] wraddress;
