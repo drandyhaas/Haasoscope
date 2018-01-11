@@ -76,7 +76,7 @@ rdaddress2,trigthresh2, debug1,debug2);
 
   localparam READ=0, SOLVING=1, WAITING=2, WRITE_EXT1=3, WRITE_EXT2=4, WAIT_ADC1=5, WAIT_ADC2=6, WRITE_BYTE1=7, WRITE_BYTE2=8, READMORE=9, 
 	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15,WRITEUSB1=16,WRITEUSB2=17, LOCKIN1=18,LOCKIN2=19,LOCKIN3=20,LOCKINWRITE1=21,LOCKINWRITE2=22,
-	WRITE_USB_EXT1=33, WRITE_USB_EXT2=34, WRITE_USB_EXT3=35, WRITE_USB_EXT4=36;
+	WRITE_USB_EXT1=33, WRITE_USB_EXT2=34, WRITE_USB_EXT3=35, WRITE_USB_EXT4=36, WRITE_USB_EXT5=37;
   integer state,i2cstate;
 
   reg [7:0] myid;
@@ -786,7 +786,7 @@ rdaddress2,trigthresh2, debug1,debug2);
 			state=WRITE_USB_EXT4;
 		end
 		WRITE_USB_EXT4: begin
-			usb2counter<=usb2counter+1;
+			usb2counter=usb2counter+1;
 			if( (usb2counter>clockbitstowait) ) begin // wait a few clock cycles (usb2counter was set to 0 in last state)
 				usb_wr<= 1;	
 				if(SendCount==0) begin 
@@ -795,15 +795,24 @@ rdaddress2,trigthresh2, debug1,debug2);
 						//tell them all to prime the trigger
 						get_ext_data=1;
 					end
-					state=READ;
+					state=WRITE_USB_EXT5;
 				end
 				else begin
+					usb2counter=0;
 					state=WRITE_USB_EXT1;
 					if ( (rdaddress- wraddress_triggerpoint-64)>=0 && (rdaddress-wraddress_triggerpoint+64)<128 ) begin //update display // - triggerpoint ??
 						if (SendCount[ram_width+1:ram_width]==chanforscreen) screencolumndata[rdaddress - wraddress_triggerpoint - 64]=(63-txData[7:2]);//store most significant 6 bits
 						screenwren = 1;
 					end
 				end
+			end
+		end
+		WRITE_USB_EXT5: begin
+			usb_siwu=0;//this sends out the data to the PC immediately, without waiting for the latency timer (16 ms by default!)
+			usb2counter<=usb2counter+1;
+			if( (usb2counter>8) ) begin // wait a few clock cycles (usb2counter was set to 0 in last state)
+				state=READ;
+				usb_siwu=1;
 			end
 		end
 

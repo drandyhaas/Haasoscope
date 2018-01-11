@@ -75,6 +75,7 @@ class DynamicUpdate():
     keyi2c=False
     keyLevel=False
     keyResample=False
+    keyACDC=False
     keyShift=False
     keyAlt=False
     keyControl=False
@@ -463,6 +464,7 @@ class DynamicUpdate():
     def chantext(self):
         text = "chan: "+str(self.selectedchannel)
         text +="\nlevel="+str(self.chanlevel[self.selectedchannel])
+        text +="\nDC coupled="+str(self.acdc[self.selectedchannel])
         #text+="\n"
         #text+="\nmax10chan: "+str(self.selectedmax10channel)
         return text
@@ -536,17 +538,26 @@ class DynamicUpdate():
         except TypeError: pass
     
     def adjustvertical(self,up):
-         amount=10
-         if self.keyShift: amount*=5
-         if self.keyControl: amount/=10
-         if self.gain[self.selectedchannel]==1: #low gain
-             amount*=10
-         if up:
+        amount=10
+        if self.keyShift: amount*=5
+        if self.keyControl: amount/=10
+        print "amount is",amount
+        if self.gain[self.selectedchannel]==1: #low gain
+            amount*=10
+        if up:
              self.chanlevel = self.chanlevel - amount
-         else:
+        else:
              self.chanlevel = self.chanlevel + amount
-         self.setPWMlevel(self.selectedchannel,self.chanlevel[self.selectedchannel])
+        self.setPWMlevel(self.selectedchannel,self.chanlevel[self.selectedchannel])
     
+    acdc=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is dc, 0 is ac
+    def setacdc(self,chan):
+        print "toggling acdc for chan",chan
+        self.b20 = self.toggleBit(self.b20,int(chan))
+        self.sendi2c("20 13 "+ ('%0*x' % (2,self.b20)) ) #port B of IOexp 1
+        self.acdc[chan] = not self.acdc[chan]
+        self.drawtext()
+        
     def onscroll(self,event):
          #print event
          if event.button=='up': self.adjustvertical(True)
@@ -618,6 +629,14 @@ class DynamicUpdate():
                 else:
                     self.i2ctemp=self.i2ctemp+event.key
                     print "i2ctemp",self.i2ctemp; return
+            elif self.keyACDC:
+                if event.key=="enter":          
+                    self.keyACDC=False          
+                    self.setacdc(self.acdctemp)
+                    return
+                else:
+                    self.acdctemp=self.acdctemp+event.key
+                    print "acdctemp",self.acdctemp; return
             elif self.keyLevel:
                 if event.key=="enter":
                     self.keyLevel=False
@@ -648,6 +667,10 @@ class DynamicUpdate():
             elif event.key=="left": self.telldownsample(self.downsample-1); return
             elif event.key=="up": self.adjustvertical(True); return
             elif event.key=="down": self.adjustvertical(False); return
+            elif event.key=="shift+up": self.adjustvertical(True); return
+            elif event.key=="shift+down": self.adjustvertical(False); return
+            elif event.key=="ctrl+up": self.adjustvertical(True); return
+            elif event.key=="ctrl+down": self.adjustvertical(False); return
             elif event.key=="D": self.keydownsample=True;self.tempdownsample=0;print "now enter downsample amount, then enter";return
             elif event.key=="S": self.keySPI=True;self.SPIval=0;print "now enter SPI code, then enter";return
             elif event.key=="F": self.keyFFT=True;self.fftchantemp=0;print "now enter channel to fft, then enter:";return
@@ -655,6 +678,7 @@ class DynamicUpdate():
             elif event.key=="I": self.testi2c(); return 
             elif event.key=="W": self.domaindrawing=not self.domaindrawing; return
             elif event.key=="L": self.keyLevel=True;self.leveltemp="";print "now enter [channel to set level for, level] then enter:";return
+            elif event.key=="/": self.keyACDC=True;self.acdctemp="";print "now enter channel to toggle AC/DC coupling for:";return
             elif event.key=="shift": self.keyShift=True;return
             elif event.key=="alt": self.keyAlt=True;return
             elif event.key=="control": self.keyControl=True;return
@@ -883,7 +907,7 @@ class DynamicUpdate():
             byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
             if debug3: print "\n delay counter data",byte_array[0],"from board",board
             #if debug3: print "other data",bin(byte_array[0])
-        else: print "getdata asked for",num_other_bytes,"delay counter bytes and got",len(rslt)        
+        else: print "getotherdata asked for",num_other_bytes,"delay counter bytes and got",len(rslt)        
         ser.write(chr(133)) #carry counter
         num_other_bytes = 1
         rslt = ser.read(num_other_bytes)
@@ -891,7 +915,7 @@ class DynamicUpdate():
             byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
             if debug3: print " carry counter data",byte_array[0],"from board",board
             #if debug3: print "other data",bin(byte_array[0])
-        else: print "getdata asked for",num_other_bytes,"carry counter bytes and got",len(rslt)
+        else: print "getotherdata asked for",num_other_bytes,"carry counter bytes and got",len(rslt)
     
     def to_int(self,n): # takes a 32 bit decimal number in two's complement and converts to a binary and then to a signed integer
         bin = '{0:32b}'.format(n)
@@ -1103,19 +1127,19 @@ class DynamicUpdate():
                 for c in np.arange(0,num_board*num_chan_per_board):
                     self.setPWMlevel(c,self.lowdaclevel)
             self.on_launch()
-            x=0; oldtime=time.clock(); tinterval=100.
+            self.nevents=0; oldnevents=0; oldtime=time.clock(); tinterval=100.
             while 1:
                 if (self.paused): time.sleep(.1)
                 else:
                     if not self.getchannels(): break
-                    if (self.db): print "done with evt",x,time.clock()
-                    x+=1
-                    if x%tinterval==0:
+                    if (self.db): print "done with evt",self.nevents,time.clock()
+                    self.nevents+=1
+                    if self.nevents-oldnevents >= tinterval:
                         lastrate = round(tinterval/(time.clock()-oldtime),2)
-                        print x,"events,",lastrate,"Hz"; oldtime=time.clock()
-                        if lastrate>100: tinterval=200.
+                        print self.nevents,"events,",lastrate,"Hz"; oldtime=time.clock()
+                        if lastrate>40: tinterval=500.
                         else: tinterval=100.
-                        x=0
+                        oldnevents=self.nevents
                     if self.getone: self.paused=True
                 self.redraw()
                 if not plt.get_fignums(): break # quit when all the plots have been closed
@@ -1144,7 +1168,7 @@ if port!="":
     ser = Serial(port,brate,timeout=btimeout)
     print "connected serial to",port,":",port_description,": timeout",btimeout,"seconds"
 if usbport!="":
-    usbser = Serial(usbport,brate*10,timeout=btimeout)
+    usbser = Serial(usbport,timeout=btimeout)
     print "connected USBserial to",usbport,":",usbport_description,": timeout",btimeout,"seconds"
 listports=True
 if port=="" or listports==True:
