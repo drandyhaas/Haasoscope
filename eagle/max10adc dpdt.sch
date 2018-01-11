@@ -19269,11 +19269,11 @@ www.SparkFun.com SKU : Comp-SMDS</description>
 <wire x1="-4.953" y1="2.413" x2="-4.953" y2="-2.54" width="0.2032" layer="21"/>
 <wire x1="-4.953" y1="-2.54" x2="4.953" y2="-2.54" width="0.2032" layer="21"/>
 <wire x1="4.953" y1="-2.54" x2="4.953" y2="2.413" width="0.2032" layer="21"/>
-<pad name="2" x="-2.54" y="1.2954" drill="0.7874" diameter="1.27"/>
-<pad name="5" x="0" y="1.2954" drill="0.7874" diameter="1.27"/>
+<pad name="2" x="0" y="1.2954" drill="0.7874" diameter="1.27"/>
+<pad name="5" x="0" y="-1.2446" drill="0.7874" diameter="1.27"/>
 <pad name="6" x="2.54" y="-1.27" drill="0.7874" diameter="1.27"/>
 <pad name="4" x="-2.5146" y="-1.2446" drill="0.7874" diameter="1.27"/>
-<pad name="1" x="0" y="-1.27" drill="0.7874" diameter="1.27"/>
+<pad name="1" x="-2.54" y="1.27" drill="0.7874" diameter="1.27"/>
 <pad name="3" x="2.54" y="1.2954" drill="0.7874" diameter="1.27"/>
 <text x="4.5466" y="-2.032" size="0.4064" layer="21" rot="R90">&gt;NAME</text>
 <dimension x1="5" y1="0" x2="-5" y2="0" x3="0" y3="-0.167" textsize="0.8128" layer="37"/>
@@ -23620,6 +23620,7 @@ Footprint unproven</description>
 <wire x1="-233.68" y1="-88.9" x2="-226.06" y2="-88.9" width="0.1524" layer="91"/>
 <wire x1="-226.06" y1="-88.9" x2="-226.06" y2="-83.82" width="0.1524" layer="91"/>
 <junction x="-233.68" y="-88.9"/>
+<label x="-226.06" y="-88.9" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="INA12" class="0">
@@ -24313,6 +24314,7 @@ Footprint unproven</description>
 <junction x="-200.66" y="-88.9"/>
 <pinref part="ST2" gate="G$1" pin="2"/>
 <wire x1="-193.04" y1="-88.9" x2="-193.04" y2="-83.82" width="0.1524" layer="91"/>
+<label x="-193.04" y="-88.9" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="N$15" class="0">
@@ -24350,6 +24352,7 @@ Footprint unproven</description>
 <junction x="-167.64" y="-88.9"/>
 <pinref part="ST3" gate="G$1" pin="2"/>
 <wire x1="-160.02" y1="-88.9" x2="-160.02" y2="-83.82" width="0.1524" layer="91"/>
+<label x="-160.02" y="-88.9" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="INJ4" class="0">
@@ -24366,6 +24369,7 @@ Footprint unproven</description>
 <junction x="-137.16" y="-88.9"/>
 <pinref part="ST4" gate="G$1" pin="2"/>
 <wire x1="-129.54" y1="-88.9" x2="-129.54" y2="-83.82" width="0.1524" layer="91"/>
+<label x="-129.54" y="-88.9" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="N$11" class="0">
