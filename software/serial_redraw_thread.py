@@ -462,8 +462,8 @@ class DynamicUpdate():
         self.figure.canvas.draw()    
         
     def chantext(self):
-        text = "chan: "+str(self.selectedchannel)
-        text +="\nlevel="+str(self.chanlevel[self.selectedchannel])
+        text = "Channel: "+str(self.selectedchannel)
+        text +="\nLevel="+str(self.chanlevel[self.selectedchannel])
         text +="\nDC coupled="+str(self.acdc[self.selectedchannel])
         #text+="\n"
         #text+="\nmax10chan: "+str(self.selectedmax10channel)
@@ -555,7 +555,7 @@ class DynamicUpdate():
         print "toggling acdc for chan",chan
         self.b20 = self.toggleBit(self.b20,int(chan))
         self.sendi2c("20 13 "+ ('%0*x' % (2,self.b20)) ) #port B of IOexp 1
-        self.acdc[chan] = not self.acdc[chan]
+        self.acdc[int(chan)] = not self.acdc[int(chan)]
         self.drawtext()
         
     def onscroll(self,event):
