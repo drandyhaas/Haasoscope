@@ -6,7 +6,7 @@ adcdata,adcready,getadcdata,getadcadr,adcvalid,adcreset,adcramdata,writesamp,wri
 triggerpoint,downsample, screendata,screenwren,screenaddr,screenreset,trigthresh,trigchannels,triggertype,triggertot,
 SPIsend,SPIsenddata,delaycounter,carrycounter,usb_siwu,SPIstate,offset,gainsw,led4,
 i2c_ena,i2c_addr,i2c_rw,i2c_datawr,i2c_datard,i2c_busy,i2c_ackerror,   usb_clk60,usb_dataio,usb_txe_busy,usb_wr,
-rdaddress2,trigthresh2, debug1,debug2);
+rdaddress2,trigthresh2, debug1,debug2,chip_id);
    input clk;
 	input[7:0] rxData;
    input rxReady;
@@ -62,6 +62,7 @@ rdaddress2,trigthresh2, debug1,debug2);
 	output reg[3:0] gainsw;
 	reg[3:0] oversamp;
 	output reg debug1,debug2;
+	input [63:0] chip_id;
 	
 	output reg i2c_ena;
 	output reg [6:0] i2c_addr;
@@ -75,7 +76,8 @@ rdaddress2,trigthresh2, debug1,debug2);
 	reg i2cgo=0;
 
   localparam READ=0, SOLVING=1, WAITING=2, WRITE_EXT1=3, WRITE_EXT2=4, WAIT_ADC1=5, WAIT_ADC2=6, WRITE_BYTE1=7, WRITE_BYTE2=8, READMORE=9, 
-	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15,WRITEUSB1=16,WRITEUSB2=17, LOCKIN1=18,LOCKIN2=19,LOCKIN3=20,LOCKINWRITE1=21,LOCKINWRITE2=22,
+	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15, //WRITEUSB1=16,WRITEUSB2=17, 
+	LOCKIN1=18,LOCKIN2=19,LOCKIN3=20,LOCKINWRITE1=21,LOCKINWRITE2=22,
 	WRITE_USB_EXT1=33, WRITE_USB_EXT2=34, WRITE_USB_EXT3=35, WRITE_USB_EXT4=36, WRITE_USB_EXT5=37;
   integer state,i2cstate;
 
@@ -107,10 +109,8 @@ rdaddress2,trigthresh2, debug1,debug2);
   reg [5:0] screencolumndata [128]; //all the screen data, 128 columns of (8 rows of 8 dots)
   
   //For writing out data in WRITE1,2
-  localparam LEN = 1;//number of bytes to write out
-  localparam LENMAX = LEN - 1;
-  integer ioCount;
-  reg[7:0] data[0:LENMAX];
+  integer ioCount, ioCountToSend;
+  reg[7:0] data[0:15];
   
   //For lockin calculations
   reg [7:0] numlockinbytes=16;//number of bytes of info to send for lockin info
@@ -205,7 +205,8 @@ rdaddress2,trigthresh2, debug1,debug2);
 		  SPIsend<=0;
 		  i2cgo=0;
 		  usb_wr<=1;
-        if (rxReady) begin
+        ioCount = 0;
+       if (rxReady) begin
 			 readdata = rxData;
           state = SOLVING;
         end
@@ -246,8 +247,7 @@ rdaddress2,trigthresh2, debug1,debug2);
 				comdata=(readdata+1); // give the next one an ID one larger
 				newcomdata=1; //pass it on
 				state=READ;
-			end			
-			
+			end
 			else if (readdata > 9 && readdata < 20) begin // got character "10-19"
 				if (myid==(readdata-10)) begin
 					//read me out
@@ -263,12 +263,24 @@ rdaddress2,trigthresh2, debug1,debug2);
 					state=READ;
 				end
 			end
-			
 			else if (readdata > 19 && readdata < 30) begin // got character "20-29"
 				if (myid==(readdata-20)) imthelast=1; // I'm the last one
 				else imthelast=0;
 				comdata=readdata;
 				newcomdata=1; //pass it on
+				state=READ;
+			end
+			else if (readdata > 29 && readdata < 40) begin // got character "30-39"
+				if (myid==(readdata-30)) begin
+					//make me active
+					serial_passthrough=0;
+				end
+				else begin
+					//pass it on, and set serial to "passthrough mode"
+					serial_passthrough=1;
+					comdata=readdata;
+					newcomdata=1; //pass it on
+				end
 				state=READ;
 			end
 			
@@ -442,7 +454,7 @@ rdaddress2,trigthresh2, debug1,debug2);
 					state=READ;
 				end
 				else begin
-					ioCount = 0;
+					ioCountToSend = 1;
 					data[0]=delaycounter;
 					state=WRITE1;
 				end
@@ -454,7 +466,7 @@ rdaddress2,trigthresh2, debug1,debug2);
 					state=READ;
 				end
 				else begin
-					ioCount = 0;
+					ioCountToSend = 1;
 					data[0]=carrycounter;
 					state=WRITE1;
 				end
@@ -571,6 +583,25 @@ rdaddress2,trigthresh2, debug1,debug2);
 						state=READ;
 					end
 				end
+			end			
+			else if (readdata==142) begin // send the uniqueID
+				if (serial_passthrough) begin
+					comdata=readdata;
+					newcomdata=1; //pass it on
+					state=READ;
+				end
+				else begin
+					data[0]=chip_id[7+8*0:8*0];
+					data[1]=chip_id[7+8*1:8*1];
+					data[2]=chip_id[7+8*2:8*2];
+					data[3]=chip_id[7+8*3:8*3];
+					data[4]=chip_id[7+8*4:8*4];
+					data[5]=chip_id[7+8*5:8*5];
+					data[6]=chip_id[7+8*6:8*6];
+					data[7]=chip_id[7+8*7:8*7];
+					ioCountToSend = 8; // send 8 bytes
+					state=WRITE1;
+				end
 			end
 			else state=READ; // if we got some other command, just ignore it
       end
@@ -606,7 +637,7 @@ rdaddress2,trigthresh2, debug1,debug2);
 			end
 			if ( timeoutcounter > 100000000 ) begin
 				state=READ;//timeout!
-				//ioCount = 0;
+				//ioCountToSend = 1;
 				//data[0] = 8'hfb;//send message indicating timeout
 				//state=WRITE1;
 			end
@@ -870,34 +901,33 @@ rdaddress2,trigthresh2, debug1,debug2);
       end
       WRITE2: begin
         txStart = 0;
-        if (ioCount != LENMAX) begin
+        if (ioCount < ioCountToSend-1) begin
           ioCount = ioCount + 1;
           state = WRITE1;
         end else begin
-          ioCount = 0;
           state = READ;
         end
       end
 		
-		//just writng out some data bytes over USB
-		WRITEUSB1: begin
-		  newcomdata<=0; //set this back, to just send out data once
-        if (usb_txe_not_busy) begin
-          usb_dataio = data[ioCount];
-			 usb_wr = 1;
-          state = WRITEUSB2;
-        end
-      end
-      WRITEUSB2: begin
-        usb_wr = 0;
-        if (ioCount != LENMAX) begin
-          ioCount = ioCount + 1;
-          state = WRITEUSB1;
-        end else begin
-          ioCount = 0;
-          state = READ;
-        end
-      end
+//		//just writng out some data bytes over USB
+//		WRITEUSB1: begin
+//		  newcomdata<=0; //set this back, to just send out data once
+//        if (usb_txe_not_busy) begin
+//          usb_dataio = data[ioCount];
+//			 usb_wr = 1;
+//          state = WRITEUSB2;
+//        end
+//      end
+//      WRITEUSB2: begin
+//        usb_wr = 0;
+//        if (ioCount != LENMAX) begin
+//          ioCount = ioCount + 1;
+//          state = WRITEUSB1;
+//        end else begin
+//          ioCount = 0;
+//          state = READ;
+//        end
+//      end
 		
     endcase
 	 

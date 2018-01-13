@@ -69,7 +69,7 @@ class DynamicUpdate():
     gain=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is low gain, 0 is high gain (x10)
     supergain=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is normal gain, 0 is super gain (x100)
     acdc=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is dc, 0 is ac
-    trigsactive=np.ones(num_board*num_chan_per_board, dtype=int)
+    trigsactive=np.ones(num_board*num_chan_per_board, dtype=int) # 1 means triggering on that channel
     
     #These hold the state of the IO expanders
     a20= int('f0',16) # oversamp (set bits 0,1 to 0 to send 0->2 and 1->3) / gain (set second char to 0 for low gain)
@@ -331,6 +331,20 @@ class DynamicUpdate():
         if (self.db): print "priming trigger",time.clock()
         if (self.db): time.sleep(.1)
         ser.write(chr(100)) # prime the trigger one last time
+    
+    def getIDs(self):
+        debug3=True
+        self.uniqueID=[]
+        for n in range(num_board):
+            ser.write(chr(30+n)) #make the next board active (serial_passthrough 0) 
+            ser.write(chr(142)) #request the unique ID
+            num_other_bytes = 8
+            rslt = ser.read(num_other_bytes)
+            if (len(rslt)==num_other_bytes):
+                byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
+                self.uniqueID.append( ' '.join(format(x, '02x') for x in byte_array) )
+                if debug3: print self.uniqueID[n],"for board",n
+            else: print "getID asked for",num_other_bytes,"bytes and got",len(rslt),"from board",n
     
     def togglesupergainchan(self,chan):
         origline,legline,channum = self.lined[chan]
@@ -636,6 +650,7 @@ class DynamicUpdate():
             elif event.key=="a": self.average = not self.average;print "average",self.average; return
             elif event.key=="A": self.toggleautorearm(); return
             elif event.key=="U": self.toggledousb(); return
+            elif event.key=="u": self.getIDs(); return
             elif event.key=="0": self.oversample02 = not self.oversample02;print "oversample02 is now",self.oversample02; self.oversamp(0); return # TODO: allow for more boards
             elif event.key=="1": self.oversample13 = not self.oversample13;print "oversample13 is now",self.oversample13; self.oversamp(1); return
             elif event.key=="t": self.rising=not self.rising;self.settriggertype(self.rising);print "rising toggled",self.rising; return
@@ -889,7 +904,7 @@ class DynamicUpdate():
             byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
             if debug3: print "\n delay counter data",byte_array[0],"from board",board
             #if debug3: print "other data",bin(byte_array[0])
-        else: print "getotherdata asked for",num_other_bytes,"delay counter bytes and got",len(rslt)        
+        else: print "getotherdata asked for",num_other_bytes,"delay counter bytes and got",len(rslt)
         ser.write(chr(133)) #carry counter
         num_other_bytes = 1
         rslt = ser.read(num_other_bytes)

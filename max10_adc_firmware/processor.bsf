@@ -186,6 +186,13 @@ agreement for further details.
 		(line (pt 0 384)(pt 16 384)(line_width 1))
 	)
 	(port
+		(pt 0 400)
+		(input)
+		(text "chip_id[63..0]" (rect 0 0 51 12)(font "Arial" ))
+		(text "chip_id[63..0]" (rect 21 395 72 407)(font "Arial" ))
+		(line (pt 0 400)(pt 16 400)(line_width 3))
+	)
+	(port
 		(pt 360 32)
 		(output)
 		(text "txStart" (rect 0 0 25 12)(font "Arial" ))
