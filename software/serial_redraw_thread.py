@@ -1079,11 +1079,8 @@ class DynamicUpdate():
             print amplwindowfloat.round(2), phasewindowfloat.round(2), "<------ offline with window float\n"
         self.lockinampo = amplwindowfloat
         self.lockinphaseo = phasewindowfloat
-        
-    def getdata(self,board):
-        ser.write(chr(10+board))
-        if (self.db): print "asked for data from board",board,time.clock()        
-        if self.dolockin: 
+    
+    def getlockingdata(self,board):
             rslt = ser.read(16)
             byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
             if (len(rslt)==16):
@@ -1108,6 +1105,11 @@ class DynamicUpdate():
                 if False:
                     print ampl_fpga.round(2), phase_fpga.round(2), "<------ fpga "
             else: print "getdata asked for",16,"lockin bytes and got",len(rslt),"from board",board        
+        
+    def getdata(self,board):
+        ser.write(chr(10+board))
+        if (self.db): print "asked for data from board",board,time.clock()        
+        if self.dolockin: self.getlockindata(board)
         if self.dousb:
             rslt = usbser.read(num_bytes)
             #usbser.flushInput() #just in case
