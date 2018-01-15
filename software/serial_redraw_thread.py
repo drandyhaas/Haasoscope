@@ -66,10 +66,13 @@ class DynamicUpdate():
     
     doI2C=True
     doDAC=True
+    yscale = 7.5 # Vpp for full scale
+    min_y = -yscale/2. #-4.0 #0 ADC
+    max_y = yscale/2. #4.0 #256 ADC
     lowdaclevel0=1900 # these are default values for each gain combination
     highdaclevel0=2300
-    lowdaclevelsuper0=110
-    highdaclevelsuper0=40
+    lowdaclevelsuper0=105
+    highdaclevelsuper0=35
     lowdaclevel=np.ones(num_board*num_chan_per_board)*lowdaclevel0 # these hold the user set levels for each gain combination
     highdaclevel=np.ones(num_board*num_chan_per_board)*highdaclevel0
     lowdaclevelsuper=np.ones(num_board*num_chan_per_board)*lowdaclevelsuper0
@@ -355,7 +358,7 @@ class DynamicUpdate():
             if (len(rslt)==num_other_bytes):
                 byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
                 self.uniqueID.append( ''.join(format(x, '02x') for x in byte_array) )
-                if debug3: print "got uniqueID",self.uniqueID[n],"for board",n
+                if debug3: print "got uniqueID",self.uniqueID[n],"for board",n,", len is now",len(self.uniqueID)
             else: print "getID asked for",num_other_bytes,"bytes and got",len(rslt),"from board",n
     
     def togglesupergainchan(self,chan):
@@ -476,17 +479,14 @@ class DynamicUpdate():
             self.max_x = xscale/1e6
             self.xscaling=1.e6
         self.ax.set_xlim(self.min_x, self.max_x)
-        nticks=8
-        self. ax.xaxis.set_ticks(np.arange(self.min_x*1000/1024, self.max_x*1000/1024+xscale/1e6/100, (self.max_x*1000/1024-self.min_x*1000/1024)/nticks)) 
+        self.ax.xaxis.set_major_locator(plt.MultipleLocator( (self.max_x*1000/1024-self.min_x*1000/1024)/8 ))
         self.figure.canvas.draw()
     
     def setyaxis(self):
-        self.min_y = -5.0 #0
-        self.max_y = 5.0 #256
         self.ax.set_ylim(self.min_y, self.max_y)
         self.ax.set_ylabel("Volts") #("ADC value")
-        nticks=10
-        self. ax.yaxis.set_ticks(np.arange( self.min_y, self.max_y+0.1, (self.max_y-self.min_y)/nticks ) )
+        self.ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
+        self.ax.yaxis.set_minor_locator(plt.MultipleLocator(0.5))
         #self.ax.set_autoscaley_on(True)
         self.figure.canvas.draw()    
         
@@ -638,6 +638,9 @@ class DynamicUpdate():
             self.readcalibforboard(board)
     def readcalibforboard(self,board):
         sc = board*num_chan_per_board
+        if len(self.uniqueID)<=board:
+            print "failed to get board ID for board",board
+            return
         print "reading calibrations for board",board,", channels",sc,"-",sc+4
         fname = "calib_"+self.uniqueID[board]+".json.txt"
         try:
@@ -809,8 +812,8 @@ class DynamicUpdate():
                 line, = self.ax.plot([],[], '-', label="chan "+str(l), color=c, linewidth=1.0, alpha=.9)
             self.lines.append(line)
         #Other stuff
-        self.ax.grid()
         self.setxaxis(); self.setyaxis();
+        self.ax.grid()
         self.vline=0
         otherline , = self.ax.plot([self.vline, self.vline], [-2, 2], 'k--', lw=1)#,label='trigger time vert')
         self.otherlines.append(otherline)
@@ -868,7 +871,7 @@ class DynamicUpdate():
                 if (self.db): print "drawing adc line",thechan
                 if len(theydata)<=l: print "don't have channel",l,"on board",board; return
                 xdatanew = (self.xdata-num_samples/2.)*(1000.0*pow(2,self.downsample)/clkrate/self.xscaling)
-                ydatanew=(127-theydata[l])*(10./256.) # got to flip it, since it's a negative feedback op amp
+                ydatanew=(127-theydata[l])*(self.yscale/256.) # got to flip it, since it's a negative feedback op amp
                 if self.sincresample: (ydatanew,xdatanew) = resample(ydatanew, num_samples*self.sincresample, t = xdatanew)
                 self.lines[thechan].set_xdata(xdatanew)
                 self.lines[thechan].set_ydata(ydatanew)
@@ -887,7 +890,7 @@ class DynamicUpdate():
                             self.ax2d.clear()
                             self.ax2d.hist2d(
                                 np.tile(xdatanew,self.recordedchannellength), np.concatenate(tuple(self.recordedchannel)), 
-                                bins=[num_samples/8,256/2], range=[[xdatanew[0],xdatanew[num_samples-1]],[self.min_y,self.max_y]],
+                                bins=[max(num_samples,1024),256], range=[[xdatanew[0],xdatanew[num_samples-1]],[self.min_y,self.max_y]],
                                 cmin=1, cmap='rainbow') #, Blues, Reds, coolwarm, seismic
                             self.fig2d.canvas.set_window_title('Persist display of channel '+str(self.recorddatachan))
                             self.ax2d.set_xlabel('Time (us)')
@@ -1253,10 +1256,10 @@ class DynamicUpdate():
             self.setupi2c() # sets all ports to be outputs
             self.toggledousb() # switch to USB2 connection for readout of events, if available
             self.getIDs() # get the unique ID of each board, for calibration etc.
+            self.readcalib() # get the calibrated DAC values for each board
             if self.doDAC: 
                 for c in np.arange(0,num_board*num_chan_per_board):
                     self.setPWMlevel(c,self.lowdaclevel) # defaults in case calib is not available
-            self.readcalib() # get the calibrated DAC values for each board
             self.on_launch()
             self.nevents=0; oldnevents=0; oldtime=time.clock(); tinterval=100.
             while 1:
