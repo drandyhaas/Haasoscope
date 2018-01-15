@@ -757,6 +757,7 @@ class DynamicUpdate():
             elif event.key=="c": self.readcalib(); return            
             elif event.key=="C": self.storecalib(); return
             elif event.key=="W": self.domaindrawing=not self.domaindrawing; return
+            elif event.key=="Y": self. recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; return;
             elif event.key=="right": self.telldownsample(self.downsample+1); return
             elif event.key=="left": self.telldownsample(self.downsample-1); return
             elif event.key=="up": self.adjustvertical(True); return
@@ -847,6 +848,12 @@ class DynamicUpdate():
         self.figure.canvas.draw()
         #plt.show(block=False)
     
+    recorddata=False
+    recordindex=0 # for recording data, the last N events, for the shaded persist display window
+    recordedchannellength=250
+    recordedchannel=[]
+    drawn2d=False
+    
     def on_running(self, theydata, board): #update data for main plot for a board
         if (board<0): #hack to tell it the max10adc channel
             chantodraw=-board-1 #draw chan 0 first (when board=-1)
@@ -854,16 +861,39 @@ class DynamicUpdate():
             if (self.db): print "drawing line",posi
             if (self.db): print "ydata[0]=",theydata[0]
             self.lines[posi].set_xdata((self.xsampdata-num_samples/2.)*(1000.0*pow(2,self.downsample)/clkrate/self.xscaling))
-            self.lines[posi].set_ydata(theydata*(3.3/256))
+            self.lines[posi].set_ydata(theydata*(3.3/256)) #full scale is 3.3V
         else:
             for l in np.arange(num_chan_per_board):
-                if (self.db): print "drawing adc line",l+board*num_chan_per_board
-                if len(theydata)<=l: print "don't have channel",l; return
+                thechan=l+(num_board-board-1)*num_chan_per_board
+                if (self.db): print "drawing adc line",thechan
+                if len(theydata)<=l: print "don't have channel",l,"on board",board; return
                 xdatanew = (self.xdata-num_samples/2.)*(1000.0*pow(2,self.downsample)/clkrate/self.xscaling)
                 ydatanew=(127-theydata[l])*(10./256.) # got to flip it, since it's a negative feedback op amp
                 if self.sincresample: (ydatanew,xdatanew) = resample(ydatanew, num_samples*self.sincresample, t = xdatanew)
-                self.lines[l+(num_board-board-1)*num_chan_per_board].set_xdata(xdatanew)
-                self.lines[l+(num_board-board-1)*num_chan_per_board].set_ydata(ydatanew) 
+                self.lines[thechan].set_xdata(xdatanew)
+                self.lines[thechan].set_ydata(ydatanew)
+                if self.recorddata and thechan==self.recorddatachan: # the persist shaded plot
+                    if len(self.recordedchannel)<self.recordedchannellength: self.recordedchannel.append(ydatanew)
+                    else: self.recordedchannel[self.recordindex]=ydatanew
+                    self.recordindex+=1
+                    if self.recordindex>=self.recordedchannellength: self.recordindex=0;
+                    #print len(self.recordedchannel)
+                    if len(self.recordedchannel)==self.recordedchannellength:
+                        if not self.drawn2d: # got to make the plot window the first time
+                            self.fig2d, self.ax2d = plt.subplots(1,1)
+                            self.fig2d.canvas.mpl_connect('close_event', self.handle_persist_close)
+                            self.drawn2d=True
+                        if self.recordindex==0:
+                            self.ax2d.clear()
+                            self.ax2d.hist2d(
+                                np.tile(xdatanew,self.recordedchannellength), np.concatenate(tuple(self.recordedchannel)), 
+                                bins=[num_samples/8,256/2], range=[[xdatanew[0],xdatanew[num_samples-1]],[self.min_y,self.max_y]],
+                                cmin=1, cmap='rainbow') #, Blues, Reds, coolwarm, seismic
+                            self.fig2d.canvas.set_window_title('Persist display of channel '+str(self.recorddatachan))
+                            self.ax2d.set_xlabel('Time (us)')
+                            self.ax2d.set_ylabel('Volts')
+                            self.ax2d.grid()
+                            self.fig2d.canvas.draw()
     
     def redraw(self):
         if self.domaindrawing: # don't draw if we're going for speed!
@@ -884,6 +914,9 @@ class DynamicUpdate():
                 self.figure.canvas.draw()
         self.figure.canvas.flush_events()
     
+    def handle_persist_close(self,evt):
+        self.drawn2d=False
+        self.recorddata=False
     def handle_fft_close(self,evt):
         self.dofft=False
         self.fftdrawn=False
@@ -1105,7 +1138,7 @@ class DynamicUpdate():
                 if False:
                     print ampl_fpga.round(2), phase_fpga.round(2), "<------ fpga "
             else: print "getdata asked for",16,"lockin bytes and got",len(rslt),"from board",board        
-        
+    
     def getdata(self,board):
         ser.write(chr(10+board))
         if (self.db): print "asked for data from board",board,time.clock()        
