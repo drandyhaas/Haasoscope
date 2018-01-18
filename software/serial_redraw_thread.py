@@ -64,19 +64,17 @@ class DynamicUpdate():
     debuglockin=False #debugging of lockin calculations #True #False
     reffreq = 0.008 #MHz of reference signal on chan 3 for lockin calculations
     
-    doI2C=True
-    doDAC=True
     yscale = 7.5 # Vpp for full scale
     min_y = -yscale/2. #-4.0 #0 ADC
     max_y = yscale/2. #4.0 #256 ADC
-    lowdaclevel0=1900 # these are default values for each gain combination
-    highdaclevel0=2300
-    lowdaclevelsuper0=105
-    highdaclevelsuper0=35
-    lowdaclevel=np.ones(num_board*num_chan_per_board)*lowdaclevel0 # these hold the user set levels for each gain combination
-    highdaclevel=np.ones(num_board*num_chan_per_board)*highdaclevel0
-    lowdaclevelsuper=np.ones(num_board*num_chan_per_board)*lowdaclevelsuper0
-    highdaclevelsuper=np.ones(num_board*num_chan_per_board)*highdaclevelsuper0
+    lowdaclevel=np.ones(num_board*num_chan_per_board)*1900 # these hold the user set levels for each gain combination
+    highdaclevel=np.ones(num_board*num_chan_per_board)*2300
+    lowdaclevelsuper=np.ones(num_board*num_chan_per_board)*105
+    highdaclevelsuper=np.ones(num_board*num_chan_per_board)*35
+    lowdaclevelac=np.ones(num_board*num_chan_per_board)*1900 # these hold the user set levels for each gain combination in ac coupling mode
+    highdaclevelac=np.ones(num_board*num_chan_per_board)*2300
+    lowdaclevelsuperac=np.ones(num_board*num_chan_per_board)*1900
+    highdaclevelsuperac=np.ones(num_board*num_chan_per_board)*2300
     chanlevel=np.ones(num_board*num_chan_per_board)*lowdaclevel # the current level for each channel, initially set to lowdaclevel (x1)
     gain=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is low gain, 0 is high gain (x10)
     supergain=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is normal gain, 0 is super gain (x100)
@@ -184,10 +182,7 @@ class DynamicUpdate():
         chanonboard = chan%num_chan_per_board
         ser.write(chr(board*num_chan_per_board+chanonboard)) # the channels are numbered differently in the firmware
     
-    def setPWMlevel(self,chan,levelset):
-        level=levelset[self.selectedchannel]
-        self.setPWMlevelforchan(chan,level)
-    def setPWMlevelforchan(self,chan,level):
+    def setdaclevelforchan(self,chan,level):
         if level>=4096: 
             print "level can't be bigger than 2**12-1=4095"
             level=4095
@@ -251,9 +246,6 @@ class DynamicUpdate():
         return(int_type ^ mask)
   
     def sendi2c(self,whattosend):
-        if not self.doI2C: 
-            print "not doing I2C! ", whattosend
-            return # not doing i2c for now? Will hang boards that don't have it!
         myb=bytearray.fromhex(whattosend)
         ser.write(chr(136))
         datacounttosend=len(myb)-1 #number of bytes of info to send, not counting the address
@@ -368,21 +360,18 @@ class DynamicUpdate():
             if self.gain[chan]==1:
                 origline.set_label("chan "+str(chan)+" x100")
                 self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x100")
-                if self.doDAC and self.acdc[chan]: self.setPWMlevel(chan,self.lowdaclevelsuper)
             else:
                 origline.set_label("chan "+str(chan)+" x1000")
                 self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x1000")
-                if self.doDAC and self.acdc[chan]: self.setPWMlevel(chan,self.highdaclevelsuper)
         else:
             self.supergain[chan]=1 #normal gain
             if self.gain[chan]==1:
                 origline.set_label("chan "+str(chan))
                 self.leg.get_texts()[chan].set_text("chan "+str(chan))
-                if self.doDAC: self.setPWMlevel(chan,self.lowdaclevel)
             else:
                 origline.set_label("chan "+str(chan)+" x10")
                 self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x10")
-                if self.doDAC: self.setPWMlevel(chan,self.highdaclevel)
+        self.setdacvalue()
         self.figure.canvas.draw()
         print "Supergain switched for channel",chan,"to",self.gain[chan]
     
@@ -396,25 +385,18 @@ class DynamicUpdate():
             if self.supergain[chan]==1:
                 origline.set_label("chan "+str(chan)+" x10")
                 self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x10")
-                if self.doDAC: self.setPWMlevel(chan,self.highdaclevel)
             else:
                 origline.set_label("chan "+str(chan)+" x1000")
                 self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x1000")
-                if self.doDAC:
-                    if self.acdc[chan]: self.setPWMlevel(chan,self.highdaclevelsuper)
-                    else: self.setPWMlevel(chan,self.highdaclevel)
         else:
             self.gain[chan]=1 #low gain
             if self.supergain[chan]==1:
                 origline.set_label("chan "+str(chan))
                 self.leg.get_texts()[chan].set_text("chan "+str(chan))
-                if self.doDAC: self.setPWMlevel(chan,self.lowdaclevel)
             else:
                 origline.set_label("chan "+str(chan)+" x100")
                 self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x100")
-                if self.doDAC: 
-                    if self.acdc[chan]: self.setPWMlevel(chan,self.lowdaclevelsuper)
-                    else: self.setPWMlevel(chan,self.lowdaclevel)
+        self.setdacvalue()
         self.figure.canvas.draw()
         print "Gain switched for channel",chan,"to",self.gain[chan]
 
@@ -583,18 +565,42 @@ class DynamicUpdate():
              self.chanlevel[self.selectedchannel] = self.chanlevel[self.selectedchannel] - amount
         else:
              self.chanlevel[self.selectedchannel] = self.chanlevel[self.selectedchannel] + amount
-        self.setPWMlevel(self.selectedchannel,self.chanlevel)
-        #and remember it for the future
+        self.rememberdacvalue()
+        self.setdacvalue()
+        
+    def rememberdacvalue(self):
+        #remember current dac level for the future to the right daclevel, depending on other settings
         if self.gain[self.selectedchannel]: # low gain
-            if self.supergain[self.selectedchannel]: self.lowdaclevel[self.selectedchannel]=self.chanlevel[self.selectedchannel]
-            else: 
+            if self.supergain[self.selectedchannel]: 
+                if self.acdc[self.selectedchannel]: self.lowdaclevel[self.selectedchannel]=self.chanlevel[self.selectedchannel]
+                else: self.lowdaclevelac[self.selectedchannel]=self.chanlevel[self.selectedchannel]
+            else: #supergain
                 if self.acdc[self.selectedchannel]: self.lowdaclevelsuper[self.selectedchannel]=self.chanlevel[self.selectedchannel] #dc super gain
-                else: self.lowdaclevel[self.selectedchannel]=self.chanlevel[self.selectedchannel]
+                else: self.lowdaclevelsuperac[self.selectedchannel]=self.chanlevel[self.selectedchannel]
         else: # high gain
-            if self.supergain[self.selectedchannel]: self.highdaclevel[self.selectedchannel]=self.chanlevel[self.selectedchannel]
-            else: 
+            if self.supergain[self.selectedchannel]: 
+                if self.acdc[self.selectedchannel]: self.highdaclevel[self.selectedchannel]=self.chanlevel[self.selectedchannel]
+                else: self.highdaclevelac[self.selectedchannel]=self.chanlevel[self.selectedchannel]
+            else: #supergain
                 if self.acdc[self.selectedchannel]: self.highdaclevelsuper[self.selectedchannel]=self.chanlevel[self.selectedchannel] #dc super gain
-                else: self.highdaclevel[self.selectedchannel]=self.chanlevel[self.selectedchannel]
+                else: self.highdaclevelsuperac[self.selectedchannel]=self.chanlevel[self.selectedchannel]
+                
+    def setdacvalue(self):
+        #set current dac level to the remembered value, depending on other settings
+        if self.gain[self.selectedchannel]: # low gain
+            if self.supergain[self.selectedchannel]: 
+                if self.acdc[self.selectedchannel]: self.setdaclevelforchan(self.selectedchannel,self.lowdaclevel[self.selectedchannel])
+                else: self.setdaclevelforchan(self.selectedchannel,self.lowdaclevelac[self.selectedchannel])
+            else: #supergain
+                if self.acdc[self.selectedchannel]: self.setdaclevelforchan(self.selectedchannel,self.lowdaclevelsuper[self.selectedchannel]) #dc super gain
+                else: self.setdaclevelforchan(self.selectedchannel,self.lowdaclevelsuperac[self.selectedchannel])
+        else: # high gain
+            if self.supergain[self.selectedchannel]: 
+                if self.acdc[self.selectedchannel]: self.setdaclevelforchan(self.selectedchannel,self.highdaclevel[self.selectedchannel])
+                else: self.setdaclevelforchan(self.selectedchannel,self.highdaclevelac[self.selectedchannel])
+            else: #supergain
+                if self.acdc[self.selectedchannel]: self.setdaclevelforchan(self.selectedchannel,self.highdaclevelsuper[self.selectedchannel]) #dc super gain
+                else: self.setdaclevelforchan(self.selectedchannel,self.highdaclevelsuperac[self.selectedchannel])
         
     def setacdc(self):
         chan=self.selectedchannel
@@ -602,14 +608,8 @@ class DynamicUpdate():
         self.b20 = self.toggleBit(self.b20,int(chan))
         self.sendi2c("20 13 "+ ('%0*x' % (2,self.b20)) ) #port B of IOexp 1
         self.acdc[int(chan)] = not self.acdc[int(chan)]
+        self.setdacvalue()
         self.drawtext()
-        if self.supergain[chan]==0: #if in supergain, need to adjust the DAC levels
-            if self.gain[chan]==1:
-                if self.doDAC and not self.acdc[chan]: self.setPWMlevel(chan,self.lowdaclevel)
-                if self.doDAC and self.acdc[chan]: self.setPWMlevel(chan,self.lowdaclevelsuper)
-            else:
-                if self.doDAC and not self.acdc[chan]: self.setPWMlevel(chan,self.highdaclevel)
-                if self.doDAC and self.acdc[chan]: self.setPWMlevel(chan,self.highdaclevelsuper)
     
     def storecalib(self):
         cwd = os.getcwd()
@@ -625,6 +625,10 @@ class DynamicUpdate():
             highdaclevels=self.highdaclevel[sc : sc+4].tolist(),
             lowdaclevelssuper=self.lowdaclevelsuper[sc : sc+4].tolist(),
             highdaclevelssuper=self.highdaclevelsuper[sc : sc+4].tolist(),
+            lowdaclevelsac=self.lowdaclevelac[sc : sc+4].tolist(),
+            highdaclevelsac=self.highdaclevelac[sc : sc+4].tolist(),
+            lowdaclevelssuperac=self.lowdaclevelsuperac[sc : sc+4].tolist(),
+            highdaclevelssuperac=self.highdaclevelsuperac[sc : sc+4].tolist()
             )
         #print json.dumps(c,indent=4)
         fname = "calib_"+self.uniqueID[board]+".json.txt"
@@ -640,6 +644,11 @@ class DynamicUpdate():
         sc = board*num_chan_per_board
         if len(self.uniqueID)<=board:
             print "failed to get board ID for board",board
+            oldchan=self.selectedchannel
+            for chan in range(sc,sc+4):
+                self.selectedchannel=chan
+                self.setdacvalue()
+            self.selectedchannel=oldchan
             return
         print "reading calibrations for board",board,", channels",sc,"-",sc+4
         fname = "calib_"+self.uniqueID[board]+".json.txt"
@@ -651,22 +660,15 @@ class DynamicUpdate():
             self.highdaclevel[sc : sc+4] = c['highdaclevels']
             self.lowdaclevelsuper[sc : sc+4] = c['lowdaclevelssuper']
             self.highdaclevelsuper[sc : sc+4] = c['highdaclevelssuper']
+            self.lowdaclevelac[sc : sc+4] = c['lowdaclevelsac']
+            self.highdaclevelac[sc : sc+4] = c['highdaclevelsac']
+            self.lowdaclevelsuperac[sc : sc+4] = c['lowdaclevelssuperac']
+            self.highdaclevelsuperac[sc : sc+4] = c['highdaclevelssuperac']
             #and use the new levels right away
             oldselchan=self.selectedchannel
             for chan in range(sc,sc+4):
                 self.selectedchannel=chan
-                if self.supergain[chan]==0: #supergain on
-                    if self.gain[chan]==1: #low gain
-                        if self.doDAC and not self.acdc[chan]: self.setPWMlevel(chan,self.lowdaclevel)
-                        if self.doDAC and self.acdc[chan]: self.setPWMlevel(chan,self.lowdaclevelsuper)
-                    else: #high gain
-                        if self.doDAC and not self.acdc[chan]: self.setPWMlevel(chan,self.highdaclevel)
-                        if self.doDAC and self.acdc[chan]: self.setPWMlevel(chan,self.highdaclevelsuper)
-                else: #normal gain (supergain off)
-                    if self.gain[chan]==1: #low gain
-                        if self.doDAC: self.setPWMlevel(chan,self.lowdaclevel)
-                    else: #high gain
-                        if self.doDAC: self.setPWMlevel(chan,self.highdaclevel)
+                self.setdacvalue()
             self.selectedchannel=oldselchan
             if not self.firstdrawtext: self.drawtext()
         except IOError:
@@ -737,7 +739,10 @@ class DynamicUpdate():
                     self.keyLevel=False
                     s=self.leveltemp.split(",")
                     #print "Got",int(s[0]),int(s[1])
-                    if self.doDAC: self.setPWMlevelforchan(int(s[0]),int(s[1]))
+                    self.selectedchannel=int(s[0])
+                    self.chanlevel[self.selectedchannel] = int(s[1])
+                    self.rememberdacvalue()
+                    self.setdacvalue()
                     return
                 else:
                     self.leveltemp=self.leveltemp+event.key
@@ -1256,10 +1261,7 @@ class DynamicUpdate():
             self.setupi2c() # sets all ports to be outputs
             self.toggledousb() # switch to USB2 connection for readout of events, if available
             self.getIDs() # get the unique ID of each board, for calibration etc.
-            self.readcalib() # get the calibrated DAC values for each board
-            if self.doDAC: 
-                for c in np.arange(0,num_board*num_chan_per_board):
-                    self.setPWMlevel(c,self.lowdaclevel) # defaults in case calib is not available
+            self.readcalib() # get the calibrated DAC values for each board; if it fails then use defaults                
             self.on_launch()
             self.nevents=0; oldnevents=0; oldtime=time.clock(); tinterval=100.
             while 1:
@@ -1282,9 +1284,6 @@ class DynamicUpdate():
             self.setbacktoserialreadout()
             self.resetchans()
             if self.autorearm: self.toggleautorearm()
-            if self.doDAC: 
-                for c in np.arange(0,num_board*num_chan_per_board):
-                    self.setPWMlevel(c,self.lowdaclevel)
             self.shutdownadcs()
             print "Done with main loop"
 
