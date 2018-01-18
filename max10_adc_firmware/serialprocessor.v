@@ -734,14 +734,14 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id);
 		WRITE_EXT1: begin
 			timeoutcounter=timeoutcounter+1;
 			rden = 1;
-			if( (!txBusy) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles
-				//rotate through the 4 outputs
-				case(SendCount[ram_width+1:ram_width])
-				0: txData<=ram_output1;
-				1: txData<=ram_output2;
-				2: txData<=ram_output3;
-				3: txData<=ram_output4;
-				endcase
+			//rotate through the 4 outputs
+			case(SendCount[ram_width+1:ram_width])
+			0: txData<=ram_output1;
+			1: txData<=ram_output2;
+			2: txData<=ram_output3;
+			3: txData<=ram_output4;
+			endcase
+			if( (!txBusy) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles				
 				txStart<= 1;				
 				SendCount = SendCount + (2**sendincrement);
 				rdaddress = rdaddress + (2**sendincrement);
@@ -782,8 +782,9 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id);
 		
 		WRITE_USB_EXT1: begin
 			if (usb_txe_not_busy) begin
-				state=WRITE_USB_EXT2;
+				thecounterbit=thecounter[clockbitstowait];
 				usb2counter<=0;
+				state=WRITE_USB_EXT2;
 			end
 			debug2<=1;
 			rden = 1;
@@ -798,7 +799,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id);
 				2: usb_dataio<=ram_output3;
 				3: usb_dataio<=ram_output4;
 			endcase
-			if(usb2counter>clockbitstowait) begin // wait a few clock cycles (usb2counter was set to 0 in last state)
+			if( (usb2counter>clockbitstowait) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles (usb2counter was set to 0 in last state)
 				SendCount = SendCount + (2**sendincrement);
 				rdaddress = rdaddress + (2**sendincrement);
 				rdaddress2 = rdaddress;
@@ -818,7 +819,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id);
 		end
 		WRITE_USB_EXT4: begin
 			usb2counter=usb2counter+1;
-			if( (usb2counter>clockbitstowait) ) begin // wait a few clock cycles (usb2counter was set to 0 in last state)
+			if( (usb2counter>clockbitstowait) && (thecounter[clockbitstowait]==thecounterbit) ) begin // wait a few clock cycles (usb2counter was set to 0 in last state)
 				usb_wr<= 1;	
 				if(SendCount==0) begin 
 					rden = 0;

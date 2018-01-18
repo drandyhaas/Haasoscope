@@ -133,8 +133,8 @@ class DynamicUpdate():
     
     def telltickstowait(self): #usually downsample+4
         #tell it the number of clock ticks to wait, log2, between sending bytes
-        ds=self.downsample/3
-        if self.dousb: ds=1
+        ds=self.downsample-4
+        if ds<1: ds=1
         ser.write(chr(125))
         ser.write(chr(ds))
         print "clockbitstowait is",ds
@@ -423,7 +423,7 @@ class DynamicUpdate():
     
     def telldownsample(self,ds):
         #tell it the amount to downsample, log2... so 0 (none), 1(factor 2), 2(factor 4), etc.
-        if ds>20: print "downsample >20 doesn't work well..."; return False
+        if ds>12: print "downsample >12 doesn't work well...and I get bored running that slow!"; return False
         if ds<0: print "downsample can't be <0 !"; return False
         ser.write(chr(124))
         ser.write(chr(ds))
@@ -897,7 +897,8 @@ class DynamicUpdate():
                                 bins=[max(num_samples,1024),256], range=[[xdatanew[0],xdatanew[num_samples-1]],[self.min_y,self.max_y]],
                                 cmin=1, cmap='rainbow') #, Blues, Reds, coolwarm, seismic
                             self.fig2d.canvas.set_window_title('Persist display of channel '+str(self.recorddatachan))
-                            self.ax2d.set_xlabel('Time (us)')
+                            if self.xscaling==1.e3: self.ax2d.set_xlabel('Time (us)')
+                            else: self.ax2d.set_xlabel('Time (ms)')
                             self.ax2d.set_ylabel('Volts')
                             self.ax2d.grid()
                             self.fig2d.canvas.draw()
