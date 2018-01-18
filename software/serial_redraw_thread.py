@@ -71,8 +71,8 @@ class DynamicUpdate():
     highdaclevel=np.ones(num_board*num_chan_per_board)*2300
     lowdaclevelsuper=np.ones(num_board*num_chan_per_board)*105
     highdaclevelsuper=np.ones(num_board*num_chan_per_board)*35
-    lowdaclevelac=np.ones(num_board*num_chan_per_board)*1900 # these hold the user set levels for each gain combination in ac coupling mode
-    highdaclevelac=np.ones(num_board*num_chan_per_board)*2300
+    lowdaclevelac=np.ones(num_board*num_chan_per_board)*2100 # these hold the user set levels for each gain combination in ac coupling mode
+    highdaclevelac=np.ones(num_board*num_chan_per_board)*3300
     lowdaclevelsuperac=np.ones(num_board*num_chan_per_board)*1900
     highdaclevelsuperac=np.ones(num_board*num_chan_per_board)*2300
     chanlevel=np.ones(num_board*num_chan_per_board)*lowdaclevel # the current level for each channel, initially set to lowdaclevel (x1)
@@ -611,6 +611,13 @@ class DynamicUpdate():
         self.setdacvalue()
         self.drawtext()
     
+    def setdacvalues(self,sc):
+        oldchan=self.selectedchannel
+        for chan in range(sc,sc+4):
+            self.selectedchannel=chan
+            self.setdacvalue()
+        self.selectedchannel=oldchan
+    
     def storecalib(self):
         cwd = os.getcwd()
         print "current directory is",cwd
@@ -644,11 +651,7 @@ class DynamicUpdate():
         sc = board*num_chan_per_board
         if len(self.uniqueID)<=board:
             print "failed to get board ID for board",board
-            oldchan=self.selectedchannel
-            for chan in range(sc,sc+4):
-                self.selectedchannel=chan
-                self.setdacvalue()
-            self.selectedchannel=oldchan
+            self.setdacvalues(sc) #will load in defaults
             return
         print "reading calibrations for board",board,", channels",sc,"-",sc+4
         fname = "calib_"+self.uniqueID[board]+".json.txt"
@@ -663,16 +666,12 @@ class DynamicUpdate():
             self.lowdaclevelac[sc : sc+4] = c['lowdaclevelsac']
             self.highdaclevelac[sc : sc+4] = c['highdaclevelsac']
             self.lowdaclevelsuperac[sc : sc+4] = c['lowdaclevelssuperac']
-            self.highdaclevelsuperac[sc : sc+4] = c['highdaclevelssuperac']
-            #and use the new levels right away
-            oldselchan=self.selectedchannel
-            for chan in range(sc,sc+4):
-                self.selectedchannel=chan
-                self.setdacvalue()
-            self.selectedchannel=oldselchan
+            self.highdaclevelsuperac[sc : sc+4] = c['highdaclevelssuperac']            
+            self.setdacvalues(sc) #and use the new levels right away
             if not self.firstdrawtext: self.drawtext()
         except IOError:
             print "No calib file found for board",board,"at file",fname
+            self.setdacvalues(sc) #will load in defaults
     
     def onscroll(self,event):
          #print event
