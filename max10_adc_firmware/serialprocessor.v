@@ -1,10 +1,10 @@
 // from http://www.sparxeng.com/blog/software/communicating-with-your-cyclone-ii-fpga-over-serial-port-part-3-number-crunching
 
 module processor(clk, rxReady, rxData, txBusy, txStart, txData, readdata, get_ext_data, ext_data_ready, wraddress_triggerpoint, rden, rdaddress, ram_output1, ram_output2, ram_output3, ram_output4,
-newcomdata,comdata,led1,led2,led3,serial_passthrough,master_clock, imthelast,imthefirst,rollingtrigger,trigDebug, 
+newcomdata,comdata,spare1,spare2,spare3,serial_passthrough,master_clock, imthelast,imthefirst,rollingtrigger,trigDebug, 
 adcdata,adcready,getadcdata,getadcadr,adcvalid,adcreset,adcramdata,writesamp,writeadc,adctestout,
 triggerpoint,downsample, screendata,screenwren,screenaddr,screenreset,trigthresh,trigchannels,triggertype,triggertot,
-SPIsend,SPIsenddata,delaycounter,carrycounter,usb_siwu,SPIstate,offset,gainsw,led4,
+SPIsend,SPIsenddata,delaycounter,carrycounter,usb_siwu,SPIstate,offset,gainsw,do_usb,
 i2c_ena,i2c_addr,i2c_rw,i2c_datawr,i2c_datard,i2c_busy,i2c_ackerror,   usb_clk60,usb_dataio,usb_txe_busy,usb_wr,
 rdaddress2,trigthresh2, debug1,debug2,chip_id);
    input clk;
@@ -14,7 +14,8 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id);
    output reg txStart;
    output reg[7:0] txData;
    output reg[7:0] readdata;//first byte we got
-   output reg led1,led2,led3,led4;
+   output reg spare1,spare2,spare3;
+	reg led1,led2,led3,led4;
   	output reg get_ext_data;
 	input ext_data_ready;
 	parameter ram_width=12;//9 is 512 samples
@@ -98,7 +99,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id);
   integer thecounter, timeoutcounter;
   
   reg [7:0] usb2counter;
-  reg do_usb=0;
+  output reg do_usb=0;
   input usb_clk60;
   output reg [7:0] usb_dataio;
   input usb_txe_busy;
@@ -134,6 +135,9 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id);
 	 gainsw<=4'b0000;//1 is for 1k resistor (gain 2), 0 is for 100 Ohm resistor (gain .2)
 	 oversamp<=4'b0011;//1 is for _no_ oversampling (and only matters for bits 0 and 1)
   	 debug1<=0; debug2<=0;
+	 spare1<=0;
+	 spare2<=0;
+	 spare3<=0;
   end
   
   //set the LEDs to indicate my ID

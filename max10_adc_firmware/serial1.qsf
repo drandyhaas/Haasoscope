@@ -98,11 +98,6 @@ set_global_assignment -name FLOW_ENABLE_POWER_ANALYZER ON
 set_global_assignment -name POWER_DEFAULT_INPUT_IO_TOGGLE_RATE "12.5 %"
 set_location_assignment PIN_27 -to clock_ext_osc
 set_location_assignment PIN_26 -to clock_in
-set_location_assignment PIN_114 -to CD -disable
-set_location_assignment PIN_110 -to CLKO -disable
-set_location_assignment PIN_118 -to CS -disable
-set_location_assignment PIN_111 -to DO -disable
-set_location_assignment PIN_113 -to RSTO -disable
 set_parameter -name SERIAL_BAUD_RATE 1500000
 set_parameter -name SERIAL_BAUD_RATE_ARDUINO 9600
 set_location_assignment PIN_22 -to outsel_out
@@ -116,6 +111,20 @@ set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST ON -section_id eda_s
 set_location_assignment PIN_98 -to 232_in2
 set_parameter -name ADC_RAM_WIDTH 12
 set_location_assignment PIN_32 -to clk_flash_out_2
+set_location_assignment PIN_21 -to i2c_sda
+set_location_assignment PIN_141 -to i2c_scl
+set_global_assignment -name TIMEQUEST_MULTICORNER_ANALYSIS ON
+set_global_assignment -name OPTIMIZATION_MODE "AGGRESSIVE AREA"
+set_global_assignment -name AUTO_RESOURCE_SHARING ON
+set_global_assignment -name ALLOW_ANY_RAM_SIZE_FOR_RECOGNITION ON
+set_location_assignment PIN_132 -to usb_wr
+set_location_assignment PIN_127 -to usb_txe_busy
+set_location_assignment PIN_134 -to usb_clk60
+set_location_assignment PIN_131 -to usb_siwu
+set_location_assignment PIN_100 -to carryin -disable
+set_location_assignment PIN_101 -to carryout -disable
+set_location_assignment PIN_100 -to debug1
+set_location_assignment PIN_101 -to debug2
 set_global_assignment -name BDF_FILE serial1.bdf
 set_global_assignment -name VERILOG_FILE ring_counter.v
 set_global_assignment -name VERILOG_FILE tdc2.v
@@ -132,30 +141,16 @@ set_global_assignment -name QIP_FILE ram1.qip
 set_global_assignment -name QIP_FILE dpram2.qip
 set_global_assignment -name QIP_FILE lp_ram_dp.qip
 set_global_assignment -name QIP_FILE myadc/synthesis/myadc.qip
-set_location_assignment PIN_21 -to i2c_sda
-set_location_assignment PIN_141 -to i2c_scl
-set_global_assignment -name CDF_FILE Chain1.cdf
-set_global_assignment -name CDF_FILE Chain2.cdf
-set_global_assignment -name TIMEQUEST_MULTICORNER_ANALYSIS ON
-set_global_assignment -name OPTIMIZATION_MODE "AGGRESSIVE AREA"
-set_global_assignment -name AUTO_RESOURCE_SHARING ON
-set_global_assignment -name ALLOW_ANY_RAM_SIZE_FOR_RECOGNITION ON
-set_location_assignment PIN_122 -to usb_dataio[0]
-set_location_assignment PIN_29 -to usb_dataio[1]
-set_location_assignment PIN_119 -to usb_dataio[2]
-set_location_assignment PIN_118 -to usb_dataio[3]
-set_location_assignment PIN_114 -to usb_dataio[4]
-set_location_assignment PIN_113 -to usb_dataio[5]
-set_location_assignment PIN_111 -to usb_dataio[6]
-set_location_assignment PIN_110 -to usb_dataio[7]
-set_location_assignment PIN_132 -to usb_wr
-set_location_assignment PIN_127 -to usb_txe_busy
-set_location_assignment PIN_134 -to usb_clk60
-set_location_assignment PIN_131 -to usb_siwu
-set_location_assignment PIN_100 -to carryin -disable
-set_location_assignment PIN_101 -to carryout -disable
-set_location_assignment PIN_100 -to debug1
-set_location_assignment PIN_101 -to debug2
 set_global_assignment -name QIP_FILE uniqueid.qip
 set_global_assignment -name SIP_FILE uniqueid.sip
+set_global_assignment -name CDF_FILE Chain1.cdf
+set_global_assignment -name CDF_FILE Chain2.cdf
+set_location_assignment PIN_29 -to pin_29
+set_location_assignment PIN_110 -to pin_110
+set_location_assignment PIN_111 -to pin_111
+set_location_assignment PIN_113 -to pin_113
+set_location_assignment PIN_114 -to pin_114
+set_location_assignment PIN_118 -to pin_118
+set_location_assignment PIN_119 -to pin_119
+set_location_assignment PIN_122 -to pin_122
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

@@ -251,22 +251,22 @@ agreement for further details.
 	(port
 		(pt 360 160)
 		(output)
-		(text "led1" (rect 0 0 14 12)(font "Arial" ))
-		(text "led1" (rect 325 155 339 167)(font "Arial" ))
+		(text "spare1" (rect 0 0 25 12)(font "Arial" ))
+		(text "spare1" (rect 314 155 339 167)(font "Arial" ))
 		(line (pt 360 160)(pt 344 160)(line_width 1))
 	)
 	(port
 		(pt 360 176)
 		(output)
-		(text "led2" (rect 0 0 15 12)(font "Arial" ))
-		(text "led2" (rect 324 171 339 183)(font "Arial" ))
+		(text "spare2" (rect 0 0 27 12)(font "Arial" ))
+		(text "spare2" (rect 312 171 339 183)(font "Arial" ))
 		(line (pt 360 176)(pt 344 176)(line_width 1))
 	)
 	(port
 		(pt 360 192)
 		(output)
-		(text "led3" (rect 0 0 15 12)(font "Arial" ))
-		(text "led3" (rect 324 187 339 199)(font "Arial" ))
+		(text "spare3" (rect 0 0 27 12)(font "Arial" ))
+		(text "spare3" (rect 312 187 339 199)(font "Arial" ))
 		(line (pt 360 192)(pt 344 192)(line_width 1))
 	)
 	(port
@@ -454,8 +454,8 @@ agreement for further details.
 	(port
 		(pt 360 624)
 		(output)
-		(text "led4" (rect 0 0 16 12)(font "Arial" ))
-		(text "led4" (rect 323 619 339 631)(font "Arial" ))
+		(text "do_usb" (rect 0 0 29 12)(font "Arial" ))
+		(text "do_usb" (rect 310 619 339 631)(font "Arial" ))
 		(line (pt 360 624)(pt 344 624)(line_width 1))
 	)
 	(port
