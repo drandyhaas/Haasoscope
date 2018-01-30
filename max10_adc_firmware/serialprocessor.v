@@ -210,7 +210,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id);
 		  i2cgo=0;
 		  usb_wr<=1;
         ioCount = 0;
-       if (rxReady) begin
+        if (rxReady) begin
 			 readdata = rxData;
           state = SOLVING;
         end

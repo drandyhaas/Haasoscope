@@ -200,7 +200,7 @@ always @(posedge clk_flash) begin
 end
 //trigger is an OR of all the channels which are active // also trigger every second or so (rolling)
 wire selftrig;
-assign selftrig = (trigchannels[0]&&selftrigtemp[0])||(trigchannels[1]&&selftrigtemp[1])||(trigchannels[2]&&selftrigtemp[2])||(trigchannels[3]&&selftrigtemp[3]) ||(rollingtrigger&thecounter>=100000000);
+assign selftrig = (trigchannels[0]&&selftrigtemp[0])||(trigchannels[1]&&selftrigtemp[1])||(trigchannels[2]&&selftrigtemp[2])||(trigchannels[3]&&selftrigtemp[3]) ||(rollingtrigger&thecounter>=25000000);
 
 reg Acquiring1; always @(posedge clk) Acquiring1 <= AcquiringAndTriggered;
 reg Acquiring2; always @(posedge clk) Acquiring2 <= Acquiring1;
