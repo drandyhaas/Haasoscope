@@ -540,12 +540,12 @@ class DynamicUpdate():
             if event.button==1: #left click                
                 pass
             if event.button==2: #middle click                
-                self.settriggerthresh2(int(  event.ydata/(10./256.) + 127  ))                
+                self.settriggerthresh2(int(  event.ydata/(self.yscale/256.) + 128  ))                
                 self.hline2 = event.ydata
                 self.otherlines[2].set_data( [self.min_x, self.max_x], [self.hline2, self.hline2] )
             if event.button==3: #right click
                 self.settriggerpoint(int(  (event.xdata / (1000.0*pow(2,self.downsample)/clkrate/self.xscaling)) +num_samples/2  ))
-                self.settriggerthresh(int(  event.ydata/(10./256.) + 127  ))
+                self.settriggerthresh(int(  event.ydata/(self.yscale/256.) + 128  ))
                 self.vline = event.xdata
                 self.otherlines[0].set_data( [self.vline, self.vline], [self.min_y, self.max_y] ) # vertical line showing trigger time
                 self.hline = event.ydata
