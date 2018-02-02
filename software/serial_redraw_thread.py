@@ -778,7 +778,8 @@ class DynamicUpdate():
             elif event.key=="c": self.readcalib(); return            
             elif event.key=="C": self.storecalib(); return
             elif event.key=="W": self.domaindrawing=not self.domaindrawing; return
-            elif event.key=="Z": self. recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; return;
+            elif event.key=="Y": self.doxyplot=True; self.xychan=self.selectedchannel; print "doxyplot now",self.doxyplot,"for channel",self.xychan; return;
+            elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; return;
             elif event.key=="right": self.telldownsample(self.downsample+1); return
             elif event.key=="left": self.telldownsample(self.downsample-1); return
             elif event.key=="up": self.adjustvertical(True); return
@@ -869,12 +870,6 @@ class DynamicUpdate():
         self.figure.canvas.draw()
         #plt.show(block=False)
     
-    recorddata=False
-    recordindex=0 # for recording data, the last N events, for the shaded persist display window
-    recordedchannellength=250
-    recordedchannel=[]
-    drawn2d=False
-    
     def on_running(self, theydata, board): #update data for main plot for a board
         if (board<0): #hack to tell it the max10adc channel
             chantodraw=-board-1 #draw chan 0 first (when board=-1)
@@ -893,29 +888,61 @@ class DynamicUpdate():
                 if self.sincresample: (ydatanew,xdatanew) = resample(ydatanew, num_samples*self.sincresample, t = xdatanew)
                 self.lines[thechan].set_xdata(xdatanew)
                 self.lines[thechan].set_ydata(ydatanew)
-                if self.recorddata and thechan==self.recorddatachan: # the persist shaded plot
-                    if len(self.recordedchannel)<self.recordedchannellength: self.recordedchannel.append(ydatanew)
-                    else: self.recordedchannel[self.recordindex]=ydatanew
-                    self.recordindex+=1
-                    if self.recordindex>=self.recordedchannellength: self.recordindex=0;
-                    #print len(self.recordedchannel)
-                    if len(self.recordedchannel)==self.recordedchannellength:
-                        if not self.drawn2d: # got to make the plot window the first time
-                            self.fig2d, self.ax2d = plt.subplots(1,1)
-                            self.fig2d.canvas.mpl_connect('close_event', self.handle_persist_close)
-                            self.drawn2d=True
-                        if self.recordindex==0:
-                            self.ax2d.clear()
-                            self.ax2d.hist2d(
-                                np.tile(xdatanew,self.recordedchannellength), np.concatenate(tuple(self.recordedchannel)), 
-                                bins=[max(num_samples,1024),256], range=[[xdatanew[0],xdatanew[num_samples-1]],[self.min_y,self.max_y]],
-                                cmin=1, cmap='rainbow') #, Blues, Reds, coolwarm, seismic
-                            self.fig2d.canvas.set_window_title('Persist display of channel '+str(self.recorddatachan))
-                            if self.xscaling==1.e3: self.ax2d.set_xlabel('Time (us)')
-                            else: self.ax2d.set_xlabel('Time (ms)')
-                            self.ax2d.set_ylabel('Volts')
-                            self.ax2d.grid()
-                            self.fig2d.canvas.draw()
+                if self.doxyplot and (thechan==self.xychan or thechan==(self.xychan+1)): self.drawxyplot(xdatanew,ydatanew,thechan)# the xy plot
+                if self.recorddata and thechan==self.recorddatachan: self.dopersistplot(xdatanew,ydatanew)# the persist shaded plot
+    
+    doxyplot=False
+    drawnxy=False
+    xychan=0
+    def drawxyplot(self,xdatanew,ydatanew,thechan):
+        if thechan==self.xychan: self.xydataforxaxis=ydatanew #the first channel will define the info on the x-axis
+        if thechan==(self.xychan+1):
+            if not self.drawnxy: # got to make the plot window the first time
+                self.figxy, self.axxy = plt.subplots(1,1)
+                self.figxy.canvas.mpl_connect('close_event', self.handle_xy_close)
+                self.drawnxy=True
+                self.figxy.set_size_inches(6, 6, forward=True)
+                self.xyplot, = self.axxy.plot(self.xydataforxaxis,ydatanew) #scatter
+                self.figxy.canvas.set_window_title('XY display of channels '+str(self.xychan)+' and '+str(self.xychan+1))
+                self.axxy.set_xlabel('Channel '+str(self.xychan)+' Volts')
+                self.axxy.set_ylabel('Channel '+str(self.xychan+1)+' Volts')
+                self.axxy.set_xlim(self.min_y, self.max_y)
+                self.axxy.set_ylim(self.min_y, self.max_y)
+                self.axxy.grid()
+            #redraw the plot
+            self.figxy.canvas.set_window_title('XY display of channels '+str(self.xychan)+' and '+str(self.xychan+1))
+            self.axxy.set_xlabel('Channel '+str(self.xychan)+' Volts')
+            self.axxy.set_ylabel('Channel '+str(self.xychan+1)+' Volts')
+            self.xyplot.set_data(self.xydataforxaxis, ydatanew)
+            self.figxy.canvas.draw()
+    
+    recorddata=False
+    recordindex=0 # for recording data, the last N events, for the shaded persist display window
+    recordedchannellength=250 #number of events to overlay in the 2d persist plot
+    recordedchannel=[]
+    drawn2d=False
+    def dopersistplot(self,xdatanew,ydatanew):
+        if len(self.recordedchannel)<self.recordedchannellength: self.recordedchannel.append(ydatanew)
+        else: self.recordedchannel[self.recordindex]=ydatanew
+        self.recordindex+=1
+        if self.recordindex>=self.recordedchannellength: self.recordindex=0;
+        if len(self.recordedchannel)==self.recordedchannellength:
+            if not self.drawn2d: # got to make the plot window the first time
+                self.fig2d, self.ax2d = plt.subplots(1,1)
+                self.fig2d.canvas.mpl_connect('close_event', self.handle_persist_close)
+                self.drawn2d=True
+            if self.recordindex==0:
+                self.ax2d.clear()
+                self.ax2d.hist2d(
+                    np.tile(xdatanew,self.recordedchannellength), np.concatenate(tuple(self.recordedchannel)), 
+                    bins=[max(num_samples,1024),256], range=[[xdatanew[0],xdatanew[num_samples-1]],[self.min_y,self.max_y]],
+                    cmin=1, cmap='rainbow') #, Blues, Reds, coolwarm, seismic
+                self.fig2d.canvas.set_window_title('Persist display of channel '+str(self.recorddatachan))
+                if self.xscaling==1.e3: self.ax2d.set_xlabel('Time (us)')
+                else: self.ax2d.set_xlabel('Time (ms)')
+                self.ax2d.set_ylabel('Volts')
+                self.ax2d.grid()
+                self.fig2d.canvas.draw()
     
     def redraw(self):
         if self.domaindrawing: # don't draw if we're going for speed!
@@ -936,6 +963,9 @@ class DynamicUpdate():
                 self.figure.canvas.draw()
         self.figure.canvas.flush_events()
     
+    def handle_xy_close(self,evt):
+        self.drawnxy=False
+        self.doxyplot=False
     def handle_persist_close(self,evt):
         self.drawn2d=False
         self.recorddata=False
