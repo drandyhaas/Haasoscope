@@ -1300,6 +1300,7 @@ class DynamicUpdate():
             self.resetchans()
             if self.autorearm: self.toggleautorearm()
             if self.dohighres: self.togglehighres()
+            if self.useexttrig: self.toggleuseexttrig()
             self.shutdownadcs()
             print "Done with main loop"
 
