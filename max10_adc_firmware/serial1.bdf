@@ -242,6 +242,23 @@ agreement for further details.
 	(annotation_block (location)(rect 112 704 168 720))
 )
 (pin
+	(input)
+	(rect 216 136 384 152)
+	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
+	(text "ext_trig_in" (rect 5 0 56 12)(font "Arial" ))
+	(pt 168 8)
+	(drawing
+		(line (pt 84 12)(pt 109 12))
+		(line (pt 84 4)(pt 109 4))
+		(line (pt 113 8)(pt 168 8))
+		(line (pt 84 12)(pt 84 4))
+		(line (pt 109 4)(pt 113 8))
+		(line (pt 109 12)(pt 113 8))
+	)
+	(text "VCC" (rect 128 7 148 17)(font "Arial" (font_size 6)))
+	(annotation_block (location)(rect 160 152 216 168))
+)
+(pin
 	(output)
 	(rect 864 -312 1040 -296)
 	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
@@ -2561,9 +2578,9 @@ agreement for further details.
 	(annotation_block (parameter)(rect 1512 1168 1640 1196))
 )
 (symbol
-	(rect 392 -288 752 176)
+	(rect 392 -288 752 208)
 	(text "oscillo" (rect 5 0 35 12)(font "Arial" ))
-	(text "inst1" (rect 8 448 31 460)(font "Arial" ))
+	(text "inst1" (rect 8 480 31 492)(font "Arial" ))
 	(port
 		(pt 0 32)
 		(input)
@@ -2740,6 +2757,20 @@ agreement for further details.
 		(line (pt 0 416)(pt 16 416))
 	)
 	(port
+		(pt 0 432)
+		(input)
+		(text "ext_trig_in" (rect 0 0 50 12)(font "Arial" ))
+		(text "ext_trig_in" (rect 21 427 71 439)(font "Arial" ))
+		(line (pt 0 432)(pt 16 432))
+	)
+	(port
+		(pt 0 448)
+		(input)
+		(text "use_ext_trig" (rect 0 0 60 12)(font "Arial" ))
+		(text "use_ext_trig" (rect 21 443 81 455)(font "Arial" ))
+		(line (pt 0 448)(pt 16 448))
+	)
+	(port
 		(pt 360 32)
 		(output)
 		(text "pwr1" (rect 0 0 22 12)(font "Arial" ))
@@ -2870,10 +2901,15 @@ agreement for further details.
 		"12"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
+	(parameter
+		"maxhighres"
+		"5"
+		""
+		(type "PARAMETER_SIGNED_DEC")	)
 	(drawing
-		(rectangle (rect 16 16 344 448))
+		(rectangle (rect 16 16 344 480))
 	)
-	(annotation_block (parameter)(rect 760 144 943 172))
+	(annotation_block (parameter)(rect 760 144 960 200))
 )
 (symbol
 	(rect 392 344 752 1192)
@@ -3389,6 +3425,13 @@ agreement for further details.
 		(text "highres" (rect 0 0 35 12)(font "Arial" ))
 		(text "highres" (rect 310 795 339 807)(font "Arial" ))
 		(line (pt 360 800)(pt 344 800))
+	)
+	(port
+		(pt 360 816)
+		(output)
+		(text "use_ext_trig" (rect 0 0 60 12)(font "Arial" ))
+		(text "use_ext_trig" (rect 289 811 339 823)(font "Arial" ))
+		(line (pt 360 816)(pt 344 816))
 	)
 	(parameter
 		"ram_width"
@@ -4675,6 +4718,14 @@ agreement for further details.
 (connector
 	(pt 392 128)
 	(pt 752 1144)
+)
+(connector
+	(pt 392 144)
+	(pt 384 144)
+)
+(connector
+	(pt 752 1160)
+	(pt 392 160)
 )
 (junction (pt 56 328))
 (junction (pt 56 392))

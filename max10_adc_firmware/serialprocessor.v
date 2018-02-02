@@ -6,7 +6,7 @@ adcdata,adcready,getadcdata,getadcadr,adcvalid,adcreset,adcramdata,writesamp,wri
 triggerpoint,downsample, screendata,screenwren,screenaddr,screenreset,trigthresh,trigchannels,triggertype,triggertot,
 SPIsend,SPIsenddata,delaycounter,carrycounter,usb_siwu,SPIstate,offset,gainsw,do_usb,
 i2c_ena,i2c_addr,i2c_rw,i2c_datawr,i2c_datard,i2c_busy,i2c_ackerror,   usb_clk60,usb_dataio,usb_txe_busy,usb_wr,
-rdaddress2,trigthresh2, debug1,debug2,chip_id, highres);
+rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig);
    input clk;
 	input[7:0] rxData;
    input rxReady;
@@ -64,7 +64,8 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres);
 	reg[3:0] oversamp;
 	output reg debug1,debug2;
 	input [63:0] chip_id;
-	output reg highres = 0;
+	output reg highres=0;
+	output reg use_ext_trig=0;
 	
 	output reg i2c_ena;
 	output reg [6:0] i2c_addr;
@@ -611,6 +612,13 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres);
 			else if (143==readdata) begin
 				//tell them to toggle highres mode
 				highres=~highres;
+				comdata=readdata;
+				newcomdata=1; //pass it on
+				state=READ;
+			end
+			else if (144==readdata) begin
+				//tell them to toggle using ext_trig_in
+				use_ext_trig=~use_ext_trig;
 				comdata=readdata;
 				newcomdata=1; //pass it on
 				state=READ;

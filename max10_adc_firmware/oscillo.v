@@ -1,18 +1,18 @@
 module oscillo(clk, startTrigger, clk_flash, data_flash1, data_flash2, data_flash3, data_flash4, pwr1, pwr2, shdn_out, spen_out, trig_in, trig_out, rden, rdaddress, 
 data_ready, wraddress_triggerpoint, imthelast, imthefirst,rollingtrigger,trigDebug,triggerpoint,downsample,
 trigthresh,trigchannels,triggertype,triggertot,format_sdin_out,div_sclk_out,outsel_cs_out,clk_spi,SPIsend,SPIsenddata,
-wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2,dout1,dout2,dout3,dout4,highres);
+wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig);
 input clk,clk_spi;
 input startTrigger;
 input [1:0] trig_in;
 output reg [1:0] trig_out;
-output reg pwr1;//to power up adc, set low
-output reg pwr2;//to power up adc, set low
-output reg shdn_out;//Active-High Power-Down. If SPEN is high (parallel programming mode), a register reset is initiated on the falling edge of SHDN.
-output reg spen_out;//Active-Low SPI Enable. Drive high to enable parallel programming mode.
-output reg format_sdin_out;//0=2's complement, 1=offset binary, unconnected=gray code
-output reg div_sclk_out;//0=divide clock by 1, 1=divide clock by 2, unconnected=divide clock by 4
-output reg outsel_cs_out;//0=CMOS (dual bus), 1=MUX CMOS (channel A data bus), unconnected=MUX CMOS (channel b data bus)
+output reg pwr1=0;//to power up adc, set low
+output reg pwr2=0;//to power up adc, set low
+output reg shdn_out=0;//Active-High Power-Down. If SPEN is high (parallel programming mode), a register reset is initiated on the falling edge of SHDN.
+output reg spen_out=0;//Active-Low SPI Enable. Drive high to enable parallel programming mode.
+output reg format_sdin_out=0;//0=2's complement, 1=offset binary, unconnected=gray code
+output reg div_sclk_out=0;//0=divide clock by 1, 1=divide clock by 2, unconnected=divide clock by 4
+output reg outsel_cs_out=1;//0=CMOS (dual bus), 1=MUX CMOS (channel A data bus), unconnected=MUX CMOS (channel b data bus)
 input clk_flash, clk_flash2;
 input [7:0] data_flash1, data_flash2, data_flash3, data_flash4;
 output reg [7:0] dout1, dout2, dout3, dout4;
@@ -23,7 +23,7 @@ input wire rden;//read enable
 output reg data_ready;
 input wire imthelast, imthefirst;
 input wire rollingtrigger;
-output reg trigDebug;
+output reg trigDebug=1;
 input [7:0] trigthresh, trigthresh2;
 input [3:0] trigchannels;
 input [ram_width-1:0] triggerpoint;
@@ -33,24 +33,7 @@ input [ram_width:0] triggertot; // the top bit says whether to do check every sa
 input highres;
 parameter maxhighres=5;
 reg [7+maxhighres:0] highres1, highres2, highres3, highres4;
-
-initial begin
-	pwr1<=0; // unused
-	pwr2<=0; // unused
-	shdn_out<=0; // pwr up adcs
-	
-	//spen_out<=1; // parallel programming mode
-	//outsel_cs_out<=0; //CMOS (dual bus)
-	//format_sdin_out<=1; //offset binary
-	//div_sclk_out<=0; //divide clock by 1
-	
-	spen_out<=0; // serial programming mode
-	outsel_cs_out<=1; //start high
-	format_sdin_out<=0;
-	div_sclk_out<=0; 
-	
-	trigDebug<=1;
-end
+input ext_trig_in, use_ext_trig;
 
 reg [31:0] SPIcounter=0;//clock counter for SPI
 input [15:0] SPIsenddata;//the bits to send
@@ -200,7 +183,7 @@ always @(posedge clk_flash) begin
 end
 //trigger is an OR of all the channels which are active // also trigger every second or so (rolling)
 wire selftrig;
-assign selftrig = (trigchannels[0]&&selftrigtemp[0])||(trigchannels[1]&&selftrigtemp[1])||(trigchannels[2]&&selftrigtemp[2])||(trigchannels[3]&&selftrigtemp[3]) ||(rollingtrigger&thecounter>=25000000);
+assign selftrig = (trigchannels[0]&&selftrigtemp[0])||(trigchannels[1]&&selftrigtemp[1])||(trigchannels[2]&&selftrigtemp[2])||(trigchannels[3]&&selftrigtemp[3]) ||(rollingtrigger&thecounter>=25000000) || (use_ext_trig&ext_trig_in);
 
 reg Acquiring1; always @(posedge clk) Acquiring1 <= AcquiringAndTriggered;
 reg Acquiring2; always @(posedge clk) Acquiring2 <= Acquiring1;

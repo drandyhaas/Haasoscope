@@ -535,6 +535,13 @@ agreement for further details.
 		(text "highres" (rect 311 795 339 807)(font "Arial" ))
 		(line (pt 360 800)(pt 344 800)(line_width 1))
 	)
+	(port
+		(pt 360 816)
+		(output)
+		(text "use_ext_trig" (rect 0 0 49 12)(font "Arial" ))
+		(text "use_ext_trig" (rect 290 811 339 823)(font "Arial" ))
+		(line (pt 360 816)(pt 344 816)(line_width 1))
+	)
 	(parameter
 		"ram_width"
 		"12"

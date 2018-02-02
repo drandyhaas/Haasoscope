@@ -57,6 +57,7 @@ class DynamicUpdate():
     oversample13=False #do oversampling, merging channels 1 and 3
     autorearm=False #whether to automatically rearm the trigger after each event, or wait for a signal from software
     dohighres=False #whether to do averaging during downsampling or not (turned on by default during startup, and off again during shutdown)
+    useexttrig=False #whether to use the external trigger input
     db = False #debugging #True #False
 
     dolockin=False # read lockin info
@@ -323,7 +324,12 @@ class DynamicUpdate():
     def togglehighres(self):#toggle whether to do highres averaging during downsampling or not
             ser.write(chr(143))
             self.dohighres = not self.dohighres
-            print "do highres",self.dohighres
+            print "do highres is",self.dohighres
+    
+    def toggleuseexttrig(self):#toggle whether to use the external trigger input or not
+            ser.write(chr(144))
+            self.useexttrig = not self.useexttrig
+            print "useexttrig is",self.useexttrig
     
     def toggletriggerchan(self,tp):
         #tell it to trigger or not trigger on a given channel
@@ -757,6 +763,7 @@ class DynamicUpdate():
             elif event.key=="P": self.getone = not self.getone;print "get one",self.getone; return
             elif event.key=="a": self.average = not self.average;print "average",self.average; return
             elif event.key=="h": self.togglehighres(); return
+            elif event.key=="e": self.toggleuseexttrig(); return
             elif event.key=="A": self.toggleautorearm(); return
             elif event.key=="U": self.toggledousb(); return
             elif event.key=="0": self.oversample02 = not self.oversample02;print "oversample02 is now",self.oversample02; self.oversamp(0); return # TODO: allow for more boards
