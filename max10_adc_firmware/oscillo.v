@@ -1,7 +1,7 @@
 module oscillo(clk, startTrigger, clk_flash, data_flash1, data_flash2, data_flash3, data_flash4, pwr1, pwr2, shdn_out, spen_out, trig_in, trig_out, rden, rdaddress, 
 data_ready, wraddress_triggerpoint, imthelast, imthefirst,rollingtrigger,trigDebug,triggerpoint,downsample,
 trigthresh,trigchannels,triggertype,triggertot,format_sdin_out,div_sclk_out,outsel_cs_out,clk_spi,SPIsend,SPIsenddata,
-wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2);
+wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2,dout1,dout2,dout3,dout4,highres);
 input clk,clk_spi;
 input startTrigger;
 input [1:0] trig_in;
@@ -14,10 +14,8 @@ output reg format_sdin_out;//0=2's complement, 1=offset binary, unconnected=gray
 output reg div_sclk_out;//0=divide clock by 1, 1=divide clock by 2, unconnected=divide clock by 4
 output reg outsel_cs_out;//0=CMOS (dual bus), 1=MUX CMOS (channel A data bus), unconnected=MUX CMOS (channel b data bus)
 input clk_flash, clk_flash2;
-input [7:0] data_flash1;
-input [7:0] data_flash2;
-input [7:0] data_flash3;
-input [7:0] data_flash4;
+input [7:0] data_flash1, data_flash2, data_flash3, data_flash4;
+output reg [7:0] dout1, dout2, dout3, dout4;
 parameter ram_width=10;
 output reg[ram_width-1:0] wraddress_triggerpoint;
 input wire [ram_width-1:0] rdaddress;
@@ -32,6 +30,9 @@ input [ram_width-1:0] triggerpoint;
 input [4:0] downsample; // only record 1 out of every 2^downsample samples
 input [3:0] triggertype;
 input [ram_width:0] triggertot; // the top bit says whether to do check every sample or only according to downsample
+input highres;
+parameter maxhighres=5;
+reg [7+maxhighres:0] highres1, highres2, highres3, highres4;
 
 initial begin
 	pwr1<=0; // unused
@@ -129,7 +130,6 @@ reg [ram_width-1:0] samplecount;
 output reg [ram_width-1:0] wraddress;
 output reg Acquiring;
 reg PreOrPostAcquiring;
-reg [31:0] thecounter2;
 
 always @(posedge clk_flash) begin
 	i=0;
@@ -235,15 +235,17 @@ reg startAcquisition2; always @(posedge clk_flash) startAcquisition2 <= startAcq
 
 localparam INIT=0, PREACQ=1, WAITING=2, POSTACQ=3;
 integer state=INIT;
+reg [15:0] thecounter2;//max downsample is ~12
+reg [maxhighres:0] thecounter3;//for counting highres
 wire downsamplego;
 assign downsamplego = thecounter2[downsample] || downsample==0; // pay attention to sample when downsamplego is true
 always @(posedge clk_flash) begin
-case (state)
+	case (state)
 	INIT: begin // this is the beginning... wait for the go-ahead to start acquiring the pre-trigger samples
 		if (startAcquisition2) begin
 			Acquiring <= 1; // start acquiring?
 			PreOrPostAcquiring <= 1; // preacquiring
-			thecounter2<=1;
+			thecounter2=1;
 			state=PREACQ;
 		end
 	end
@@ -269,10 +271,42 @@ case (state)
 			state=INIT;
 		end
 	end
-endcase
-	thecounter2<=thecounter2+1;
+	endcase
+	thecounter2=thecounter2+1;
+	if (highres && downsample>0) begin // doing highres mode (averaging over samples within each downsample)
+		thecounter3=thecounter3+1;
+		highres1=highres1+data_flash1_reg;
+		highres2=highres2+data_flash2_reg;
+		highres3=highres3+data_flash3_reg;
+		highres4=highres4+data_flash4_reg;
+		if (downsamplego || thecounter3[maxhighres]) begin
+			thecounter3=0;
+			if (downsample>maxhighres) begin			
+				dout1=highres1>>maxhighres;
+				dout2=highres2>>maxhighres;
+				dout3=highres3>>maxhighres;
+				dout4=highres4>>maxhighres;
+			end
+			else begin
+				dout1=highres1>>downsample;
+				dout2=highres2>>downsample;
+				dout3=highres3>>downsample;
+				dout4=highres4>>downsample;
+			end
+			highres1=0;
+			highres2=0;
+			highres3=0;
+			highres4=0;
+		end
+	end
+	else begin
+		dout1=data_flash1_reg;
+		dout2=data_flash2_reg;
+		dout3=data_flash3_reg;
+		dout4=data_flash4_reg;
+	end
 	if (downsamplego) begin
-		thecounter2<=1;
+		thecounter2=1;
 		if(Acquiring) wraddress <= wraddress + 1;
 		if(PreOrPostAcquiring) samplecount <= samplecount + 1;
 	end
