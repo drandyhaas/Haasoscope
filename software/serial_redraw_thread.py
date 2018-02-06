@@ -696,7 +696,6 @@ class DynamicUpdate():
         elif event.key=="control": self.keyControl=False; return    
     
     #will grab the next keys as input
-    keychanneldisplay=False
     keyResample=False
     keysettriggertime=False
     keydownsample=False
@@ -708,11 +707,7 @@ class DynamicUpdate():
     keyControl=False    
     
     def onpress(self,event): # a key was pressed
-            if self.keychanneldisplay:
-                self.chanforscreen=int(event.key)
-                self.tellminidisplaychan(self.chanforscreen)
-                self.keychanneldisplay=False; return
-            elif self.keyResample:
+            if self.keyResample:
                 try:
                     self.sincresample=int(event.key)
                     self.keyResample=False; return
@@ -788,7 +783,7 @@ class DynamicUpdate():
             elif event.key=="shift+down": self.adjustvertical(False); return
             elif event.key=="ctrl+up": self.adjustvertical(True); return
             elif event.key=="ctrl+down": self.adjustvertical(False); return
-            elif event.key=="d": self.keychanneldisplay=True;print "now enter channel to show on miniscreen";return
+            elif event.key=="d": self.tellminidisplaychan(self.selectedchannel);return
             elif event.key=="R": self.keyResample=True;print "now enter amount to sinc resample (0-9)";return
             elif event.key=="T": self.keysettriggertime=True;self.triggertimethresh=0;print "now enter time over/under thresh, then enter";return
             elif event.key=="D": self.keydownsample=True;self.tempdownsample=0;print "now enter downsample amount, then enter";return
