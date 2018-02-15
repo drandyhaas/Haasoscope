@@ -495,8 +495,8 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig);
 					i2cdata[2]=0; // not used for mcp io expanders
 					if (i2cstate==READ) begin
 						i2cgo=1;
-						state=READ;
 					end
+					state=READ;
 				end
 			end
 			else if (readdata==135) begin
@@ -586,8 +586,8 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig);
 					i2cdata[2]=0; // not used for mcp io expanders
 					if (i2cstate==READ) begin
 						i2cgo=1;
-						state=READ;
 					end
+					state=READ;
 				end
 			end			
 			else if (readdata==142) begin // send the uniqueID
