@@ -11,7 +11,7 @@ import serial.tools.list_ports
 import json, os
 
 # You might adjust these regularly
-num_board = 1 # Number of Haasoscope boards to read out
+num_board = 4 # Number of Haasoscope boards to read out
 ram_width = 12 # width in bits of sample ram to use (e.g. 9==512 samples, 12(max)==4096 samples)
 max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1 (triggered by main ADC!), 111=pin6, ..., 118=pin14, 119=temp
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
@@ -180,9 +180,9 @@ class DynamicUpdate():
         print "Trigger time over/under thresh now",256*myb[0]+1*myb[1]-pow(2,12),"and usedownsamplefortriggertot is",usedownsamplefortriggertot
     
     def writefirmchan(self,chan):
-        board = num_board-1-chan/num_chan_per_board
+        theboard = num_board-1-chan/num_chan_per_board
         chanonboard = chan%num_chan_per_board
-        ser.write(chr(board*num_chan_per_board+chanonboard)) # the channels are numbered differently in the firmware
+        ser.write(chr(theboard*num_chan_per_board+chanonboard)) # the channels are numbered differently in the firmware
     
     def setdaclevelforchan(self,chan,level):
         if level>=4096: 
@@ -191,10 +191,12 @@ class DynamicUpdate():
         if level<0: 
             print "level can't be less than 0"
             level=0
-        self.setdac(chan,level)
+        theboard = num_board-1-chan/num_chan_per_board
+        chanonboard = chan%num_chan_per_board
+        self.setdac(chanonboard,level,theboard)
         self.chanlevel[chan]=level
         if not self.firstdrawtext: self.drawtext()
-        print "DAC level set for channel",chan,"to",level
+        print "DAC level set for channel",chan,"to",level,"which is chan",chanonboard,"on board",theboard
     
     def tellSPIsetup(self,what):
         #time.sleep(.1) #pause to make sure other SPI wriitng is done
@@ -247,7 +249,7 @@ class DynamicUpdate():
         mask = 1 << offset
         return(int_type ^ mask)
   
-    def sendi2c(self,whattosend):
+    def sendi2c(self,whattosend,board=200):
         myb=bytearray.fromhex(whattosend)
         ser.write(chr(136))
         datacounttosend=len(myb)-1 #number of bytes of info to send, not counting the address
@@ -255,8 +257,8 @@ class DynamicUpdate():
         for b in np.arange(len(myb)): ser.write(chr(myb[b]))
         for b in np.arange(4-len(myb)): 
             ser.write(chr(255)) # pad with extra bytes since the command expects a total of 5 bytes (numtosend, addr, and 3 more bytes)
-            #print 255
-        print "Tell i2c:","bytestosend:",datacounttosend," and address/data:",whattosend
+        ser.write(chr(board)) #200 (default) will address message to all boards, otherwise only the given board ID will listen
+        print "Tell i2c:","bytestosend:",datacounttosend," and address/data:",whattosend,"for board",board
     
     def setupi2c(self):
         self.sendi2c("20 00 00") #port A on IOexp 1 are outputs
@@ -269,7 +271,7 @@ class DynamicUpdate():
         self.sendi2c("21 13 "+ ('%0*x' % (2,self.b21)) ) #port B of IOexp 2
         print "initialized all i2c ports and set to starting values"
             
-    def setdac(self,chan,val):        
+    def setdac(self,chan,val,board):        
         if chan==0: c="50"
         elif chan==1: c="52"
         elif chan==2: c="54"
@@ -283,7 +285,7 @@ class DynamicUpdate():
         if val>=4096 or val<0:
             print "value",val,"out of range 0-4095"
             return
-        self.sendi2c("60 "+c+d+('%0*x' % (3,val))) #DAC, can go from 000 to 0fff in last 12 bits
+        self.sendi2c("60 "+c+d+('%0*x' % (3,val)),  board) #DAC, can go from 000 to 0fff in last 12 bits, and only send to the selected board
     
     def shutdownadcs(self):
         self.b20= int('ff',16)  # shdn (set first char to f to turn off) / ac coupling (?)
@@ -519,8 +521,8 @@ class DynamicUpdate():
             # If the channel was not actively triggering, and we now turned it on, or vice versa, toggle the trigger activity for this channel
             if self.trigsactive[channum] != vis: self.toggletriggerchan(channum)
         # Change the alpha on the line in the legend so we can see what lines have been toggled
-        if vis: legline.set_alpha(1.0); legline.set_linewidth(2)
-        else: legline.set_alpha(0.2); legline.set_linewidth(1)
+        if vis: legline.set_alpha(1.0); legline.set_linewidth(2.0)
+        else: legline.set_alpha(0.2); legline.set_linewidth(1.0)
     
     def pickline(self,theline):
         # on the pick event, find the orig line corresponding to the
@@ -528,8 +530,8 @@ class DynamicUpdate():
         origline,legline,channum = self.lined[theline]
         print "picked",theline,"for channum",channum
         if hasattr(self,'selectedlegline'): 
-            if self.selectedorigline.get_visible(): self.selectedlegline.set_linewidth(1.0)
-            else: self.selectedlegline.set_linewidth(2.0)
+            if self.selectedorigline.get_visible(): self.selectedlegline.set_linewidth(2.0)
+            else: self.selectedlegline.set_linewidth(1.0)
         legline.set_linewidth(4.0)
         self.selectedlegline=legline; self.selectedorigline=origline # remember them so we can set it back to normal later when we pick something else
         if channum < num_board*num_chan_per_board: # it's an ADC channel (not a max10adc channel or other thing)
@@ -616,10 +618,17 @@ class DynamicUpdate():
         
     def setacdc(self):
         chan=self.selectedchannel
-        print "toggling acdc for chan",chan
-        self.b20 = self.toggleBit(self.b20,int(chan))
-        self.sendi2c("20 13 "+ ('%0*x' % (2,self.b20)) ) #port B of IOexp 1
+        theboard = num_board-1-chan/num_chan_per_board
+        chanonboard = chan%num_chan_per_board
+        print "toggling acdc for chan",chan,"which is chan",chanonboard,"on board",theboard
         self.acdc[int(chan)] = not self.acdc[int(chan)]
+        self.b20= int('00',16)  # shdn (set first char to 0 to turn on) / ac coupling (set second char to f for DC, 0 for AC)
+        for c in range(0,4):
+            realchan = (num_board-1-theboard)*num_chan_per_board+c
+            if self.acdc[int(realchan)]: 
+                self.b20 = self.toggleBit(self.b20,int(c)) # 1 is dc, 0 is ac
+                print "toggling bit",c,"for chan",realchan
+        self.sendi2c("20 13 "+ ('%0*x' % (2,self.b20)),  theboard) #port B of IOexp 1, only for the selected board
         self.setdacvalue()
         self.drawtext()
     
@@ -854,7 +863,7 @@ class DynamicUpdate():
         channum=0
         for legline, origline in zip(self.leg.get_lines(), self.lines):
             legline.set_picker(5)  # 5 pts tolerance
-            legline.set_linewidth(2)
+            legline.set_linewidth(2.0)
             origline.set_picker(5)
             #save a reference to the plot line and legend line and channel number, accessible from either line or the channel number
             self.lined[legline] = (origline,legline,channum)

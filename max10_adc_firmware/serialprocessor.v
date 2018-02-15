@@ -515,7 +515,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig);
 				end
 			end
 			else if (readdata==136) begin
-				byteswanted=5;//wait for next bytes which are the stuff to send over i2c
+				byteswanted=6;//wait for next bytes which are the stuff to send over i2c
 				comdata=readdata;
 				newcomdata=1; //pass it on
 				if (bytesread<byteswanted) state=READMORE;
@@ -528,10 +528,10 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig);
 					i2cdata[0]=extradata[2];
 					i2cdata[1]=extradata[3];
 					i2cdata[2]=extradata[4];
-					if (i2cstate==READ) begin
+					if ((extradata[5]==myid || extradata[5]==200) && i2cstate==READ) begin // only pay attention if the board is broadcast (id 200) or for my id!
 						i2cgo=1;
-						state=READ;
 					end
+					state=READ;
 				end
 			end
 			else if (137==readdata) begin
