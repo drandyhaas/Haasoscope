@@ -11,7 +11,7 @@ import serial.tools.list_ports
 import json, os
 
 # You might adjust these regularly
-num_board = 2 # Number of Haasoscope boards to read out
+num_board = 1 # Number of Haasoscope boards to read out
 ram_width = 12 # width in bits of sample ram to use (e.g. 9==512 samples, 12(max)==4096 samples)
 max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1 (triggered by main ADC!), 111=pin6, ..., 118=pin14, 119=temp
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
@@ -134,7 +134,7 @@ class DynamicUpdate():
     
     def telltickstowait(self): #usually downsample+4
         #tell it the number of clock ticks to wait, log2, between sending bytes
-        ds=self.downsample-4
+        ds=self.downsample-3
         if ds<1: ds=1
         ser.write(chr(125))
         ser.write(chr(ds))
