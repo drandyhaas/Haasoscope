@@ -11,7 +11,7 @@ import serial.tools.list_ports
 import json, os
 
 # You might adjust these regularly
-num_board = 4 # Number of Haasoscope boards to read out
+num_board = 2 # Number of Haasoscope boards to read out
 ram_width = 12 # width in bits of sample ram to use (e.g. 9==512 samples, 12(max)==4096 samples)
 max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1 (triggered by main ADC!), 111=pin6, ..., 118=pin14, 119=temp
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
@@ -53,8 +53,6 @@ class DynamicUpdate():
     domaindrawing=True # whether to update the main window data and redraw it
     selectedchannel=0 #what channel some actions apply to
     selectedmax10channel=0 #what max10 channel is selected
-    oversample02=False #do oversampling, merging channels 0 and 2
-    oversample13=False #do oversampling, merging channels 1 and 3
     autorearm=False #whether to automatically rearm the trigger after each event, or wait for a signal from software
     dohighres=False #whether to do averaging during downsampling or not (turned on by default during startup, and off again during shutdown)
     useexttrig=False #whether to use the external trigger input
@@ -82,6 +80,7 @@ class DynamicUpdate():
     supergain=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is normal gain, 0 is super gain (x100)
     acdc=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is dc, 0 is ac
     trigsactive=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is triggering on that channel, 0 is not triggering on it
+    dooversample=np.zeros(num_board*num_chan_per_board, dtype=int) # 1 is oversampling, 0 is no oversampling
     
     #These hold the state of the IO expanders
     a20= int('f0',16) # oversamp (set bits 0,1 to 0 to send 0->2 and 1->3) / gain (set second char to 0 for low gain)
@@ -416,9 +415,14 @@ class DynamicUpdate():
 
     def oversamp(self,chan):
         #tell it to toggle oversampling for this channel
+        chanonboard = chan%num_chan_per_board
+        if chanonboard>1: return
+        self.dooversample[self.selectedchannel] = not self.dooversample[self.selectedchannel];
+        print "oversample is now",self.dooversample[self.selectedchannel],"for channel",chan
         ser.write(chr(141))
         self.writefirmchan(chan)
-        print "Oversampling toggled for channel",chan
+        self.drawtext()
+        self.figure.canvas.draw()
 
     def resetchans(self):
         for chan in np.arange(num_board*num_chan_per_board):
@@ -426,8 +430,8 @@ class DynamicUpdate():
                 self.tellswitchgain(chan) # set all gains back to low gain
             if  self.trigsactive[chan]==0:
                 self.toggletriggerchan(chan) # set all trigger channels back to active
-        if self.oversample02: self.oversamp(0)
-        if self.oversample13: self.oversamp(1)
+            if self.dooversample[chan]: 
+                self.oversamp(chan) # set all channels back to no oversampling
     
     def setbacktoserialreadout(self):
         if self.dousb:    
@@ -492,6 +496,11 @@ class DynamicUpdate():
         text +="\nLevel="+str(self.chanlevel[self.selectedchannel])
         text +="\nDC coupled="+str(self.acdc[self.selectedchannel])
         text +="\nTriggering="+str(self.trigsactive[self.selectedchannel])
+        chanonboard = self.selectedchannel%num_chan_per_board
+        if chanonboard<2:
+            if self.dooversample[self.selectedchannel]: text+= "\nOversampled x2"
+        else:
+            if self.dooversample[self.selectedchannel-2]: text+= "\nDisabled (oversampling)"
         #text+="\n"
         #text+="\nmax10chan: "+str(self.selectedmax10channel)
         return text
@@ -770,8 +779,7 @@ class DynamicUpdate():
             elif event.key=="e": self.toggleuseexttrig(); return
             elif event.key=="A": self.toggleautorearm(); return
             elif event.key=="U": self.toggledousb(); return
-            elif event.key=="0": self.oversample02 = not self.oversample02;print "oversample02 is now",self.oversample02; self.oversamp(0); return # TODO: allow for more boards
-            elif event.key=="1": self.oversample13 = not self.oversample13;print "oversample13 is now",self.oversample13; self.oversamp(1); return
+            elif event.key=="O": self.oversamp(self.selectedchannel); return
             elif event.key=="t": self.rising=not self.rising;self.settriggertype(self.rising);print "rising toggled",self.rising; return
             elif event.key=="g": self.dogrid=not self.dogrid;print "dogrid toggled",self.dogrid; return
             elif event.key=="x": self.tellswitchgain(self.selectedchannel)
@@ -984,13 +992,9 @@ class DynamicUpdate():
     def plot_fft(self,bn): # pass in the board number
         channumonboard = self.fftchan%num_chan_per_board # this is what channel (0--3) we want to draw fft from for the board
         chanonboardnum = num_board - self.fftchan/num_chan_per_board - 1 # this is what board (0 -- (num_board-1)) we want to draw that fft channel from
-        #print channumonboard, chanonboardnum
         if bn==chanonboardnum and len(self.ydata)>channumonboard: # select the right board check that the channel data is really there
             twoforoversampling=1
-            if self.oversample02 and channumonboard==0:
-                twoforoversampling=2
-            if self.oversample13 and channumonboard==1:
-                twoforoversampling=2
+            if self.dooversample[self.fftchan]: twoforoversampling=2
             y = self.ydata[channumonboard] # channel signal to take fft of
             n = len(y) # length of the signal
             k = np.arange(n)
@@ -1211,8 +1215,8 @@ class DynamicUpdate():
             db2=False #True #False
             if (db2): print byte_array[0:10]
             self.ydata=np.reshape(byte_array,(num_chan_per_board,num_samples))            
-            if (self.oversample02): self.oversample(0,2)                
-            if (self.oversample13): self.oversample(1,3)                
+            if self.dooversample[num_chan_per_board*(num_board-board-1)]: self.oversample(0,2)
+            if self.dooversample[num_chan_per_board*(num_board-board-1)+1]: self.oversample(1,3)            
             if (self.average):
                 for c in np.arange(num_chan_per_board):
                     for i in np.arange(num_samples/2):
@@ -1223,7 +1227,7 @@ class DynamicUpdate():
             print byte_array[0:10]
         
     def oversample(self,c1,c2):
-        tempc1=self.ydata[c1][num_samples/4:3*num_samples/4:1]
+        tempc1=self.ydata[c1][num_samples/4:3*num_samples/4:1] #just using the half of the data in the middle
         tempc2=self.ydata[c2][num_samples/4:3*num_samples/4:1]
         adjustmeanandrms=True
         if (adjustmeanandrms):
@@ -1237,8 +1241,8 @@ class DynamicUpdate():
             tempc2=meanrms*(tempc2-mean_c2)/rms_c2 + meanmean
             #print mean_c1, mean_c2, rms_c1, rms_c2
         mergedsamps=np.empty(num_samples)
-        mergedsamps[0:num_samples:2]=tempc2 # a little tricky which is 0 and which is 1 (i.e. which is sampled first!)
-        mergedsamps[1:num_samples+1:2]=tempc1
+        mergedsamps[0:num_samples:2]=tempc1 # a little tricky which is 0 and which is 1 (i.e. which is sampled first!)
+        mergedsamps[1:num_samples+1:2]=tempc2
         self.ydata[c1]=mergedsamps
         self.ydata[c2]=0
     
