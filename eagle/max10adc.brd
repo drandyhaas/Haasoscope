@@ -3,14 +3,14 @@
 <eagle version="8.6.2">
 <drawing>
 <settings>
-<setting alwaysvectorfont="no"/>
+<setting alwaysvectorfont="yes"/>
 <setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
 <grid distance="1" unitdist="mm" unit="mm" style="dots" multiple="1" display="no" altdistance="0.1" altunitdist="mm" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
-<layer number="2" name="Route2" color="58" fill="10" visible="yes" active="yes"/>
+<layer number="2" name="Route2" color="58" fill="10" visible="no" active="yes"/>
 <layer number="3" name="Route3" color="4" fill="3" visible="no" active="no"/>
 <layer number="4" name="Route4" color="1" fill="4" visible="no" active="no"/>
 <layer number="5" name="Route5" color="4" fill="4" visible="no" active="no"/>
@@ -23,20 +23,20 @@
 <layer number="12" name="Route12" color="1" fill="5" visible="no" active="no"/>
 <layer number="13" name="Route13" color="4" fill="5" visible="no" active="no"/>
 <layer number="14" name="Route14" color="1" fill="6" visible="no" active="no"/>
-<layer number="15" name="Route15" color="13" fill="1" visible="yes" active="yes"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
+<layer number="15" name="Route15" color="13" fill="1" visible="no" active="yes"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="yes"/>
 <layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
 <layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="yes"/>
 <layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="yes"/>
 <layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="yes"/>
 <layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="no" active="yes"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="yes"/>
@@ -48,19 +48,19 @@
 <layer number="37" name="tTest" color="7" fill="1" visible="no" active="yes"/>
 <layer number="38" name="bTest" color="7" fill="1" visible="no" active="yes"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="yes" active="yes"/>
-<layer number="40" name="bKeepout" color="1" fill="11" visible="yes" active="yes"/>
+<layer number="40" name="bKeepout" color="1" fill="11" visible="no" active="yes"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="yes" active="yes"/>
-<layer number="42" name="bRestrict" color="1" fill="10" visible="yes" active="yes"/>
+<layer number="42" name="bRestrict" color="1" fill="10" visible="no" active="yes"/>
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="yes"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
-<layer number="45" name="Holes" color="7" fill="1" visible="no" active="yes"/>
+<layer number="45" name="Holes" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
 <layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
 <layer number="48" name="Document" color="7" fill="1" visible="no" active="yes"/>
 <layer number="49" name="Reference" color="7" fill="1" visible="no" active="yes"/>
 <layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
 <layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="yes"/>
 <layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
 <layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
 <layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
@@ -172,7 +172,7 @@
 <plain>
 <hole x="82" y="12.5" drill="1.6"/>
 <hole x="82" y="45.5" drill="1.6"/>
-<hole x="-4.5" y="58.5" drill="1.6"/>
+<hole x="-2.5" y="58.5" drill="1.6"/>
 <hole x="-10.5" y="-0.5" drill="1.6"/>
 <wire x1="-12" y1="-2" x2="-12" y2="60" width="0.1524" layer="20"/>
 <wire x1="-12" y1="60" x2="86" y2="60" width="0.1524" layer="20"/>
@@ -191,7 +191,7 @@
 <dimension x1="85.5" y1="32.2" x2="85.5" y2="26.2" x3="85.5" y3="29.2" textsize="0.8128" layer="37" dtype="vertical"/>
 <dimension x1="85.6" y1="48.6" x2="85.6" y2="42.6" x3="85.6" y3="45.6" textsize="0.8128" layer="37" dtype="vertical"/>
 <text x="-9.31" y="1.51" size="0.8128" layer="21" font="vector" rot="R90">by Dr. Andy Haas</text>
-<text x="37.3" y="13.9" size="0.8128" layer="21" font="vector" rot="R90">1</text>
+<text x="37.4" y="14.1" size="0.8128" layer="21" font="vector" rot="R90">1</text>
 <text x="36.4" y="15" size="0.8128" layer="21" font="vector" rot="R90">50.0</text>
 <text x="50.5" y="3.1" size="0.8128" layer="21" font="vector" rot="R180">Reset</text>
 <wire x1="-7.3" y1="7.8" x2="12.7" y2="7.8" width="0.1524" layer="21"/>
@@ -237,6 +237,44 @@ gain</text>
 <text x="72" y="48.7" size="0.8128" layer="21" font="vector" rot="R90">high gain</text>
 <text x="64" y="49.1" size="0.8128" layer="21" font="vector" rot="R90">low gain</text>
 <wire x1="-11.3" y1="17.8" x2="16.7" y2="17.8" width="0.1524" layer="21"/>
+<text x="19.71" y="45.51" size="0.8128" layer="21" font="vector">3.3V</text>
+<text x="24.71" y="45.51" size="0.8128" layer="21" font="vector">5V</text>
+<text x="30.11" y="45.51" size="0.8128" layer="21" font="vector">GND</text>
+<text x="34.11" y="45.51" size="0.8128" layer="21" font="vector">122</text>
+<text x="38.99" y="45.21" size="0.8128" layer="21" font="vector" rot="R90">AIN1</text>
+<text x="40.3" y="14.8" size="0.8128" layer="21" font="vector" rot="R90">10nF</text>
+<text x="21.1" y="12" size="0.8128" layer="21" font="vector" rot="R90">AIN6</text>
+<text x="39.3" y="10.8" size="0.8128" layer="21" font="vector" rot="R90">AIN14</text>
+<text x="18.7" y="4.3" size="0.8128" layer="21" font="vector">B0 E24</text>
+<text x="33.7" y="4.3" size="0.8128" layer="21" font="vector">E24 B7</text>
+<text x="21.19" y="52.41" size="0.8128" layer="21" font="vector" rot="R90">101</text>
+<text x="38.99" y="52.21" size="0.8128" layer="21" font="vector" rot="R90">GND</text>
+<text x="36.49" y="52.21" size="0.8128" layer="21" font="vector" rot="R90">3.3V</text>
+<text x="23.79" y="52.41" size="0.8128" layer="21" font="vector" rot="R90">100</text>
+<text x="26.29" y="53.11" size="0.8128" layer="21" font="vector" rot="R90">91</text>
+<text x="28.89" y="53.11" size="0.8128" layer="21" font="vector" rot="R90">90</text>
+<text x="31.39" y="53.11" size="0.8128" layer="21" font="vector" rot="R90">89</text>
+<text x="33.89" y="53.11" size="0.8128" layer="21" font="vector" rot="R90">88</text>
+<text x="16.81" y="24.91" size="0.8128" layer="21" font="vector">GND</text>
+<text x="16.81" y="27.41" size="0.8128" layer="21" font="vector">5V</text>
+<text x="-8.29" y="45.51" size="0.8128" layer="21" font="vector">5V</text>
+<text x="-8.39" y="47.91" size="0.8128" layer="21" font="vector">GND</text>
+<text x="16.81" y="30.01" size="0.8128" layer="21" font="vector">110</text>
+<text x="16.81" y="32.71" size="0.8128" layer="21" font="vector">111</text>
+<text x="16.81" y="35.01" size="0.8128" layer="21" font="vector">113</text>
+<text x="16.81" y="37.71" size="0.8128" layer="21" font="vector">114</text>
+<text x="16.81" y="40.11" size="0.8128" layer="21" font="vector">118</text>
+<text x="16.81" y="42.71" size="0.8128" layer="21" font="vector">119</text>
+<text x="16.81" y="45.21" size="0.8128" layer="21" font="vector">29</text>
+<text x="17.79" y="47.21" size="0.8128" layer="21" font="vector" rot="R90">122</text>
+<text x="-8.49" y="42.91" size="0.8128" layer="21" font="vector">140</text>
+<text x="-8.49" y="40.31" size="0.8128" layer="21" font="vector">135</text>
+<text x="-8.49" y="37.71" size="0.8128" layer="21" font="vector">134</text>
+<text x="-8.49" y="35.21" size="0.8128" layer="21" font="vector">131</text>
+<text x="-8.49" y="32.71" size="0.8128" layer="21" font="vector">132</text>
+<text x="-7.81" y="29.51" size="0.8128" layer="21" font="vector" rot="R90">130</text>
+<text x="-7.81" y="27.01" size="0.8128" layer="21" font="vector" rot="R90">127</text>
+<text x="-7.81" y="24.11" size="0.8128" layer="21" font="vector" rot="R90">124</text>
 </plain>
 <libraries>
 <library name="rcl">
@@ -4997,7 +5035,7 @@ design rules under a new name.
 </designrules>
 <autorouter>
 <pass name="Default">
-<param name="RoutingGrid" value="0.1mm"/>
+<param name="RoutingGrid" value="0.15mm"/>
 <param name="AutoGrid" value="0"/>
 <param name="Efforts" value="1"/>
 <param name="TopRouterVariant" value="0"/>
@@ -5032,7 +5070,7 @@ design rules under a new name.
 <param name="cfHugging" value="3"/>
 <param name="cfAvoid" value="4"/>
 <param name="cfPolygon" value="10"/>
-<param name="cfBase.1" value="1"/>
+<param name="cfBase.1" value="0"/>
 <param name="cfBase.2" value="9"/>
 <param name="cfBase.3" value="1"/>
 <param name="cfBase.4" value="1"/>
@@ -5046,8 +5084,8 @@ design rules under a new name.
 <param name="cfBase.12" value="1"/>
 <param name="cfBase.13" value="1"/>
 <param name="cfBase.14" value="1"/>
-<param name="cfBase.15" value="0"/>
-<param name="cfBase.16" value="0"/>
+<param name="cfBase.15" value="1"/>
+<param name="cfBase.16" value="1"/>
 <param name="mnVias" value="20"/>
 <param name="mnSegments" value="9999"/>
 <param name="mnExtdSteps" value="9999"/>
@@ -5056,9 +5094,8 @@ design rules under a new name.
 <param name="mnRipupTotal" value="100"/>
 </pass>
 <pass name="Follow-me" refer="Default" active="yes">
-<param name="cfBase.1" value="0"/>
 <param name="cfBase.2" value="1"/>
-<param name="cfBase.15" value="1"/>
+<param name="cfBase.16" value="0"/>
 </pass>
 <pass name="Busses" refer="Default" active="yes">
 <param name="cfNonPref" value="4"/>
@@ -5287,7 +5324,7 @@ design rules under a new name.
 </element>
 <element name="PIN_LEFT" library="Seeed-OPL-Connector" package="H8-2.54-90D-MALE" value="8p-2.54-90d" x="28.4" y="2.1" smashed="yes" rot="MR270">
 <attribute name="MPN" value="" x="28.4" y="2.1" size="0.8128" layer="28" font="vector" rot="MR270" display="off"/>
-<attribute name="NAME" x="25.67" y="3.695" size="0.8128" layer="21" font="vector"/>
+<attribute name="NAME" x="23.67" y="-0.305" size="0.8128" layer="21" font="vector"/>
 <attribute name="NAME" x="30.432" y="1.846" size="0.8128" layer="34" ratio="10" rot="MR0"/>
 </element>
 <element name="SW_5V" library="PP_Electromechanical" package="0S102011MS2QS1" value="OS102011MS2QN1" x="42.1" y="53.4" smashed="yes" rot="R90"/>
@@ -5588,12 +5625,12 @@ design rules under a new name.
 </element>
 <element name="PIN_DISPLAY" library="Seeed-Connector" library_urn="urn:adsk.eagle:library:478" package="H10-2.54" package3d_urn="urn:adsk.eagle:package:33117/1" value="YELLOW-10P-2.54" x="-10" y="36.9" smashed="yes">
 <attribute name="MPN" value="" x="-10" y="36.9" size="1.778" layer="27" display="off"/>
-<attribute name="NAME" x="-7.605" y="33.63" size="0.8128" layer="21" font="vector" rot="R90"/>
+<attribute name="NAME" x="-11.005" y="33.63" size="0.8128" layer="21" font="vector" rot="R90"/>
 <attribute name="NAME" x="-9.365" y="39.44" size="1.27" layer="33" ratio="10" rot="R90"/>
 </element>
 <element name="PIN_IO_1" library="Seeed-Connector" library_urn="urn:adsk.eagle:library:478" package="H10-2.54" package3d_urn="urn:adsk.eagle:package:33117/1" value="YELLOW-10P-2.54" x="15.4" y="36.9" smashed="yes" rot="R180">
 <attribute name="MPN" value="" x="15.4" y="36.9" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="NAME" x="13.005" y="39.57" size="0.8128" layer="21" font="vector" rot="R270"/>
+<attribute name="NAME" x="13.405" y="39.37" size="0.8128" layer="21" font="vector" rot="R270"/>
 <attribute name="NAME" x="14.765" y="34.36" size="1.27" layer="33" ratio="10" rot="R270"/>
 </element>
 <element name="K1" library="relay" library_urn="urn:adsk.eagle:library:339" package="SOP04" package3d_urn="urn:adsk.eagle:package:24376/1" value="AQY21SOP" x="76" y="10" smashed="yes" rot="MR270">
@@ -5663,11 +5700,11 @@ design rules under a new name.
 </element>
 <element name="PIN_AIN_IO2_PWRGND" library="pinhead+" package="2X08_SMT" value="15-91-2160" x="28.5" y="50.4" smashed="yes" rot="R180">
 <attribute name="MPN" value="15-91-2160" x="28.5" y="50.4" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="NAME" x="34.26" y="45.985" size="0.8128" layer="21" font="vector" rot="R180"/>
+<attribute name="NAME" x="34.26" y="49.985" size="0.8128" layer="21" font="vector" rot="R180"/>
 </element>
 <element name="PIN_ANALOG_IOEXP" library="pinhead+" package="2X08_SMT" value="15-91-2160" x="28.4" y="9.3" smashed="yes">
 <attribute name="MPN" value="15-91-2160" x="28.4" y="9.3" size="1.778" layer="27" display="off"/>
-<attribute name="NAME" x="22.74" y="13.615" size="0.8128" layer="21" font="vector"/>
+<attribute name="NAME" x="22.74" y="8.615" size="0.8128" layer="21" font="vector"/>
 </element>
 <element name="RIN1_10K" library="resistor" package="R0805" value="10K" x="61" y="11.6" smashed="yes" rot="MR180">
 <attribute name="MF" value="" x="61" y="11.6" size="1.778" layer="28" rot="MR180" display="off"/>
@@ -5892,7 +5929,7 @@ design rules under a new name.
 <element name="CIN56_4" library="rcl@1" package="C0603" value="56pF" x="60.3" y="51.1" smashed="yes" rot="MR180">
 <attribute name="MPN" value="06035A560FAT2A" x="60.3" y="51.1" size="1.778" layer="28" rot="MR180" display="off"/>
 </element>
-<element name="GOLD_ORB_SM1" library="oshw" package="OSHW_8MM" value="OSHWLOGOLOGO8MM" x="-1" y="39" rot="R90"/>
+<element name="GOLD_ORB_SM1" library="oshw" package="OSHW_8MM" value="OSHWLOGOLOGO8MM" x="-1" y="39" smashed="yes" rot="R90"/>
 </elements>
 <signals>
 <signal name="+5V" class="3">
@@ -6797,8 +6834,6 @@ design rules under a new name.
 <wire x1="14.55" y1="21.15" x2="15.9" y2="19.8" width="0.1524" layer="1"/>
 <wire x1="10.5" y1="21.15" x2="14.55" y2="21.15" width="0.1524" layer="1"/>
 <wire x1="15.9" y1="19.8" x2="15.95" y2="19.8" width="0.1524" layer="1"/>
-<wire x1="-4.65" y1="40.5" x2="-4.65" y2="39.6" width="0.1524" layer="1"/>
-<wire x1="-4.65" y1="39.6" x2="-4.65" y2="29.7" width="0.1524" layer="1"/>
 <wire x1="9.3" y1="48.75" x2="9.3" y2="47.4" width="0.1524" layer="1"/>
 <wire x1="5.7" y1="52.35" x2="9.3" y2="48.75" width="0.1524" layer="1"/>
 <wire x1="5.7" y1="52.65" x2="5.7" y2="52.35" width="0.1524" layer="1"/>
@@ -6811,7 +6846,6 @@ design rules under a new name.
 <wire x1="-11.1" y1="46.2" x2="-10.35" y2="46.95" width="0.1524" layer="1"/>
 <wire x1="-11.1" y1="40.2" x2="-11.1" y2="46.2" width="0.1524" layer="1"/>
 <wire x1="-10.5" y1="39.6" x2="-11.1" y2="40.2" width="0.1524" layer="1"/>
-<wire x1="-4.65" y1="39.6" x2="-10.5" y2="39.6" width="0.1524" layer="1"/>
 <wire x1="5.7" y1="52.35" x2="5.635" y2="52.695" width="0.1524" layer="1"/>
 <wire x1="-7.95" y1="49.95" x2="-7.95" y2="48.3" width="0.1524" layer="1"/>
 <wire x1="-8.55" y1="50.55" x2="-7.95" y2="49.95" width="0.1524" layer="1"/>
@@ -6820,6 +6854,10 @@ design rules under a new name.
 <wire x1="9.6" y1="56.7" x2="-8.1" y2="56.7" width="0.1524" layer="1"/>
 <wire x1="12.45" y1="59.55" x2="9.6" y2="56.7" width="0.1524" layer="1"/>
 <wire x1="13.5" y1="59.55" x2="12.45" y2="59.55" width="0.1524" layer="1"/>
+<wire x1="19.65" y1="47.4" x2="19.65" y2="48.4" width="0.1524" layer="1"/>
+<wire x1="-4.65" y1="34.35" x2="-4.65" y2="29.7" width="0.1524" layer="1"/>
+<wire x1="-9.9" y1="39.6" x2="-4.65" y2="34.35" width="0.1524" layer="1"/>
+<wire x1="-10.5" y1="39.6" x2="-9.9" y2="39.6" width="0.1524" layer="1"/>
 </signal>
 <signal name="TCK">
 <contactref element="RJ2" pad="1"/>
