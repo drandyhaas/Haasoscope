@@ -1173,7 +1173,7 @@ class DynamicUpdate():
         self.lockinampo = amplwindowfloat
         self.lockinphaseo = phasewindowfloat
     
-    def getlockingdata(self,board):
+    def getlockindata(self,board):
             rslt = ser.read(16)
             byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
             if (len(rslt)==16):
