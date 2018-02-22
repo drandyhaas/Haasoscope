@@ -3,7 +3,7 @@
 <eagle version="8.6.2">
 <drawing>
 <settings>
-<setting alwaysvectorfont="yes"/>
+<setting alwaysvectorfont="no"/>
 <setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
@@ -238,9 +238,10 @@ gain</text>
 <text x="64" y="49.1" size="0.8128" layer="21" font="vector" rot="R90">low gain</text>
 <wire x1="-11.3" y1="17.8" x2="16.7" y2="17.8" width="0.1524" layer="21"/>
 <text x="19.71" y="45.51" size="0.8128" layer="21" font="vector">3.3V</text>
-<text x="24.71" y="45.51" size="0.8128" layer="21" font="vector">5V</text>
+<text x="25.31" y="45.51" size="0.8128" layer="21" font="vector">5V</text>
 <text x="30.11" y="45.51" size="0.8128" layer="21" font="vector">GND</text>
-<text x="34.11" y="45.51" size="0.8128" layer="21" font="vector">122</text>
+<text x="33.71" y="44.31" size="0.8128" layer="21" font="vector">121
+ExtTrig</text>
 <text x="38.99" y="45.21" size="0.8128" layer="21" font="vector" rot="R90">AIN1</text>
 <text x="40.3" y="14.8" size="0.8128" layer="21" font="vector" rot="R90">10nF</text>
 <text x="21.1" y="12" size="0.8128" layer="21" font="vector" rot="R90">AIN6</text>
