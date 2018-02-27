@@ -1265,7 +1265,10 @@ class DynamicUpdate():
         if (self.db): print "asked for data from board",board,time.clock()        
         if self.dolockin: self.getlockindata(board)
         if self.dousb:
-            rslt = usbser.read(num_bytes)
+            try:
+		rslt = usbser.read(num_bytes)
+	    except SerialException:
+		pass
             #usbser.flushInput() #just in case
         else:
             rslt = ser.read(num_bytes)
@@ -1407,10 +1410,10 @@ class DynamicUpdate():
 port=""; usbport=""; port_description=""; usbport_description="";
 ports = list(serial.tools.list_ports.comports())
 for port_no, description, address in ports:
-    if 'UART' in description or 'SERIAL' in description:
+    if 'UART' in description or 'SERIAL' in description or '1A86:7523' in address:
         #if port=="":
             port = port_no; port_description = description
-    if "USB Serial" in description:
+    if "USB Serial" in description or "Haasoscope" in description:
         #if usbport=="":
             usbport=port_no; usbport_description = description
 if port!="":
@@ -1421,7 +1424,7 @@ if usbport!="":
     print "connected USBserial to",usbport,":",usbport_description,": timeout",btimeout,"seconds"
 listports=True
 if port=="" or listports==True:
-    for port_no, description, address in ports: print port_no,":",description
+    for port_no, description, address in ports: print port_no,":",description,":",address
 if port=="": print "\nNo UART COM port found:"; sys.exit()
 
 def fit_sin(tt, yy):
