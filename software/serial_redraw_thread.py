@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from scipy.signal import resample
 import serial.tools.list_ports
 import json, os
+import scipy.optimize
 
 # You might adjust these regularly
 num_board = 1 # Number of Haasoscope boards to read out
@@ -63,6 +64,7 @@ class DynamicUpdate():
     lockinanalyzedataboard=0 # the board to analyze lockin info from
     debuglockin=False #debugging of lockin calculations #True #False
     reffreq = 0.008 #MHz of reference signal on chan 3 for lockin calculations
+    refsinchan = 3 #the channel number of the ref input signal (for auto reffreq calculation via sin fit)
     
     yscale = 7.5 # Vpp for full scale
     min_y = -yscale/2. #-4.0 #0 ADC
@@ -780,6 +782,7 @@ class DynamicUpdate():
             elif event.key=="A": self.toggleautorearm(); return
             elif event.key=="U": self.toggledousb(); return
             elif event.key=="O": self.oversamp(self.selectedchannel); return
+            elif event.key==">": self.refsinchan=self.selectedchannel; self.reffreq=0;
             elif event.key=="t": self.rising=not self.rising;self.settriggertype(self.rising);print "rising toggled",self.rising; return
             elif event.key=="g": self.dogrid=not self.dogrid;print "dogrid toggled",self.dogrid; return
             elif event.key=="x": self.tellswitchgain(self.selectedchannel)
@@ -890,7 +893,7 @@ class DynamicUpdate():
             if (self.db): print "ydata[0]=",theydata[0]
             self.lines[posi].set_xdata((self.xsampdata-num_samples/2.)*(1000.0*pow(2,self.downsample)/clkrate/self.xscaling))
             self.lines[posi].set_ydata(theydata*(3.3/256)) #full scale is 3.3V
-        else:
+        else: #this draws the 4 fast ADC data channels for each board
             for l in np.arange(num_chan_per_board):
                 thechan=l+(num_board-board-1)*num_chan_per_board
                 if (self.db): print "drawing adc line",thechan
@@ -902,6 +905,12 @@ class DynamicUpdate():
                 self.lines[thechan].set_ydata(ydatanew)
                 if self.doxyplot and (thechan==self.xychan or thechan==(self.xychan+1)): self.drawxyplot(xdatanew,ydatanew,thechan)# the xy plot
                 if self.recorddata and thechan==self.recorddatachan: self.dopersistplot(xdatanew,ydatanew)# the persist shaded plot
+                if thechan==self.refsinchan and self.reffreq==0:
+                    res = fit_sin(xdatanew, ydatanew)
+                    print res['maxcov'], res['amp'], res['freq'], res['phase'], res['offset']
+                    print res['freq']*1000000./self.xscaling,'kHz'
+                    if res['maxcov']<1e-6: self.reffreq = res['freq']
+                    else: print "sin fit failed!"
     
     doxyplot=False
     drawnxy=False
@@ -1362,6 +1371,24 @@ listports=True
 if port=="" or listports==True:
     for port_no, description, address in ports: print port_no,":",description
 if port=="": print "\nNo UART COM port found:"; sys.exit()
+
+def fit_sin(tt, yy):
+    '''Fit sin to the input time sequence, and return fitting parameters "amp", "omega", "phase", "offset", "freq", "period" and "fitfunc"'''
+    tt = np.array(tt)
+    yy = np.array(yy)
+    ff = np.fft.fftfreq(len(tt), (tt[1]-tt[0]))   # assume uniform spacing
+    Fyy = abs(np.fft.fft(yy))
+    guess_freq = abs(ff[np.argmax(Fyy[1:])+1])   # excluding the zero frequency "peak", which is related to offset
+    guess_amp = np.std(yy) * 2.**0.5
+    guess_offset = np.mean(yy)
+    guess = np.array([guess_amp, 2.*np.pi*guess_freq, 0., guess_offset])
+
+    def sinfunc(t, A, w, p, c):  return A * np.sin(w*t + p) + c
+    popt, pcov = scipy.optimize.curve_fit(sinfunc, tt, yy, p0=guess)
+    A, w, p, c = popt
+    f = w/(2.*np.pi)
+    fitfunc = lambda t: A * np.sin(w*t + p) + c
+    return {"amp": A, "omega": w, "phase": p, "offset": c, "freq": f, "period": 1./f, "fitfunc": fitfunc, "maxcov": np.max(pcov), "rawres": (guess,popt,pcov)}
 
 #Run the stuff!
 d = DynamicUpdate()
