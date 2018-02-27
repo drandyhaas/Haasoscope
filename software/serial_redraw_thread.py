@@ -57,6 +57,8 @@ class DynamicUpdate():
     autorearm=False #whether to automatically rearm the trigger after each event, or wait for a signal from software
     dohighres=False #whether to do averaging during downsampling or not (turned on by default during startup, and off again during shutdown)
     useexttrig=False #whether to use the external trigger input
+    autocalibchannel=-1 #which channel we are auto-calibrating
+    autocalibgainac=0 #which stage of gain and acdc we are auto-calibrating
     db = False #debugging #True #False
 
     dolockin=False # read lockin info
@@ -186,9 +188,9 @@ class DynamicUpdate():
         ser.write(chr(theboard*num_chan_per_board+chanonboard)) # the channels are numbered differently in the firmware
     
     def setdaclevelforchan(self,chan,level):
-        if level>=4096: 
-            print "level can't be bigger than 2**12-1=4095"
-            level=4095
+        if level>4096*2-1: 
+            print "level can't be bigger than 2**13-1=4096*2-1"
+            level=4096*2-1
         if level<0: 
             print "level can't be less than 0"
             level=0
@@ -279,13 +281,15 @@ class DynamicUpdate():
         elif chan==3: c="56"
         else:
             print "channel",chan,"out of range 0-3"
+            return        
+        if val>4096*2-1 or val<0:
+            print "value",val,"out of range 0-(4096*2-1)"
             return
         #d="0" # Vdd ref (0-3.3V, but noisy?)
         d="8" #internal ref, gain=1 (0-2V)
-        #d="9" #internal ref, gain=2 (0-4V)
-        if val>=4096 or val<0:
-            print "value",val,"out of range 0-4095"
-            return
+        if val>4095:
+            d="9" #internal ref, gain=2 (0-4V)
+            val/=2
         self.sendi2c("60 "+c+d+('%0*x' % (3,val)),  board) #DAC, can go from 000 to 0fff in last 12 bits, and only send to the selected board
     
     def shutdownadcs(self):
@@ -579,13 +583,13 @@ class DynamicUpdate():
             return
         except TypeError: pass
     
-    def adjustvertical(self,up):
-        amount=10
+    def adjustvertical(self,up,amount=10):
         if self.keyShift: amount*=5
         if self.keyControl: amount/=10
-        print "amount is",amount
+        #print "amount is",amount
         if self.gain[self.selectedchannel]: amount*=10 #low gain
-        if self.supergain[self.selectedchannel]==0 and self.acdc[self.selectedchannel]: amount/=10 #super gain
+        if self.supergain[self.selectedchannel]==0 and self.acdc[self.selectedchannel]: amount=max(1,amount/10) #super gain
+        #print "now amount is",amount
         if up:
              self.chanlevel[self.selectedchannel] = self.chanlevel[self.selectedchannel] - amount
         else:
@@ -703,7 +707,7 @@ class DynamicUpdate():
             if not self.firstdrawtext: self.drawtext()
         except IOError:
             print "No calib file found for board",board,"at file",fname
-            self.setdacvalues(sc) #will load in defaults
+            self.setdacvalues(sc) #will load in defaults      
     
     def onscroll(self,event):
          #print event
@@ -792,6 +796,7 @@ class DynamicUpdate():
             elif event.key=="I": self.testi2c(); return
             elif event.key=="c": self.readcalib(); return            
             elif event.key=="C": self.storecalib(); return
+            elif event.key=="|": self.autocalibchannel=0;
             elif event.key=="W": self.domaindrawing=not self.domaindrawing; return
             elif event.key=="Y": self.doxyplot=True; self.xychan=self.selectedchannel; print "doxyplot now",self.doxyplot,"for channel",self.xychan; return;
             elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; return;
@@ -905,12 +910,59 @@ class DynamicUpdate():
                 self.lines[thechan].set_ydata(ydatanew)
                 if self.doxyplot and (thechan==self.xychan or thechan==(self.xychan+1)): self.drawxyplot(xdatanew,ydatanew,thechan)# the xy plot
                 if self.recorddata and thechan==self.recorddatachan: self.dopersistplot(xdatanew,ydatanew)# the persist shaded plot
-                if thechan==self.refsinchan and self.reffreq==0:
-                    res = fit_sin(xdatanew, ydatanew)
-                    print res['maxcov'], res['amp'], res['freq'], res['phase'], res['offset']
-                    print res['freq']*1000000./self.xscaling,'kHz'
-                    if res['maxcov']<1e-6: self.reffreq = res['freq']
-                    else: print "sin fit failed!"
+                if thechan==self.refsinchan and self.reffreq==0: self.fittosin(xdatanew, ydatanew)                    
+                if self.autocalibchannel>=0 and thechan==self.autocalibchannel: self.autocalibrate(thechan,ydatanew)
+    
+    def fittosin(self,xdatanew, ydatanew):
+        res = fit_sin(xdatanew, ydatanew)
+        print res['maxcov'], res['amp'], res['freq'], res['phase'], res['offset']
+        print res['freq']*1000000./self.xscaling,'kHz'
+        if res['maxcov']<1e-6: self.reffreq = res['freq']
+        else: print "sin fit failed!"
+    
+    def autocalibrate(self,thechan,ydatanew):
+        self.selectedchannel=thechan
+        avg = np.average(ydatanew)
+        #print avg
+        tol = 1.0
+        tol2 = 0.25
+        if self.supergain[self.selectedchannel] or self.gain[self.selectedchannel]: # normal gain or low gain
+            tol = 0.3
+            tol2 = 0.02
+        if avg>0+tol:                        
+            self.adjustvertical(False,10)
+        elif avg<0-tol:
+            self.adjustvertical(True,10)
+        elif avg>0+tol2:
+            self.adjustvertical(False,1)
+        elif avg<0-tol2:
+            self.adjustvertical(True,1)
+        else: 
+            #go to the next channel, unless we're at the end of all channels
+            self.autocalibchannel=self.autocalibchannel+1
+            if self.autocalibchannel==num_chan_per_board*num_board:
+                self.autocalibgainac=self.autocalibgainac+1
+                if self.autocalibgainac==1:
+                    self.autocalibchannel=0
+                    for chan in range(num_chan_per_board*num_board):
+                        self.selectedchannel=chan
+                        self.setacdc()
+                elif self.autocalibgainac==2:
+                    self.autocalibchannel=0
+                    for chan in range(num_chan_per_board*num_board):
+                        self.selectedchannel=chan
+                        self.tellswitchgain(chan)
+                elif self.autocalibgainac==3:
+                    self.autocalibchannel=0
+                    for chan in range(num_chan_per_board*num_board):
+                        self.selectedchannel=chan
+                        self.setacdc()
+                else:
+                    self.autocalibchannel=-1 #all done
+                    self.autocalibgainac=0
+                    for chan in range(num_chan_per_board*num_board):
+                        self.selectedchannel=chan
+                        self.tellswitchgain(chan)
     
     doxyplot=False
     drawnxy=False
