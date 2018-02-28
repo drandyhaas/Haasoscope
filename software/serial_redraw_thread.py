@@ -1265,11 +1265,10 @@ class DynamicUpdate():
         if (self.db): print "asked for data from board",board,time.clock()        
         if self.dolockin: self.getlockindata(board)
         if self.dousb:
-            try:
+            #try:
 		rslt = usbser.read(num_bytes)
-	    except serial.SerialException:
-		pass
-            #usbser.flushInput() #just in case
+            	#usbser.flushInput() #just in case
+	    #except serial.SerialException: pass
         else:
             rslt = ser.read(num_bytes)
             #ser.flushInput() #just in case
