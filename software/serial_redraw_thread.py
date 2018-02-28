@@ -1267,7 +1267,7 @@ class DynamicUpdate():
         if self.dousb:
             try:
 		rslt = usbser.read(num_bytes)
-	    except SerialException:
+	    except serial.SerialException:
 		pass
             #usbser.flushInput() #just in case
         else:
