@@ -1,23 +1,13 @@
 # -*- coding: utf-8 -*-
-from serial import Serial
-from struct import unpack
-import numpy as np
-import time, sys
-import matplotlib
-import matplotlib.pyplot as plt
-from scipy.signal import resample
-import serial.tools.list_ports
-import json, os
-import scipy.optimize
 
 # You might adjust these regularly
 num_board = 1 # Number of Haasoscope boards to read out
 ram_width = 12 # width in bits of sample ram to use (e.g. 9==512 samples, 12(max)==4096 samples)
 max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1 (triggered by main ADC!), 111=pin6, ..., 118=pin14, 119=temp
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
-dofast=True #do the fast way of redrawing, just the specific things that could have likely changed
 
 # Probably don't need to tough these often
+dofast=True #do the fast way of redrawing, just the specific things that could have likely changed
 clkrate=125.0 # ADC sample rate in MHz
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
 num_samples = pow(2,ram_width)/pow(2,sendincrement) # num samples per channel, max is pow(2,ram_width)/pow(2,0)=4096
@@ -27,8 +17,19 @@ btimeout = 3.0 #time to wait for serial response #3.0, num_bytes*8*10.0/brate, o
 Nsamp=pow(2,ram_width)-1 #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
 print "num main ADC bytes for all boards",num_bytes*num_board
 print "num max10adc bytes for all boards",len(max10adcchans)*Nsamp
-print "rate theoretically",round(brate/10./(num_bytes*num_board+len(max10adcchans)*Nsamp),2),"Hz over serial" #including start/stop bits
+print "rate theoretically",round(brate/11./(num_bytes*num_board+len(max10adcchans)*Nsamp),2),"Hz over serial" #including start+2stop bits
+
+from serial import Serial
+from struct import unpack
+import numpy as np
+import time, sys
+import matplotlib
 if dofast: matplotlib.use('Qt4Agg')
+import matplotlib.pyplot as plt
+from scipy.signal import resample
+import serial.tools.list_ports
+import json, os
+import scipy.optimize
 
 class DynamicUpdate():
     lines = []
@@ -203,7 +204,7 @@ class DynamicUpdate():
         print "DAC level set for channel",chan,"to",level,"which is chan",chanonboard,"on board",theboard
     
     def tellSPIsetup(self,what):
-        time.sleep(.1) #pause to make sure other SPI wriitng is done
+        time.sleep(.01) #pause to make sure other SPI writng is done
         ser.write(chr(131))
         myb=bytearray.fromhex('06 10') #default    
         #SPIsenddata[14:8]=7'h08;//Common mode bias voltages
@@ -232,9 +233,9 @@ class DynamicUpdate():
         if what==30: myb=bytearray.fromhex('01 02') #multiplexed, with chA first
         if what==31: myb=bytearray.fromhex('01 06') #multiplexed, with chB first
         if what==32: myb=bytearray.fromhex('01 00') # not multiplexed output        
-        ser.write(chr(myb[0])); ser.write(chr(myb[1])); #write it!
+        ser.write(chr(myb[0]));	ser.write(chr(myb[1])); #write it!
         print "Tell SPI setup:",format(myb[0],'02x'),format(myb[1],'02x')
-        time.sleep(.1) #pause to make sure other SPI wriitng is done
+        time.sleep(.01) #pause to make sure other SPI writng is done
     
     # testBit() returns a nonzero result, 2**offset, if the bit at 'offset' is one.
     def testBit(self,int_type, offset):
@@ -254,6 +255,7 @@ class DynamicUpdate():
         return(int_type ^ mask)
   
     def sendi2c(self,whattosend,board=200):
+	time.sleep(.01)
         myb=bytearray.fromhex(whattosend)
         ser.write(chr(136))
         datacounttosend=len(myb)-1 #number of bytes of info to send, not counting the address
@@ -1416,7 +1418,7 @@ for port_no, description, address in ports:
         #if usbport=="":
             usbport=port_no; usbport_description = description
 if port!="":
-    ser = Serial(port,brate,timeout=btimeout,stopbits=1)
+    ser = Serial(port,brate,timeout=btimeout,stopbits=2)
     print "connected serial to",port,":",port_description,": timeout",btimeout,"seconds"
 if usbport!="":
     usbser = Serial(usbport,timeout=btimeout)
