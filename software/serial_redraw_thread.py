@@ -1381,7 +1381,7 @@ class DynamicUpdate():
             self.getIDs() # get the unique ID of each board, for calibration etc.
             self.readcalib() # get the calibrated DAC values for each board; if it fails then use defaults                
             self.on_launch()
-            self.nevents=0; oldnevents=0; oldtime=time.clock(); tinterval=100.
+            self.nevents=0; oldnevents=0; oldtime=time.clock(); tinterval=100.; oldtime=time.time()
             while 1:
                 if (self.paused): time.sleep(.1)
                 else:
@@ -1389,8 +1389,9 @@ class DynamicUpdate():
                     if (self.db): print "done with evt",self.nevents,time.clock()
                     self.nevents+=1
                     if self.nevents-oldnevents >= tinterval:
-                        lastrate = round(tinterval/(time.clock()-oldtime),2)
-                        print self.nevents,"events,",lastrate,"Hz"; oldtime=time.clock()
+                        lastrate = round(tinterval/(time.time()-oldtime),2)
+                        print self.nevents,"events,",lastrate,"Hz"
+                        oldtime=time.time()
                         if lastrate>40: tinterval=500.
                         else: tinterval=100.
                         oldnevents=self.nevents
