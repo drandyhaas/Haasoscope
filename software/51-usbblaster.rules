@@ -1,0 +1,9 @@
+# For Altera USB-Blaster permissions.
+SUBSYSTEM=="usb",\
+ENV{DEVTYPE}=="usb_device",\
+ATTR{idVendor}=="09fb",\
+ATTR{idProduct}=="6001",\
+MODE="0666",\
+NAME="bus/usb/$env{BUSNUM}/$env{DEVNUM}",\
+RUN+="/bin/chmod 0666 %c"
+
