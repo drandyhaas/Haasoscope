@@ -130,7 +130,7 @@ class DynamicUpdate():
         myb=bytearray.fromhex('{:04x}'.format(numtoshift))
         ser.write(chr(myb[0]))
         ser.write(chr(myb[1]))
-        print "lockinnumtoshift is",256*myb[0]+1*myb[1]
+        if self.db: print "lockinnumtoshift is",256*myb[0]+1*myb[1]
     
     def tellbytesskip(self):
         #tell it the number of bytes to skip after each send, log2
@@ -201,7 +201,7 @@ class DynamicUpdate():
         self.setdac(chanonboard,level,theboard)
         self.chanlevel[chan]=level
         if not self.firstdrawtext: self.drawtext()
-        print "DAC level set for channel",chan,"to",level,"which is chan",chanonboard,"on board",theboard
+        if self.db: print "DAC level set for channel",chan,"to",level,"which is chan",chanonboard,"on board",theboard
     
     def tellSPIsetup(self,what):
         time.sleep(.01) #pause to make sure other SPI writng is done
@@ -264,7 +264,7 @@ class DynamicUpdate():
         for b in np.arange(4-len(myb)): 
             ser.write(chr(255)) # pad with extra bytes since the command expects a total of 5 bytes (numtosend, addr, and 3 more bytes)
         ser.write(chr(board)) #200 (default) will address message to all boards, otherwise only the given board ID will listen
-        print "Tell i2c:","bytestosend:",datacounttosend," and address/data:",whattosend,"for board",board
+        if self.db: print "Tell i2c:","bytestosend:",datacounttosend," and address/data:",whattosend,"for board",board
     
     def setupi2c(self):
         self.sendi2c("20 00 00") #port A on IOexp 1 are outputs
@@ -546,18 +546,18 @@ class DynamicUpdate():
         # on the pick event, find the orig line corresponding to the
         # legend proxy line, and toggle the visibility
         origline,legline,channum = self.lined[theline]
-        print "picked",theline,"for channum",channum
+        if self.db: print "picked",theline,"for channum",channum
         if hasattr(self,'selectedlegline'): 
             if self.selectedorigline.get_visible(): self.selectedlegline.set_linewidth(2.0)
             else: self.selectedlegline.set_linewidth(1.0)
         legline.set_linewidth(4.0)
         self.selectedlegline=legline; self.selectedorigline=origline # remember them so we can set it back to normal later when we pick something else
         if channum < num_board*num_chan_per_board: # it's an ADC channel (not a max10adc channel or other thing)
-            print "picked a real ADC channel"
+            if self.db: print "picked a real ADC channel"
             self.selectedchannel=channum
             if self.keyShift: self.toggletriggerchan(channum)
         else:
-            print "picked a max10 ADC channel"
+            if self.db: print "picked a max10 ADC channel"
             self.selectedmax10channel=channum - num_board*num_chan_per_board
         self.drawtext()
 
