@@ -87,6 +87,7 @@ class DynamicUpdate():
     acdc=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is dc, 0 is ac
     trigsactive=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is triggering on that channel, 0 is not triggering on it
     dooversample=np.zeros(num_board*num_chan_per_board, dtype=int) # 1 is oversampling, 0 is no oversampling
+    maxdownsample=10 # slowest I can run
     
     #These hold the state of the IO expanders
     a20= int('f0',16) # oversamp (set bits 0,1 to 0 to send 0->2 and 1->3) / gain (set second char to 0 for low gain)
@@ -140,11 +141,12 @@ class DynamicUpdate():
     
     def telltickstowait(self): #usually downsample+4
         #tell it the number of clock ticks to wait, log2, between sending bytes
-        ds=self.downsample-3
+        if self.dousb: ds=self.downsample-2
+        else: ds=self.downsample-3
         if ds<1: ds=1
         ser.write(chr(125))
         ser.write(chr(ds))
-        print "clockbitstowait is",ds
+        if self.db: print "clockbitstowait is",ds
     
     def tellminidisplaychan(self,ch):
         #tell it the channel to show on the mini-display
@@ -329,6 +331,7 @@ class DynamicUpdate():
             self.dousb = not self.dousb
             ser.write(chr(137))
             print "dousb toggled to",self.dousb
+            if self.dousb: print "rate theoretically",round(4000000./(num_bytes*num_board+len(max10adcchans)*Nsamp),2),"Hz over USB2"
             self.telltickstowait()
     
     def togglehighres(self):#toggle whether to do highres averaging during downsampling or not
@@ -450,12 +453,12 @@ class DynamicUpdate():
     
     def telldownsample(self,ds):
         #tell it the amount to downsample, log2... so 0 (none), 1(factor 2), 2(factor 4), etc.
-        if ds>12: print "downsample >12 doesn't work well...and I get bored running that slow!"; return False
+        if ds>self.maxdownsample: print "downsample >",self.maxdownsample,"doesn't work well...and I get bored running that slow!"; return False
         if ds<0: print "downsample can't be <0 !"; return False
         ser.write(chr(124))
         ser.write(chr(ds))
         self.downsample=ds
-        print "downsample is",self.downsample        
+        if self.db: print "downsample is",self.downsample        
         if self.dolockin:
             twoforoversampling=1
             uspersample=(1.0/clkrate)*pow(2,self.downsample)/twoforoversampling # us per sample = 10 ns * 2^downsample
