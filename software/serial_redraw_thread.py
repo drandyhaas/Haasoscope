@@ -2,7 +2,7 @@
 
 # You might adjust these regularly
 num_board = 1 # Number of Haasoscope boards to read out
-ram_width = 12 # width in bits of sample ram to use (e.g. 9==512 samples, 12(max)==4096 samples)
+ram_width = 9 # width in bits of sample ram to use (e.g. 9==512 samples, 12(max)==4096 samples)
 max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1 (triggered by main ADC!), 111=pin6, ..., 118=pin14, 119=temp
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
 
@@ -15,10 +15,11 @@ num_bytes = num_samples*num_chan_per_board #num bytes per board
 brate = 1500000 #serial baud rate #1500000 #115200
 btimeout = 3.0 #time to wait for serial response #3.0, num_bytes*8*10.0/brate, or None
 Nsamp=pow(2,ram_width)-1 #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
-print "num main ADC bytes for all boards",num_bytes*num_board
-print "num max10adc bytes for all boards",len(max10adcchans)*Nsamp
-print "rate theoretically",round(brate/11./(num_bytes*num_board+len(max10adcchans)*Nsamp),2),"Hz over serial" #including start+2stop bits
-serialdelaytimerwait=0 # 300 # delay (in us) between each 32 (64?) bytes of serial output (set to 300 for some slow USB serial setups, but 0 normally)
+serialdelaytimerwait=0 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
+print "num main ADC and max10adc bytes for all boards = ",num_bytes*num_board,"and",len(max10adcchans)*Nsamp
+adjustedbrate=1./(1./brate+2.*serialdelaytimerwait*1.e-6/(32.*11.)) # delay of 2*serialdelaytimerwait microseconds every 32*11 bits
+serialrate=adjustedbrate/11./(num_bytes*num_board+len(max10adcchans)*Nsamp) #including start+2stop bits
+print "rate theoretically",round(serialrate,2),"Hz over serial"
 
 from serial import Serial
 from struct import unpack
