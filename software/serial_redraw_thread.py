@@ -6,7 +6,7 @@ ram_width = 12 # width in bits of sample ram to use (e.g. 9==512 samples, 12(max
 max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1 (triggered by main ADC!), 111=pin6, ..., 118=pin14, 119=temp
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
 
-# Probably don't need to tough these often
+# Probably don't need to touch these often
 dofast=True #do the fast way of redrawing, just the specific things that could have likely changed
 clkrate=125.0 # ADC sample rate in MHz
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
@@ -18,6 +18,8 @@ Nsamp=pow(2,ram_width)-1 #samples for each max10 adc channel (4095 max (not sure
 print "num main ADC bytes for all boards",num_bytes*num_board
 print "num max10adc bytes for all boards",len(max10adcchans)*Nsamp
 print "rate theoretically",round(brate/11./(num_bytes*num_board+len(max10adcchans)*Nsamp),2),"Hz over serial" #including start+2stop bits
+serialdelaytimerwait=0 # 300 # delay (in us) between each 32 (64?) bytes of serial output (set to 300 for some slow USB serial setups, but 0 normally)
+
 
 from serial import Serial
 from struct import unpack
@@ -88,7 +90,6 @@ class DynamicUpdate():
     trigsactive=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is triggering on that channel, 0 is not triggering on it
     dooversample=np.zeros(num_board*num_chan_per_board, dtype=int) # 1 is oversampling, 0 is no oversampling
     maxdownsample=10 # slowest I can run
-    serialdelaytimerwait=0 # 300 # delay (in us) between each 32 (64?) bytes of serial output (set to 300 for some slow USB serial setups, but 0 normally)
     
     #These hold the state of the IO expanders
     a20= int('f0',16) # oversamp (set bits 0,1 to 0 to send 0->2 and 1->3) / gain (set second char to 0 for low gain)
@@ -137,7 +138,7 @@ class DynamicUpdate():
     def tellserialdelaytimerwait(self):
         #tell it the number of microseconds to wait between every 32 (64?) bytes of serial output (for some slow USB serial setups)
         ser.write(chr(135))
-        myb=bytearray.fromhex('{:04x}'.format(self.serialdelaytimerwait))
+        myb=bytearray.fromhex('{:04x}'.format(serialdelaytimerwait))
         ser.write(chr(myb[0]))
         ser.write(chr(myb[1]))
         print "serialdelaytimerwait is",256*myb[0]+1*myb[1]
