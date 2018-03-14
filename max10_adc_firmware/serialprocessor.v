@@ -98,7 +98,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig);
   reg [ram_width-1:0] samplestosend = 0;
   reg [7:0] chanforscreen=0;
   reg autorearm=0;
-  integer thecounter, timeoutcounter;
+  integer thecounter=0, timeoutcounter=0, serialdelaytimer=0,serialdelaytimerwait=0;
   
   reg [7:0] usb2counter;
   output reg do_usb=0;
@@ -500,17 +500,12 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig);
 				end
 			end
 			else if (readdata==135) begin
-				byteswanted=2;//wait for next bytes which are the channel and PWM
+				byteswanted=2;//wait for next bytes which are the serialdelaytimerwait
 				comdata=readdata;
 				newcomdata=1; //pass it on
 				if (bytesread<byteswanted) state=READMORE;
 				else begin
-					if (extradata[0]/4 ==myid) begin //I have this channel
-						//if (extradata[0]%4==0) PWMoffset0 = extradata[1];//set the PWM value for the channel (fraction of 256 of which to be on for, *3.3V)
-						//if (extradata[0]%4==1) PWMoffset1 = extradata[1];
-						//if (extradata[0]%4==2) PWMoffset2 = extradata[1];
-						//if (extradata[0]%4==3) PWMoffset3 = extradata[1];
-					end
+					serialdelaytimerwait=100*(256*extradata[0]+extradata[1]); // 50 * amount given, so amount given in microseconds (20ns*50=1us)
 					state=READ;
 				end
 			end
@@ -790,12 +785,18 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig);
 					end
 					state=READ;
 				end
-				else begin
-					if ( (rdaddress- wraddress_triggerpoint-64)>=0 && (rdaddress-wraddress_triggerpoint+64)<128 ) begin //update display // - triggerpoint ??
-						if (SendCount[ram_width+1:ram_width]==chanforscreen) screencolumndata[rdaddress - wraddress_triggerpoint - 64]=(63-txData[7:2]);//store most significant 6 bits
-						screenwren = 1;
+				else begin					
+					if(SendCount[5:0]==0 && serialdelaytimer<serialdelaytimerwait) begin // every 32 (64?) bytes, 50000 is 1 ms
+						serialdelaytimer=serialdelaytimer+1;
 					end
-					state=WRITE_EXT1;
+					else begin
+						if ( (rdaddress- wraddress_triggerpoint-64)>=0 && (rdaddress-wraddress_triggerpoint+64)<128 ) begin //update display // - triggerpoint ??
+							if (SendCount[ram_width+1:ram_width]==chanforscreen) screencolumndata[rdaddress - wraddress_triggerpoint - 64]=(63-txData[7:2]);//store most significant 6 bits
+							screenwren = 1;
+						end
+						serialdelaytimer=0;
+						state=WRITE_EXT1;
+					end
 				end
 			end
 		end

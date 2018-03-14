@@ -88,6 +88,7 @@ class DynamicUpdate():
     trigsactive=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is triggering on that channel, 0 is not triggering on it
     dooversample=np.zeros(num_board*num_chan_per_board, dtype=int) # 1 is oversampling, 0 is no oversampling
     maxdownsample=10 # slowest I can run
+    serialdelaytimerwait=500 # delay (in us) between each 32 (64?) bytes of serial output (for some slow USB serial setups
     
     #These hold the state of the IO expanders
     a20= int('f0',16) # oversamp (set bits 0,1 to 0 to send 0->2 and 1->3) / gain (set second char to 0 for low gain)
@@ -132,6 +133,14 @@ class DynamicUpdate():
         ser.write(chr(myb[0]))
         ser.write(chr(myb[1]))
         if self.db: print "lockinnumtoshift is",256*myb[0]+1*myb[1]
+        
+    def tellserialdelaytimerwait(self):
+        #tell it the number of microseconds to wait between every 32 (64?) bytes of serial output (for some slow USB serial setups)
+        ser.write(chr(135))
+        myb=bytearray.fromhex('{:04x}'.format(self.serialdelaytimerwait))
+        ser.write(chr(myb[0]))
+        ser.write(chr(myb[1]))
+        print "serialdelaytimerwait is",256*myb[0]+1*myb[1]
     
     def tellbytesskip(self):
         #tell it the number of bytes to skip after each send, log2
@@ -1374,6 +1383,7 @@ class DynamicUpdate():
             self.telldownsample(self.downsample); self.telltickstowait()
             self.togglehighres()
             self.settriggertime(self.triggertimethresh)
+            self.tellserialdelaytimerwait()
             self.tellSPIsetup(0) #0.9V CM but not connected
             self.tellSPIsetup(11) #offset binary output
             #tellSPIsetup(12) #offset binary output and divide clock by 2
