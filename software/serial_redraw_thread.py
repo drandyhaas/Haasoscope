@@ -110,7 +110,7 @@ class DynamicUpdate():
         myb=bytearray.fromhex('{:04x}'.format(Nsamp))
         ser.write(chr(myb[0]))
         ser.write(chr(myb[1]))
-        print "Nsamp for max10 ADC is",256*myb[0]+1*myb[1]
+        if self.db: print "Nsamp for max10 ADC is",256*myb[0]+1*myb[1]
     
     def settriggerpoint(self,tp):
         #tell it the trigger point
@@ -127,7 +127,7 @@ class DynamicUpdate():
         myb=bytearray.fromhex('{:04x}'.format(num_samples*pow(2,sendincrement))) # or 0 for all, or num_samples*pow(2,sendincrement)
         ser.write(chr(myb[0]))
         ser.write(chr(myb[1]))
-        print "num_samples is",256*myb[0]+1*myb[1]
+        print "num samples is",256*myb[0]+1*myb[1]
     
     def telllockinnumtoshift(self,numtoshift):
         #tell it the number of samples to shift when calculating 90deg outofphase sum for lockin
@@ -189,14 +189,14 @@ class DynamicUpdate():
     def settriggertime(self,ttt):
         #tell it the trigger time over/under threshold required
         if ttt>num_samples and ttt>10:
-            print "Trigger time over/under thresh can't be bigger than num samples",num_samples; return
+            print "trigger time over/under thresh can't be bigger than num samples",num_samples; return
         usedownsamplefortriggertot=True
         if usedownsamplefortriggertot: ttt+=pow(2,12) #set bit [ram_width] (max) = 1
         ser.write(chr(129))
         myb=bytearray.fromhex('{:04x}'.format(ttt))
         ser.write(chr(myb[0]))
         ser.write(chr(myb[1]))
-        print "Trigger time over/under thresh now",256*myb[0]+1*myb[1]-pow(2,12),"and usedownsamplefortriggertot is",usedownsamplefortriggertot
+        print "trigger time over/under thresh now",256*myb[0]+1*myb[1]-pow(2,12),"and usedownsamplefortriggertot is",usedownsamplefortriggertot
     
     def writefirmchan(self,chan):
         theboard = num_board-1-chan/num_chan_per_board
@@ -248,7 +248,7 @@ class DynamicUpdate():
         if what==31: myb=bytearray.fromhex('01 06') #multiplexed, with chB first
         if what==32: myb=bytearray.fromhex('01 00') # not multiplexed output        
         ser.write(chr(myb[0]));	ser.write(chr(myb[1])); #write it!
-        print "Tell SPI setup:",format(myb[0],'02x'),format(myb[1],'02x')
+        print "tell SPI setup:",format(myb[0],'02x'),format(myb[1],'02x')
         time.sleep(.01) #pause to make sure other SPI writng is done
     
     # testBit() returns a nonzero result, 2**offset, if the bit at 'offset' is one.
@@ -1422,7 +1422,7 @@ class DynamicUpdate():
             if self.dohighres: self.togglehighres()
             if self.useexttrig: self.toggleuseexttrig()
             self.shutdownadcs()
-            print "Done with main loop"
+            print "done with main loop"
 
 #For setting up serial and USB connections
 def setup_connections(serport,usbport):
@@ -1443,8 +1443,8 @@ def setup_connections(serport,usbport):
         usbser = Serial(usbport,timeout=btimeout)
         print "connected USBserial to",usbport,":",usbport_description,": timeout",btimeout,"seconds"
     else: usbser=""
-    listports=True
-    if serport=="" or listports==True:
+    listports=False
+    if serport=="" or listports:
         for port_no, description, address in ports: print port_no,":",description,":",address
     if serport=="": print "\nNo UART COM port found:"; sys.exit()
     return ser,usbser
@@ -1477,4 +1477,4 @@ finally:
     if usbport!="": usbser.close()
     ser.close()
     plt.close()
-    print "Bye Bye!"
+    print "bye bye!"
