@@ -99,7 +99,6 @@ set_global_assignment -name POWER_DEFAULT_INPUT_IO_TOGGLE_RATE "12.5 %"
 set_location_assignment PIN_27 -to clock_ext_osc
 set_location_assignment PIN_26 -to clock_in
 set_parameter -name SERIAL_BAUD_RATE 1500000
-set_parameter -name SERIAL_BAUD_RATE_ARDUINO 9600
 set_location_assignment PIN_22 -to outsel_out
 set_location_assignment PIN_25 -to format_out
 set_location_assignment PIN_24 -to div_out

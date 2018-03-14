@@ -9,15 +9,13 @@
 SoftwareSerial mySerial(10, 11); // RX, TX
 
 void setup() {
-  int speed = 9600; //115200
   // Open serial communications and wait for port to open:
-  Serial.begin(speed);
+  Serial.begin(115200);
   while (!Serial) { ; }// wait for serial port to connect. Needed for native USB port only
-  //Serial.println("Goodnight moon!");
+  Serial.println("Goodnight moon!");
 
   // set the data rate for the SoftwareSerial port
-  mySerial.begin(speed);
-  //mySerial.println("Hello, world?");
+  mySerial.begin(57600); //9600 //57600 //115200 //1500000
   delay(1000);
   
   //board id 0 and last board
@@ -45,7 +43,7 @@ void setup() {
 int nbytes=0;
 unsigned long previousMillis = 0;
 const long interval = 3000;
-bool paused = true;
+bool paused = false;
 
 void loop() { // run over and over
 
@@ -61,8 +59,8 @@ void loop() { // run over and over
 
   while (mySerial.available()) {
     int b = mySerial.read();
-    //Serial.println(String(mySerial.read()));
     nbytes++;
+    if (nbytes<5) Serial.println(String(b,HEX)+" ");
   }
   if (nbytes>=4*256) 
     {
@@ -74,7 +72,7 @@ void loop() { // run over and over
   while(Serial.available()) {
     String a= Serial.readString();
     Serial.println(String(a.toInt()));
-    if (a==" ") paused=!paused;
+    if (a=="p") paused=!paused;
     else mySerial.write(a.toInt());
   }
 }
