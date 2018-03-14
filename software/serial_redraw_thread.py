@@ -7,6 +7,9 @@ max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw 
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
 
 # Probably don't need to touch these often
+serport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
+usbport="" # the name of the USB2 port on your computer, connected to Haasoscope, leave blank to detect automatically!
+serialdelaytimerwait=0 #150 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
 dofast=True #do the fast way of redrawing, just the specific things that could have likely changed
 clkrate=125.0 # ADC sample rate in MHz
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
@@ -15,7 +18,6 @@ num_bytes = num_samples*num_chan_per_board #num bytes per board
 brate = 1500000 #serial baud rate #1500000 #115200
 btimeout = 3.0 #time to wait for serial response #3.0, num_bytes*8*10.0/brate, or None
 Nsamp=pow(2,ram_width)-1 #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
-serialdelaytimerwait=0 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
 print "num main ADC and max10adc bytes for all boards = ",num_bytes*num_board,"and",len(max10adcchans)*Nsamp
 adjustedbrate=1./(1./brate+2.*serialdelaytimerwait*1.e-6/(32.*11.)) # delay of 2*serialdelaytimerwait microseconds every 32*11 bits
 serialrate=adjustedbrate/11./(num_bytes*num_board+len(max10adcchans)*Nsamp) #including start+2stop bits
@@ -334,7 +336,7 @@ class DynamicUpdate():
             self.a21=self.clearBit(self.a21,0); self.sendi2c("21 12 "+ ('%0*x' % (2,self.a21)) )
 
     def toggledousb(self):#toggle whether to read over FT232H USB or not
-        if not "usbser" in globals(): 
+        if usbser=="": 
             self.dousb=False
             print "usb2 connection not available"
         else:
@@ -1423,26 +1425,31 @@ class DynamicUpdate():
             print "Done with main loop"
 
 #For setting up serial and USB connections
-port=""; usbport=""; port_description=""; usbport_description="";
-ports = list(serial.tools.list_ports.comports())
-for port_no, description, address in ports:
-    if '1A86:7523' in address or '1a86:7523' in address:
-        #if port=="":
-            port = port_no; port_description = description
-    if "USB Serial" in description or "Haasoscope" in description:
-        #if usbport=="":
-            usbport=port_no; usbport_description = description
-if port!="":
-    ser = Serial(port,brate,timeout=btimeout,stopbits=2)
-    print "connected serial to",port,":",port_description,": timeout",btimeout,"seconds"
-if usbport!="":
-    usbser = Serial(usbport,timeout=btimeout)
-    print "connected USBserial to",usbport,":",usbport_description,": timeout",btimeout,"seconds"
-listports=True
-if port=="" or listports==True:
-    for port_no, description, address in ports: print port_no,":",description,":",address
-if port=="": print "\nNo UART COM port found:"; sys.exit()
+def setup_connections(serport,usbport):
+    port_description=""; usbport_description="";
+    ports = list(serial.tools.list_ports.comports())
+    for port_no, description, address in ports:
+        if '1A86:7523' in address or '1a86:7523' in address:
+            #if serport=="":
+                serport = port_no; port_description = description
+        if "USB Serial" in description or "Haasoscope" in description:
+            #if usbport=="":
+                usbport=port_no; usbport_description = description
+    if serport!="":
+        ser = Serial(serport,brate,timeout=btimeout,stopbits=2)
+        print "connected serial to",serport,":",port_description,": timeout",btimeout,"seconds"
+    else: ser=""
+    if usbport!="":
+        usbser = Serial(usbport,timeout=btimeout)
+        print "connected USBserial to",usbport,":",usbport_description,": timeout",btimeout,"seconds"
+    else: usbser=""
+    listports=True
+    if serport=="" or listports==True:
+        for port_no, description, address in ports: print port_no,":",description,":",address
+    if serport=="": print "\nNo UART COM port found:"; sys.exit()
+    return ser,usbser
 
+#For finding the frequency of a reference sin wave signal, for lockin calculations
 def fit_sin(tt, yy):
     '''Fit sin to the input time sequence, and return fitting parameters "amp", "omega", "phase", "offset", "freq", "period" and "fitfunc"'''
     tt = np.array(tt)
@@ -1462,6 +1469,7 @@ def fit_sin(tt, yy):
     return {"amp": A, "omega": w, "phase": p, "offset": c, "freq": f, "period": 1./f, "fitfunc": fitfunc, "maxcov": np.max(pcov), "rawres": (guess,popt,pcov)}
 
 #Run the stuff!
+ser,usbser=setup_connections(serport,usbport)
 d = DynamicUpdate()
 try: d()
 finally:
