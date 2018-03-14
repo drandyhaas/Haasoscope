@@ -786,7 +786,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig);
 					state=READ;
 				end
 				else begin					
-					if(SendCount[5:0]==0 && serialdelaytimer<serialdelaytimerwait) begin // every 32 (64?) bytes, 50000 is 1 ms
+					if(SendCount[4:0]==0 && serialdelaytimer<serialdelaytimerwait) begin // every 32 bytes, 50000 is 1 ms
 						serialdelaytimer=serialdelaytimer+1;
 					end
 					else begin
