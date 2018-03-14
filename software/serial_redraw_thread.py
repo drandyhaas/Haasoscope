@@ -88,7 +88,7 @@ class DynamicUpdate():
     trigsactive=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is triggering on that channel, 0 is not triggering on it
     dooversample=np.zeros(num_board*num_chan_per_board, dtype=int) # 1 is oversampling, 0 is no oversampling
     maxdownsample=10 # slowest I can run
-    serialdelaytimerwait=500 # delay (in us) between each 32 (64?) bytes of serial output (for some slow USB serial setups
+    serialdelaytimerwait=0 # 300 # delay (in us) between each 32 (64?) bytes of serial output (set to 300 for some slow USB serial setups, but 0 normally)
     
     #These hold the state of the IO expanders
     a20= int('f0',16) # oversamp (set bits 0,1 to 0 to send 0->2 and 1->3) / gain (set second char to 0 for low gain)
