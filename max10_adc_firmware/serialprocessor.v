@@ -505,7 +505,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig);
 				newcomdata=1; //pass it on
 				if (bytesread<byteswanted) state=READMORE;
 				else begin
-					serialdelaytimerwait=50*(256*extradata[0]+extradata[1]); // 50 * amount given, so amount given in microseconds (20ns*50=1us)
+					serialdelaytimerwait=50*(256*extradata[0]+extradata[1]); // 50 * amount given, so amount given in microseconds (20ns*50=1us) (except for the flipping clockbitstowait, so actually 2 us steps!)
 					state=READ;
 				end
 			end
