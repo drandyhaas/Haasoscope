@@ -1474,7 +1474,7 @@ d = DynamicUpdate()
 try: d()
 finally:
     #cleanup
-    if usbport!="": usbser.close()
+    if usbser!="": usbser.close()
     ser.close()
     plt.close()
     print "bye bye!"
