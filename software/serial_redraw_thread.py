@@ -20,7 +20,6 @@ print "num max10adc bytes for all boards",len(max10adcchans)*Nsamp
 print "rate theoretically",round(brate/11./(num_bytes*num_board+len(max10adcchans)*Nsamp),2),"Hz over serial" #including start+2stop bits
 serialdelaytimerwait=0 # 300 # delay (in us) between each 32 (64?) bytes of serial output (set to 300 for some slow USB serial setups, but 0 normally)
 
-
 from serial import Serial
 from struct import unpack
 import numpy as np
