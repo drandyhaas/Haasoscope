@@ -1453,11 +1453,14 @@ class DynamicUpdate():
 #For setting up serial and USB connections
 def setup_connections(serport,usbport):
     ports = list(serial.tools.list_ports.comports()); ports.sort(reverse=True)
+    autofindusbports = (len(usbport)==0)
     if serport=="" or True:
         for port_no, description, address in ports: print port_no,":",description,":",address
     for port_no, description, address in ports:
-        if '1A86:7523' in address or '1a86:7523' in address: serport = port_no
-        if "USB Serial" in description or "Haasoscope" in description: usbport.append(port_no)
+        if serport=="":
+            if '1A86:7523' in address or '1a86:7523' in address: serport = port_no
+        if autofindusbports:
+            if "USB Serial" in description or "Haasoscope" in description: usbport.append(port_no)
     if serport!="":
         ser = Serial(serport,brate,timeout=sertimeout,stopbits=2)
         print "connected serial to",serport,", timeout",sertimeout,"seconds"
