@@ -8,7 +8,7 @@ sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is
 
 # Probably don't need to touch these often
 serport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
-usbport="" # the name of the USB2 port on your computer, connected to Haasoscope, leave blank to detect automatically!
+usbport=[] # the names of the USB2 ports on your computer, connected to Haasoscope, leave blank to detect automatically!
 serialdelaytimerwait=0 #150 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
 dofast=True #do the fast way of redrawing, just the specific things that could have likely changed
 clkrate=125.0 # ADC sample rate in MHz
@@ -16,7 +16,7 @@ num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
 num_samples = pow(2,ram_width)/pow(2,sendincrement) # num samples per channel, max is pow(2,ram_width)/pow(2,0)=4096
 num_bytes = num_samples*num_chan_per_board #num bytes per board
 brate = 1500000 #serial baud rate #1500000 #115200
-btimeout = 3.0 #time to wait for serial response #3.0, num_bytes*8*10.0/brate, or None
+sertimeout = 3.0 #time to wait for serial response #3.0, num_bytes*8*10.0/brate, or None
 Nsamp=pow(2,ram_width)-1 #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
 print "num main ADC and max10adc bytes for all boards = ",num_bytes*num_board,"and",len(max10adcchans)*Nsamp
 adjustedbrate=1./(1./brate+2.*serialdelaytimerwait*1.e-6/(32.*11.)) # delay of 2*serialdelaytimerwait microseconds every 32*11 bits
@@ -336,7 +336,7 @@ class DynamicUpdate():
             self.a21=self.clearBit(self.a21,0); self.sendi2c("21 12 "+ ('%0*x' % (2,self.a21)) )
 
     def toggledousb(self):#toggle whether to read over FT232H USB or not
-        if usbser=="": 
+        if len(usbser)==0:
             self.dousb=False
             print "usb2 connection not available"
         else:
@@ -1277,13 +1277,38 @@ class DynamicUpdate():
                     print ampl_fpga.round(2), phase_fpga.round(2), "<------ fpga "
             else: print "getdata asked for",16,"lockin bytes and got",len(rslt),"from board",board        
     
+    usbsermap=[]
+    def makeusbsermap(self): # figure out which board is connected to which USB 2 connection
+        self.usbsermap=np.zeros(num_board, dtype=int)
+        if len(usbser)<num_board:
+            print "Not a USB2 connection for each board!"
+            sys.exit()
+        if num_board>0:
+            for usb in np.arange(num_board): usbser[usb].setTimeout(.5) # lower the timeout on the connections, temporarily
+            foundusbs=[]
+            for bn in np.arange(num_board):
+                ser.write(chr(100)) # prime the trigger
+                ser.write(chr(10+bn))
+                for usb in np.arange(len(usbser)):
+                    if not usb in foundusbs: # it's not already known that this usb connection is assigned to a board
+                        rslt = usbser[usb].read(num_bytes) # try to get data from the board
+                        if len(rslt)==num_bytes:
+                            print "   got the right nbytes for board",bn,"from usb",usb
+                            self.usbsermap[bn]=usb
+                            foundusbs.append(usb) # remember that we already have figured out which board this usb connection is for, so we don't bother trying again for another board
+                            break # already found which board this usb connection is used for, so bail out
+                        else: print "   got the wrong nbytes for board",bn,"from usb",usb
+                    else: print "   already know what usb",usb,"is for"
+            for usb in np.arange(num_board): usbser[usb].setTimeout(sertimeout) # put back the timeout on the connections
+        print "   usbsermap is",self.usbsermap
+    
     def getdata(self,board):
         ser.write(chr(10+board))
         if (self.db): print "asked for data from board",board,time.clock()        
         if self.dolockin: self.getlockindata(board)
         if self.dousb:
             #try:
-		rslt = usbser.read(num_bytes)
+		rslt = usbser[self.usbsermap[board]].read(num_bytes)
             	#usbser.flushInput() #just in case
 	    #except serial.SerialException: pass
         else:
@@ -1394,6 +1419,7 @@ class DynamicUpdate():
             self.tellSPIsetup(32) # non-multiplexed output (less noise)
             self.setupi2c() # sets all ports to be outputs
             self.toggledousb() # switch to USB2 connection for readout of events, if available
+            if self.dousb: self.makeusbsermap() # figure out which usb connection has which board's data
             self.getIDs() # get the unique ID of each board, for calibration etc.
             self.readcalib() # get the calibrated DAC values for each board; if it fails then use defaults                
             self.on_launch()
@@ -1426,26 +1452,19 @@ class DynamicUpdate():
 
 #For setting up serial and USB connections
 def setup_connections(serport,usbport):
-    port_description=""; usbport_description="";
-    ports = list(serial.tools.list_ports.comports())
-    for port_no, description, address in ports:
-        if '1A86:7523' in address or '1a86:7523' in address:
-            #if serport=="":
-                serport = port_no; port_description = description
-        if "USB Serial" in description or "Haasoscope" in description:
-            #if usbport=="":
-                usbport=port_no; usbport_description = description
-    if serport!="":
-        ser = Serial(serport,brate,timeout=btimeout,stopbits=2)
-        print "connected serial to",serport,":",port_description,": timeout",btimeout,"seconds"
-    else: ser=""
-    if usbport!="":
-        usbser = Serial(usbport,timeout=btimeout)
-        print "connected USBserial to",usbport,":",usbport_description,": timeout",btimeout,"seconds"
-    else: usbser=""
-    listports=False
-    if serport=="" or listports:
+    ports = list(serial.tools.list_ports.comports()); ports.sort(reverse=True)
+    if serport=="" or True:
         for port_no, description, address in ports: print port_no,":",description,":",address
+    for port_no, description, address in ports:
+        if '1A86:7523' in address or '1a86:7523' in address: serport = port_no
+        if "USB Serial" in description or "Haasoscope" in description: usbport.append(port_no)
+    if serport!="":
+        ser = Serial(serport,brate,timeout=sertimeout,stopbits=2)
+        print "connected serial to",serport,", timeout",sertimeout,"seconds"
+    else: ser=""
+    for p in usbport:
+        usbser.append(Serial(p,timeout=sertimeout))
+        print "connected USBserial to",p,", timeout",sertimeout,"seconds"
     if serport=="": print "\nNo UART COM port found:"; sys.exit()
     return ser,usbser
 
@@ -1469,12 +1488,13 @@ def fit_sin(tt, yy):
     return {"amp": A, "omega": w, "phase": p, "offset": c, "freq": f, "period": 1./f, "fitfunc": fitfunc, "maxcov": np.max(pcov), "rawres": (guess,popt,pcov)}
 
 #Run the stuff!
+usbser=[]
 ser,usbser=setup_connections(serport,usbport)
 d = DynamicUpdate()
 try: d()
 finally:
     #cleanup
-    if usbser!="": usbser.close()
+    for p in usbser: p.close()
     ser.close()
     plt.close()
     print "bye bye!"
