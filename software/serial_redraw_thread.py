@@ -3,7 +3,7 @@
 # You might adjust these regularly
 num_board = 1 # Number of Haasoscope boards to read out
 ram_width = 9 # width in bits of sample ram to use (e.g. 9==512 samples, 12(max)==4096 samples)
-max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1 (triggered by main ADC!), 111=pin6, ..., 118=pin14, 119=temp
+max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
 
 # Probably don't need to touch these often
@@ -855,7 +855,7 @@ class DynamicUpdate():
             maxchan=l-num_chan_per_board*num_board
             c=(0,0,0)
             if maxchan>=0:
-                board = int(max10adcchans[maxchan][0])
+                board = int(num_board-1-max10adcchans[maxchan][0])
                 if board%3==0: c=(1-0.2*maxchan,0,0)
                 if board%3==1: c=(0,1-0.2*maxchan,0)
                 if board%3==2: c=(0,0,1-0.2*maxchan)
