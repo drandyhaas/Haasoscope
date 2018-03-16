@@ -1284,7 +1284,7 @@ class DynamicUpdate():
             print "Not a USB2 connection for each board!"
             sys.exit()
         if num_board>0:
-            for usb in np.arange(num_board): usbser[usb].setTimeout(.5) # lower the timeout on the connections, temporarily
+            for usb in np.arange(num_board): usbser[usb].timeout=.5 # lower the timeout on the connections, temporarily
             foundusbs=[]
             for bn in np.arange(num_board):
                 ser.write(chr(100)) # prime the trigger
@@ -1299,7 +1299,7 @@ class DynamicUpdate():
                             break # already found which board this usb connection is used for, so bail out
                         else: print "   got the wrong nbytes for board",bn,"from usb",usb
                     else: print "   already know what usb",usb,"is for"
-            for usb in np.arange(num_board): usbser[usb].setTimeout(sertimeout) # put back the timeout on the connections
+            for usb in np.arange(num_board): usbser[usb].timeout=sertimeout # put back the timeout on the connections
         print "   usbsermap is",self.usbsermap
     
     def getdata(self,board):
