@@ -2,7 +2,7 @@
 
 # You might adjust these regularly
 num_board = 1 # Number of Haasoscope boards to read out
-ram_width = 9 # width in bits of sample ram to use (e.g. 9==512 samples, 12(max)==4096 samples)
+ram_width = 12 # width in bits of sample ram to use (e.g. 9==512 samples, 12(max)==4096 samples)
 max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
 
@@ -1026,7 +1026,7 @@ class DynamicUpdate():
                 self.ax2d.clear()
                 self.ax2d.hist2d(
                     np.tile(xdatanew,self.recordedchannellength), np.concatenate(tuple(self.recordedchannel)), 
-                    bins=[max(num_samples,1024),256], range=[[xdatanew[0],xdatanew[num_samples-1]],[self.min_y,self.max_y]],
+                    bins=[min(num_samples,1024),256], range=[[xdatanew[0],xdatanew[num_samples-1]],[self.min_y,self.max_y]],
                     cmin=1, cmap='rainbow') #, Blues, Reds, coolwarm, seismic
                 self.fig2d.canvas.set_window_title('Persist display of channel '+str(self.recorddatachan))
                 if self.xscaling==1.e3: self.ax2d.set_xlabel('Time (us)')
