@@ -1283,7 +1283,7 @@ class DynamicUpdate():
         if len(usbser)<num_board:
             print "Not a USB2 connection for each board!"
             sys.exit()
-        if num_board>0:
+        if len(usbser)>1:
             for usb in np.arange(num_board): usbser[usb].timeout=.5 # lower the timeout on the connections, temporarily
             foundusbs=[]
             for bn in np.arange(num_board):
@@ -1293,14 +1293,14 @@ class DynamicUpdate():
                     if not usb in foundusbs: # it's not already known that this usb connection is assigned to a board
                         rslt = usbser[usb].read(num_bytes) # try to get data from the board
                         if len(rslt)==num_bytes:
-                            print "   got the right nbytes for board",bn,"from usb",usb
+                            #print "   got the right nbytes for board",bn,"from usb",usb
                             self.usbsermap[bn]=usb
                             foundusbs.append(usb) # remember that we already have figured out which board this usb connection is for, so we don't bother trying again for another board
                             break # already found which board this usb connection is used for, so bail out
-                        else: print "   got the wrong nbytes for board",bn,"from usb",usb
-                    else: print "   already know what usb",usb,"is for"
+                        #else: print "   got the wrong nbytes for board",bn,"from usb",usb
+                    #else: print "   already know what usb",usb,"is for"
             for usb in np.arange(num_board): usbser[usb].timeout=sertimeout # put back the timeout on the connections
-        print "   usbsermap is",self.usbsermap
+        print "usbsermap is",self.usbsermap
     
     def getdata(self,board):
         ser.write(chr(10+board))
