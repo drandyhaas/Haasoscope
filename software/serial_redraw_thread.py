@@ -9,7 +9,7 @@ sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is
 # Probably don't need to touch these often
 serport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
 usbport=[] # the names of the USB2 ports on your computer, connected to Haasoscope, leave blank to detect automatically!
-serialdelaytimerwait=0 #150 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
+serialdelaytimerwait=150 #150 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
 dofast=True #do the fast way of redrawing, just the specific things that could have likely changed
 clkrate=125.0 # ADC sample rate in MHz
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
@@ -52,7 +52,7 @@ class DynamicUpdate():
     dogrid=True #redraw the grid
     chanforscreen=0 #channel to draw on the mini-display
     triggertimethresh=5 #samples for which the trigger must be over/under threshold
-    downsample=3 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
+    downsample=1 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
     dofft=False #drawing the FFT plot
     dousb=False #whether to use USB2 output
     sincresample=0 # amount of resampling to do (sinx/x)
@@ -77,14 +77,14 @@ class DynamicUpdate():
     yscale = 7.5 # Vpp for full scale
     min_y = -yscale/2. #-4.0 #0 ADC
     max_y = yscale/2. #4.0 #256 ADC
-    lowdaclevel=np.ones(num_board*num_chan_per_board)*1900 # these hold the user set levels for each gain combination
-    highdaclevel=np.ones(num_board*num_chan_per_board)*2300
-    lowdaclevelsuper=np.ones(num_board*num_chan_per_board)*105
-    highdaclevelsuper=np.ones(num_board*num_chan_per_board)*35
-    lowdaclevelac=np.ones(num_board*num_chan_per_board)*2100 # these hold the user set levels for each gain combination in ac coupling mode
-    highdaclevelac=np.ones(num_board*num_chan_per_board)*3300
-    lowdaclevelsuperac=np.ones(num_board*num_chan_per_board)*1900
-    highdaclevelsuperac=np.ones(num_board*num_chan_per_board)*2300
+    lowdaclevel=np.ones(num_board*num_chan_per_board)*2050 # these hold the user set levels for each gain combination
+    highdaclevel=np.ones(num_board*num_chan_per_board)*2800
+    lowdaclevelsuper=np.ones(num_board*num_chan_per_board)*120
+    highdaclevelsuper=np.ones(num_board*num_chan_per_board)*50
+    lowdaclevelac=np.ones(num_board*num_chan_per_board)*2250 # these hold the user set levels for each gain combination in ac coupling mode
+    highdaclevelac=np.ones(num_board*num_chan_per_board)*4100
+    lowdaclevelsuperac=np.ones(num_board*num_chan_per_board)*2100
+    highdaclevelsuperac=np.ones(num_board*num_chan_per_board)*2800
     chanlevel=np.ones(num_board*num_chan_per_board)*lowdaclevel # the current level for each channel, initially set to lowdaclevel (x1)
     gain=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is low gain, 0 is high gain (x10)
     supergain=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is normal gain, 0 is super gain (x100)
@@ -814,7 +814,7 @@ class DynamicUpdate():
             elif event.key=="I": self.testi2c(); return
             elif event.key=="c": self.readcalib(); return            
             elif event.key=="C": self.storecalib(); return
-            elif event.key=="|": self.autocalibchannel=0;
+            elif event.key=="|": print "starting autocalibration";self.autocalibchannel=0;
             elif event.key=="W": self.domaindrawing=not self.domaindrawing; return
             elif event.key=="Y": self.doxyplot=True; self.xychan=self.selectedchannel; print "doxyplot now",self.doxyplot,"for channel",self.xychan; return;
             elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; return;
@@ -981,6 +981,8 @@ class DynamicUpdate():
                     for chan in range(num_chan_per_board*num_board):
                         self.selectedchannel=chan
                         self.tellswitchgain(chan)
+                        self.togglesupergainchan(chan)
+                    print "done with autocalibration \a" # beep!
     
     doxyplot=False
     drawnxy=False
