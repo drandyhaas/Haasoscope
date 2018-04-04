@@ -692,7 +692,7 @@ class DynamicUpdate():
             highdaclevelssuperac=self.highdaclevelsuperac[sc : sc+4].tolist()
             )
         #print json.dumps(c,indent=4)
-        fname = "calib_"+self.uniqueID[board]+".json.txt"
+        fname = "calib/calib_"+self.uniqueID[board]+".json.txt"
         json.dump(c,open(fname,'w'),indent=4)
         print "wrote",fname
     
@@ -708,7 +708,7 @@ class DynamicUpdate():
             self.setdacvalues(sc) #will load in defaults
             return
         print "reading calibrations for board",board,", channels",sc,"-",sc+4
-        fname = "calib_"+self.uniqueID[board]+".json.txt"
+        fname = "calib/calib_"+self.uniqueID[board]+".json.txt"
         try:
             c = json.load(open(fname))
             print "read",fname
