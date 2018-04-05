@@ -9,7 +9,7 @@ sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is
 # Probably don't need to touch these often
 serport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
 usbport=[] # the names of the USB2 ports on your computer, connected to Haasoscope, leave blank to detect automatically!
-serialdelaytimerwait=150 #150 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
+serialdelaytimerwait=100 #150 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
 dofast=True #do the fast way of redrawing, just the specific things that could have likely changed
 clkrate=125.0 # ADC sample rate in MHz
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
@@ -433,6 +433,7 @@ class DynamicUpdate():
             else:
                 origline.set_label("chan "+str(chan)+" x100")
                 self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x100")
+        self.selectedchannel=chan # needed for setdacvalue
         self.setdacvalue()
         self.figure.canvas.draw()
         print "Gain switched for channel",chan,"to",self.gain[chan]
@@ -808,6 +809,8 @@ class DynamicUpdate():
             elif event.key=="t": self.rising=not self.rising;self.settriggertype(self.rising);print "rising toggled",self.rising; return
             elif event.key=="g": self.dogrid=not self.dogrid;print "dogrid toggled",self.dogrid; return
             elif event.key=="x": self.tellswitchgain(self.selectedchannel)
+            elif event.key=="ctrl+x": 
+                for chan in range(num_chan_per_board*num_board): self.tellswitchgain(chan)
             elif event.key=="X": self.togglesupergainchan(self.selectedchannel)
             elif event.key=="F": self.fftchan=self.selectedchannel; self.dofft=True;return
             elif event.key=="/": self.setacdc();return
@@ -942,6 +945,7 @@ class DynamicUpdate():
         self.selectedchannel=thechan
         avg = np.average(ydatanew)
         #print avg
+        gotonext=False
         tol = 1.0
         tol2 = 0.25
         if self.supergain[self.selectedchannel] or self.gain[self.selectedchannel]: # normal gain or low gain
@@ -955,7 +959,9 @@ class DynamicUpdate():
             self.adjustvertical(False,1)
         elif avg<0-tol2:
             self.adjustvertical(True,1)
-        else: 
+        else: gotonext=True
+        if self.chanlevel[self.selectedchannel]==0: gotonext=True
+        if gotonext:
             #go to the next channel, unless we're at the end of all channels
             self.autocalibchannel=self.autocalibchannel+1
             if self.autocalibchannel==num_chan_per_board*num_board:
