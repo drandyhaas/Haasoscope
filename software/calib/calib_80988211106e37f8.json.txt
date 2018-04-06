@@ -1,0 +1,51 @@
+{
+    "highdaclevels": [
+        2823.0, 
+        2742.0, 
+        -10.0, 
+        -10.0
+    ], 
+    "lowdaclevelssuper": [
+        117.0, 
+        112.0, 
+        0.0, 
+        0.0
+    ], 
+    "highdaclevelssuperac": [
+        2832.0, 
+        2800.0, 
+        0.0, 
+        0.0
+    ], 
+    "lowdaclevelssuperac": [
+        2090.0, 
+        2060.0, 
+        0.0, 
+        0.0
+    ], 
+    "boardID": "80988211106e37f8", 
+    "highdaclevelssuper": [
+        42.0, 
+        39.0, 
+        0.0, 
+        0.0
+    ], 
+    "lowdaclevels": [
+        2070.0, 
+        2050.0, 
+        -100.0, 
+        -100.0
+    ], 
+    "lowdaclevelsac": [
+        2260.0, 
+        2230.0, 
+        -100.0, 
+        -100.0
+    ], 
+    "highdaclevelsac": [
+        4121.0, 
+        3990.0, 
+        -10.0, 
+        -10.0
+    ]
+}
