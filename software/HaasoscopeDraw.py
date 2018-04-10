@@ -18,8 +18,8 @@ try:
         if d.paused: time.sleep(.1)
         else:
             if not d.getchannels(): break
-            print d.lines[0].get_xydata()[100] # print the x and y data for the 100th sample on channel 0
-            if d.dolockin: print d.lockinamp, d.lockinphase
+            #print d.lines[0].get_xydata()[100] # print the x and y data for the 100th sample on channel 0
+            #if d.dolockin: print d.lockinamp, d.lockinphase
             if d.db: print "done with evt",nevents,time.clock()
             nevents+=1
             if nevents-oldnevents >= tinterval:
