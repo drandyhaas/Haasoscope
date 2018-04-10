@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 #Run the stuff!
 d = HaasoscopeLib.Haasoscope()
 d.construct()
-d.domaindrawing=True # whether to keep updating the main plot
+#d.domaindrawing=False # whether to keep updating the main plot
 #d.dolockin=True; d.dolockinplot=False # whether to calculate the lockin info on the FPGA and read it out
 
 try:
