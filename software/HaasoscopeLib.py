@@ -16,7 +16,6 @@ num_bytes = num_samples*num_chan_per_board #num bytes per board
 brate = 1500000 #serial baud rate #1500000 #115200
 sertimeout = 3.0 #time to wait for serial response #3.0, num_bytes*8*10.0/brate, or None
 Nsamp=pow(2,ram_width)-1 #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
-print "num main ADC and max10adc bytes for all boards = ",num_bytes*num_board,"and",len(max10adcchans)*Nsamp
 
 from serial import Serial
 from struct import unpack
@@ -33,6 +32,7 @@ import scipy.optimize
 class Haasoscope():
     
     def construct(self):
+        print "num main ADC and max10adc bytes for all boards = ",num_bytes*num_board,"and",len(max10adcchans)*Nsamp
         self.serport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
         self.usbport=[] # the names of the USB2 ports on your computer, connected to Haasoscope, leave blank to detect automatically!
         self.usbser=[]
