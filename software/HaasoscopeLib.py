@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+print "Loading HaasoscopeLib.py"
 
 # You might adjust these regularly
 num_board = 1 # Number of Haasoscope boards to read out
