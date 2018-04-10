@@ -8,5 +8,6 @@ eagle/max10adc*.b#*
 eagle/max10adc*.s#*
 eagle/max10adc*.job
 eagle/max10adc*.pro
+software/*.pyc
 
 
