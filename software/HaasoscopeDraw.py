@@ -12,6 +12,7 @@ d.construct()
 
 #Some options
 #d.domaindrawing=False # whether to keep updating the main plot (on by default)
+#d.serialdelaytimerwait=600 #150 #300 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
 #d.dolockin=True; d.dolockinplot=d.domaindrawing # whether to calculate the lockin info on the FPGA and read it out (off by default)
 
 try:
