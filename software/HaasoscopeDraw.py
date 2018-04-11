@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 d = HaasoscopeLib.Haasoscope()
 #HaasoscopeLib.num_board = 1 # Number of Haasoscope boards to read out (default is 1)
 #HaasoscopeLib.ram_width = 12 # width in bits of sample ram to use (e.g. 9==512 samples (default), 12(max)==4096 samples)
-#HaasoscopeLib.max10adcchans = [(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp # default is none
+#HaasoscopeLib.max10adcchans = [(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp # default is none, []
 d.construct()
 
 #Some options
@@ -31,10 +31,9 @@ try:
         if d.paused: time.sleep(.1)
         else:
             if not d.getchannels(): break
-            if not d.domaindrawing:
-                print d.xydata[0][0][99], d.xydata[0][1][99] # print the x and y data, respectively, for the 100th sample on fast adc channel 0
-                if len(HaasoscopeLib.max10adcchans)>0: print "slow", d.xydataslow[0][0][99], d.xydataslow[0][1][99] # print the x and y data, respectively, for the 100th sample on slow max10 adc channel 0
-                if d.dolockin: print d.lockinamp, d.lockinphase
+            #print d.xydata[0][0][12], d.xydata[0][1][12] # print the x and y data, respectively, for the 13th sample on fast adc channel 0
+            #if len(HaasoscopeLib.max10adcchans)>0: print "slow", d.xydataslow[0][0][99], d.xydataslow[0][1][99] # print the x and y data, respectively, for the 100th sample on slow max10 adc channel 0
+            #if d.dolockin: print d.lockinamp, d.lockinphase
             if d.db: print "done with evt",nevents,time.clock()
             nevents+=1
             if nevents-oldnevents >= tinterval:

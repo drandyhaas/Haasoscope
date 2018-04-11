@@ -447,6 +447,7 @@ class Haasoscope():
         #tell it to toggle oversampling for this channel
         chanonboard = chan%num_chan_per_board
         if chanonboard>1: return
+        self.telldownsample(0) # must be in max sampling mode for oversampling to make sense
         self.dooversample[self.selectedchannel] = not self.dooversample[self.selectedchannel];
         print "oversample is now",self.dooversample[self.selectedchannel],"for channel",chan
         self.ser.write(chr(141))
@@ -471,6 +472,7 @@ class Haasoscope():
     
     def telldownsample(self,ds):
         #tell it the amount to downsample, log2... so 0 (none), 1(factor 2), 2(factor 4), etc.
+        if max(self.dooversample)>0: print "can't change sampling rate while oversampling - must be fastest!"; return False
         if ds>self.maxdownsample: print "downsample >",self.maxdownsample,"doesn't work well...and I get bored running that slow!"; return False
         if ds<0: print "downsample can't be <0 !"; return False
         if self.dolockin and ds<2: print "downsample can't be <2 in lockin mode !"; return False
@@ -759,6 +761,9 @@ class Haasoscope():
             if self.keyResample:
                 try:
                     self.sincresample=int(event.key)
+                    print "resample now",self.sincresample
+                    if self.sincresample>0: self.xydata=np.empty([num_chan_per_board*num_board,2,self.sincresample*(self.num_samples-1)],dtype=float)
+                    else: self.xydata=np.empty([num_chan_per_board*num_board,2,1*(self.num_samples-1)],dtype=float)
                     self.keyResample=False; return
                 except ValueError: pass
             elif self.keysettriggertime:
@@ -856,7 +861,7 @@ class Haasoscope():
             except TypeError: pass
     
     def on_launch(self):        
-        self.xydata=np.empty([num_chan_per_board*num_board,2,self.num_samples],dtype=float)
+        self.xydata=np.empty([num_chan_per_board*num_board,2,self.num_samples-1],dtype=float)
         self.xydataslow=np.empty([len(max10adcchans),2,self.nsamp],dtype=float)
         if self.domaindrawing: self.on_launch_draw()
     
@@ -943,7 +948,13 @@ class Haasoscope():
                 if len(theydata)<=l: print "don't have channel",l,"on board",board; return
                 xdatanew = (self.xdata-self.num_samples/2.)*(1000.0*pow(2,self.downsample)/self.clkrate/self.xscaling)
                 ydatanew=(127-theydata[l])*(self.yscale/256.) # got to flip it, since it's a negative feedback op amp
-                if self.sincresample>0: (ydatanew,xdatanew) = resample(ydatanew, self.num_samples*self.sincresample, t = xdatanew)
+                if self.sincresample>0:
+                    (ydatanew,xdatanew) = resample(ydatanew, self.num_samples*self.sincresample, t = xdatanew)
+                    xdatanew = xdatanew[1*self.sincresample:self.num_samples*self.sincresample]
+                    ydatanew = ydatanew[1*self.sincresample:self.num_samples*self.sincresample]
+                else:
+                    xdatanew = xdatanew[1:self.num_samples]
+                    ydatanew = ydatanew[1:self.num_samples]
                 if len(self.lines)>thechan: # we may not be drawing, so check!
                     self.lines[thechan].set_xdata(xdatanew)
                     self.lines[thechan].set_ydata(ydatanew)
@@ -1366,7 +1377,7 @@ class Haasoscope():
         byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
         if len(rslt)==self.num_bytes:
             db2=False #True #False
-            if db2: print byte_array[0:10]
+            if db2: print byte_array[1:11]
             self.ydata=np.reshape(byte_array,(num_chan_per_board,self.num_samples))            
             if self.dooversample[num_chan_per_board*(num_board-board-1)]: self.oversample(0,2)
             if self.dooversample[num_chan_per_board*(num_board-board-1)+1]: self.oversample(1,3)            
