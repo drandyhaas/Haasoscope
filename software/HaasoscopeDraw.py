@@ -1,23 +1,25 @@
 import HaasoscopeLib
 reload(HaasoscopeLib) # in case you changed it, and to always load some defaults
-import time
+import time, sys
 import matplotlib.pyplot as plt
 
-#Run the stuff!
-d = HaasoscopeLib.Haasoscope()
-#HaasoscopeLib.num_board = 1 # Number of Haasoscope boards to read out (default is 1)
+#Some options
+#HaasoscopeLib.num_board = 2 # Number of Haasoscope boards to read out (default is 1)
 #HaasoscopeLib.ram_width = 12 # width in bits of sample ram to use (e.g. 9==512 samples (default), 12(max)==4096 samples)
 #HaasoscopeLib.max10adcchans = [(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp # default is none, []
+
+d = HaasoscopeLib.Haasoscope()
 d.construct()
 
-#Some options
+#Some other options
+#d.serport="COM7" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
 #d.domaindrawing=False # whether to keep updating the main plot (on by default)
-#d.serialdelaytimerwait=600 #150 #300 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
+d.serialdelaytimerwait=100 #150 #300 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
 #d.dolockin=True; d.dolockinplot=d.domaindrawing # whether to calculate the lockin info on the FPGA and read it out (off by default)
 
 try:
-    d.setup_connections()
-    d.init()
+    if not d.setup_connections(): sys.exit()
+    if not d.init(): sys.exit()
     d.on_launch()
     
     #can change some things

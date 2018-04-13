@@ -8,7 +8,7 @@ max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw 
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
 
-from serial import Serial
+from serial import Serial, SerialException
 from struct import unpack
 import numpy as np
 import time, sys
@@ -1341,7 +1341,7 @@ class Haasoscope():
         self.usbsermap=np.zeros(num_board, dtype=int)
         if len(self.usbser)<num_board:
             print "Not a USB2 connection for each board!"
-            sys.exit()
+            return False
         if len(self.usbser)>1:
             for usb in np.arange(num_board): self.usbser[usb].timeout=.5 # lower the timeout on the connections, temporarily
             foundusbs=[]
@@ -1360,6 +1360,7 @@ class Haasoscope():
                     #else: print "   already know what usb",usb,"is for"
             for usb in np.arange(num_board): self.usbser[usb].timeout=self.sertimeout # put back the timeout on the connections
         print "usbsermap is",self.usbsermap
+        return True
     
     def getdata(self,board):
         self.ser.write(chr(10+board))
@@ -1477,9 +1478,11 @@ class Haasoscope():
             self.tellSPIsetup(32) # non-multiplexed output (less noise)
             self.setupi2c() # sets all ports to be outputs
             self.toggledousb() # switch to USB2 connection for readout of events, if available
-            if self.dousb: self.makeusbsermap() # figure out which usb connection has which board's data
+            if self.dousb:
+                if not self.makeusbsermap(): return False # figure out which usb connection has which board's data
             self.getIDs() # get the unique ID of each board, for calibration etc.
             self.readcalib() # get the calibrated DAC values for each board; if it fails then use defaults
+            return True
     
     #cleanup
     def cleanup(self):
@@ -1488,9 +1491,10 @@ class Haasoscope():
             if self.autorearm: self.toggleautorearm()
             if self.dohighres: self.togglehighres()
             if self.useexttrig: self.toggleuseexttrig()
-            self.shutdownadcs()
-            for p in self.usbser: p.close()
-            self.ser.close()
+            if self.serport!="" and hasattr(self,'ser'):
+                self.shutdownadcs()
+                for p in self.usbser: p.close()
+                self.ser.close()
             plt.close()
             print "bye bye!"
     
@@ -1500,20 +1504,23 @@ class Haasoscope():
         serialrate=adjustedbrate/11./(self.num_bytes*num_board+len(max10adcchans)*self.nsamp) #including start+2stop bits
         print "rate theoretically",round(serialrate,2),"Hz over serial"
         ports = list(serial.tools.list_ports.comports()); ports.sort(reverse=True)
-        autofindusbports = (len(self.usbport)==0)
+        autofindusbports = len(self.usbport)==0
         if self.serport=="" or True:
             for port_no, description, address in ports: print port_no,":",description,":",address
         for port_no, description, address in ports:
             if self.serport=="":
-                if '1A86:7523' in address or '1a86:7523' in address: serport = port_no
+                if '1A86:7523' in address or '1a86:7523' in address: self.serport = port_no
             if autofindusbports:
                 if "USB Serial" in description or "Haasoscope" in description: self.usbport.append(port_no)
-        if serport!="":
-            self.ser = Serial(serport,self.brate,timeout=self.sertimeout,stopbits=2)
-            print "connected serial to",serport,", timeout",self.sertimeout,"seconds"
+        if self.serport!="":
+            try:
+                self.ser = Serial(self.serport,self.brate,timeout=self.sertimeout,stopbits=2)
+            except SerialException:
+                print "Could not open",self.serport,"!"; return False
+            print "connected serial to",self.serport,", timeout",self.sertimeout,"seconds"
         else: self.ser=""
         for p in self.usbport:
             self.usbser.append(Serial(p,timeout=self.sertimeout))
             print "connected USBserial to",p,", timeout",self.sertimeout,"seconds"
-        if serport=="": print "\nNo UART COM port found:"; sys.exit()
-
+        if self.serport=="": print "No serial COM port opened!"; return False
+        return True
