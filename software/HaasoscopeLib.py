@@ -1486,6 +1486,7 @@ class Haasoscope():
     
     #cleanup
     def cleanup(self):
+        try:
             self.setbacktoserialreadout()
             self.resetchans()
             if self.autorearm: self.toggleautorearm()
@@ -1495,8 +1496,10 @@ class Haasoscope():
                 self.shutdownadcs()
                 for p in self.usbser: p.close()
                 self.ser.close()
-            plt.close()
-            print "bye bye!"
+        except SerialException:
+            print "failed to talk to board when cleaning up!"
+        plt.close()
+        print "bye bye!"
     
     #For setting up serial and USB connections
     def setup_connections(self):

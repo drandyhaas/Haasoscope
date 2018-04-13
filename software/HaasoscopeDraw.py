@@ -2,6 +2,7 @@ import HaasoscopeLib
 reload(HaasoscopeLib) # in case you changed it, and to always load some defaults
 import time, sys
 import matplotlib.pyplot as plt
+from serial import SerialException
 
 #Some options
 #HaasoscopeLib.num_board = 2 # Number of Haasoscope boards to read out (default is 1)
@@ -50,5 +51,7 @@ try:
         if len(plt.get_fignums())==0:
             if d.domaindrawing: break # quit when all the plots have been closed
             elif nevents>50: break
+except SerialException:
+    print "serial com failed!"
 finally:
     d.cleanup()
