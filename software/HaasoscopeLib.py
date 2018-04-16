@@ -669,7 +669,7 @@ class Haasoscope():
             realchan = (num_board-1-theboard)*num_chan_per_board+c
             if self.acdc[int(realchan)]: 
                 self.b20 = self.toggleBit(self.b20,int(c)) # 1 is dc, 0 is ac
-                print "toggling bit",c,"for chan",realchan
+                if self.db: print "toggling bit",c,"for chan",realchan
         self.sendi2c("20 13 "+ ('%0*x' % (2,self.b20)),  theboard) #port B of IOexp 1, only for the selected board
         self.setdacvalue()
         self.drawtext()
@@ -1389,7 +1389,7 @@ class Haasoscope():
                         self.ydata[c][2*i]=val; self.ydata[c][2*i+1]=val;
         else:
             if not self.db: print "getdata asked for",self.num_bytes,"bytes and got",len(rslt),"from board",board
-            print byte_array[0:10]
+            if len(rslt)>0: print byte_array[0:10]
         
     def oversample(self,c1,c2):
         tempc1=self.ydata[c1][self.num_samples/4:3*self.num_samples/4:1] #just using the half of the data in the middle
