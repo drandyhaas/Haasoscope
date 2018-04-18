@@ -823,6 +823,8 @@ class Haasoscope():
             elif event.key=="ctrl+x": 
                 for chan in range(num_chan_per_board*num_board): self.tellswitchgain(chan)
             elif event.key=="X": self.togglesupergainchan(self.selectedchannel)
+            elif event.key=="ctrl+X": 
+                for chan in range(num_chan_per_board*num_board): self.selectedchannel=chan; self.togglesupergainchan(chan)
             elif event.key=="F": self.fftchan=self.selectedchannel; self.dofft=True;return
             elif event.key=="/": self.setacdc();return
             elif event.key=="I": self.testi2c(); return
