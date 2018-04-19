@@ -29,7 +29,7 @@ try:
     #d.togglesupergainchan(d.selectedchannel)
     #d.toggletriggerchan(d.selectedchannel)
     
-    nevents=0; oldnevents=0; oldtime=time.clock(); tinterval=100.; oldtime=time.time()
+    nevents=0; oldnevents=0; tinterval=100.; oldtime=time.time()
     while 1:
         if d.paused: time.sleep(.1)
         else:
@@ -37,10 +37,11 @@ try:
             #print d.xydata[0][0][12], d.xydata[0][1][12] # print the x and y data, respectively, for the 13th sample on fast adc channel 0
             #if len(HaasoscopeLib.max10adcchans)>0: print "slow", d.xydataslow[0][0][99], d.xydataslow[0][1][99] # print the x and y data, respectively, for the 100th sample on slow max10 adc channel 0
             #if d.dolockin: print d.lockinamp, d.lockinphase
-            if d.db: print "done with evt",nevents,time.clock()
+            if d.db: print time.time()-d.oldtime,"done with evt",nevents
             nevents+=1
             if nevents-oldnevents >= tinterval:
-                lastrate = round(tinterval/(time.time()-oldtime),2)
+                elapsedtime=time.time()-oldtime
+                lastrate = round(tinterval/elapsedtime,2)
                 print nevents,"events,",lastrate,"Hz"
                 oldtime=time.time()
                 if lastrate>40: tinterval=500.

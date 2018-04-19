@@ -11,7 +11,7 @@ num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
 from serial import Serial, SerialException
 from struct import unpack
 import numpy as np
-import time, sys
+import time
 import matplotlib
 dofast=True #do the fast way of redrawing, just the specific things that could have likely changed
 if dofast: matplotlib.use('Qt4Agg')
@@ -51,6 +51,7 @@ class Haasoscope():
         self.chanforscreen=0 #channel to draw on the mini-display
         self.triggertimethresh=5 #samples for which the trigger must be over/under threshold
         self.downsample=2 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
+        self.maxdownsample=10 # slowest I can run
         self.dofft=False #drawing the FFT plot
         self.dousb=False #whether to use USB2 output
         self.sincresample=0 # amount of resampling to do (sinx/x)
@@ -90,7 +91,10 @@ class Haasoscope():
         self.acdc=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is dc, 0 is ac
         self.trigsactive=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is triggering on that channel, 0 is not triggering on it
         self.dooversample=np.zeros(num_board*num_chan_per_board, dtype=int) # 1 is oversampling, 0 is no oversampling
-        self.maxdownsample=10 # slowest I can run
+        
+        self.domeasure=self.domaindrawing #by default we will calculate measurements if we are drawing
+        self.Vrms=np.zeros(num_board*num_chan_per_board, dtype=float) # the Vrms for each channel
+        self.Vmean=np.zeros(num_board*num_chan_per_board, dtype=float) # the Vmean for each channel
         
         #These hold the state of the IO expanders
         self.a20= int('f0',16) # oversamp (set bits 0,1 to 0 to send 0->2 and 1->3) / gain (set second char to 0 for low gain)
@@ -373,8 +377,7 @@ class Haasoscope():
         self.ser.write(chr(139))
         self.autorearm = not self.autorearm
         print "Trigger auto rearm now",self.autorearm
-        if self.db: print "priming trigger",time.clock()
-        if self.db: time.sleep(.1)
+        if self.db: print time.time()-self.oldtime,"priming trigger"
         self.ser.write(chr(100)) # prime the trigger one last time
     
     def getIDs(self):
@@ -526,28 +529,33 @@ class Haasoscope():
     def chantext(self):
         text = "Selected:"
         text +="\nChannel: "+str(self.selectedchannel)
-        text +="\nLevel="+str(self.chanlevel[self.selectedchannel])
+        text +="\nLevel="+str(int(self.chanlevel[self.selectedchannel]))
         text +="\nDC coupled="+str(self.acdc[self.selectedchannel])
         text +="\nTriggering="+str(self.trigsactive[self.selectedchannel])
+        if self.domeasure:
+            text +="\nVmean="+str(self.Vmean[self.selectedchannel].round(3))
+            text +="\nVrms="+str(self.Vrms[self.selectedchannel].round(3))
         chanonboard = self.selectedchannel%num_chan_per_board
         if chanonboard<2:
             if self.dooversample[self.selectedchannel]: text+= "\nOversampled x2"
         else:
-            if self.dooversample[self.selectedchannel-2]: text+= "\nDisabled (oversampling)"
-        #text+="\n"
-        #text+="\nmax10chan: "+str(self.selectedmax10channel)
+            if self.selectedchannel>1 and self.dooversample[self.selectedchannel-2]: text+= "\nOff (oversamp)"
+        if len(max10adcchans)>0:
+            text+="\n"
+            text+="\nmax10chan: "+str(self.selectedmax10channel)
         return text
     
     firstdrawtext=True
     needtoredrawtext=False
     def drawtext(self):
-        height = 0.2 # height up from bottom to start drawing text
+        height = 0.25 # height up from bottom to start drawing text
+        xpos = 1.02 # how far over to the right to draw
         if self.firstdrawtext:
-            self.texts.append(self.ax.text(1.01, height, self.chantext(),horizontalalignment='left', verticalalignment='top',transform=self.ax.transAxes))
+            self.texts.append(self.ax.text(xpos, height, self.chantext(),horizontalalignment='left', verticalalignment='top',transform=self.ax.transAxes))
             self.firstdrawtext=False
         else:
             self.texts[0].remove()
-            self.texts[0]=(self.ax.text(1.01, height, self.chantext(),horizontalalignment='left', verticalalignment='top',transform=self.ax.transAxes))
+            self.texts[0]=(self.ax.text(xpos, height, self.chantext(),horizontalalignment='left', verticalalignment='top',transform=self.ax.transAxes))
             #for txt in self.ax.texts: print txt # debugging
         self.needtoredrawtext=True
         plt.draw()
@@ -831,7 +839,7 @@ class Haasoscope():
             elif event.key=="c": self.readcalib(); return
             elif event.key=="C": self.storecalib(); return
             elif event.key=="|": print "starting autocalibration";self.autocalibchannel=0;
-            elif event.key=="W": self.domaindrawing=not self.domaindrawing; return
+            elif event.key=="W": self.domaindrawing=not self.domaindrawing; self.domeasure=self.domaindrawing; return
             elif event.key=="Y": self.doxyplot=True; self.xychan=self.selectedchannel; print "doxyplot now",self.doxyplot,"for channel",self.xychan; return;
             elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; return;
             elif event.key=="right": self.telldownsample(self.downsample+1); return
@@ -934,8 +942,8 @@ class Haasoscope():
         if board<0: #hack to tell it the max10adc channel
             chantodraw=-board-1 #draw chan 0 first (when board=-1)
             posi=chantodraw+num_board*num_chan_per_board
-            if self.db: print "drawing line",posi
-            if self.db: print "ydata[0]=",theydata[0]
+            if self.db: print time.time()-self.oldtime,"drawing line",posi
+            #if self.db: print "ydata[0]=",theydata[0]
             xdatanew=(self.xsampdata-self.num_samples/2.)*(1000.0*pow(2,self.downsample)/self.clkrate/self.xscaling)
             ydatanew=theydata*(3.3/256)#full scale is 3.3V
             if len(self.lines)>posi: # we may not be drawing, so check!
@@ -946,7 +954,7 @@ class Haasoscope():
         else: #this draws the 4 fast ADC data channels for each board
             for l in np.arange(num_chan_per_board):
                 thechan=l+(num_board-board-1)*num_chan_per_board
-                if self.db: print "drawing adc line",thechan
+                if self.db: print time.time()-self.oldtime,"drawing adc line",thechan
                 if len(theydata)<=l: print "don't have channel",l,"on board",board; return
                 xdatanew = (self.xdata-self.num_samples/2.)*(1000.0*pow(2,self.downsample)/self.clkrate/self.xscaling)
                 ydatanew=(127-theydata[l])*(self.yscale/256.) # got to flip it, since it's a negative feedback op amp
@@ -960,6 +968,9 @@ class Haasoscope():
                 if len(self.lines)>thechan: # we may not be drawing, so check!
                     self.lines[thechan].set_xdata(xdatanew)
                     self.lines[thechan].set_ydata(ydatanew)
+                if self.domeasure:
+                    self.Vmean[thechan] = np.mean(ydatanew)
+                    self.Vrms[thechan] = np.sqrt(np.mean((ydatanew-self.Vmean[thechan])**2))
                 self.xydata[l][0]=xdatanew
                 self.xydata[l][1]=ydatanew
                 if self.doxyplot and (thechan==self.xychan or thechan==(self.xychan+1)): self.drawxyplot(xdatanew,ydatanew,thechan)# the xy plot
@@ -1366,7 +1377,7 @@ class Haasoscope():
     
     def getdata(self,board):
         self.ser.write(chr(10+board))
-        if self.db: print "asked for data from board",board,time.clock()        
+        if self.db: print time.time()-self.oldtime,"asked for data from board",board   
         if self.dolockin: self.getlockindata(board)
         if self.dousb:
             #try:
@@ -1376,7 +1387,7 @@ class Haasoscope():
         else:
             rslt = self.ser.read(self.num_bytes)
             #ser.flushInput() #just in case
-        if self.db: print "getdata wanted",self.num_bytes,"bytes and got",len(rslt),"from board",board,time.clock()
+        if self.db: print time.time()-self.oldtime,"getdata wanted",self.num_bytes,"bytes and got",len(rslt),"from board",board
         byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
         if len(rslt)==self.num_bytes:
             db2=False #True #False
@@ -1388,7 +1399,7 @@ class Haasoscope():
                 for c in np.arange(num_chan_per_board):
                     for i in np.arange(self.num_samples/2):
                         val=(self.ydata[c][2*i]+self.ydata[c][2*i+1])/2
-                        self.ydata[c][2*i]=val; self.ydata[c][2*i+1]=val;
+                        self.ydata[c][2*i]=val; self.ydata[c][2*i+1]=val;            
         else:
             if not self.db: print "getdata asked for",self.num_bytes,"bytes and got",len(rslt),"from board",board
             if len(rslt)>0: print byte_array[0:10]
@@ -1415,16 +1426,16 @@ class Haasoscope():
     
     def getmax10adc(self,bn):
         chansthisboard = [(x,y) for (x,y) in max10adcchans if x==bn]
-        #if self.db: print "getting",chansthisboard
+        if self.db: print time.time()-self.oldtime,"getting",chansthisboard
         for chans in chansthisboard:
             chan=chans[1]
             #chan: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp
             self.ser.write(chr(chan))
-            if self.db: print "getting max10adc chan",chan,"for bn",bn
+            if self.db: print time.time()-self.oldtime,"getting max10adc chan",chan,"for bn",bn
             rslt = self.ser.read(self.nsamp*2) #read N bytes (2 per sample)
-            if self.db: print "getmax10adc got bytes:",len(rslt)
+            if self.db: print time.time()-self.oldtime,"getmax10adc got bytes:",len(rslt)
             if len(rslt)!=(self.nsamp*2): 
-                print "getmax10adc got bytes:",len(rslt),"for board",bn,"and chan",chan
+                print time.time()-self.oldtime,"getmax10adc got bytes:",len(rslt),"for board",bn,"and chan",chan
                 return
             byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
             db2=False #True #False
@@ -1441,14 +1452,14 @@ class Haasoscope():
             self.on_running(self.ysampdata[self.max10adcchan-1], -self.max10adcchan)
             self.max10adcchan+=1
 
+    oldtime=time.time()
     def getchannels(self):
         if not self.autorearm:
-            if self.db: print "priming trigger",time.clock()
-            if self.db: time.sleep(.1)
+            if self.db: print time.time()-self.oldtime,"priming trigger"
             self.ser.write(chr(100))
         self.max10adcchan=1
         for bn in np.arange(num_board):
-            if self.db: print "getting board",bn,time.clock()
+            if self.db: print time.time()-self.oldtime,"getting board",bn
             self.getdata(bn) #this sets all boards before this board into serial passthrough mode, so this and following calls for data will go to this board and then travel back over serial
             self.getmax10adc(bn) # get data from 1 MHz Max10 ADC channels
             if self.dogetotherdata: self.getotherdata(bn) # get other data, like TDC info, or other bytes
@@ -1458,7 +1469,12 @@ class Haasoscope():
                 else: print "you need to set sendincrement = 0 first before debugging lockin info"; return False
             if self.dolockin and self.dolockinplot: self.plot_lockin()
             self.on_running(self.ydata, bn) #update data in main window
-            if self.db: print "done with board",bn,time.clock()
+            if self.db: print time.time()-self.oldtime,"done with board",bn
+        thetime=time.time()
+        elapsedtime=thetime-self.oldtime
+        if elapsedtime>1.0:
+                #self.drawtext() # causes a little drawing blip, so don't redo each second for now - just select a channel to update text
+                self.oldtime=thetime
         return True
 
     #initialization
