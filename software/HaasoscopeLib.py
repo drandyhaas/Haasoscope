@@ -522,11 +522,13 @@ class Haasoscope():
         self.ax.set_ylim(self.min_y, self.max_y)
         self.ax.set_ylabel("Volts") #("ADC value")
         self.ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
-        self.ax.yaxis.set_minor_locator(plt.MultipleLocator(0.5))
+        #self.ax.yaxis.set_minor_locator(plt.MultipleLocator(0.5))
         self.ax.spines['top'].set_visible(False)
         self.ax.spines['right'].set_visible(False)
         self.ax.spines['left'].set_visible(False)
         self.ax.spines['bottom'].set_visible(False)
+        plt.setp(self.ax.get_xticklines(),visible=False)
+        plt.setp(self.ax.get_yticklines(),visible=False)
         #self.ax.set_autoscaley_on(True)
         self.figure.canvas.draw()    
         
@@ -610,6 +612,7 @@ class Haasoscope():
             if event.button==2: #middle click                
                 self.settriggerthresh2(int(  event.ydata/(self.yscale/256.) + 128  ))                
                 self.hline2 = event.ydata
+                self.otherlines[2].set_visible(True) # starts off being hidden, so now show it!
                 self.otherlines[2].set_data( [self.min_x, self.max_x], [self.hline2, self.hline2] )
             if event.button==3: #right click
                 self.settriggerpoint(int(  (event.xdata / (1000.0*pow(2,self.downsample)/self.clkrate/self.xscaling)) +self.num_samples/2  ))
@@ -830,7 +833,7 @@ class Haasoscope():
             elif event.key=="O": self.oversamp(self.selectedchannel); return
             elif event.key==">": self.refsinchan=self.selectedchannel; self.reffreq=0;
             elif event.key=="t": self.rising=not self.rising;self.settriggertype(self.rising);print "rising toggled",self.rising; return
-            elif event.key=="g": self.dogrid=not self.dogrid;print "dogrid toggled",self.dogrid; return
+            elif event.key=="g": self.dogrid=not self.dogrid;print "dogrid toggled",self.dogrid; self.ax.grid(self.dogrid); return
             elif event.key=="x": self.tellswitchgain(self.selectedchannel)
             elif event.key=="ctrl+x": 
                 for chan in range(num_chan_per_board*num_board): self.tellswitchgain(chan)
@@ -903,7 +906,7 @@ class Haasoscope():
             self.lines.append(line)
         #Other stuff
         self.setxaxis(); self.setyaxis();
-        self.ax.grid()
+        self.ax.grid(True)
         self.vline=0
         otherline , = self.ax.plot([self.vline, self.vline], [-2, 2], 'k--', lw=1)#,label='trigger time vert')
         self.otherlines.append(otherline)
@@ -912,6 +915,7 @@ class Haasoscope():
         self.otherlines.append(otherline)
         self.hline2 = 0
         otherline , = self.ax.plot( [-2, 2], [self.hline2, self.hline2], 'k--', lw=1, color='blue')#, label='trigger2 thresh horiz')
+        otherline.set_visible(False)
         self.otherlines.append(otherline)
         if self.db: print "drew lines in launch",len(self.otherlines)
         self.figure.canvas.mpl_connect('button_press_event', self.onclick)
