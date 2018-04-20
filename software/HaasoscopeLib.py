@@ -523,6 +523,10 @@ class Haasoscope():
         self.ax.set_ylabel("Volts") #("ADC value")
         self.ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
         self.ax.yaxis.set_minor_locator(plt.MultipleLocator(0.5))
+        self.ax.spines['top'].set_visible(False)
+        self.ax.spines['right'].set_visible(False)
+        self.ax.spines['left'].set_visible(False)
+        self.ax.spines['bottom'].set_visible(False)
         #self.ax.set_autoscaley_on(True)
         self.figure.canvas.draw()    
         
@@ -1473,7 +1477,7 @@ class Haasoscope():
         thetime=time.time()
         elapsedtime=thetime-self.oldtime
         if elapsedtime>1.0:
-                #self.drawtext() # causes a little drawing blip, so don't redo each second for now - just select a channel to update text
+                self.drawtext() # causes a little drawing blip? Not with self.ax.spines['top/bottom/left/right'].set_visible(False) !
                 self.oldtime=thetime
         return True
 
