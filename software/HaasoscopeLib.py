@@ -64,6 +64,7 @@ class Haasoscope():
         self.useexttrig=False #whether to use the external trigger input
         self.autocalibchannel=-1 #which channel we are auto-calibrating
         self.autocalibgainac=0 #which stage of gain and acdc we are auto-calibrating
+        self.recordedchannellength=250 #number of events to overlay in the 2d persist plot
         self.db = False #debugging #True #False
     
         self.dolockin=False # read lockin info
@@ -1088,7 +1089,6 @@ class Haasoscope():
     
     recorddata=False
     recordindex=0 # for recording data, the last N events, for the shaded persist display window
-    recordedchannellength=250 #number of events to overlay in the 2d persist plot
     recordedchannel=[]
     drawn2d=False
     def dopersistplot(self,xdatanew,ydatanew):
@@ -1105,7 +1105,7 @@ class Haasoscope():
                 self.ax2d.clear()
                 self.ax2d.hist2d(
                     np.tile(xdatanew,self.recordedchannellength), np.concatenate(tuple(self.recordedchannel)), 
-                    bins=[min(self.num_samples,1024),256], range=[[xdatanew[0],xdatanew[self.num_samples-1]],[self.min_y,self.max_y]],
+                    bins=[min(self.num_samples,1024),256], range=[[xdatanew[0],xdatanew[self.num_samples-2]],[self.min_y,self.max_y]],
                     cmin=1, cmap='rainbow') #, Blues, Reds, coolwarm, seismic
                 self.fig2d.canvas.set_window_title('Persist display of channel '+str(self.recorddatachan))
                 if self.xscaling==1.e3: self.ax2d.set_xlabel('Time (us)')
