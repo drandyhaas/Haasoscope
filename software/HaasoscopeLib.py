@@ -65,6 +65,7 @@ class Haasoscope():
         self.autocalibchannel=-1 #which channel we are auto-calibrating
         self.autocalibgainac=0 #which stage of gain and acdc we are auto-calibrating
         self.recordedchannellength=250 #number of events to overlay in the 2d persist plot
+        self.ydatarefchan=-1 #the reference channel for each board, whose ydata will be subtracted from other channels' ydata on the board
         self.db = False #debugging #True #False
     
         self.dolockin=False # read lockin info
@@ -535,7 +536,8 @@ class Haasoscope():
         
     def chantext(self):
         text = "Selected:"
-        text +="\nChannel: "+str(self.selectedchannel)
+        text +="\nChan: "+str(self.selectedchannel)
+        if self.ydatarefchan>=0: text += " - ref "+str(int(self.ydatarefchan))
         text +="\nLevel="+str(int(self.chanlevel[self.selectedchannel]))
         text +="\nDC coupled="+str(self.acdc[self.selectedchannel])
         text +="\nTriggering="+str(self.trigsactive[self.selectedchannel])
@@ -549,7 +551,7 @@ class Haasoscope():
             if self.selectedchannel>1 and self.dooversample[self.selectedchannel-2]: text+= "\nOff (oversamp)"
         if len(max10adcchans)>0:
             text+="\n"
-            text+="\nmax10chan: "+str(self.selectedmax10channel)
+            text+="\nSlow chan: "+str(self.selectedmax10channel)
         return text
     
     firstdrawtext=True
@@ -846,6 +848,9 @@ class Haasoscope():
             elif event.key=="I": self.testi2c(); return
             elif event.key=="c": self.readcalib(); return
             elif event.key=="C": self.storecalib(); return
+            elif event.key=="R": 
+                if self.ydatarefchan<0: self.ydatarefchan=self.selectedchannel
+                else: self.ydatarefchan=-1
             elif event.key=="|": print "starting autocalibration";self.autocalibchannel=0;
             elif event.key=="W": self.domaindrawing=not self.domaindrawing; self.domeasure=self.domaindrawing; return
             elif event.key=="Y": self.doxyplot=True; self.xychan=self.selectedchannel; print "doxyplot now",self.doxyplot,"for channel",self.xychan; return;
@@ -967,6 +972,8 @@ class Haasoscope():
                 if len(theydata)<=l: print "don't have channel",l,"on board",board; return
                 xdatanew = (self.xdata-self.num_samples/2.)*(1000.0*pow(2,self.downsample)/self.clkrate/self.xscaling)
                 ydatanew=(127-theydata[l])*(self.yscale/256.) # got to flip it, since it's a negative feedback op amp
+                if self.ydatarefchan>=0:
+                    ydatanew -= (127-theydata[self.ydatarefchan])*(self.yscale/256.) # subtract the board's reference channel ydata from this channel's ydata
                 if self.sincresample>0:
                     (ydatanew,xdatanew) = resample(ydatanew, self.num_samples*self.sincresample, t = xdatanew)
                     xdatanew = xdatanew[1*self.sincresample:self.num_samples*self.sincresample]
