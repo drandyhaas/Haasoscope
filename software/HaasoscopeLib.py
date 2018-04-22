@@ -848,7 +848,7 @@ class Haasoscope():
             elif event.key=="I": self.testi2c(); return
             elif event.key=="c": self.readcalib(); return
             elif event.key=="C": self.storecalib(); return
-            elif event.key=="R": 
+            elif event.key=="ctrl+r": 
                 if self.ydatarefchan<0: self.ydatarefchan=self.selectedchannel
                 else: self.ydatarefchan=-1
             elif event.key=="|": print "starting autocalibration";self.autocalibchannel=0;
