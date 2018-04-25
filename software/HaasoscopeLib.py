@@ -760,9 +760,12 @@ class Haasoscope():
          else: self.adjustvertical(False)
         
     def onrelease(self,event): # a key was released
-        if event.key=="shift": self.keyShift=False;return
-        elif event.key=="alt": self.keyAlt=False;return
-        elif event.key=="control": self.keyControl=False; return    
+        #print event.key, "released"
+        if event.key.find("shift")>-1: self.keyShift=False;return
+        if event.key.find("alt")>-1: self.keyAlt=False;return
+        if event.key=="control": self.keyControl=False; return
+        if event.key.find("ctrl")>-1: self.keyControl=False; return    
+        if event.key.find("control")>-1: self.keyControl=False; return    
     
     #will grab the next keys as input
     keyResample=False
