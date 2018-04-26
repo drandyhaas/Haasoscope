@@ -94,7 +94,6 @@ class Haasoscope():
         self.trigsactive=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is triggering on that channel, 0 is not triggering on it
         self.dooversample=np.zeros(num_board*num_chan_per_board, dtype=int) # 1 is oversampling, 0 is no oversampling
         
-        self.domeasure=self.domaindrawing #by default we will calculate measurements if we are drawing
         self.Vrms=np.zeros(num_board*num_chan_per_board, dtype=float) # the Vrms for each channel
         self.Vmean=np.zeros(num_board*num_chan_per_board, dtype=float) # the Vmean for each channel
         
@@ -855,7 +854,8 @@ class Haasoscope():
                 if self.ydatarefchan<0: self.ydatarefchan=self.selectedchannel
                 else: self.ydatarefchan=-1
             elif event.key=="|": print "starting autocalibration";self.autocalibchannel=0;
-            elif event.key=="W": self.domaindrawing=not self.domaindrawing; self.domeasure=self.domaindrawing; return
+            elif event.key=="W": self.domaindrawing=not self.domaindrawing; self.domeasure=self.domaindrawing; print "domaindrawing now",self.domaindrawing; return
+            elif event.key=="M": self.domeasure=not self.domeasure; print "domeasure now",self.domeasure; self.drawtext(); return
             elif event.key=="Y": self.doxyplot=True; self.xychan=self.selectedchannel; print "doxyplot now",self.doxyplot,"for channel",self.xychan; return;
             elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; return;
             elif event.key=="right": self.telldownsample(self.downsample+1); return
@@ -1488,10 +1488,11 @@ class Haasoscope():
             if self.dolockin and self.dolockinplot: self.plot_lockin()
             self.on_running(self.ydata, bn) #update data in main window
             if self.db: print time.time()-self.oldtime,"done with board",bn
-        thetime=time.time()
-        elapsedtime=thetime-self.oldtime
-        if elapsedtime>1.0:
-                self.drawtext() # causes a little drawing blip? Not with self.ax.spines['top/bottom/left/right'].set_visible(False) !
+        if self.domaindrawing and self.domeasure:
+            thetime=time.time()
+            elapsedtime=thetime-self.oldtime
+            if elapsedtime>1.0:
+                self.drawtext() #redraws the measurements
                 self.oldtime=thetime
         return True
 
@@ -1518,6 +1519,7 @@ class Haasoscope():
                 if not self.makeusbsermap(): return False # figure out which usb connection has which board's data
             self.getIDs() # get the unique ID of each board, for calibration etc.
             self.readcalib() # get the calibrated DAC values for each board; if it fails then use defaults
+            self.domeasure=self.domaindrawing #by default we will calculate measurements if we are drawing
             return True
     
     #cleanup
