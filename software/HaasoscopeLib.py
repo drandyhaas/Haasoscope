@@ -984,7 +984,7 @@ class Haasoscope():
                 else:
                     xdatanew = xdatanew[1:self.num_samples]
                     ydatanew = ydatanew[1:self.num_samples]
-                if len(self.lines)>thechan: # we may not be drawing, so check!
+                if len(self.lines)>thechan and self.domaindrawing: # we may not be drawing, so check!
                     self.lines[thechan].set_xdata(xdatanew)
                     self.lines[thechan].set_ydata(ydatanew)
                 if self.domeasure:
