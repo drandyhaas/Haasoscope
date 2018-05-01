@@ -93,6 +93,7 @@ class Haasoscope():
         self.acdc=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is dc, 0 is ac
         self.trigsactive=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is triggering on that channel, 0 is not triggering on it
         self.dooversample=np.zeros(num_board*num_chan_per_board, dtype=int) # 1 is oversampling, 0 is no oversampling
+        self.rollingtrigger=True #rolling auto trigger at 5 Hz 
         
         self.Vrms=np.zeros(num_board*num_chan_per_board, dtype=float) # the Vrms for each channel
         self.Vmean=np.zeros(num_board*num_chan_per_board, dtype=float) # the Vmean for each channel
@@ -105,8 +106,8 @@ class Haasoscope():
     
     def tellrolltrig(self,rt):
         #tell them to roll the trigger (a self-trigger each ~second), or not
-        if rt: self.ser.write(chr(101)); print "rolling trigger"
-        else:  self.ser.write(chr(102)); print "not rolling trigger"
+        if rt: self.ser.write(chr(101)); self.rollingtrigger=True; print "rolling trigger"
+        else:  self.ser.write(chr(102)); self.rollingtrigger=False; print "not rolling trigger"
 
     def tellsamplesmax10adc(self):
         #tell it the number of samples to use for the 1MHz internal Max10 ADC
@@ -1419,7 +1420,7 @@ class Haasoscope():
                         val=(self.ydata[c][2*i]+self.ydata[c][2*i+1])/2
                         self.ydata[c][2*i]=val; self.ydata[c][2*i+1]=val;            
         else:
-            if not self.db: print "getdata asked for",self.num_bytes,"bytes and got",len(rslt),"from board",board
+            if not self.db and self.rollingtrigger: print "getdata asked for",self.num_bytes,"bytes and got",len(rslt),"from board",board
             if len(rslt)>0: print byte_array[0:10]
         
     def oversample(self,c1,c2):
