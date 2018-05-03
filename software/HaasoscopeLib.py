@@ -518,14 +518,13 @@ class Haasoscope():
             self.max_x = xscale/1e6
             self.xscaling=1.e6
         self.ax.set_xlim(self.min_x, self.max_x)
-        self.ax.xaxis.set_major_locator(plt.MultipleLocator( (self.max_x*1000/1024-self.min_x*1000/1024)/8 ))
+        self.ax.xaxis.set_major_locator(plt.MultipleLocator( (self.max_x*1000/1024-self.min_x*1000/1024)/8. ))
         self.figure.canvas.draw()
     
     def setyaxis(self):
         self.ax.set_ylim(self.min_y, self.max_y)
         self.ax.set_ylabel("Volts") #("ADC value")
         self.ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
-        #self.ax.yaxis.set_minor_locator(plt.MultipleLocator(0.5))
         self.ax.spines['top'].set_visible(False)
         self.ax.spines['right'].set_visible(False)
         self.ax.spines['left'].set_visible(False)
@@ -859,6 +858,8 @@ class Haasoscope():
             elif event.key==">": self.refsinchan=self.selectedchannel; self.reffreq=0;
             elif event.key=="t": self.rising=not self.rising;self.settriggertype(self.rising);print "rising toggled",self.rising; return
             elif event.key=="g": self.dogrid=not self.dogrid;print "dogrid toggled",self.dogrid; self.ax.grid(self.dogrid); return
+            elif event.key=="ctrl+g": self.ax.xaxis.set_major_locator(plt.MultipleLocator( (self.max_x*1000/1024-self.min_x*1000/1024)/8./5. )); return
+            elif event.key=="G": self.ax.yaxis.set_major_locator(plt.MultipleLocator(0.2)); return
             elif event.key=="x": self.tellswitchgain(self.selectedchannel)
             elif event.key=="ctrl+x": 
                 for chan in range(num_chan_per_board*num_board): self.tellswitchgain(chan)
