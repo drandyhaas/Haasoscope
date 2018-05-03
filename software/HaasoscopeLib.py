@@ -452,6 +452,7 @@ class Haasoscope():
         #tell it to toggle oversampling for this channel
         chanonboard = chan%num_chan_per_board
         if chanonboard>1: return
+        self.togglechannel(chan+2)
         self.telldownsample(0) # must be in max sampling mode for oversampling to make sense
         self.dooversample[self.selectedchannel] = not self.dooversample[self.selectedchannel];
         print "oversample is now",self.dooversample[self.selectedchannel],"for channel",chan
@@ -535,8 +536,7 @@ class Haasoscope():
         self.figure.canvas.draw()    
         
     def chantext(self):
-        text = "Selected:"
-        text +="\nChan: "+str(self.selectedchannel)
+        text ="Channel: "+str(self.selectedchannel)
         if self.ydatarefchan>=0: text += " - ref "+str(int(self.ydatarefchan))
         text +="\nLevel="+str(int(self.chanlevel[self.selectedchannel]))
         text +="\nDC coupled="+str(self.acdc[self.selectedchannel])
@@ -780,8 +780,8 @@ class Haasoscope():
             if c>num_chan_per_board*num_board: break
             if self.drawmarkers:
                 line.set_marker("o")
-                line.set_markeredgewidth(0.2)
-                line.set_markersize(2.0)
+                line.set_markeredgewidth(0.5)
+                line.set_markersize(2.5)
             else:
                 line.set_marker(".")
                 line.set_markersize(0)
