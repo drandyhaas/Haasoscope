@@ -452,7 +452,7 @@ class Haasoscope():
         #tell it to toggle oversampling for this channel
         chanonboard = chan%num_chan_per_board
         if chanonboard>1: return
-        self.togglechannel(chan+2)
+        self.togglechannel(chan+2,True)
         self.telldownsample(0) # must be in max sampling mode for oversampling to make sense
         self.dooversample[self.selectedchannel] = not self.dooversample[self.selectedchannel];
         print "oversample is now",self.dooversample[self.selectedchannel],"for channel",chan
@@ -568,10 +568,11 @@ class Haasoscope():
         self.needtoredrawtext=True
         plt.draw()
     
-    def togglechannel(self,theline):
+    def togglechannel(self,theline,leaveoff=False):
         # on the pick event, find the orig line corresponding to the
         # legend proxy line, and toggle the visibility
         origline,legline,channum = self.lined[theline]
+        if leaveoff and not origline.get_visible(): return
         print "toggle",theline,"for channum",channum                
         vis = not origline.get_visible()
         origline.set_visible(vis)
