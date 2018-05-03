@@ -612,11 +612,15 @@ class Haasoscope():
         try:
             if event.button==1: #left click                
                 pass
-            if event.button==2: #middle click                
-                self.settriggerthresh2(int(  event.ydata/(self.yscale/256.) + 128  ))                
-                self.hline2 = event.ydata
-                self.otherlines[2].set_visible(True) # starts off being hidden, so now show it!
-                self.otherlines[2].set_data( [self.min_x, self.max_x], [self.hline2, self.hline2] )
+            if event.button==2: #middle click
+                if self.keyShift:# if shift is held, turn off threshold2
+                    self.settriggerthresh2(0)
+                    self.otherlines[2].set_visible(False)
+                else:
+                    self.hline2 = event.ydata
+                    self.settriggerthresh2(int(  self.hline2/(self.yscale/256.) + 128  ))                
+                    self.otherlines[2].set_visible(True) # starts off being hidden, so now show it!
+                    self.otherlines[2].set_data( [self.min_x, self.max_x], [self.hline2, self.hline2] )
             if event.button==3: #right click
                 self.settriggerpoint(int(  (event.xdata / (1000.0*pow(2,self.downsample)/self.clkrate/self.xscaling)) +self.num_samples/2  ))
                 self.settriggerthresh(int(  event.ydata/(self.yscale/256.) + 128  ))
@@ -767,6 +771,21 @@ class Haasoscope():
         if event.key.find("ctrl")>-1: self.keyControl=False; return    
         if event.key.find("control")>-1: self.keyControl=False; return    
     
+    drawmarkers=False
+    def domarkers(self): # toggle drawing of markers, for fast ADC channels
+        self.drawmarkers = not self.drawmarkers
+        c=0
+        for line in self.lines:
+            c=c+1
+            if c>num_chan_per_board*num_board: break
+            if self.drawmarkers:
+                line.set_marker("o")
+                line.set_markeredgewidth(0.2)
+                line.set_markersize(2.0)
+            else:
+                line.set_marker(".")
+                line.set_markersize(0)
+    
     #will grab the next keys as input
     keyResample=False
     keysettriggertime=False
@@ -857,6 +876,7 @@ class Haasoscope():
             elif event.key=="|": print "starting autocalibration";self.autocalibchannel=0;
             elif event.key=="W": self.domaindrawing=not self.domaindrawing; self.domeasure=self.domaindrawing; print "domaindrawing now",self.domaindrawing; return
             elif event.key=="M": self.domeasure=not self.domeasure; print "domeasure now",self.domeasure; self.drawtext(); return
+            elif event.key=="m": self.domarkers(); return
             elif event.key=="Y": self.doxyplot=True; self.xychan=self.selectedchannel; print "doxyplot now",self.doxyplot,"for channel",self.xychan; return;
             elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; return;
             elif event.key=="right": self.telldownsample(self.downsample+1); return
@@ -900,13 +920,13 @@ class Haasoscope():
         for l in np.arange(self.nlines):            
             maxchan=l-num_chan_per_board*num_board
             c=(0,0,0)
-            if maxchan>=0:
+            if maxchan>=0: # these are the slow ADC channels
                 board = int(num_board-1-max10adcchans[maxchan][0])
                 if board%3==0: c=(1-0.2*maxchan,0,0)
                 if board%3==1: c=(0,1-0.2*maxchan,0)
                 if board%3==2: c=(0,0,1-0.2*maxchan)
                 line, = self.ax.plot([],[], '-', label=str(max10adcchans[maxchan]), color=c, linewidth=0.5, alpha=.5)
-            else: 
+            else: # these are the fast ADC channels
                 board=l/4
                 chan=l%4
                 if board%3==0: c=(1-0.2*chan,0,0)
