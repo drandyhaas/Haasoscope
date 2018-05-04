@@ -460,6 +460,12 @@ class Haasoscope():
         self.writefirmchan(chan)
         self.drawtext()
         self.figure.canvas.draw()
+    
+    def overoversamp(self):
+    	if self.selectedchannel%4: print "over over sampling only for channel 0 of a board!"
+        elif self.dooversample[self.selectedchannel]==0 or self.dooversample[self.selectedchannel+1]==0: print "for over over sampling, first do oversampling on channels 0 and 1 of the board"
+        elif self.dooversample[self.selectedchannel]==1: self.dooversample[self.selectedchannel]=9; self.togglechannel(self.selectedchannel+1,True); print "over over sampling"
+        elif self.dooversample[self.selectedchannel]==9: self.dooversample[self.selectedchannel]=1; print "no more over over sampling"
 
     def resetchans(self):
         for chan in np.arange(num_board*num_chan_per_board):
@@ -545,7 +551,8 @@ class Haasoscope():
             text +="\nVrms="+str(self.Vrms[self.selectedchannel].round(3))
         chanonboard = self.selectedchannel%num_chan_per_board
         if chanonboard<2:
-            if self.dooversample[self.selectedchannel]: text+= "\nOversampled x2"
+            if self.dooversample[self.selectedchannel]==1: text+= "\nOversampled x2"
+            if self.dooversample[self.selectedchannel]==9: text+= "\nOversampled x4"
         else:
             if self.selectedchannel>1 and self.dooversample[self.selectedchannel-2]: text+= "\nOff (oversamp)"
         if len(max10adcchans)>0:
@@ -856,13 +863,7 @@ class Haasoscope():
             elif event.key=="A": self.toggleautorearm(); return
             elif event.key=="U": self.toggledousb(); return
             elif event.key=="O": self.oversamp(self.selectedchannel); return
-            elif event.key=="ctrl+o": 
-                if self.selectedchannel%4==0:
-                    if self.dooversample[self.selectedchannel]==0 or self.dooversample[self.selectedchannel+1]==0: print "for over over sampling, first do oversampling on channels 0 and 1 of the board"
-                    elif self.dooversample[self.selectedchannel]==1: self.dooversample[self.selectedchannel]=9; print "over over sampling"
-                    elif self.dooversample[self.selectedchannel]==9: self.dooversample[self.selectedchannel]=1; print "no more over over sampling"
-                else: print "over over sampling only for channel 0 of a board!"
-                return
+            elif event.key=="ctrl+o": self.overoversamp(); return
             elif event.key==">": self.refsinchan=self.selectedchannel; self.reffreq=0;
             elif event.key=="t": self.rising=not self.rising;self.settriggertype(self.rising);print "rising toggled",self.rising; return
             elif event.key=="g": self.dogrid=not self.dogrid;print "dogrid toggled",self.dogrid; self.ax.grid(self.dogrid); return
@@ -1192,7 +1193,8 @@ class Haasoscope():
         chanonboardnum = num_board - self.fftchan/num_chan_per_board - 1 # this is what board (0 -- (num_board-1)) we want to draw that fft channel from
         if bn==chanonboardnum and len(self.ydata)>channumonboard: # select the right board check that the channel data is really there
             twoforoversampling=1
-            if self.dooversample[self.fftchan]: twoforoversampling=2
+            if self.dooversample[self.fftchan]==1: twoforoversampling=2
+            if self.dooversample[self.fftchan]==9: twoforoversampling=4
             y = self.ydata[channumonboard] # channel signal to take fft of
             n = len(y) # length of the signal
             k = np.arange(n)
@@ -1216,6 +1218,7 @@ class Haasoscope():
                 self.fftax[1].set_xlim(0,frq[n/2-1])
                 self.oldmaxt = n*uspersample
                 self.oldmaxfreq = frq[n/2-1]
+                self.fftfig.tight_layout()
             else: # redrawing
                 self.fftdataplot.set_xdata(t)
                 self.fftfreqplot.set_xdata(frq)
@@ -1248,6 +1251,7 @@ class Haasoscope():
             self.lockinfig, self.lockinax = plt.subplots(2,1)
             self.lockinfig.canvas.set_window_title('Lockin of channel '+str(2)+" wrt "+str(3))
             self.lockinfig.canvas.mpl_connect('close_event', self.handle_lockin_close)
+
             self.lockinamplplot, = self.lockinax[0].plot(t,self.lockiny1) # plotting the amplitude
             self.lockinax[0].set_xlabel(' ')
             self.lockinax[0].set_ylabel('Amplitude')
@@ -1257,6 +1261,7 @@ class Haasoscope():
             if self.debuglockin:
                 self.lockinamplploto, = self.lockinax[0].plot(t,self.lockiny1o)# offline float calculation
                 self.lockinphaseploto, = self.lockinax[1].plot(t,self.lockiny2o)# offline float calculation
+            self.lockinfig.tight_layout()
         else: # redrawing
             self.lockiny1=np.roll(self.lockiny1,-1)
             self.lockiny2=np.roll(self.lockiny2,-1)
