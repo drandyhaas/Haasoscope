@@ -856,6 +856,13 @@ class Haasoscope():
             elif event.key=="A": self.toggleautorearm(); return
             elif event.key=="U": self.toggledousb(); return
             elif event.key=="O": self.oversamp(self.selectedchannel); return
+            elif event.key=="ctrl+o": 
+                if self.selectedchannel%4==0:
+                    if self.dooversample[self.selectedchannel]==0 or self.dooversample[self.selectedchannel+1]==0: print "for over over sampling, first do oversampling on channels 0 and 1 of the board"
+                    elif self.dooversample[self.selectedchannel]==1: self.dooversample[self.selectedchannel]=9; print "over over sampling"
+                    elif self.dooversample[self.selectedchannel]==9: self.dooversample[self.selectedchannel]=1; print "no more over over sampling"
+                else: print "over over sampling only for channel 0 of a board!"
+                return
             elif event.key==">": self.refsinchan=self.selectedchannel; self.reffreq=0;
             elif event.key=="t": self.rising=not self.rising;self.settriggertype(self.rising);print "rising toggled",self.rising; return
             elif event.key=="g": self.dogrid=not self.dogrid;print "dogrid toggled",self.dogrid; self.ax.grid(self.dogrid); return
@@ -1435,7 +1442,8 @@ class Haasoscope():
             if db2: print byte_array[1:11]
             self.ydata=np.reshape(byte_array,(num_chan_per_board,self.num_samples))            
             if self.dooversample[num_chan_per_board*(num_board-board-1)]: self.oversample(0,2)
-            if self.dooversample[num_chan_per_board*(num_board-board-1)+1]: self.oversample(1,3)            
+            if self.dooversample[num_chan_per_board*(num_board-board-1)+1]: self.oversample(1,3)
+            if self.dooversample[num_chan_per_board*(num_board-board-1)]==9: self.oversample(0,1)
             if self.average:
                 for c in np.arange(num_chan_per_board):
                     for i in np.arange(self.num_samples/2):
