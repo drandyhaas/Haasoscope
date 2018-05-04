@@ -875,7 +875,7 @@ class Haasoscope():
             elif event.key=="X": self.togglesupergainchan(self.selectedchannel)
             elif event.key=="ctrl+X": 
                 for chan in range(num_chan_per_board*num_board): self.selectedchannel=chan; self.togglesupergainchan(chan)
-            elif event.key=="F": self.fftchan=self.selectedchannel; self.dofft=True;return
+            elif event.key=="F": self.fftchan=self.selectedchannel; self.dofft=True; self.keyShift=False; return
             elif event.key=="/": self.setacdc();return
             elif event.key=="I": self.testi2c(); return
             elif event.key=="c": self.readcalib(); return
@@ -887,8 +887,8 @@ class Haasoscope():
             elif event.key=="W": self.domaindrawing=not self.domaindrawing; self.domeasure=self.domaindrawing; print "domaindrawing now",self.domaindrawing; return
             elif event.key=="M": self.domeasure=not self.domeasure; print "domeasure now",self.domeasure; self.drawtext(); return
             elif event.key=="m": self.domarkers(); return
-            elif event.key=="Y": self.doxyplot=True; self.xychan=self.selectedchannel; print "doxyplot now",self.doxyplot,"for channel",self.xychan; return;
-            elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; return;
+            elif event.key=="Y": self.doxyplot=True; self.xychan=self.selectedchannel; print "doxyplot now",self.doxyplot,"for channel",self.xychan; self.keyShift=False; return;
+            elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; self.keyShift=False; return;
             elif event.key=="right": self.telldownsample(self.downsample+1); return
             elif event.key=="left": self.telldownsample(self.downsample-1); return
             elif event.key=="up": self.adjustvertical(True); return
