@@ -49,7 +49,7 @@ class Haasoscope():
         self.rising=True #trigger on rising edge (or else falling edge)
         self.dogrid=True #redraw the grid
         self.chanforscreen=0 #channel to draw on the mini-display
-        self.triggertimethresh=5 #samples for which the trigger must be over/under threshold
+        self.triggertimethresh=1 #samples for which the trigger must be over/under threshold
         self.downsample=2 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
         self.maxdownsample=10 # slowest I can run
         self.dofft=False #drawing the FFT plot
