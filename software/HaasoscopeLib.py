@@ -66,6 +66,7 @@ class Haasoscope():
         self.autocalibgainac=0 #which stage of gain and acdc we are auto-calibrating
         self.recordedchannellength=250 #number of events to overlay in the 2d persist plot
         self.ydatarefchan=-1 #the reference channel for each board, whose ydata will be subtracted from other channels' ydata on the board
+        self.chtext = "Ch." #the text in the legend for each channel
         self.db = False #debugging #True #False
     
         self.dolockin=False # read lockin info
@@ -402,20 +403,20 @@ class Haasoscope():
             self.supergain[chan]=0 #x100 super gain on!
             if len(plt.get_fignums())>0:
                 if self.gain[chan]==1:
-                    origline.set_label("chan "+str(chan)+" x100")
-                    self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x100")
+                    origline.set_label(self.chtext+str(chan)+" x100")
+                    self.leg.get_texts()[chan].set_text(self.chtext+str(chan)+" x100")
                 else:
-                    origline.set_label("chan "+str(chan)+" x1000")
-                    self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x1000")
+                    origline.set_label(self.chtext+str(chan)+" x1000")
+                    self.leg.get_texts()[chan].set_text(self.chtext+str(chan)+" x1000")
         else:
             self.supergain[chan]=1 #normal gain
             if len(plt.get_fignums())>0:
                 if self.gain[chan]==1:
-                    origline.set_label("chan "+str(chan))
-                    self.leg.get_texts()[chan].set_text("chan "+str(chan))
+                    origline.set_label(self.chtext+str(chan))
+                    self.leg.get_texts()[chan].set_text(self.chtext+str(chan))
                 else:
-                    origline.set_label("chan "+str(chan)+" x10")
-                    self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x10")
+                    origline.set_label(self.chtext+str(chan)+" x10")
+                    self.leg.get_texts()[chan].set_text(self.chtext+str(chan)+" x10")
         self.setdacvalue()
         if len(plt.get_fignums())>0: self.figure.canvas.draw()
         print "Supergain switched for channel",chan,"to",self.gain[chan]
@@ -429,20 +430,20 @@ class Haasoscope():
             self.gain[chan]=0 # x10 gain on!
             if len(plt.get_fignums())>0:
                 if self.supergain[chan]==1:
-                    origline.set_label("chan "+str(chan)+" x10")
-                    self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x10")
+                    origline.set_label(self.chtext+str(chan)+" x10")
+                    self.leg.get_texts()[chan].set_text(self.chtext+str(chan)+" x10")
                 else:
-                    origline.set_label("chan "+str(chan)+" x1000")
-                    self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x1000")
+                    origline.set_label(self.chtext+str(chan)+" x1000")
+                    self.leg.get_texts()[chan].set_text(self.chtext+str(chan)+" x1000")
         else:
             self.gain[chan]=1 #low gain
             if len(plt.get_fignums())>0:
                 if self.supergain[chan]==1:
-                    origline.set_label("chan "+str(chan))
-                    self.leg.get_texts()[chan].set_text("chan "+str(chan))
+                    origline.set_label(self.chtext+str(chan))
+                    self.leg.get_texts()[chan].set_text(self.chtext+str(chan))
                 else:
-                    origline.set_label("chan "+str(chan)+" x100")
-                    self.leg.get_texts()[chan].set_text("chan "+str(chan)+" x100")
+                    origline.set_label(self.chtext+str(chan)+" x100")
+                    self.leg.get_texts()[chan].set_text(self.chtext+str(chan)+" x100")
         self.selectedchannel=chan # needed for setdacvalue
         self.setdacvalue()
         if len(plt.get_fignums())>0: self.figure.canvas.draw()
@@ -547,8 +548,8 @@ class Haasoscope():
         text +="\nDC coupled="+str(self.acdc[self.selectedchannel])
         text +="\nTriggering="+str(self.trigsactive[self.selectedchannel])
         if self.domeasure:
-            text +="\nVmean="+str(self.Vmean[self.selectedchannel].round(3))
-            text +="\nVrms="+str(self.Vrms[self.selectedchannel].round(3))
+            text +="\nVmean="+str(self.Vmean[self.selectedchannel].round(6))
+            text +="\nVrms="+str(self.Vrms[self.selectedchannel].round(6))
         chanonboard = self.selectedchannel%num_chan_per_board
         if chanonboard<2:
             if self.dooversample[self.selectedchannel]==1: text+= "\nOversampled x2"
@@ -942,7 +943,7 @@ class Haasoscope():
                 if board%3==0: c=(1-0.2*chan,0,0)
                 if board%3==1: c=(0,1-0.2*chan,0)
                 if board%3==2: c=(0,0,1-0.2*chan)
-                line, = self.ax.plot([],[], '-', label="chan "+str(l), color=c, linewidth=1.0, alpha=.9)
+                line, = self.ax.plot([],[], '-', label=self.chtext+str(l), color=c, linewidth=1.0, alpha=.9)
             self.lines.append(line)
         #Other stuff
         self.setxaxis(); self.setyaxis();
@@ -966,7 +967,7 @@ class Haasoscope():
         self.leg = self.ax.legend(loc='upper left', bbox_to_anchor=(1.02, 1),
               ncol=1, borderaxespad=0, fancybox=False, shadow=False, fontsize=10)
         self.leg.get_frame().set_alpha(0.4)
-        self.figure.subplots_adjust(right=0.80)
+        self.figure.subplots_adjust(right=0.76)
         self.figure.subplots_adjust(left=.10)
         self.figure.subplots_adjust(top=.95)
         self.figure.subplots_adjust(bottom=.10)
@@ -1021,6 +1022,12 @@ class Haasoscope():
                 if self.domeasure:
                     self.Vmean[thechan] = np.mean(ydatanew)
                     self.Vrms[thechan] = np.sqrt(np.mean((ydatanew-self.Vmean[thechan])**2))
+                    gain=1
+                    if self.gain[thechan]==0: gain*=10
+                    if self.supergain[thechan]==0: gain*=100
+                    if gain>1:
+                        self.Vmean/=gain
+                        self.Vrms/=gain
                 self.xydata[l][0]=xdatanew
                 self.xydata[l][1]=ydatanew
                 if self.doxyplot and (thechan==self.xychan or thechan==(self.xychan+1)): self.drawxyplot(xdatanew,ydatanew,thechan)# the xy plot
