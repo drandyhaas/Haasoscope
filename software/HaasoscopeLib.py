@@ -1028,8 +1028,8 @@ class Haasoscope():
                     if self.gain[thechan]==0: gain*=10
                     if self.supergain[thechan]==0: gain*=100
                     if gain>1:
-                        self.Vmean/=gain
-                        self.Vrms/=gain
+                        self.Vmean[thechan]/=gain
+                        self.Vrms[thechan]/=gain
                 self.xydata[l][0]=xdatanew
                 self.xydata[l][1]=ydatanew
                 if self.doxyplot and (thechan==self.xychan or thechan==(self.xychan+1)): self.drawxyplot(xdatanew,ydatanew,thechan)# the xy plot
