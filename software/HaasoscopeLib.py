@@ -539,8 +539,8 @@ class Haasoscope():
         plt.setp(self.ax.get_xticklines(),visible=False)
         plt.setp(self.ax.get_yticklines(),visible=False)
         #self.ax.set_autoscaley_on(True)
-        self.figure.canvas.draw()    
-        
+        self.figure.canvas.draw()
+    
     def chantext(self):
         text ="Channel: "+str(self.selectedchannel)
         if self.ydatarefchan>=0: text += " - ref "+str(int(self.ydatarefchan))
@@ -548,8 +548,10 @@ class Haasoscope():
         text +="\nDC coupled="+str(self.acdc[self.selectedchannel])
         text +="\nTriggering="+str(self.trigsactive[self.selectedchannel])
         if self.domeasure:
-            text +="\nVmean="+str(self.Vmean[self.selectedchannel].round(6))
-            text +="\nVrms="+str(self.Vrms[self.selectedchannel].round(6))
+            if abs(self.Vmean[self.selectedchannel])>.9: text +="\nMean={0:1.3g} V".format(self.Vmean[self.selectedchannel])
+            else: text +="\nMean={0:1.3g} mV".format(1000.*self.Vmean[self.selectedchannel])
+            if abs(self.Vrms[self.selectedchannel])>.9: text +="\nRMS={0:1.3g} V".format(self.Vrms[self.selectedchannel])
+            else: text +="\nRMS={0:1.3g} mV".format(1000.*self.Vrms[self.selectedchannel])
         chanonboard = self.selectedchannel%num_chan_per_board
         if chanonboard<2:
             if self.dooversample[self.selectedchannel]==1: text+= "\nOversampled x2"
