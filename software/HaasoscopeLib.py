@@ -934,17 +934,28 @@ class Haasoscope():
             maxchan=l-num_chan_per_board*num_board
             c=(0,0,0)
             if maxchan>=0: # these are the slow ADC channels
-                board = int(num_board-1-max10adcchans[maxchan][0])
-                if board%3==0: c=(1-0.2*maxchan,0,0)
-                if board%3==1: c=(0,1-0.2*maxchan,0)
-                if board%3==2: c=(0,0,1-0.2*maxchan)
+                if num_board>1:
+                    board = int(num_board-1-max10adcchans[maxchan][0])
+                    if board%4==0: c=(1-0.1*maxchan,0,0)
+                    if board%4==1: c=(0,1-0.1*maxchan,0)
+                    if board%4==2: c=(0,0,1-0.1*maxchan)
+                    if board%4==3: c=(1-0.1*maxchan,0,1-0.1*maxchan)
+                else:
+                    c=(0.1*(maxchan+1),0.1*(maxchan+1),0.1*(maxchan+1))
                 line, = self.ax.plot([],[], '-', label=str(max10adcchans[maxchan]), color=c, linewidth=0.5, alpha=.5)
             else: # these are the fast ADC channels
-                board=l/4
                 chan=l%4
-                if board%3==0: c=(1-0.2*chan,0,0)
-                if board%3==1: c=(0,1-0.2*chan,0)
-                if board%3==2: c=(0,0,1-0.2*chan)
+                if num_board>1:
+                    board=l/4
+                    if board%4==0: c=(1-0.2*chan,0,0)
+                    if board%4==1: c=(0,1-0.2*chan,0)
+                    if board%4==2: c=(0,0,1-0.2*chan)
+                    if board%4==3: c=(1-0.2*chan,0,1-0.2*chan)
+                else:
+                    if chan==0: c="red"
+                    if chan==1: c="green"
+                    if chan==2: c="blue"
+                    if chan==3: c="magenta"
                 line, = self.ax.plot([],[], '-', label=self.chtext+str(l), color=c, linewidth=1.0, alpha=.9)
             self.lines.append(line)
         #Other stuff
