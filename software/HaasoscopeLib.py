@@ -925,6 +925,7 @@ class Haasoscope():
         self.xydataslow=np.empty([len(max10adcchans),2,self.nsamp],dtype=float)
         if self.domaindrawing: self.on_launch_draw()
     
+    fitline1=-1 # set to >-1 to draw a risetime fit
     def on_launch_draw(self):
         plt.ion() #turn on interactive mode
         self.nlines = num_chan_per_board*num_board+len(max10adcchans)
@@ -958,7 +959,12 @@ class Haasoscope():
                     if chan==3: c="magenta"
                 line, = self.ax.plot([],[], '-', label=self.chtext+str(l), color=c, linewidth=1.0, alpha=.9)
             self.lines.append(line)
-        #Other stuff
+        #other data to draw
+        if self.fitline1>-1:
+            line, = self.ax.plot([],[], '-', label="fit data", color="purple", linewidth=0.5, alpha=.5)
+            self.lines.append(line)
+            self.fitline1=len(self.lines)-1 # remember index where this line is
+        #other stuff
         self.setxaxis(); self.setyaxis();
         self.ax.grid(True)
         self.vline=0
@@ -1040,7 +1046,24 @@ class Haasoscope():
                     if self.supergain[thechan]==0: gain*=100
                     if gain>1:
                         self.Vmean[thechan]/=gain
-                        self.Vrms[thechan]/=gain
+                        self.Vrms[thechan]/=gain                    
+                    if self.fitline1>-1 and thechan==0: # optional risetime fit for channel 0
+    	                def fit_rise(x,a,bottom,b,top): # a function for fitting to find risetime
+    	                    val=bottom+(x-a)*(top-bottom)/(b-a)
+    	                    inbottom=(x<=a)
+    	                    val[inbottom]=bottom
+    	                    intop=(x>=b)
+    	                    val[intop]=top
+    	                    return val
+    	                try:
+    	                    x2=xdatanew[(xdatanew>-.1) & (xdatanew<.1)] # only fit in range -.1 to .1 (us)
+    	                    y2=ydatanew[(xdatanew>-.1) & (xdatanew<.1)]
+                            popt, pcov = scipy.optimize.curve_fit(fit_rise,x2,y2,bounds=([-.1,-4,-0.05,0],[0.05,0,.1,4])) #and note these bounds - top must be>0 and bottom<0 !
+                            self.lines[self.fitline1].set_xdata(x2)
+                            self.lines[self.fitline1].set_ydata( fit_rise(x2, *popt) )
+                            print "risetime = ",1000*0.8*(popt[2]-popt[0]),"ns" # from 10-90% is 0.8 on the line - don't forget to correct for x2 or x4 oversampling!
+                        except:
+                            print "fit exception!"                    
                 self.xydata[l][0]=xdatanew
                 self.xydata[l][1]=ydatanew
                 if self.doxyplot and (thechan==self.xychan or thechan==(self.xychan+1)): self.drawxyplot(xdatanew,ydatanew,thechan)# the xy plot
