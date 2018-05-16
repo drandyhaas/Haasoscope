@@ -51,7 +51,7 @@ class Haasoscope():
         self.chanforscreen=0 #channel to draw on the mini-display
         self.triggertimethresh=1 #samples for which the trigger must be over/under threshold
         self.downsample=2 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
-        self.maxdownsample=10 # slowest I can run
+        self.maxdownsample=15 # +(12-ram_width) # slowest I can run
         self.dofft=False #drawing the FFT plot
         self.dousb=False #whether to use USB2 output
         self.sincresample=0 # amount of resampling to do (sinx/x)
@@ -162,6 +162,10 @@ class Haasoscope():
         if self.dousb: ds=self.downsample-2
         else: ds=self.downsample-3
         if ds<1: ds=1
+        if ds>8: 
+            ds=8 # otherwise we timeout upon readout
+            if self.num_samples>10: self.settriggerpoint(self.num_samples-10) # set trigger way to the right, so we can capture full event
+            self.otherlines[0].set_visible(False) # don't draw trigger time position line, to indicate it's not really set anymore
         self.ser.write(chr(125))
         self.ser.write(chr(ds))
         if self.db: print "clockbitstowait is",ds
@@ -635,6 +639,7 @@ class Haasoscope():
                 self.settriggerpoint(int(  (event.xdata / (1000.0*pow(2,self.downsample)/self.clkrate/self.xscaling)) +self.num_samples/2  ))
                 self.settriggerthresh(int(  event.ydata/(self.yscale/256.) + 128  ))
                 self.vline = event.xdata
+                self.otherlines[0].set_visible(True)
                 self.otherlines[0].set_data( [self.vline, self.vline], [self.min_y, self.max_y] ) # vertical line showing trigger time
                 self.hline = event.ydata
                 self.otherlines[1].set_data( [self.min_x, self.max_x], [self.hline, self.hline] ) # horizontal line showing trigger threshold
@@ -1259,18 +1264,27 @@ class Haasoscope():
                 self.fftax[1].set_ylabel('|Y(freq)|')
                 self.fftax[0].set_xlim(0,n*uspersample)
                 self.fftax[1].set_xlim(0,frq[n/2-1])
-                self.oldmaxt = n*uspersample
-                self.oldmaxfreq = frq[n/2-1]
+                self.oldmaxt = 0 # n*uspersample
+                self.oldmaxfreq = 0 # frq[n/2-1]
                 self.fftfig.tight_layout()
-            else: # redrawing
+                self.fftax[1].grid(True)
+            if self.fftdrawn: # redrawing
                 self.fftdataplot.set_xdata(t)
-                self.fftfreqplot.set_xdata(frq)
                 self.fftdataplot.set_ydata(y)
+                if np.max(frq)<.001:
+                    self.fftfreqplot.set_xdata(frq*1000000.0)
+                    self.fftax[1].set_xlabel('Freq (Hz)')
+                    if frq[n/2-1] != self.oldmaxfreq: self.fftax[1].set_xlim(0,1000000.0*frq[n/2-1])
+                elif np.max(frq)<1.0:
+                    self.fftfreqplot.set_xdata(frq*1000.0)
+                    self.fftax[1].set_xlabel('Freq (kHz)')
+                    if frq[n/2-1] != self.oldmaxfreq: self.fftax[1].set_xlim(0,1000.0*frq[n/2-1])
+                else:
+                    self.fftfreqplot.set_xdata(frq)
+                    self.fftax[1].set_xlabel('Freq (MHz)')
+                    if frq[n/2-1] != self.oldmaxfreq: self.fftax[1].set_xlim(0,frq[n/2-1])
                 self.fftfreqplot.set_ydata(abs(Y))
-                if n*uspersample != self.oldmaxt:
-                    self.fftax[0].set_xlim(0,n*uspersample)
-                if frq[n/2-1] != self.oldmaxfreq:
-                    self.fftax[1].set_xlim(0,frq[n/2-1])
+                if n*uspersample != self.oldmaxt: self.fftax[0].set_xlim(0,n*uspersample)
                 self.oldmaxfreq = frq[n/2-1]
                 self.oldmaxt = n*uspersample
                 self.fftax[0].relim()
@@ -1644,3 +1658,5 @@ class Haasoscope():
             print "connected USBserial to",p,", timeout",self.sertimeout,"seconds"
         if self.serport=="": print "No serial COM port opened!"; return False
         return True
+    
+
