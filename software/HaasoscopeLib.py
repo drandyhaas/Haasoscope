@@ -872,7 +872,7 @@ class Haasoscope():
             elif event.key=="U": self.toggledousb(); return
             elif event.key=="O": self.oversamp(self.selectedchannel); return
             elif event.key=="ctrl+o": self.overoversamp(); return
-            elif event.key==">": self.refsinchan=self.selectedchannel; self.reffreq=0;
+            elif event.key==">": self.refsinchan=self.selectedchannel; self.oldchanphase=-1.; self.reffreq=0;
             elif event.key=="t": self.rising=not self.rising;self.settriggertype(self.rising);print "rising toggled",self.rising; return
             elif event.key=="g": self.dogrid=not self.dogrid;print "dogrid toggled",self.dogrid; self.ax.grid(self.dogrid); return
             elif event.key=="ctrl+g": self.ax.xaxis.set_major_locator(plt.MultipleLocator( (self.max_x*1000/1024-self.min_x*1000/1024)/8./5. )); return
@@ -1073,15 +1073,22 @@ class Haasoscope():
                 self.xydata[l][1]=ydatanew
                 if self.doxyplot and (thechan==self.xychan or thechan==(self.xychan+1)): self.drawxyplot(xdatanew,ydatanew,thechan)# the xy plot
                 if self.recorddata and thechan==self.recorddatachan: self.dopersistplot(xdatanew,ydatanew)# the persist shaded plot
-                if thechan==self.refsinchan and self.reffreq==0: self.fittosin(xdatanew, ydatanew)                    
+                
+                if thechan==self.refsinchan-1 and self.reffreq==0: self.oldchanphase=-1.; self.fittosin(xdatanew, ydatanew, thechan) # first fit the previous channel, for comparison
+                elif thechan==self.refsinchan and self.reffreq==0: self.reffreq = self.fittosin(xdatanew, ydatanew, thechan) # then fit for the ref freq and store the result
+                
                 if self.autocalibchannel>=0 and thechan==self.autocalibchannel: self.autocalibrate(thechan,ydatanew)
     
-    def fittosin(self,xdatanew, ydatanew):
+    def fittosin(self,xdatanew, ydatanew, chan):
         res = self.fit_sin(xdatanew, ydatanew)
-        print res['maxcov'], res['amp'], res['freq'], res['phase'], res['offset']
-        print res['freq']*1000000./self.xscaling,'kHz'
-        if res['maxcov']<1e-6: self.reffreq = res['freq']
-        else: print "sin fit failed!"
+        phase=res['phase']*180./np.pi
+        if res['amp']<0.: phase+=180.
+        print "Chan:",chan, "cov=",res['maxcov'], "amp=",abs(res['amp']), "phase=",phase, "offset=", res['offset'], res['freq']*1000000./self.xscaling,'kHz'
+        if res['maxcov']<1e-4:
+            if self.oldchanphase>=0.: print "phase diff=",phase-self.oldchanphase
+            self.oldchanphase=phase
+            return res['freq']
+        else: print "sin fit failed!"; return 0;
         
     #For finding the frequency of a reference sin wave signal, for lockin calculations
     def fit_sin(self,tt, yy):
