@@ -2,6 +2,7 @@ import HaasoscopeLib
 reload(HaasoscopeLib) # in case you changed it, and to always load some defaults
 import time, sys
 import matplotlib.pyplot as plt
+import numpy as np
 from serial import SerialException
 
 #Some options
@@ -34,9 +35,18 @@ try:
         if d.paused: time.sleep(.1)
         else:
             if not d.getchannels(): break
+            
             #print d.xydata[0][0][12], d.xydata[0][1][12] # print the x and y data, respectively, for the 13th sample on fast adc channel 0
+            
             #if len(HaasoscopeLib.max10adcchans)>0: print "slow", d.xydataslow[0][0][99], d.xydataslow[0][1][99] # print the x and y data, respectively, for the 100th sample on slow max10 adc channel 0
-            #if d.dolockin: print d.lockinamp, d.lockinphase
+            
+            #if d.dolockin: print d.lockinamp, d.lockinphase # print the lockin info
+            
+            #if d.fftdrawn: # print some fft info (the freq with the biggest amplitude)
+            #    fftxdata = d.fftfreqplot.get_xdata(); fftydata = d.fftfreqplot.get_ydata()
+            #    maxfftydata=np.max(fftydata); maxfftfrq=fftxdata[fftydata.argmax()]
+            #    print "max amp=",maxfftydata, "at freq=",maxfftfrq, d.fftax[1].get_xlabel().replace('Freq ','')
+            
             if d.db: print time.time()-d.oldtime,"done with evt",nevents
             nevents+=1
             if nevents-oldnevents >= tinterval:
