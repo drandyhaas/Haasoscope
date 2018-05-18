@@ -1085,7 +1085,10 @@ class Haasoscope():
         if res['amp']<0.: phase+=180.
         print "Chan:",chan, "cov=",res['maxcov'], "amp=",abs(res['amp']), "phase=",phase, "offset=", res['offset'], res['freq']*1000000./self.xscaling,'kHz'
         if res['maxcov']<1e-4:
-            if self.oldchanphase>=0.: print "phase diff=",phase-self.oldchanphase
+            if self.oldchanphase>=0.: 
+                diff=phase-self.oldchanphase
+                if diff<0: diff+=360
+                print "phase diff=",diff
             self.oldchanphase=phase
             return res['freq']
         else: print "sin fit failed!"; return 0;

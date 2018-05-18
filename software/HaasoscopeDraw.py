@@ -2,7 +2,7 @@ import HaasoscopeLib
 reload(HaasoscopeLib) # in case you changed it, and to always load some defaults
 import time, sys
 import matplotlib.pyplot as plt
-import numpy as np
+#import numpy as np
 from serial import SerialException
 
 #Some options
