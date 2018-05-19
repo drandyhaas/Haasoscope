@@ -327,7 +327,7 @@ class Haasoscope():
         
     def testi2c(self):
         print "test i2c"
-        dotest=1 # what to test
+        dotest=3 # what to test
         if dotest==0:
             # IO expander 1            
             self.sendi2c("20 12 ff") #turn on all port A of IOexp 1 (12 means A, ff is which of the 8 bits to turn on)
@@ -341,11 +341,12 @@ class Haasoscope():
             time.sleep(3)
             self.setdac(0,1200)
         elif dotest==2:
-            #toggle led 1, at 0x21 a0
-            self.a21=self.setBit(self.a21,0); self.sendi2c("21 12 "+ ('%0*x' % (2,self.a21)) )
-            time.sleep(3)
-            self.a21=self.clearBit(self.a21,0); self.sendi2c("21 12 "+ ('%0*x' % (2,self.a21)) )
-
+            #toggle led 3, at 0x21 a0
+            self.a21=self.toggleBit(self.a21,3); self.sendi2c("21 12 "+ ('%0*x' % (2,self.a21)) )
+        elif dotest==3:
+            #toggle pin E24 B7, at 0x21 b7
+            self.b21=self.toggleBit(self.b21,7); self.sendi2c("21 13 "+ ('%0*x' % (2,self.b21)) )
+    
     def toggledousb(self):#toggle whether to read over FT232H USB or not
         if len(self.usbser)==0:
             self.dousb=False
