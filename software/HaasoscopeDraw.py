@@ -29,6 +29,7 @@ try:
     #d.tellswitchgain(d.selectedchannel)
     #d.togglesupergainchan(d.selectedchannel)
     #d.toggletriggerchan(d.selectedchannel)
+    #d.togglelogicanalyzer() # run the logic analyzer
     #d.sendi2c("21 13 f0") # set extra pins E24 B0,1,2,3 off and B4,5,6,7 on
     
     nevents=0; oldnevents=0; tinterval=100.; oldtime=time.time()

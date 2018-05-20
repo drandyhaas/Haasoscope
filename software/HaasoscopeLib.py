@@ -164,10 +164,12 @@ class Haasoscope():
         self.ser.write(chr(145))
         if self.dologicanalyzer: 
             self.ser.write(chr(5))
-            for l in np.arange(8): self.lines[l+self.logicline1].set_visible(True)
+            if len(self.lines)>=8+self.logicline1: # check that we're drawing
+                for l in np.arange(8): self.lines[l+self.logicline1].set_visible(True)
         else:
             self.ser.write(chr(4))
-            for l in np.arange(8): self.lines[l+self.logicline1].set_visible(False)
+            if len(self.lines)>=8+self.logicline1: # check that we're drawing
+                for l in np.arange(8): self.lines[l+self.logicline1].set_visible(False)
         print "dologicanalyzer is now",self.dologicanalyzer
     
     def telltickstowait(self): #usually downsample+4
