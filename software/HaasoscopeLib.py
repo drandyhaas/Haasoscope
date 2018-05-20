@@ -1045,7 +1045,8 @@ class Haasoscope():
             self.xydataslow[chantodraw][1]=ydatanew
         else:
             if self.dologicanalyzer and self.logicline1>=0: #this draws logic analyzer info
-                xdatanew = (self.xdata-self.num_samples/2.)*(1000.0*pow(2,self.downsample)/self.clkrate/self.xscaling)
+                xlogicshift=12.0/pow(2,self.downsample) # shift the logic analyzer data to the right by this number of samples (to account for the ADC delay)
+                xdatanew = (self.xdata+xlogicshift-self.num_samples/2.)*(1000.0*pow(2,self.downsample)/self.clkrate/self.xscaling)
                 for l in np.arange(self.nlogicanalyzerbits):
                     a=np.array(self.ydatalogic,dtype=np.uint8)
                     b=np.unpackbits(a)
