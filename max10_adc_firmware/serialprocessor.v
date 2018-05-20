@@ -147,7 +147,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig);
 	thecounter<=thecounter+1;
 	usb_txe_not_busy <= ~usb_txe_busy;
 	debug1 <= usb_txe_not_busy;
-	led4<=0; //on   
+	led4<=1; //on   
    if ( imthelast & thecounter[26]==1'b1 ) begin //flash every few seconds
 		led1<=0;		led2<=0;		led3<=0;//all on
 	end
@@ -223,7 +223,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig);
 			 i2c_addr=8'h21; // the second mcp io expander
 			 i2cdata[0]=8'h12; // port a
 			 i2cdata[1][0]=led1; i2cdata[1][1]=led2; i2cdata[1][2]=led3; i2cdata[1][3]=led4; // set the low 4 bits to be correct for the leds
-			 i2cdata[1][7:4]=4'b1111; // set the high 4 bits on to light the leds
+			 i2cdata[1][7:4]=4'b1110; // set the high 4 bits to light those leds if so desired
 			 i2cdata[2]=0; // not used for mcp io expanders
 			 if (i2cstate==READ) begin // if it's busy, we'll do nothing, oh well
 			   i2cgo=1;
