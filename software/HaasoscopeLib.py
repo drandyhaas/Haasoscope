@@ -1050,7 +1050,7 @@ class Haasoscope():
                     a=np.array(self.ydatalogic,dtype=np.uint8)
                     b=np.unpackbits(a)
                     bl=b[l::8] # every 8th bit, starting at l
-                    ydatanew=bl*.3+l*3./8. # scale it
+                    ydatanew = bl*.3 + (l+1)*3.2/8. # scale it and shift it
                     self.lines[l+self.logicline1].set_xdata(xdatanew)
                     self.lines[l+self.logicline1].set_ydata(ydatanew)
             for l in np.arange(num_chan_per_board): #this draws the 4 fast ADC data channels for each board
