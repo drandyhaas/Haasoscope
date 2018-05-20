@@ -95,6 +95,7 @@ class Haasoscope():
         self.trigsactive=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is triggering on that channel, 0 is not triggering on it
         self.dooversample=np.zeros(num_board*num_chan_per_board, dtype=int) # 1 is oversampling, 0 is no oversampling
         self.rollingtrigger=True #rolling auto trigger at 5 Hz 
+        self.dologicanalyzer=False #whether to send logic analyzer data
         
         self.Vrms=np.zeros(num_board*num_chan_per_board, dtype=float) # the Vrms for each channel
         self.Vmean=np.zeros(num_board*num_chan_per_board, dtype=float) # the Vmean for each channel
@@ -156,6 +157,14 @@ class Haasoscope():
         self.ser.write(chr(123))
         self.ser.write(chr(sendincrement))
         print "send increment is",sendincrement
+    
+    def togglelogicanalyzer(self):
+        #tell it start/stop doing logic analyzer
+        self.dologicanalyzer = not self.dologicanalyzer
+        self.ser.write(chr(145))
+        if self.dologicanalyzer: self.ser.write(chr(5))
+        else: self.ser.write(chr(4))
+        print "dologicanalyzer is now",self.dologicanalyzer
     
     def telltickstowait(self): #usually downsample+4
         #tell it the number of clock ticks to wait, log2, between sending bytes
@@ -906,6 +915,7 @@ class Haasoscope():
             elif event.key=="shift+down": self.adjustvertical(False); return
             elif event.key=="ctrl+up": self.adjustvertical(True); return
             elif event.key=="ctrl+down": self.adjustvertical(False); return
+            elif event.key=="?": self.togglelogicanalyzer(); return 
             elif event.key=="d": self.tellminidisplaychan(self.selectedchannel);return
             elif event.key=="R": self.keyResample=True;print "now enter amount to sinc resample (0-9)";return
             elif event.key=="T": self.keysettriggertime=True;self.triggertimethresh=0;print "now enter time over/under thresh, then enter";return
@@ -932,12 +942,13 @@ class Haasoscope():
         if self.domaindrawing: self.on_launch_draw()
     
     fitline1=-1 # set to >-1 to draw a risetime fit
+    logicline1=-1 # to remember which is the first logic analyzer line
     def on_launch_draw(self):
         plt.ion() #turn on interactive mode
         self.nlines = num_chan_per_board*num_board+len(max10adcchans)
         if self.db: print "nlines=",self.nlines
         self.figure, self.ax = plt.subplots(1)
-        for l in np.arange(self.nlines):            
+        for l in np.arange(self.nlines):
             maxchan=l-num_chan_per_board*num_board
             c=(0,0,0)
             if maxchan>=0: # these are the slow ADC channels
@@ -965,6 +976,13 @@ class Haasoscope():
                     if chan==3: c="magenta"
                 line, = self.ax.plot([],[], '-', label=self.chtext+str(l), color=c, linewidth=1.0, alpha=.9)
             self.lines.append(line)
+        #for the logic analyzer
+        self.nlogicanalyzerbits=8
+        for l in np.arange(self.nlogicanalyzerbits):
+            c=(0,0,0)
+            line, = self.ax.plot([],[], '-', label="logic"+str(l), color=c, linewidth=0.5, alpha=.5)
+            self.lines.append(line)
+            if l==0: self.logicline1=len(self.lines)-1 # remember index where this first logic line is
         #other data to draw
         if self.fitline1>-1:
             line, = self.ax.plot([],[], '-', label="fit data", color="purple", linewidth=0.5, alpha=.5)
@@ -1025,8 +1043,17 @@ class Haasoscope():
                 self.lines[posi].set_ydata(ydatanew)
             self.xydataslow[chantodraw][0]=xdatanew
             self.xydataslow[chantodraw][1]=ydatanew
-        else: #this draws the 4 fast ADC data channels for each board
-            for l in np.arange(num_chan_per_board):
+        else:
+            if self.dologicanalyzer and self.logicline1>=0: #this draws logic analyzer info
+                xdatanew = (self.xdata-self.num_samples/2.)*(1000.0*pow(2,self.downsample)/self.clkrate/self.xscaling)
+                for l in np.arange(self.nlogicanalyzerbits):
+                    a=np.array(self.ydatalogic,dtype=np.uint8)
+                    b=np.unpackbits(a)
+                    bl=b[l::8] # every 8th bit, starting at l
+                    ydatanew=bl*.3+l*3./8. # scale it
+                    self.lines[l+self.logicline1].set_xdata(xdatanew)
+                    self.lines[l+self.logicline1].set_ydata(ydatanew)
+            for l in np.arange(num_chan_per_board): #this draws the 4 fast ADC data channels for each board
                 thechan=l+(num_board-board-1)*num_chan_per_board
                 if self.db: print time.time()-self.oldtime,"drawing adc line",thechan
                 if len(theydata)<=l: print "don't have channel",l,"on board",board; return
@@ -1511,9 +1538,9 @@ class Haasoscope():
         if self.db: print time.time()-self.oldtime,"getdata wanted",self.num_bytes,"bytes and got",len(rslt),"from board",board
         byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
         if len(rslt)==self.num_bytes:
-            db2=False #True #False
+            db2=False #True
             if db2: print byte_array[1:11]
-            self.ydata=np.reshape(byte_array,(num_chan_per_board,self.num_samples))            
+            self.ydata=np.reshape(byte_array,(num_chan_per_board,self.num_samples))
             if self.dooversample[num_chan_per_board*(num_board-board-1)]: self.oversample(0,2)
             if self.dooversample[num_chan_per_board*(num_board-board-1)+1]: self.oversample(1,3)
             if self.dooversample[num_chan_per_board*(num_board-board-1)]==9: self.oversample(0,1)
@@ -1524,8 +1551,28 @@ class Haasoscope():
                         self.ydata[c][2*i]=val; self.ydata[c][2*i+1]=val;            
         else:
             if not self.db and self.rollingtrigger: print "getdata asked for",self.num_bytes,"bytes and got",len(rslt),"from board",board
-            if len(rslt)>0: print byte_array[0:10]
-        
+            if len(rslt)>0 and self.rollingtrigger: print byte_array[0:10]
+        if self.dologicanalyzer:
+            #get extra logic analyzer data, if needed
+            logicbytes=self.num_bytes/4
+            if self.dousb:
+                #try:
+		    rslt = self.usbser[self.usbsermap[board]].read(logicbytes)
+                	#usbser.flushInput() #just in case
+	        #except serial.SerialException: pass
+            else:
+                rslt = self.ser.read(logicbytes)
+                #ser.flushInput() #just in case
+            if self.db: print time.time()-self.oldtime,"getdata wanted",logicbytes,"logic bytes and got",len(rslt),"from board",board
+            byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
+            if len(rslt)==logicbytes:
+                db2=False #True
+                if db2: print byte_array[1:11]
+                self.ydatalogic=np.reshape(byte_array,(1,self.num_samples))
+            else:
+                if not self.db and self.rollingtrigger: print "getdata asked for",self.num_bytes,"logic bytes and got",len(rslt),"from board",board
+                if len(rslt)>0 and self.rollingtrigger: print byte_array[0:10]
+    
     def oversample(self,c1,c2):
         tempc1=self.ydata[c1][self.num_samples/4:3*self.num_samples/4:1] #just using the half of the data in the middle
         tempc2=self.ydata[c2][self.num_samples/4:3*self.num_samples/4:1]
@@ -1634,6 +1681,7 @@ class Haasoscope():
             if self.autorearm: self.toggleautorearm()
             if self.dohighres: self.togglehighres()
             if self.useexttrig: self.toggleuseexttrig()
+            if self.dologicanalyzer: self.togglelogicanalyzer()
             if self.serport!="" and hasattr(self,'ser'):
                 self.shutdownadcs()
                 for p in self.usbser: p.close()
