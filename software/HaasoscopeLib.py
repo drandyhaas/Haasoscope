@@ -162,8 +162,12 @@ class Haasoscope():
         #tell it start/stop doing logic analyzer
         self.dologicanalyzer = not self.dologicanalyzer
         self.ser.write(chr(145))
-        if self.dologicanalyzer: self.ser.write(chr(5))
-        else: self.ser.write(chr(4))
+        if self.dologicanalyzer: 
+            self.ser.write(chr(5))
+            for l in np.arange(8): self.lines[l+self.logicline1].set_visible(True)
+        else:
+            self.ser.write(chr(4))
+            for l in np.arange(8): self.lines[l+self.logicline1].set_visible(False)
         print "dologicanalyzer is now",self.dologicanalyzer
     
     def telltickstowait(self): #usually downsample+4
@@ -977,10 +981,10 @@ class Haasoscope():
                 line, = self.ax.plot([],[], '-', label=self.chtext+str(l), color=c, linewidth=1.0, alpha=.9)
             self.lines.append(line)
         #for the logic analyzer
-        self.nlogicanalyzerbits=8
-        for l in np.arange(self.nlogicanalyzerbits):
+        for l in np.arange(8):
             c=(0,0,0)
-            line, = self.ax.plot([],[], '-', label="logic"+str(l), color=c, linewidth=0.5, alpha=.5)
+            line, = self.ax.plot([],[], '-', label="_logic"+str(l)+"_", color=c, linewidth=0.5, alpha=.5) # the leading and trailing "_"'s mean don't show in the legend
+            line.set_visible(False)
             self.lines.append(line)
             if l==0: self.logicline1=len(self.lines)-1 # remember index where this first logic line is
         #other data to draw
@@ -1047,7 +1051,7 @@ class Haasoscope():
             if self.dologicanalyzer and self.logicline1>=0: #this draws logic analyzer info
                 xlogicshift=12.0/pow(2,self.downsample) # shift the logic analyzer data to the right by this number of samples (to account for the ADC delay)
                 xdatanew = (self.xdata+xlogicshift-self.num_samples/2.)*(1000.0*pow(2,self.downsample)/self.clkrate/self.xscaling)
-                for l in np.arange(self.nlogicanalyzerbits):
+                for l in np.arange(8):
                     a=np.array(self.ydatalogic,dtype=np.uint8)
                     b=np.unpackbits(a)
                     bl=b[7-l::8] # every 8th bit, starting at 7-l
