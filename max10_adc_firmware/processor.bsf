@@ -193,6 +193,13 @@ agreement for further details.
 		(line (pt 0 400)(pt 16 400)(line_width 3))
 	)
 	(port
+		(pt 0 416)
+		(input)
+		(text "digital_buffer1[7..0]" (rect 0 0 74 12)(font "Arial" ))
+		(text "digital_buffer1[7..0]" (rect 21 411 95 423)(font "Arial" ))
+		(line (pt 0 416)(pt 16 416)(line_width 3))
+	)
+	(port
 		(pt 360 32)
 		(output)
 		(text "txStart" (rect 0 0 25 12)(font "Arial" ))
