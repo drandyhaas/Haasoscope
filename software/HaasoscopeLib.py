@@ -985,7 +985,7 @@ class Haasoscope():
         #for the logic analyzer
         for l in np.arange(8):
             c=(0,0,0)
-            line, = self.ax.plot([],[], '-', label="_logic"+str(l)+"_", color=c, linewidth=0.5, alpha=.5) # the leading and trailing "_"'s mean don't show in the legend
+            line, = self.ax.plot([],[], '-', label="_logic"+str(l)+"_", color=c, linewidth=1.7, alpha=.65) # the leading and trailing "_"'s mean don't show in the legend
             line.set_visible(False)
             self.lines.append(line)
             if l==0: self.logicline1=len(self.lines)-1 # remember index where this first logic line is
