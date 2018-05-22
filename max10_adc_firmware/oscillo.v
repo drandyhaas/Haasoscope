@@ -181,9 +181,17 @@ always @(posedge clk_flash) begin
 		i=i+1;
 	end
 end
+
+reg[12:0] ext_trig_in_delay_bits=0;
+reg ext_trig_in_delayed;
+always @(posedge clk_flash) begin
+	ext_trig_in_delayed <= ext_trig_in_delay_bits[12];
+	ext_trig_in_delay_bits <= {ext_trig_in_delay_bits[12-1:0], ext_trig_in};
+end
+
 //trigger is an OR of all the channels which are active // also trigger every second or so (rolling)
 wire selftrig;
-assign selftrig = (trigchannels[0]&&selftrigtemp[0])||(trigchannels[1]&&selftrigtemp[1])||(trigchannels[2]&&selftrigtemp[2])||(trigchannels[3]&&selftrigtemp[3]) ||(rollingtrigger&thecounter>=25000000) || (use_ext_trig&ext_trig_in);
+assign selftrig = (trigchannels[0]&&selftrigtemp[0])||(trigchannels[1]&&selftrigtemp[1])||(trigchannels[2]&&selftrigtemp[2])||(trigchannels[3]&&selftrigtemp[3]) ||(rollingtrigger&thecounter>=25000000) || (use_ext_trig&ext_trig_in_delayed);
 
 reg Acquiring1; always @(posedge clk) Acquiring1 <= AcquiringAndTriggered;
 reg Acquiring2; always @(posedge clk) Acquiring2 <= Acquiring1;
