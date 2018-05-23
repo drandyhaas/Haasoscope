@@ -510,7 +510,7 @@ class Haasoscope():
         if ds<0: # negative downsample means just scale/zoom the data, don't actually change the sampling done on the board
             self.downsample=ds
         else:
-            if max(self.dooversample)>0: print "can't change sampling rate while oversampling - must be fastest!"; return False
+            if max(self.dooversample)>0 and ds>0: print "can't change sampling rate while oversampling - must be fastest!"; return False
             if ds>self.maxdownsample: print "downsample >",self.maxdownsample,"doesn't work well... I get bored running that slow!"; return False        
             self.ser.write(chr(124))
             self.ser.write(chr(ds))
