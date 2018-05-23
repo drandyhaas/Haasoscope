@@ -172,7 +172,7 @@ class Haasoscope():
                 for l in np.arange(8): self.lines[l+self.logicline1].set_visible(False)
         print "dologicanalyzer is now",self.dologicanalyzer
     
-    def telltickstowait(self): #usually downsample+4
+    def telltickstowait(self):
         #tell it the number of clock ticks to wait, log2, between sending bytes
         if self.dousb: ds=self.downsample-2
         else: ds=self.downsample-3
@@ -474,7 +474,7 @@ class Haasoscope():
         chanonboard = chan%num_chan_per_board
         if chanonboard>1: return
         self.togglechannel(chan+2,True)
-        self.telldownsample(0) # must be in max sampling mode for oversampling to make sense
+        if self.downsample>0: self.telldownsample(0) # must be in max sampling mode for oversampling to make sense
         self.dooversample[self.selectedchannel] = not self.dooversample[self.selectedchannel];
         print "oversample is now",self.dooversample[self.selectedchannel],"for channel",chan
         self.ser.write(chr(141))
@@ -505,48 +505,50 @@ class Haasoscope():
     
     def telldownsample(self,ds):
         #tell it the amount to downsample, log2... so 0 (none), 1(factor 2), 2(factor 4), etc.
-        if max(self.dooversample)>0: print "can't change sampling rate while oversampling - must be fastest!"; return False
-        if ds>self.maxdownsample: print "downsample >",self.maxdownsample,"doesn't work well...and I get bored running that slow!"; return False
-        if ds<0: print "downsample can't be <0 !"; return False
         if self.dolockin and ds<2: print "downsample can't be <2 in lockin mode !"; return False
-        self.ser.write(chr(124))
-        self.ser.write(chr(ds))
-        self.downsample=ds
-        if self.db: print "downsample is",self.downsample        
-        if self.dolockin:
-            twoforoversampling=1
-            uspersample=(1.0/self.clkrate)*pow(2,self.downsample)/twoforoversampling # us per sample = 10 ns * 2^downsample
-            numtoshiftf= 1.0/self.reffreq/4.0 / uspersample
-            print "would like to shift by",round(numtoshiftf,4),"samples, and uspersample is",uspersample
-            self.numtoshift = int(round(numtoshiftf,0))+0 # shift by 90 deg
-            self.telllockinnumtoshift(self.numtoshift)
+        if ds<-8: print "downsample can't be <-8... that's too fast !"; return False
+        if ds<0: # negative downsample means just scale/zoom the data, don't actually change the sampling done on the board
+            self.downsample=ds
         else:
-            self.telllockinnumtoshift(0) # tells the FPGA to not send lockin info    
-        self.telltickstowait()
-        self.setxaxis()
+            if max(self.dooversample)>0: print "can't change sampling rate while oversampling - must be fastest!"; return False
+            if ds>self.maxdownsample: print "downsample >",self.maxdownsample,"doesn't work well... I get bored running that slow!"; return False        
+            self.ser.write(chr(124))
+            self.ser.write(chr(ds))
+            self.downsample=ds
+            if self.db: print "downsample is",self.downsample        
+            if self.dolockin:
+                twoforoversampling=1
+                uspersample=(1.0/self.clkrate)*pow(2,self.downsample)/twoforoversampling # us per sample = 10 ns * 2^downsample
+                numtoshiftf= 1.0/self.reffreq/4.0 / uspersample
+                print "would like to shift by",round(numtoshiftf,4),"samples, and uspersample is",uspersample
+                self.numtoshift = int(round(numtoshiftf,0))+0 # shift by 90 deg
+                self.telllockinnumtoshift(self.numtoshift)
+            else:
+                self.telllockinnumtoshift(0) # tells the FPGA to not send lockin info    
+            self.telltickstowait()
+        if hasattr(self,'ax'): self.setxaxis(self.ax,self.figure)
         return True # successful (parameter within OK range)
 
-    def setxaxis(self):
-        if not hasattr(self,'ax'): return
+    def setxaxis(self,ax,fig):
         xscale =  self.num_samples/2.0*(1000.0*pow(2,self.downsample)/self.clkrate)
         if xscale<1e3: 
-            self.ax.set_xlabel("Time (ns)")
+            ax.set_xlabel("Time (ns)")
             self.min_x = -xscale
             self.max_x = xscale
             self.xscaling=1.e0
         elif xscale<1e6: 
-            self.ax.set_xlabel("Time (us)")
+            ax.set_xlabel("Time (us)")
             self.min_x = -xscale/1e3
             self.max_x = xscale/1e3
             self.xscaling=1.e3
         else:
-            self.ax.set_xlabel("Time (ms)")
+            ax.set_xlabel("Time (ms)")
             self.min_x = -xscale/1e6
             self.max_x = xscale/1e6
             self.xscaling=1.e6
-        self.ax.set_xlim(self.min_x, self.max_x)
-        self.ax.xaxis.set_major_locator(plt.MultipleLocator( (self.max_x*1000/1024-self.min_x*1000/1024)/8. ))
-        self.figure.canvas.draw()
+        ax.set_xlim(self.min_x, self.max_x)
+        ax.xaxis.set_major_locator(plt.MultipleLocator( (self.max_x*1000/1024-self.min_x*1000/1024)/8. ))
+        fig.canvas.draw()
     
     def setyaxis(self):
         self.ax.set_ylim(self.min_y, self.max_y)
@@ -652,7 +654,7 @@ class Haasoscope():
                     self.otherlines[2].set_visible(True) # starts off being hidden, so now show it!
                     self.otherlines[2].set_data( [self.min_x, self.max_x], [self.hline2, self.hline2] )
             if event.button==3: #right click
-                self.settriggerpoint(int(  (event.xdata / (1000.0*pow(2,self.downsample)/self.clkrate/self.xscaling)) +self.num_samples/2  ))
+                self.settriggerpoint(int(  (event.xdata / (1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling)) +self.num_samples/2  )) # downsample
                 self.settriggerthresh(int(  event.ydata/(self.yscale/256.) + 128  ))
                 self.vline = event.xdata
                 self.otherlines[0].set_visible(True)
@@ -820,7 +822,6 @@ class Haasoscope():
     #will grab the next keys as input
     keyResample=False
     keysettriggertime=False
-    keydownsample=False
     keySPI=False
     keyi2c=False
     keyLevel=False
@@ -843,14 +844,7 @@ class Haasoscope():
                     self.keysettriggertime=False; return
                 else:
                     self.triggertimethresh=10*self.triggertimethresh+int(event.key)
-                    print "triggertimethresh",self.triggertimethresh; return
-            elif self.keydownsample:
-                if event.key=="enter":
-                    self.telldownsample(self.tempdownsample)
-                    self.keydownsample=False; return
-                else:
-                    self.tempdownsample=10*self.tempdownsample+int(event.key)
-                    print "tempdownsample",self.tempdownsample; return
+                    print "triggertimethresh",self.triggertimethresh; return            
             elif self.keySPI:
                 if event.key=="enter":                    
                     self.tellSPIsetup(self.SPIval)
@@ -915,6 +909,8 @@ class Haasoscope():
             elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; self.keyShift=False; return;
             elif event.key=="right": self.telldownsample(self.downsample+1); return
             elif event.key=="left": self.telldownsample(self.downsample-1); return
+            elif event.key=="shift+right": self.telldownsample(self.downsample+5); return
+            elif event.key=="shift+left": self.telldownsample(self.downsample-5); return
             elif event.key=="up": self.adjustvertical(True); return
             elif event.key=="down": self.adjustvertical(False); return
             elif event.key=="shift+up": self.adjustvertical(True); return
@@ -925,7 +921,6 @@ class Haasoscope():
             elif event.key=="d": self.tellminidisplaychan(self.selectedchannel);return
             elif event.key=="R": self.keyResample=True;print "now enter amount to sinc resample (0-9)";return
             elif event.key=="T": self.keysettriggertime=True;self.triggertimethresh=0;print "now enter time over/under thresh, then enter";return
-            elif event.key=="D": self.keydownsample=True;self.tempdownsample=0;print "now enter downsample amount, then enter";return
             elif event.key=="S": self.keySPI=True;self.SPIval=0;print "now enter SPI code, then enter";return
             elif event.key=="i": self.keyi2c=True;self.i2ctemp="";print "now enter byte in hex for i2c, then enter:";return
             elif event.key=="L": self.keyLevel=True;self.leveltemp="";print "now enter [channel to set level for, level] then enter:";return
@@ -995,7 +990,8 @@ class Haasoscope():
             self.lines.append(line)
             self.fitline1=len(self.lines)-1 # remember index where this line is
         #other stuff
-        self.setxaxis(); self.setyaxis();
+        if hasattr(self,'ax'): self.setxaxis(self.ax,self.figure)
+        self.setyaxis();
         self.ax.grid(True)
         self.vline=0
         otherline , = self.ax.plot([self.vline, self.vline], [-2, 2], 'k--', lw=1)#,label='trigger time vert')
@@ -1042,7 +1038,7 @@ class Haasoscope():
             posi=chantodraw+num_board*num_chan_per_board
             if self.db: print time.time()-self.oldtime,"drawing line",posi
             #if self.db: print "ydata[0]=",theydata[0]
-            xdatanew=(self.xsampdata-self.num_samples/2.)*(1000.0*pow(2,self.downsample)/self.clkrate/self.xscaling)
+            xdatanew=(self.xsampdata-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
             ydatanew=theydata*(3.3/256)#full scale is 3.3V
             if len(self.lines)>posi: # we may not be drawing, so check!
                 self.lines[posi].set_xdata(xdatanew)
@@ -1051,8 +1047,8 @@ class Haasoscope():
             self.xydataslow[chantodraw][1]=ydatanew
         else:
             if self.dologicanalyzer and self.logicline1>=0 and hasattr(self,"ydatalogic"): #this draws logic analyzer info
-                xlogicshift=12.0/pow(2,self.downsample) # shift the logic analyzer data to the right by this number of samples (to account for the ADC delay)
-                xdatanew = (self.xdata+xlogicshift-self.num_samples/2.)*(1000.0*pow(2,self.downsample)/self.clkrate/self.xscaling)
+                xlogicshift=12.0/pow(2,max(self.downsample,0)) # shift the logic analyzer data to the right by this number of samples (to account for the ADC delay) #downsample isn't less than 0 for xscaling
+                xdatanew = (self.xdata+xlogicshift-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
                 for l in np.arange(8):
                     a=np.array(self.ydatalogic,dtype=np.uint8)
                     b=np.unpackbits(a)
@@ -1064,7 +1060,7 @@ class Haasoscope():
                 thechan=l+(num_board-board-1)*num_chan_per_board
                 if self.db: print time.time()-self.oldtime,"drawing adc line",thechan
                 if len(theydata)<=l: print "don't have channel",l,"on board",board; return
-                xdatanew = (self.xdata-self.num_samples/2.)*(1000.0*pow(2,self.downsample)/self.clkrate/self.xscaling)
+                xdatanew = (self.xdata-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
                 ydatanew=(127-theydata[l])*(self.yscale/256.) # got to flip it, since it's a negative feedback op amp
                 if self.ydatarefchan>=0:
                     ydatanew -= (127-theydata[self.ydatarefchan])*(self.yscale/256.) # subtract the board's reference channel ydata from this channel's ydata
@@ -1242,11 +1238,9 @@ class Haasoscope():
                     bins=[min(self.num_samples,1024),256], range=[[xdatanew[0],xdatanew[self.num_samples-2]],[self.min_y,self.max_y]],
                     cmin=1, cmap='rainbow') #, Blues, Reds, coolwarm, seismic
                 self.fig2d.canvas.set_window_title('Persist display of channel '+str(self.recorddatachan))
-                if self.xscaling==1.e3: self.ax2d.set_xlabel('Time (us)')
-                else: self.ax2d.set_xlabel('Time (ms)')
                 self.ax2d.set_ylabel('Volts')
                 self.ax2d.grid()
-                self.fig2d.canvas.draw()
+                self.setxaxis(self.ax2d,self.fig2d)
     
     def redraw(self):
         if self.domaindrawing: # don't draw if we're going for speed!
@@ -1291,7 +1285,7 @@ class Haasoscope():
             y = self.ydata[channumonboard] # channel signal to take fft of
             n = len(y) # length of the signal
             k = np.arange(n)
-            uspersample=(1.0/self.clkrate)*pow(2,self.downsample)/twoforoversampling # us per sample = 10 ns * 2^downsample
+            uspersample=(1.0/self.clkrate)*pow(2,max(self.downsample,0))/twoforoversampling # us per sample = 10 ns * 2^downsample, #downsample isn't less than 0 for xscaling
             t = np.arange(0,1,1.0/n) * (n*uspersample) # time vector in us
             frq = (k/uspersample)[range(n/2)]/n # one side frequency range up to Nyquist
             Y = np.fft.fft(y)[range(n/2)]/n # fft computing and normalization
@@ -1662,7 +1656,7 @@ class Haasoscope():
             self.tellsamplesmax10adc()
             self.tellsamplessend()
             self.tellbytesskip()
-            self.telldownsample(self.downsample); self.telltickstowait()
+            self.telldownsample(self.downsample)
             self.togglehighres()
             self.settriggertime(self.triggertimethresh)
             self.tellserialdelaytimerwait()
