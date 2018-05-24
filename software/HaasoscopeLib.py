@@ -39,6 +39,8 @@ class Haasoscope():
         self.otherlines = []
         self.texts = []
         self.xdata=np.arange(self.num_samples)
+        self.xdata2=np.arange(self.num_samples*2) # for oversampling
+        self.xdata4=np.arange(self.num_samples*4) # for over-oversampling
         self.ydata = []
         ysampdatat=np.zeros(self.nsamp*len(max10adcchans)); self.ysampdata=np.reshape(ysampdatat,(len(max10adcchans),self.nsamp))
         self.xsampdata=np.arange(self.nsamp)
@@ -1060,19 +1062,42 @@ class Haasoscope():
                 thechan=l+(num_board-board-1)*num_chan_per_board
                 if self.db: print time.time()-self.oldtime,"drawing adc line",thechan
                 if len(theydata)<=l: print "don't have channel",l,"on board",board; return
-                xdatanew = (self.xdata-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
-                if self.dooversample[thechan]==1: xdatanew/=2. # account for oversampling
-                if self.dooversample[thechan]==9: xdatanew/=4. # account for over-oversampling
-                ydatanew=(127-theydata[l])*(self.yscale/256.) # got to flip it, since it's a negative feedback op amp
-                if self.ydatarefchan>=0:
-                    ydatanew -= (127-theydata[self.ydatarefchan])*(self.yscale/256.) # subtract the board's reference channel ydata from this channel's ydata
-                if self.sincresample>0:
-                    (ydatanew,xdatanew) = resample(ydatanew, self.num_samples*self.sincresample, t = xdatanew)
-                    xdatanew = xdatanew[1*self.sincresample:self.num_samples*self.sincresample]
-                    ydatanew = ydatanew[1*self.sincresample:self.num_samples*self.sincresample]
+                if self.dooversample[thechan]==1: # account for oversampling
+                    xdatanew = (self.xdata2-self.num_samples)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling/2.) #downsample isn't less than 0 for xscaling
+                    theydata2=np.concatenate([theydata[l],theydata[l+2]]) # concatenate the 2 lists
+                    ydatanew=(127-theydata2)*(self.yscale/256.) # got to flip it, since it's a negative feedback op amp
+                elif self.dooversample[thechan]==9: # account for over-oversampling
+                    xdatanew = (self.xdata4-self.num_samples*2)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling/4.) #downsample isn't less than 0 for xscaling
+                    theydata4=np.concatenate([theydata[l],theydata[l+1],theydata[l+2],theydata[l+3]]) # concatenate the 4 lists
+                    ydatanew=(127-theydata4)*(self.yscale/256.) # got to flip it, since it's a negative feedback op amp
                 else:
-                    xdatanew = xdatanew[1:self.num_samples]
-                    ydatanew = ydatanew[1:self.num_samples]
+                    xdatanew = (self.xdata-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
+                    ydatanew=(127-theydata[l])*(self.yscale/256.) # got to flip it, since it's a negative feedback op amp
+                    if self.ydatarefchan>=0: ydatanew -= (127-theydata[self.ydatarefchan])*(self.yscale/256.) # subtract the board's reference channel ydata from this channel's ydata
+                if self.sincresample>0:
+                    (ydatanew,xdatanew) = resample(ydatanew, len(xdatanew)*self.sincresample, t = xdatanew)
+                    xdatanew = xdatanew[1*self.sincresample:len(xdatanew)*self.sincresample]
+                    ydatanew = ydatanew[1*self.sincresample:len(ydatanew)*self.sincresample]
+                else:
+                    xdatanew = xdatanew[1:len(xdatanew)]
+                    ydatanew = ydatanew[1:len(ydatanew)]
+                if self.dooversample[thechan]==1: # account for oversampling, take the middle-most section
+                    if self.sincresample>0:
+                        self.xydata[l][0]=xdatanew[self.sincresample+self.num_samples*self.sincresample/2:3*self.num_samples*self.sincresample/2:1] # for printing out or other analysis
+                        self.xydata[l][1]=ydatanew[self.sincresample+self.num_samples*self.sincresample/2:3*self.num_samples*self.sincresample/2:1]
+                    else:
+                        self.xydata[l][0]=xdatanew[1+self.num_samples/2:3*self.num_samples/2:1] # for printing out or other analysis
+                        self.xydata[l][1]=ydatanew[1+self.num_samples/2:3*self.num_samples/2:1]
+                elif self.dooversample[thechan]==9: # account for over-oversampling, take the middle-most section
+                     if self.sincresample>0:
+                         self.xydata[l][0]=xdatanew[self.sincresample+3*self.num_samples*self.sincresample/2:5*self.num_samples*self.sincresample/2:1] # for printing out or other analysis
+                         self.xydata[l][1]=ydatanew[self.sincresample+3*self.num_samples*self.sincresample/2:5*self.num_samples*self.sincresample/2:1]
+                     else:
+                        self.xydata[l][0]=xdatanew[1+3*self.num_samples/2:5*self.num_samples/2:1] # for printing out or other analysis
+                        self.xydata[l][1]=ydatanew[1+3*self.num_samples/2:5*self.num_samples/2:1]
+                else: # the full data is stored
+                    self.xydata[l][0]=xdatanew # for printing out or other analysis
+                    self.xydata[l][1]=ydatanew
                 if len(self.lines)>thechan and self.domaindrawing: # we may not be drawing, so check!
                     self.lines[thechan].set_xdata(xdatanew)
                     self.lines[thechan].set_ydata(ydatanew)
@@ -1101,9 +1126,7 @@ class Haasoscope():
                             self.lines[self.fitline1].set_ydata( fit_rise(x2, *popt) )
                             print "risetime = ",1000*0.8*(popt[2]-popt[0]),"ns" # from 10-90% is 0.8 on the line - don't forget to correct for x2 or x4 oversampling!
                         except:
-                            print "fit exception!"                    
-                self.xydata[l][0]=xdatanew
-                self.xydata[l][1]=ydatanew
+                            print "fit exception!"
                 if self.doxyplot and (thechan==self.xychan or thechan==(self.xychan+1)): self.drawxyplot(xdatanew,ydatanew,thechan)# the xy plot
                 if self.recorddata and thechan==self.recorddatachan: self.dopersistplot(xdatanew,ydatanew)# the persist shaded plot
                 
@@ -1546,7 +1569,7 @@ class Haasoscope():
             self.ydata=np.reshape(byte_array,(num_chan_per_board,self.num_samples))
             if self.dooversample[num_chan_per_board*(num_board-board-1)]: self.oversample(0,2)
             if self.dooversample[num_chan_per_board*(num_board-board-1)+1]: self.oversample(1,3)
-            if self.dooversample[num_chan_per_board*(num_board-board-1)]==9: self.oversample(0,1)
+            if self.dooversample[num_chan_per_board*(num_board-board-1)]==9: self.overoversample(0,1)
             if self.average:
                 for c in np.arange(num_chan_per_board):
                     for i in np.arange(self.num_samples/2):
@@ -1577,8 +1600,8 @@ class Haasoscope():
                 if len(rslt)>0 and self.rollingtrigger: print byte_array[0:10]
     
     def oversample(self,c1,c2):
-        tempc1=self.ydata[c1][self.num_samples/4:3*self.num_samples/4:1] #just using the half of the data in the middle
-        tempc2=self.ydata[c2][self.num_samples/4:3*self.num_samples/4:1]
+        tempc1=self.ydata[c1]
+        tempc2=self.ydata[c2]
         adjustmeanandrms=True
         if adjustmeanandrms:
             mean_c1 = np.mean(tempc1)
@@ -1590,11 +1613,35 @@ class Haasoscope():
             tempc1=meanrms*(tempc1-mean_c1)/rms_c1 + meanmean
             tempc2=meanrms*(tempc2-mean_c2)/rms_c2 + meanmean
             #print mean_c1, mean_c2, rms_c1, rms_c2
-        mergedsamps=np.empty(self.num_samples)
-        mergedsamps[0:self.num_samples:2]=tempc1 # a little tricky which is 0 and which is 1 (i.e. which is sampled first!)
-        mergedsamps[1:self.num_samples+1:2]=tempc2
-        self.ydata[c1]=mergedsamps
-        self.ydata[c2]=0
+        ns=self.num_samples
+        mergedsamps=np.empty(ns*2)
+        mergedsamps[0:ns*2:2]=tempc1 # a little tricky which is 0 and which is 1 (i.e. which is sampled first!)
+        mergedsamps[1:ns*2:2]=tempc2
+        self.ydata[c1]=mergedsamps[0:ns]
+        self.ydata[c2]=mergedsamps[ns:ns*2]
+    
+    def overoversample(self,c1,c2):
+        tempc1=np.concatenate([self.ydata[c1],self.ydata[c1+2]])
+        tempc2=np.concatenate([self.ydata[c2],self.ydata[c2+2]])
+        adjustmeanandrms=True
+        if adjustmeanandrms:
+            mean_c1 = np.mean(tempc1)
+            rms_c1 = np.sqrt(np.mean((tempc1-mean_c1)**2))
+            mean_c2 = np.mean(tempc2)
+            rms_c2 = np.sqrt(np.mean((tempc2-mean_c2)**2))
+            meanmean=(mean_c1+mean_c2)/2.
+            meanrms=(rms_c1+rms_c2)/2.
+            tempc1=meanrms*(tempc1-mean_c1)/rms_c1 + meanmean
+            tempc2=meanrms*(tempc2-mean_c2)/rms_c2 + meanmean
+            #print mean_c1, mean_c2, rms_c1, rms_c2
+        ns=2*self.num_samples
+        mergedsamps=np.empty(ns*2)
+        mergedsamps[0:ns*2:2]=tempc1 # a little tricky which is 0 and which is 1 (i.e. which is sampled first!)
+        mergedsamps[1:ns*2:2]=tempc2
+        self.ydata[c1]=mergedsamps[0:ns/2]
+        self.ydata[c2]=mergedsamps[ns/2:ns]
+        self.ydata[c1+2]=mergedsamps[ns:3*ns/2]
+        self.ydata[c2+2]=mergedsamps[3*ns/2:ns*2]
     
     def getmax10adc(self,bn):
         chansthisboard = [(x,y) for (x,y) in max10adcchans if x==bn]
