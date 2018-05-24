@@ -822,12 +822,11 @@ class Haasoscope():
                 line.set_markersize(0)
     
     #called when sampling is changed, to reset some things
-    def prepareforsamplechange(self,resamp=False):
+    def prepareforsamplechange(self):
         self.recordedchannel=[]
         if self.doxyplot:
-            self.doxyplot=False
             plt.close(self.figxy)
-        if resamp and self.recorddata:
+        if self.recorddata:
             plt.close(self.fig2d)
     
     #will grab the next keys as input
@@ -847,7 +846,7 @@ class Haasoscope():
                     print "resample now",self.sincresample
                     if self.sincresample>0: self.xydata=np.empty([num_chan_per_board*num_board,2,self.sincresample*(self.num_samples-1)],dtype=float)
                     else: self.xydata=np.empty([num_chan_per_board*num_board,2,1*(self.num_samples-1)],dtype=float)
-                    self.prepareforsamplechange(True);
+                    self.prepareforsamplechange();
                     self.keyResample=False; return
                 except ValueError: pass
             elif self.keysettriggertime:
@@ -921,8 +920,9 @@ class Haasoscope():
                 if self.selectedchannel+1>=len(self.dooversample): print "can't do XY plot on last channel"
                 else:
                     if self.dooversample[self.selectedchannel]==self.dooversample[self.selectedchannel+1]:
-                        self.doxyplot=True; self.xychan=self.selectedchannel; print "doxyplot now",self.doxyplot,"for channel",self.xychan; self.keyShift=False; return;
+                        self.doxyplot=True; self.xychan=self.selectedchannel; print "doxyplot now",self.doxyplot,"for channel",self.xychan; return;
                     else: print "oversampling settings must match between channels for XY plotting"
+                self.keyShift=False
             elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; self.keyShift=False; return;
             elif event.key=="right": self.telldownsample(self.downsample+1); return
             elif event.key=="left": self.telldownsample(self.downsample-1); return
