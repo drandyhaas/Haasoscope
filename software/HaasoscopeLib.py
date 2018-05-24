@@ -821,6 +821,15 @@ class Haasoscope():
                 line.set_marker(".")
                 line.set_markersize(0)
     
+    #called when sampling is changed, to reset some things
+    def prepareforsamplechange(self,resamp=False):
+        self.recordedchannel=[]
+        if self.doxyplot:
+            self.doxyplot=False
+            plt.close(self.figxy)
+        if resamp and self.recorddata:
+            plt.close(self.fig2d)
+    
     #will grab the next keys as input
     keyResample=False
     keysettriggertime=False
@@ -838,6 +847,7 @@ class Haasoscope():
                     print "resample now",self.sincresample
                     if self.sincresample>0: self.xydata=np.empty([num_chan_per_board*num_board,2,self.sincresample*(self.num_samples-1)],dtype=float)
                     else: self.xydata=np.empty([num_chan_per_board*num_board,2,1*(self.num_samples-1)],dtype=float)
+                    self.prepareforsamplechange(True);
                     self.keyResample=False; return
                 except ValueError: pass
             elif self.keysettriggertime:
@@ -882,8 +892,8 @@ class Haasoscope():
             elif event.key=="e": self.toggleuseexttrig(); return
             elif event.key=="A": self.toggleautorearm(); return
             elif event.key=="U": self.toggledousb(); return
-            elif event.key=="O": self.oversamp(self.selectedchannel); return
-            elif event.key=="ctrl+o": self.overoversamp(); return
+            elif event.key=="O": self.oversamp(self.selectedchannel); self.prepareforsamplechange(); return
+            elif event.key=="ctrl+o": self.overoversamp(); self.prepareforsamplechange(); return
             elif event.key==">": self.refsinchan=self.selectedchannel; self.oldchanphase=-1.; self.reffreq=0;
             elif event.key=="t": self.rising=not self.rising;self.settriggertype(self.rising);print "rising toggled",self.rising; return
             elif event.key=="g": self.dogrid=not self.dogrid;print "dogrid toggled",self.dogrid; self.ax.grid(self.dogrid); return
@@ -907,7 +917,12 @@ class Haasoscope():
             elif event.key=="W": self.domaindrawing=not self.domaindrawing; self.domeasure=self.domaindrawing; print "domaindrawing now",self.domaindrawing; return
             elif event.key=="M": self.domeasure=not self.domeasure; print "domeasure now",self.domeasure; self.drawtext(); return
             elif event.key=="m": self.domarkers(); return
-            elif event.key=="Y": self.doxyplot=True; self.xychan=self.selectedchannel; print "doxyplot now",self.doxyplot,"for channel",self.xychan; self.keyShift=False; return;
+            elif event.key=="Y": 
+                if self.selectedchannel+1>=len(self.dooversample): print "can't do XY plot on last channel"
+                else:
+                    if self.dooversample[self.selectedchannel]==self.dooversample[self.selectedchannel+1]:
+                        self.doxyplot=True; self.xychan=self.selectedchannel; print "doxyplot now",self.doxyplot,"for channel",self.xychan; self.keyShift=False; return;
+                    else: print "oversampling settings must match between channels for XY plotting"
             elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; self.keyShift=False; return;
             elif event.key=="right": self.telldownsample(self.downsample+1); return
             elif event.key=="left": self.telldownsample(self.downsample-1); return
@@ -1031,6 +1046,7 @@ class Haasoscope():
             self.lined[channum] = (origline,legline,channum)
             channum+=1        
         self.drawtext()
+        self.figure.canvas.mpl_connect('close_event', self.handle_main_close)
         self.figure.canvas.draw()
         #plt.show(block=False)
     
@@ -1260,7 +1276,7 @@ class Haasoscope():
                 self.ax2d.clear()
                 self.ax2d.hist2d(
                     np.tile(xdatanew,self.recordedchannellength), np.concatenate(tuple(self.recordedchannel)), 
-                    bins=[min(self.num_samples,1024),256], range=[[xdatanew[0],xdatanew[self.num_samples-2]],[self.min_y,self.max_y]],
+                    bins=[min(self.num_samples,1024),256], range=[[xdatanew[0],xdatanew[len(xdatanew)-1]],[self.min_y,self.max_y]],
                     cmin=1, cmap='rainbow') #, Blues, Reds, coolwarm, seismic
                 self.fig2d.canvas.set_window_title('Persist display of channel '+str(self.recorddatachan))
                 self.ax2d.set_ylabel('Volts')
@@ -1286,6 +1302,8 @@ class Haasoscope():
         if len(plt.get_fignums())>0:
             self.figure.canvas.flush_events()
     
+    def handle_main_close(self,evt):
+        plt.close('all')
     def handle_xy_close(self,evt):
         self.drawnxy=False
         self.doxyplot=False
