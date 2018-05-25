@@ -395,7 +395,7 @@ class Haasoscope():
             if self.trigsactive[tp]: self.leg.get_texts()[tp].set_color('#000000')
             else: self.leg.get_texts()[tp].set_color('#aFaFaF')
             self.figure.canvas.draw()
-        print "Trigger toggled for channel",tp
+        if self.db: print "Trigger toggled for channel",tp
 
     def toggleautorearm(self):
         #tell it to toggle the auto rearm of the tirgger after readout
@@ -475,20 +475,21 @@ class Haasoscope():
         #tell it to toggle oversampling for this channel
         chanonboard = chan%num_chan_per_board
         if chanonboard>1: return
+        if chanonboard==1 and self.dooversample[chan] and self.dooversample[chan-1]==9: print "first disable over-oversampling on channel",chan-1; return
         self.togglechannel(chan+2,True)
-        if self.downsample>0: self.telldownsample(0) # must be in max sampling mode for oversampling to make sense
-        self.dooversample[self.selectedchannel] = not self.dooversample[self.selectedchannel];
-        print "oversample is now",self.dooversample[self.selectedchannel],"for channel",chan
+        self.dooversample[chan] = not self.dooversample[chan];
+        print "oversampling is now",self.dooversample[chan],"for channel",chan
+        if self.dooversample[chan] and self.downsample>0: self.telldownsample(0) # must be in max sampling mode for oversampling to make sense
         self.ser.write(chr(141))
         self.writefirmchan(chan)
         self.drawtext()
         self.figure.canvas.draw()
     
     def overoversamp(self):
-    	if self.selectedchannel%4: print "over over sampling only for channel 0 of a board!"
-        elif self.dooversample[self.selectedchannel]==0 or self.dooversample[self.selectedchannel+1]==0: print "for over over sampling, first do oversampling on channels 0 and 1 of the board"
-        elif self.dooversample[self.selectedchannel]==1: self.dooversample[self.selectedchannel]=9; self.togglechannel(self.selectedchannel+1,True); print "over over sampling"
-        elif self.dooversample[self.selectedchannel]==9: self.dooversample[self.selectedchannel]=1; print "no more over over sampling"
+    	if self.selectedchannel%4: print "over-oversampling only for channel 0 of a board!"
+        elif self.dooversample[self.selectedchannel]==0 or self.dooversample[self.selectedchannel+1]==0: print "for over-oversampling, first do oversampling on channels 0 and 1 of the board"
+        elif self.dooversample[self.selectedchannel]==1: self.dooversample[self.selectedchannel]=9; self.togglechannel(self.selectedchannel+1,True); print "over-oversampling"
+        elif self.dooversample[self.selectedchannel]==9: self.dooversample[self.selectedchannel]=1; print "no more over-oversampling"
 
     def resetchans(self):
         for chan in np.arange(num_board*num_chan_per_board):
