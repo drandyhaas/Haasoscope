@@ -79,6 +79,7 @@ class Haasoscope():
         self.refsinchan = 3 #the channel number of the ref input signal (for auto reffreq calculation via sin fit)
         
         self.yscale = 7.5 # Vpp for full scale
+        #self.yscale*=1.1 # if we used 10M / 1.1M / 11k input resistors
         self.min_y = -self.yscale/2. #-4.0 #0 ADC
         self.max_y = self.yscale/2. #4.0 #256 ADC
         self.xscaling=1.e0 # for the x-axis scale
