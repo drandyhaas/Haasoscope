@@ -276,7 +276,7 @@ class Haasoscope():
         if what==31: myb=bytearray.fromhex('01 06') #multiplexed, with chB first
         if what==32: myb=bytearray.fromhex('01 00') # not multiplexed output        
         self.ser.write(chr(myb[0]));	self.ser.write(chr(myb[1])); #write it!
-        print "tell SPI setup:",format(myb[0],'02x'),format(myb[1],'02x')
+        print "tell SPI setup: 131 ",myb[0],myb[1]
         time.sleep(.01) #pause to make sure other SPI writng is done
     
     # testBit() returns a nonzero result, 2**offset, if the bit at 'offset' is one.
@@ -297,16 +297,23 @@ class Haasoscope():
         return(int_type ^ mask)
   
     def sendi2c(self,whattosend,board=200):
+        db2=False
 	time.sleep(.02)
         myb=bytearray.fromhex(whattosend)
         self.ser.write(chr(136))
+        if db2: print " sendi2c: 136"
         datacounttosend=len(myb)-1 #number of bytes of info to send, not counting the address
         self.ser.write(chr(datacounttosend))
-        for b in np.arange(len(myb)): self.ser.write(chr(myb[b]))
+        if db2: print datacounttosend
+        for b in np.arange(len(myb)): 
+            self.ser.write(chr(myb[b]))
+            if db2: print myb[b]
         for b in np.arange(4-len(myb)): 
             self.ser.write(chr(255)) # pad with extra bytes since the command expects a total of 5 bytes (numtosend, addr, and 3 more bytes)
+            if db2: print "255"
         self.ser.write(chr(board)) #200 (default) will address message to all boards, otherwise only the given board ID will listen
-        if self.db: print "Tell i2c:","bytestosend:",datacounttosend," and address/data:",whattosend,"for board",board
+        if db2: print board,"\n"
+        if self.db or db2: print "Tell i2c:","bytestosend:",datacounttosend," and address/data:",whattosend,"for board",board
         time.sleep(.02)
     
     def setupi2c(self):
