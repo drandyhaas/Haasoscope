@@ -211,30 +211,34 @@ public class MainActivity extends AppCompatActivity {
 
                         waitalittle();
                         display.append("sent initialization commands \n");
-
                         if (autogo) {
-                            waitalittle();
-                            send2usb(10); // get an event
+                            waitalittle(); send2usb(10); // get an event
                         }
                     }
-                    else if (data.equals("(")) {
+                    else if (data.equals("p") || data.equals("P")) {
+                        autogo = !autogo;
+                        waitalittle(); send2usb(10); // get an event to keep things rollin
+                    }
+                    else if (data.equals("(") || data.equals("( ")) {
                         if (downsample<10) {
                             downsample += 1;
+                            display.append("downsample is "+String.valueOf(downsample)+" \n");
                             send2usb(124); send2usb(downsample);
                             int ds=downsample-3;
                             if (ds<1) ds=1;
                             if (ds>8) ds=8; // otherwise we timeout upon readout
-                            send2usb(125);  send2usb(ds);
+                            send2usb(125); send2usb(ds);
                         }
                     }
-                    else if (data.equals(")")) {
+                    else if (data.equals(")") || data.equals(") ")) {
                         if (downsample>0) {
                             downsample -= 1;
+                            display.append("downsample is "+String.valueOf(downsample)+" \n");
                             send2usb(124); send2usb(downsample);
                             int ds=downsample-3;
                             if (ds<1) ds=1;
                             if (ds>8) ds=8; // otherwise we timeout upon readout
-                            send2usb(125);  send2usb(ds);
+                            send2usb(125); send2usb(ds);
                         }
                     }
                     else if (usbService != null) { // if UsbService was correctly bound, send data

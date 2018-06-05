@@ -11,9 +11,9 @@
     <TextView
         android:id="@+id/textView1"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="61dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="34dp"
+        android:layout_marginTop="5dp"
         android:background="#FFFFFF"
         android:gravity="bottom"
         android:scrollbars="vertical" />
@@ -26,7 +26,7 @@
         android:layout_alignRight="@+id/textView1"
         android:layout_below="@+id/textView1"
         android:layout_marginRight="100dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="5dp"
         android:ems="10">
 
         <requestFocus/>
@@ -43,9 +43,9 @@
 
     <com.jjoe64.graphview.GraphView
         android:id="@+id/graph"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/editText1"
-        android:layout_marginTop="13dp" />
+        android:layout_marginTop="5dp" />
 
 </RelativeLayout>
