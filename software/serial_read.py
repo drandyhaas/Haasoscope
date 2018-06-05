@@ -4,6 +4,8 @@ import time
 
 ser=Serial("COM7",1500000,timeout=1.0)
 
+#This is a _minimal_ set of example commands needed to send to a board to initialize it properly
+
 ser.write(chr(0)); ser.write(chr(20)) #set board id to 0
 time.sleep(.01)
 ser.write(chr(135)); ser.write(chr(0)); ser.write(chr(100)); #serialdelaytimerwait of 100
@@ -53,6 +55,8 @@ ser.write(chr(136)); ser.write(chr(3)); ser.write(chr(96)); ser.write(chr(84)); 
 time.sleep(.01)
 ser.write(chr(136)); ser.write(chr(3)); ser.write(chr(96)); ser.write(chr(86)); ser.write(chr(136)); ser.write(chr(22)); ser.write(chr(0)); # channel 3 , board 0 calib
 time.sleep(.01)
+
+# OK, we're set up! Now we can read events and get good data out.
 
 ser.write(chr(100)); ser.write(chr(10)) # arm trigger and get an event
 rslt = ser.read(40)#[0:10]
