@@ -1,4 +1,4 @@
-Commands are received in [serialprocessor.v](max10_adc_firmware/serialprocessor.v) and handled [in the SOLVING case](max10_adc_firmware/serialprocessor.v#L253). Each command has a starting `id` number. Some commands take additional arguments. Commands are passed along a multiboard chain so they are seen by all boards.
+Commands are received in [serialprocessor.v](../max10_adc_firmware/serialprocessor.v) and handled [in the SOLVING case](../max10_adc_firmware/serialprocessor.v#L253). Each command has a starting `id` number. Some commands take additional arguments. Commands are passed along a multiboard chain so they are seen by all boards.
 
 `0-9` tells the board its `ID`. The first board will get usually be sent a `0`, and then it sends a `1` to the next board, which then sends a `2` to the next, and so on. Board `0` is special since it creates the clock for all boards.
 
@@ -62,5 +62,5 @@ Commands are received in [serialprocessor.v](max10_adc_firmware/serialprocessor.
 
 `144` toggles whether the external trigger pin is active, for all boards.
 
-`145` (+ 1 more byte) (in the new firmware!) is how many channels to send data for, from each board. For instance, `145 4` would send all 4 channels from all boards. Note that the logic analyzer data is the "5th channel" on each board, so `145 5` sends all 4 channels plus the logic analyzer data. The logic analyzer data is the same number of samples as and synchronous with the fast ADC data. It is 1 byte per sample, and each bit is 0/1 for each of the 8 logic analyzer pins being low/high.
+`145` (+ 1 more byte) (in the [new firmware](../max10_adc_firmware/output_files)!) is how many channels to send data for, from each board. For instance, `145 4` would send all 4 channels from all boards. Note that the logic analyzer data is the "5th channel" on each board, so `145 5` sends all 4 channels plus the logic analyzer data. The logic analyzer data is the same number of samples as and synchronous with the fast ADC data. It is 1 byte per sample, and each bit is 0/1 for each of the 8 logic analyzer pins being low/high.
 
