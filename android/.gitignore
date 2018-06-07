@@ -10,4 +10,6 @@ build/
 .gradle
 
 .idea/workspace.xml
+.idea/caches/*
+android.iml
 
