@@ -157,8 +157,8 @@ public class MainActivity extends AppCompatActivity {
             public boolean onLongClick(View v) {
                 display.append("Click "+String.valueOf(lastscreenX)+" "+String.valueOf(lastscreenY)+"\n");
                 DataPoint[] hl = new DataPoint[] {
-                        new DataPoint(-12, lastscreenY),
-                        new DataPoint(12, lastscreenY)
+                        new DataPoint(-1.5*Math.pow(2,downsample), lastscreenY),
+                        new DataPoint(1.5*Math.pow(2,downsample), lastscreenY)
                 };
                 _series_hl.resetData(hl);
                 int thresh = (int)(255*lastscreenfracY);
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
 
         display = (TextView) findViewById(R.id.textView1);
         editText = (EditText) findViewById(R.id.editText1);
-        Button sendButton = (Button) findViewById(R.id.buttonSend);
+        final Button sendButton = (Button) findViewById(R.id.buttonSend);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
                         send2usb(30); send2usb(142); // get board ID
                         waitalittle();
                         send2usb(135); send2usb(3); send2usb(100); // serialdelaytimerwait
-
+                        send2usb(143); // enable highres mode
                         waitalittle(); send2usb(139); // auto-rearm trigger
                         send2usb(100);//final arming
 
@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
                         waitalittle(); send2usb(10); // get an event to keep things rollin
                     }
                     else if (data.equals("(") || data.equals("( ")) {
-                        if (downsample<10) {
+                        if (downsample<15) {
                             downsample += 1;
                             display.append("downsample is "+String.valueOf(downsample)+" \n");
                             send2usb(124); send2usb(downsample);
@@ -263,6 +263,24 @@ public class MainActivity extends AppCompatActivity {
                             setupgraph();
                         }
                     }
+                    else if (data.equals("x")) {
+                        send2usb(134); send2usb(0);
+                        send2usb(134); send2usb(1);
+                        send2usb(134); send2usb(2);
+                        send2usb(134); send2usb(3);
+                    }
+                    else if (data.equals("x0")) {
+                        send2usb(134); send2usb(0);
+                    }
+                    else if (data.equals("x1")) {
+                        send2usb(134); send2usb(1);
+                    }
+                    else if (data.equals("x2")) {
+                        send2usb(134); send2usb(2);
+                    }
+                    else if (data.equals("x3")) {
+                        send2usb(134); send2usb(3);
+                    }
                     else if (usbService != null) { // if UsbService was correctly bound, send data
                         display.append(data+"\n");
                         send2usb(Integer.parseInt(data));
@@ -273,13 +291,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void setupgraph(){
-        double range = (numsamples/2)*(Math.pow(2,downsample)/clkrate/xscaling);
-        graph.getGridLabelRenderer().setHorizontalAxisTitle("Time (us)");
-        xscaling=1.;
-        //if (range>100.) {
-        //    xscaling=1000.;
-        //    graph.getGridLabelRenderer().setHorizontalAxisTitle("Time (ms)");
-        //}
+        double range = (numsamples/2)*(Math.pow(2,downsample)/clkrate);
+        if (range>1000.) {
+            xscaling=1000.;
+            graph.getGridLabelRenderer().setHorizontalAxisTitle("Time (ms)");
+        }
+        else {
+            graph.getGridLabelRenderer().setHorizontalAxisTitle("Time (us)");
+            xscaling=1.;
+        }
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getViewport().setMinX(-(numsamples/2)*(Math.pow(2,downsample)/clkrate/xscaling));
         graph.getViewport().setMaxX((numsamples/2)*(Math.pow(2,downsample)/clkrate/xscaling));

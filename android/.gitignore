@@ -8,3 +8,6 @@ local.properties
 # Gradle
 build/
 .gradle
+
+.idea/workspace.xml
+

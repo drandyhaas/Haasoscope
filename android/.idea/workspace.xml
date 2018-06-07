@@ -52,17 +52,18 @@
       <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/example/src/main/java/com/felhr/serialportexample/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="174" column="53" lean-forward="false" selection-start-line="174" selection-start-column="53" selection-end-line="174" selection-end-column="53" />
+            <state relative-caret-position="21">
+              <caret line="249" column="56" lean-forward="false" selection-start-line="249" selection-start-column="56" selection-end-line="249" selection-end-column="56" />
               <folding>
+                <element signature="imports" expanded="true" />
                 <element signature="e#5201#6097#0" expanded="true" />
                 <element signature="e#6096#6097#0" expanded="true" />
-                <element signature="e#6137#7415#0" expanded="true" />
-                <element signature="e#7414#7415#0" expanded="true" />
-                <element signature="e#7767#13386#0" expanded="true" />
-                <element signature="e#13385#13386#0" expanded="true" />
-                <element signature="e#20543#20544#0" expanded="true" />
-                <element signature="e#20584#20585#0" expanded="true" />
+                <element signature="e#6137#7463#0" expanded="true" />
+                <element signature="e#7462#7463#0" expanded="true" />
+                <element signature="e#7821#14276#0" expanded="true" />
+                <element signature="e#14275#14276#0" expanded="true" />
+                <element signature="e#21450#21451#0" expanded="true" />
+                <element signature="e#21491#21492#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -89,7 +90,6 @@
       <find>DataPoint</find>
       <find>yoffset</find>
       <find>xoffset</find>
-      <find>xscaling</find>
       <find>setmin</find>
       <find>downsampl</find>
       <find>downsamp</find>
@@ -97,6 +97,11 @@
       <find>xscal</find>
       <find>Math</find>
       <find>getTop</find>
+      <find>-12</find>
+      <find>down</find>
+      <find>xscaling</find>
+      <find>setupgraph</find>
+      <find>(us)</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -2920,17 +2925,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/example/src/main/java/com/felhr/serialportexample/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="174" column="53" lean-forward="false" selection-start-line="174" selection-start-column="53" selection-end-line="174" selection-end-column="53" />
+        <state relative-caret-position="21">
+          <caret line="249" column="56" lean-forward="false" selection-start-line="249" selection-start-column="56" selection-end-line="249" selection-end-column="56" />
           <folding>
+            <element signature="imports" expanded="true" />
             <element signature="e#5201#6097#0" expanded="true" />
             <element signature="e#6096#6097#0" expanded="true" />
-            <element signature="e#6137#7415#0" expanded="true" />
-            <element signature="e#7414#7415#0" expanded="true" />
-            <element signature="e#7767#13386#0" expanded="true" />
-            <element signature="e#13385#13386#0" expanded="true" />
-            <element signature="e#20543#20544#0" expanded="true" />
-            <element signature="e#20584#20585#0" expanded="true" />
+            <element signature="e#6137#7463#0" expanded="true" />
+            <element signature="e#7462#7463#0" expanded="true" />
+            <element signature="e#7821#14276#0" expanded="true" />
+            <element signature="e#14275#14276#0" expanded="true" />
+            <element signature="e#21450#21451#0" expanded="true" />
+            <element signature="e#21491#21492#0" expanded="true" />
           </folding>
         </state>
       </provider>
