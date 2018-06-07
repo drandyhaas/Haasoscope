@@ -13,6 +13,7 @@
     <list default="true" id="04c56522-8d16-4eb1-bf12-3a44deabc30c" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/example/src/main/java/com/felhr/serialportexample/MainActivity.java" afterPath="$PROJECT_DIR$/example/src/main/java/com/felhr/serialportexample/MainActivity.java" />
+      <change beforePath="$PROJECT_DIR$/../software/commands.md" afterPath="$PROJECT_DIR$/../software/commands.md" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -51,17 +52,17 @@
       <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/example/src/main/java/com/felhr/serialportexample/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="264">
-              <caret line="127" column="22" lean-forward="false" selection-start-line="127" selection-start-column="22" selection-end-line="127" selection-end-column="22" />
+            <state relative-caret-position="340">
+              <caret line="174" column="53" lean-forward="false" selection-start-line="174" selection-start-column="53" selection-end-line="174" selection-end-column="53" />
               <folding>
-                <element signature="e#4302#5178#0" expanded="true" />
-                <element signature="e#5177#5178#0" expanded="true" />
-                <element signature="e#5218#5459#0" expanded="true" />
-                <element signature="e#5458#5459#0" expanded="true" />
-                <element signature="e#5811#11430#0" expanded="true" />
-                <element signature="e#11429#11430#0" expanded="true" />
-                <element signature="e#18587#18588#0" expanded="true" />
-                <element signature="e#18628#18629#0" expanded="true" />
+                <element signature="e#5201#6097#0" expanded="true" />
+                <element signature="e#6096#6097#0" expanded="true" />
+                <element signature="e#6137#7415#0" expanded="true" />
+                <element signature="e#7414#7415#0" expanded="true" />
+                <element signature="e#7767#13386#0" expanded="true" />
+                <element signature="e#13385#13386#0" expanded="true" />
+                <element signature="e#20543#20544#0" expanded="true" />
+                <element signature="e#20584#20585#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -2919,17 +2920,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/example/src/main/java/com/felhr/serialportexample/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="127" column="22" lean-forward="false" selection-start-line="127" selection-start-column="22" selection-end-line="127" selection-end-column="22" />
+        <state relative-caret-position="340">
+          <caret line="174" column="53" lean-forward="false" selection-start-line="174" selection-start-column="53" selection-end-line="174" selection-end-column="53" />
           <folding>
-            <element signature="e#4302#5178#0" expanded="true" />
-            <element signature="e#5177#5178#0" expanded="true" />
-            <element signature="e#5218#5459#0" expanded="true" />
-            <element signature="e#5458#5459#0" expanded="true" />
-            <element signature="e#5811#11430#0" expanded="true" />
-            <element signature="e#11429#11430#0" expanded="true" />
-            <element signature="e#18587#18588#0" expanded="true" />
-            <element signature="e#18628#18629#0" expanded="true" />
+            <element signature="e#5201#6097#0" expanded="true" />
+            <element signature="e#6096#6097#0" expanded="true" />
+            <element signature="e#6137#7415#0" expanded="true" />
+            <element signature="e#7414#7415#0" expanded="true" />
+            <element signature="e#7767#13386#0" expanded="true" />
+            <element signature="e#13385#13386#0" expanded="true" />
+            <element signature="e#20543#20544#0" expanded="true" />
+            <element signature="e#20584#20585#0" expanded="true" />
           </folding>
         </state>
       </provider>

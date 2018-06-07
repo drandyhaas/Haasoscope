@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     protected LineGraphSeries<DataPoint> _series1;
     protected LineGraphSeries<DataPoint> _series2;
     protected LineGraphSeries<DataPoint> _series3;
+    protected LineGraphSeries<DataPoint> _series_hl;
+    protected LineGraphSeries<DataPoint> _series_vl;
     protected GraphView graph;
     private int numsamples = 400; // <4096 please
     private int eventn = 0;
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private double clkrate = 125.0; // ADC sample rate in MHz
     private double xscaling = 1.0; // account for xaxis ns, us, ms
     protected float lastscreenX=0, lastscreenY=0;
+    protected float lastscreenfracX=0, lastscreenfracY=0;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -116,15 +119,35 @@ public class MainActivity extends AppCompatActivity {
         _series3.setThickness(thickness);
         graph.addSeries(_series3);
 
+        _series_hl = new LineGraphSeries<DataPoint>(new DataPoint[] {
+                new DataPoint(-12, 0),
+                new DataPoint(12, 0)
+        });
+        _series_hl.setTitle("Trig thresh");
+        _series_hl.setColor(Color.GRAY);
+        _series_hl.setDrawDataPoints(false);
+        _series_hl.setThickness(thickness);
+        graph.addSeries(_series_hl);
+
+        _series_vl = new LineGraphSeries<DataPoint>(new DataPoint[] {
+                new DataPoint(0, 4),
+                new DataPoint(0, -4)
+        });
+        _series_vl.setTitle("Trig pos");
+        _series_vl.setColor(Color.GRAY);
+        _series_vl.setDrawDataPoints(false);
+        _series_vl.setThickness(thickness);
+        graph.addSeries(_series_vl);
+
         setupgraph();
 
         graph.setOnTouchListener(new View.OnTouchListener(){
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                    float screenX = (event.getX()-graph.getGraphContentLeft())/graph.getGraphContentWidth();
-                    float screenY = (event.getY()-graph.getGraphContentTop())/graph.getGraphContentHeight();
-                    lastscreenX=(float)(graph.getViewport().getMinX(false)+screenX*(graph.getViewport().getMaxX(false)-graph.getViewport().getMinX(false)));
-                    lastscreenY= (float)(graph.getViewport().getMaxY(false)-screenY*(graph.getViewport().getMaxY(false)-graph.getViewport().getMinY(false)));
+                    lastscreenfracX = (event.getX()-graph.getGraphContentLeft())/graph.getGraphContentWidth();
+                    lastscreenfracY = (event.getY()-graph.getGraphContentTop())/graph.getGraphContentHeight();
+                    lastscreenX=(float)(graph.getViewport().getMinX(false)+lastscreenfracX*(graph.getViewport().getMaxX(false)-graph.getViewport().getMinX(false)));
+                    lastscreenY= (float)(graph.getViewport().getMaxY(false)-lastscreenfracY*(graph.getViewport().getMaxY(false)-graph.getViewport().getMinY(false)));
                     //display.append("Touch "+String.valueOf(lastscreenX)+" "+String.valueOf(lastscreenY)+"\n");
                 }
                 return false;
@@ -133,6 +156,26 @@ public class MainActivity extends AppCompatActivity {
         graph.setOnLongClickListener(new View.OnLongClickListener(){
             public boolean onLongClick(View v) {
                 display.append("Click "+String.valueOf(lastscreenX)+" "+String.valueOf(lastscreenY)+"\n");
+                DataPoint[] hl = new DataPoint[] {
+                        new DataPoint(-12, lastscreenY),
+                        new DataPoint(12, lastscreenY)
+                };
+                _series_hl.resetData(hl);
+                int thresh = (int)(255*lastscreenfracY);
+                if (thresh<0) thresh=0;
+                if (thresh>255) thresh=255;
+                send2usb(127); send2usb(thresh);
+                DataPoint [] vl = new DataPoint[] {
+                        new DataPoint(lastscreenX, 4),
+                        new DataPoint(lastscreenX, -4)
+                };
+                _series_vl.resetData(vl);
+                int tt = (int)((numsamples-1)*lastscreenfracX);
+                if (tt<5) tt=5;
+                if (tt>numsamples-5) tt=numsamples-5;
+                tt+=Math.pow(2,12);//use the current timebase in the offset
+                send2usb(121); send2usb(tt/256); send2usb(tt%256);
+                display.append("Trig "+String.valueOf(thresh)+" "+String.valueOf(tt-Math.pow(2,12))+"\n");
                 return false;
             }
         });
@@ -245,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
         graph.getViewport().setYAxisBoundsManual(true);
         graph.getViewport().setScalable(true);
         //graph.getViewport().setScalableY(true);
-        graph.getGridLabelRenderer().setNumHorizontalLabels(6);
+        graph.getGridLabelRenderer().setNumHorizontalLabels(7);
         graph.getGridLabelRenderer().setHumanRounding(false,false);
         graph.getGridLabelRenderer().setVerticalAxisTitle("Volts");
         graph.getGridLabelRenderer().setNumVerticalLabels(9);

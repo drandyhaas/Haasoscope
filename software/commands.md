@@ -16,7 +16,7 @@ Commands are received in [serialprocessor.v](../max10_adc_firmware/serialprocess
 
 `120` (+ 2 more bytes) is how many slow ADC samples to send. It is `256*a+b` samples, where `a` is the first byte and `b` is the second byte. For instance, `120 1 10` would send `256*1+10=266` samples.
 
-`121` (+ 2 more bytes) is the trigger point in time (how many samples to record before the trigger). It is `256*a+b` samples, where `a` is the first byte and `b` is the second byte.
+`121` (+ 2 more bytes) is the trigger point in time (how many samples to record before the trigger). It is `256*a+b` samples, where `a` is the first byte and `b` is the second byte. Add pow(2,12) to the number (i.e. 16 to a) in order to use the current timebase in the calculation (recommended!).
 
 `122` (+ 2 more bytes) is how many fast ADC samples to send. It is `256*a+b` samples, where `a` is the first byte and `b` is the second byte. For instance, `122 1 100` would send `256*1+100=356` samples.
 
