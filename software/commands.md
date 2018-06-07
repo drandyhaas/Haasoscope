@@ -40,7 +40,7 @@ Commands are received in [serialprocessor.v](../max10_adc_firmware/serialprocess
 
 `132/133` will send the delaycounter / carrycounter extra data (1 byte) from the active board.
 
-`134` (+ 1 more byte) toggles the x10 gain for a given channel, e.g. `130 6` would toggle the x10 gain for channel 6.
+`134` (+ 1 more byte) toggles the x10 gain for a given channel, e.g. `134 6` would toggle the x10 gain for channel 6.
 
 `135` (+ 2 more bytes) says how many 2us ticks to wait after sending each 32 bytes of serial data (serialdelaytimerwait). It is `256*a+b` ticks, where a is the first byte and b is the second byte.
 
