@@ -11,5 +11,6 @@ build/
 
 .idea/workspace.xml
 .idea/caches/*
+.idea/misc.xml
 android.iml
 
