@@ -10,11 +10,7 @@
     </shared>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="04c56522-8d16-4eb1-bf12-3a44deabc30c" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/example/src/main/java/com/felhr/serialportexample/MainActivity.java" afterPath="$PROJECT_DIR$/example/src/main/java/com/felhr/serialportexample/MainActivity.java" />
-      <change beforePath="$PROJECT_DIR$/../software/commands.md" afterPath="$PROJECT_DIR$/../software/commands.md" />
-    </list>
+    <list default="true" id="04c56522-8d16-4eb1-bf12-3a44deabc30c" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
