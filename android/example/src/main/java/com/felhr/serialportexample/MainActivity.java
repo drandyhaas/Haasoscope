@@ -1,5 +1,6 @@
 package com.felhr.serialportexample;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -49,7 +51,9 @@ public class MainActivity extends AppCompatActivity {
     private double yscale = 7.5;
     private double clkrate = 125.0; // ADC sample rate in MHz
     private double xscaling = 1.0; // account for xaxis ns, us, ms
+    protected float lastscreenX=0, lastscreenY=0;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,6 +117,25 @@ public class MainActivity extends AppCompatActivity {
         graph.addSeries(_series3);
 
         setupgraph();
+
+        graph.setOnTouchListener(new View.OnTouchListener(){
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    float screenX = (event.getX()-graph.getGraphContentLeft())/graph.getGraphContentWidth();
+                    float screenY = (event.getY()-graph.getGraphContentTop())/graph.getGraphContentHeight();
+                    lastscreenX=(float)(graph.getViewport().getMinX(false)+screenX*(graph.getViewport().getMaxX(false)-graph.getViewport().getMinX(false)));
+                    lastscreenY= (float)(graph.getViewport().getMaxY(false)-screenY*(graph.getViewport().getMaxY(false)-graph.getViewport().getMinY(false)));
+                    //display.append("Touch "+String.valueOf(lastscreenX)+" "+String.valueOf(lastscreenY)+"\n");
+                }
+                return false;
+            }
+        });
+        graph.setOnLongClickListener(new View.OnLongClickListener(){
+            public boolean onLongClick(View v) {
+                display.append("Click "+String.valueOf(lastscreenX)+" "+String.valueOf(lastscreenY)+"\n");
+                return false;
+            }
+        });
 
         mHandler = new MyHandler(this);
         myserialBuffer= ByteBuffer.allocateDirect(numsamples*4*2);//for good luck
