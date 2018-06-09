@@ -221,6 +221,8 @@ public class MainActivity extends AppCompatActivity {
 
         // a little kickstart for autogo...
         if (autogo) new kickstartThread().start();
+
+        display.append("Haasoscope "+BuildConfig.VERSION_NAME);
     }
 
     private boolean gotaneventlately=false;
