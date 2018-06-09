@@ -204,17 +204,37 @@ public class MainActivity extends AppCompatActivity {
                             }
                             if (di >= 0 && di <= 255)
                                 send2usb(di); // only send if it was a positive integer, 0-255
-                            else display.append("bad/unknown command!\n");
+                            else {
+                                display.append("bad/unknown command!\n");
+                                editText.setText("");
+                            }
                             break;
                     }
                     donewaitalot();
                 }
             }
         });
+
         // a little kickstart for autogo...
-        if (usbService != null) {
-            waitalot();
-            donewaitalot();
+        new kickstartThread().start();
+    }
+
+    private boolean gotaneventlately=false;
+    private class kickstartThread extends Thread {
+        @Override
+        public void run() {
+            gotaneventlately=false;
+            while (true) {
+                try {
+                    kickstartThread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (!gotaneventlately) {
+                    send2usb(10);
+                }
+                else return;
+            }
         }
     }
 
@@ -317,6 +337,7 @@ public class MainActivity extends AppCompatActivity {
             _series3.resetData(series3);
 
             eventn++;//count the events
+            gotaneventlately=true;
             if (autogo) send2usb(10); // get another event
         }
         return debug; //formatter.toString();

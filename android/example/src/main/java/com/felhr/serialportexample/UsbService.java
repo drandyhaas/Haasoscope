@@ -109,16 +109,15 @@ public class UsbService extends Service {
         b = factor & 0xff;
 
         //r = ch341_control_out(dev, 0x9a, 0x1312, a);
-        setControlCommandOut(CH341_REQ_WRITE_REG, 0x1312, (int)a, null);
+        setControlCommandOut(CH341_REQ_WRITE_REG, 0x1312, (int)a);
         //r = ch341_control_out(dev, 0x9a, 0x0f2c, b);
-        setControlCommandOut(CH341_REQ_WRITE_REG, 0x0f2c, (int)b, null);
+        setControlCommandOut(CH341_REQ_WRITE_REG, 0x0f2c, (int)b);
     }
 
-    private int setControlCommandOut(int request, int value, int index, byte[] data)
+    private void setControlCommandOut(int request, int value, int index)
     {
         int dataLength = 0;
-        if(data != null) dataLength = data.length;
-        return connection.controlTransfer(REQTYPE_HOST_TO_DEVICE, request, value, index, data, dataLength, USB_TIMEOUT);
+        connection.controlTransfer(REQTYPE_HOST_TO_DEVICE, request, value, index, null, dataLength, USB_TIMEOUT);
     }
 
     /*
@@ -128,30 +127,36 @@ public class UsbService extends Service {
     private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context arg0, Intent arg1) {
-            if (arg1.getAction().equals(ACTION_USB_PERMISSION)) {
-                boolean granted = arg1.getExtras().getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
-                if (granted) // User accepted our USB connection. Try to open the device as a serial port
-                {
-                    Intent intent = new Intent(ACTION_USB_PERMISSION_GRANTED);
+            if (arg1.getAction()==null) return;
+            switch (arg1.getAction()) {
+                case ACTION_USB_PERMISSION:
+                    if (arg1.getExtras()==null) return;
+                    boolean granted = arg1.getExtras().getBoolean(UsbManager.EXTRA_PERMISSION_GRANTED);
+                    if (granted) // User accepted our USB connection. Try to open the device as a serial port
+                    {
+                        Intent intent = new Intent(ACTION_USB_PERMISSION_GRANTED);
+                        arg0.sendBroadcast(intent);
+                        connection = usbManager.openDevice(device);
+                        new ConnectionThread().start();
+                    } else // User not accepted our USB connection. Send an Intent to the Main Activity
+                    {
+                        Intent intent = new Intent(ACTION_USB_PERMISSION_NOT_GRANTED);
+                        arg0.sendBroadcast(intent);
+                    }
+                    break;
+                case ACTION_USB_ATTACHED:
+                    if (!serialPortConnected)
+                        findSerialPortDevice(); // A USB device has been attached. Try to open it as a Serial port
+                    break;
+                case ACTION_USB_DETACHED:
+                    // Usb device was disconnected. send an intent to the Main Activity
+                    Intent intent = new Intent(ACTION_USB_DISCONNECTED);
                     arg0.sendBroadcast(intent);
-                    connection = usbManager.openDevice(device);
-                    new ConnectionThread().start();
-                } else // User not accepted our USB connection. Send an Intent to the Main Activity
-                {
-                    Intent intent = new Intent(ACTION_USB_PERMISSION_NOT_GRANTED);
-                    arg0.sendBroadcast(intent);
-                }
-            } else if (arg1.getAction().equals(ACTION_USB_ATTACHED)) {
-                if (!serialPortConnected)
-                    findSerialPortDevice(); // A USB device has been attached. Try to open it as a Serial port
-            } else if (arg1.getAction().equals(ACTION_USB_DETACHED)) {
-                // Usb device was disconnected. send an intent to the Main Activity
-                Intent intent = new Intent(ACTION_USB_DISCONNECTED);
-                arg0.sendBroadcast(intent);
-                if (serialPortConnected) {
-                    serialPort.close();
-                }
-                serialPortConnected = false;
+                    if (serialPortConnected) {
+                        serialPort.close();
+                    }
+                    serialPortConnected = false;
+                    break;
             }
         }
     };
