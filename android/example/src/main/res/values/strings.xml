@@ -5,5 +5,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="serial_port">Serial Port</string>
+    <string name="send">Send</string>
+    <string name="command">command</string>
 
 </resources>

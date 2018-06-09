@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -57,89 +58,14 @@ public class MainActivity extends AppCompatActivity {
     protected float lastscreenX=0, lastscreenY=0;
     protected float lastscreenfracX=0, lastscreenfracY=0;
 
+    // this function is called upon creation, and whenever the layout (e.g. portrait/landscape) changes
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        int radius = 6;
-        int thickness = 4;
-
-        graph = findViewById(R.id.graph);
-        _series0 = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(-12, 1),
-                new DataPoint(-6, 2),
-                new DataPoint(0, 3),
-                new DataPoint(6, 2),
-                new DataPoint(12, -2)
-        });
-        _series0.setTitle("Chan 0");
-        _series0.setColor(Color.RED);
-        _series0.setDrawDataPoints(true);
-        _series0.setDataPointsRadius(radius);
-        _series0.setThickness(thickness);
-        graph.addSeries(_series0);
-        _series1 = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(-12, 2),
-                new DataPoint(-6, 1),
-                new DataPoint(0, -1),
-                new DataPoint(6, 0),
-                new DataPoint(12, 1)
-        });
-        _series1.setTitle("Chan 1");
-        _series1.setColor(Color.GREEN);
-        _series1.setDrawDataPoints(true);
-        _series1.setDataPointsRadius(radius);
-        _series1.setThickness(thickness);
-        graph.addSeries(_series1);
-        _series2 = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(-12, 3),
-                new DataPoint(-6, 2),
-                new DataPoint(0, 3),
-                new DataPoint(6, -1),
-                new DataPoint(12, -2)
-        });
-        _series2.setTitle("Chan 2");
-        _series2.setColor(Color.BLUE);
-        _series2.setDrawDataPoints(true);
-        _series2.setDataPointsRadius(radius);
-        _series2.setThickness(thickness);
-        graph.addSeries(_series2);
-        _series3 = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(-12, -3),
-                new DataPoint(-6, -2),
-                new DataPoint(0, -3),
-                new DataPoint(6, -2),
-                new DataPoint(12, -1)
-        });
-        _series3.setTitle("Chan 3");
-        _series3.setColor(Color.MAGENTA);
-        _series3.setDrawDataPoints(true);
-        _series3.setDataPointsRadius(radius);
-        _series3.setThickness(thickness);
-        graph.addSeries(_series3);
-
-        _series_hl = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(-12, 0),
-                new DataPoint(12, 0)
-        });
-        _series_hl.setTitle("Trig thresh");
-        _series_hl.setColor(Color.GRAY);
-        _series_hl.setDrawDataPoints(false);
-        _series_hl.setThickness(thickness);
-        graph.addSeries(_series_hl);
-
-        _series_vl = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(0, 4),
-                new DataPoint(0, -4)
-        });
-        _series_vl.setTitle("Trig pos");
-        _series_vl.setColor(Color.GRAY);
-        _series_vl.setDrawDataPoints(false);
-        _series_vl.setThickness(thickness);
-        graph.addSeries(_series_vl);
-
+        init_graph();
         setupgraph();
 
         graph.setOnTouchListener(new View.OnTouchListener(){
@@ -186,8 +112,14 @@ public class MainActivity extends AppCompatActivity {
         mHandler = new MyHandler(this);
         myserialBuffer= ByteBuffer.allocateDirect(numsamples*4*2);//for good luck
 
-        display = findViewById(R.id.textView1);
         editText = findViewById(R.id.editText1);
+        display = findViewById(R.id.textView1);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            display.setVisibility(View.GONE);
+        }
+        else {
+            display.setVisibility(View.VISIBLE);
+        }
         final Button sendButton = findViewById(R.id.buttonSend);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -279,6 +211,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        // a little kickstart for autogo...
+        if (usbService != null) {
+            waitalot();
+            donewaitalot();
+        }
     }
 
     void send_initialize(){
@@ -422,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else{
                         //deal with other sized packet
-                        mActivity.get().myserialBuffer.put(bd); // TODO: make sure we have enough room in the buffer
+                        mActivity.get().myserialBuffer.put(bd); // hopefully we have enough room in the buffer
                     }
 
                     //make sure we have the expected number of bytes
@@ -460,6 +397,85 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    protected void init_graph(){
+        int radius = 6;
+        int thickness = 4;
+
+        graph = findViewById(R.id.graph);
+        _series0 = new LineGraphSeries<>(new DataPoint[] {
+                new DataPoint(-12, 1),
+                new DataPoint(-6, 2),
+                new DataPoint(0, 3),
+                new DataPoint(6, 2),
+                new DataPoint(12, -2)
+        });
+        _series0.setTitle("Chan 0");
+        _series0.setColor(Color.RED);
+        _series0.setDrawDataPoints(true);
+        _series0.setDataPointsRadius(radius);
+        _series0.setThickness(thickness);
+        graph.addSeries(_series0);
+        _series1 = new LineGraphSeries<>(new DataPoint[] {
+                new DataPoint(-12, 2),
+                new DataPoint(-6, 1),
+                new DataPoint(0, -1),
+                new DataPoint(6, 0),
+                new DataPoint(12, 1)
+        });
+        _series1.setTitle("Chan 1");
+        _series1.setColor(Color.GREEN);
+        _series1.setDrawDataPoints(true);
+        _series1.setDataPointsRadius(radius);
+        _series1.setThickness(thickness);
+        graph.addSeries(_series1);
+        _series2 = new LineGraphSeries<>(new DataPoint[] {
+                new DataPoint(-12, 3),
+                new DataPoint(-6, 2),
+                new DataPoint(0, 3),
+                new DataPoint(6, -1),
+                new DataPoint(12, -2)
+        });
+        _series2.setTitle("Chan 2");
+        _series2.setColor(Color.BLUE);
+        _series2.setDrawDataPoints(true);
+        _series2.setDataPointsRadius(radius);
+        _series2.setThickness(thickness);
+        graph.addSeries(_series2);
+        _series3 = new LineGraphSeries<>(new DataPoint[] {
+                new DataPoint(-12, -3),
+                new DataPoint(-6, -2),
+                new DataPoint(0, -3),
+                new DataPoint(6, -2),
+                new DataPoint(12, -1)
+        });
+        _series3.setTitle("Chan 3");
+        _series3.setColor(Color.MAGENTA);
+        _series3.setDrawDataPoints(true);
+        _series3.setDataPointsRadius(radius);
+        _series3.setThickness(thickness);
+        graph.addSeries(_series3);
+
+        _series_hl = new LineGraphSeries<>(new DataPoint[] {
+                new DataPoint(-12, 0),
+                new DataPoint(12, 0)
+        });
+        _series_hl.setTitle("Trig thresh");
+        _series_hl.setColor(Color.GRAY);
+        _series_hl.setDrawDataPoints(false);
+        _series_hl.setThickness(thickness);
+        graph.addSeries(_series_hl);
+
+        _series_vl = new LineGraphSeries<>(new DataPoint[] {
+                new DataPoint(0, 4),
+                new DataPoint(0, -4)
+        });
+        _series_vl.setTitle("Trig pos");
+        _series_vl.setColor(Color.GRAY);
+        _series_vl.setDrawDataPoints(false);
+        _series_vl.setThickness(thickness);
+        graph.addSeries(_series_vl);
+    }
+
     protected void waitalittle(){
         try {
             Thread.sleep(5);
@@ -484,10 +500,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void send2usb(int x){
-        if (x>127) x -= 256; // since it goes to bytes as twos compliment
-        usbService.write( BigInteger.valueOf(x).toByteArray() );
+        if (x>127) x -= 256; // since it goes to bytes as twos
+        if (usbService != null) usbService.write( BigInteger.valueOf(x).toByteArray() );
     }
-
 
     private final ServiceConnection usbConnection = new ServiceConnection() {
         @Override
