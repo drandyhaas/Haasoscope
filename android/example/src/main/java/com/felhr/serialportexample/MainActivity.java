@@ -27,8 +27,8 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.Formatter;
-import java.util.Set;
+//import java.util.Formatter;
+//import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private int eventn = 0;
     private int downsample = 3;
     private boolean autogo = true;
+    private boolean oldautogo = autogo;
     private ByteBuffer myserialBuffer; // for synchronizing serial data
     private String myboardid = "";
     private boolean synced = false;
@@ -65,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
         int radius = 6;
         int thickness = 4;
 
-        graph = (GraphView) findViewById(R.id.graph);
-        _series0 = new LineGraphSeries<DataPoint>(new DataPoint[] {
+        graph = findViewById(R.id.graph);
+        _series0 = new LineGraphSeries<>(new DataPoint[] {
                 new DataPoint(-12, 1),
                 new DataPoint(-6, 2),
                 new DataPoint(0, 3),
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         _series0.setDataPointsRadius(radius);
         _series0.setThickness(thickness);
         graph.addSeries(_series0);
-        _series1 = new LineGraphSeries<DataPoint>(new DataPoint[] {
+        _series1 = new LineGraphSeries<>(new DataPoint[] {
                 new DataPoint(-12, 2),
                 new DataPoint(-6, 1),
                 new DataPoint(0, -1),
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         _series1.setDataPointsRadius(radius);
         _series1.setThickness(thickness);
         graph.addSeries(_series1);
-        _series2 = new LineGraphSeries<DataPoint>(new DataPoint[] {
+        _series2 = new LineGraphSeries<>(new DataPoint[] {
                 new DataPoint(-12, 3),
                 new DataPoint(-6, 2),
                 new DataPoint(0, 3),
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         _series2.setDataPointsRadius(radius);
         _series2.setThickness(thickness);
         graph.addSeries(_series2);
-        _series3 = new LineGraphSeries<DataPoint>(new DataPoint[] {
+        _series3 = new LineGraphSeries<>(new DataPoint[] {
                 new DataPoint(-12, -3),
                 new DataPoint(-6, -2),
                 new DataPoint(0, -3),
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         _series3.setThickness(thickness);
         graph.addSeries(_series3);
 
-        _series_hl = new LineGraphSeries<DataPoint>(new DataPoint[] {
+        _series_hl = new LineGraphSeries<>(new DataPoint[] {
                 new DataPoint(-12, 0),
                 new DataPoint(12, 0)
         });
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         _series_hl.setThickness(thickness);
         graph.addSeries(_series_hl);
 
-        _series_vl = new LineGraphSeries<DataPoint>(new DataPoint[] {
+        _series_vl = new LineGraphSeries<>(new DataPoint[] {
                 new DataPoint(0, 4),
                 new DataPoint(0, -4)
         });
@@ -164,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
                 int thresh = (int)(255*lastscreenfracY);
                 if (thresh<0) thresh=0;
                 if (thresh>255) thresh=255;
+                waitalot();
                 send2usb(127); send2usb(thresh);
                 DataPoint [] vl = new DataPoint[] {
                         new DataPoint(lastscreenX, 4),
@@ -176,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
                 tt+=Math.pow(2,12);//use the current timebase in the offset
                 send2usb(121); send2usb(tt/256); send2usb(tt%256);
                 display.append("Trig "+String.valueOf(thresh)+" "+String.valueOf(tt-Math.pow(2,12))+"\n");
+                donewaitalot();
                 return false;
             }
         });
@@ -183,111 +186,141 @@ public class MainActivity extends AppCompatActivity {
         mHandler = new MyHandler(this);
         myserialBuffer= ByteBuffer.allocateDirect(numsamples*4*2);//for good luck
 
-        display = (TextView) findViewById(R.id.textView1);
-        editText = (EditText) findViewById(R.id.editText1);
-        final Button sendButton = (Button) findViewById(R.id.buttonSend);
+        display = findViewById(R.id.textView1);
+        editText = findViewById(R.id.editText1);
+        final Button sendButton = findViewById(R.id.buttonSend);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String data = editText.getText().toString();
                 if (!data.equals("")) {
-                    if (data.equals("G") || data.equals("g")){
-                        waitalittle();
-                        send2usb(0); send2usb(20); // board ID 0
-                        send2usb(30); send2usb(142); // get board ID
-                        waitalittle();
-                        send2usb(135); send2usb(3); send2usb(100); // serialdelaytimerwait
-                        send2usb(143); // enable highres mode
-                        waitalittle(); send2usb(139); // auto-rearm trigger
-                        send2usb(100);//final arming
-
-                        //send2usb(122); send2usb(1); send2usb(0); // 256 samples per channel
-                        send2usb(122); send2usb(numsamples/256); send2usb(numsamples%256); // samples per channel
-
-                        send2usb(123); send2usb(0); // send increment
-                        send2usb(124); send2usb(downsample); // downsample 3
-                        send2usb(125); send2usb(1); // tickstowait 1
-
-                        //100, 10 // get event (or just 10 if auto-rearming)
-
-                        waitalittle(); send2usb(136); send2usb(2); send2usb(32); send2usb(0); send2usb(0); send2usb(255); send2usb(200);// io expanders on
-                        waitalittle(); send2usb(136); send2usb(2); send2usb(32); send2usb(1); send2usb(0); send2usb(255); send2usb(200);// io expanders on
-                        waitalittle(); send2usb(136); send2usb(2); send2usb(33); send2usb(0); send2usb(0); send2usb(255); send2usb(200);// io expanders on
-                        waitalittle(); send2usb(136); send2usb(2); send2usb(33); send2usb(1); send2usb(0); send2usb(255); send2usb(200);// io expanders on
-                        waitalittle(); send2usb(136); send2usb(2); send2usb(32); send2usb(18); send2usb(240); send2usb(255); send2usb(200);// init, and turn on ADCs!
-                        waitalittle(); send2usb(136); send2usb(2); send2usb(32); send2usb(19); send2usb(15); send2usb(255); send2usb(200);// init, and turn on ADCs!
-                        waitalittle(); send2usb(136); send2usb(2); send2usb(33); send2usb(18); send2usb(0); send2usb(255); send2usb(200);// init, and turn on ADCs!
-                        waitalittle(); send2usb(136); send2usb(2); send2usb(33); send2usb(19); send2usb(0); send2usb(255); send2usb(200);// init, and turn on ADCs!
-
-                        waitalittle(); send2usb(131);  send2usb(8); send2usb(0); // spi offset
-                        waitalittle(); send2usb(131);  send2usb(6); send2usb(16); // spi offset binary output
-                        //waitalittle(); send2usb(131);  send2usb(6); send2usb(80); // spi offset binary output - test pattern
-                        waitalittle(); send2usb(131);  send2usb(1); send2usb(0 ); // spi not multiplexed output
-
-                        waitalittle(); send2usb(136); send2usb(3); send2usb(96); send2usb(80); send2usb(136); send2usb(22); send2usb(0); // board 0 calib, chan 0
-                        waitalittle(); send2usb(136); send2usb(3); send2usb(96); send2usb(82); send2usb(135); send2usb(248); send2usb(0); // board 0 calib, chan 1
-                        waitalittle(); send2usb(136); send2usb(3); send2usb(96); send2usb(84); send2usb(136); send2usb(52); send2usb(0); // board 0 calib, chan 2
-                        waitalittle(); send2usb(136); send2usb(3); send2usb(96); send2usb(86); send2usb(136); send2usb(52); send2usb(0); // board 0 calib, chan 3
-
-                        waitalittle();
-                        display.append("sent initialization commands \n");
-                        if (autogo) {
-                            waitalittle(); send2usb(10); // get an event
-                        }
+                    waitalot();
+                    switch (data) {
+                        case "G":
+                        case "g":
+                            send_initialize();
+                            editText.setText("");
+                            break;
+                        case "p":
+                        case "P":
+                            autogo = !oldautogo;
+                            oldautogo = autogo;
+                            break;
+                        case "(":
+                        case "( ":
+                            if (downsample < 15) {
+                                downsample += 1;
+                                display.append("downsample is " + String.valueOf(downsample) + " \n");
+                                send2usb(124);
+                                send2usb(downsample);
+                                int ds = downsample - 3;
+                                if (ds < 1) ds = 1;
+                                if (ds > 8) ds = 8; // otherwise we timeout upon readout
+                                send2usb(125);
+                                send2usb(ds);
+                                setupgraph();
+                            }
+                            break;
+                        case ")":
+                        case ") ":
+                            if (downsample > 0) {
+                                downsample -= 1;
+                                display.append("downsample is " + String.valueOf(downsample) + " \n");
+                                send2usb(124);
+                                send2usb(downsample);
+                                int ds = downsample - 3;
+                                if (ds < 1) ds = 1;
+                                if (ds > 8) ds = 8; // otherwise we timeout upon readout
+                                send2usb(125);
+                                send2usb(ds);
+                                setupgraph();
+                            }
+                            break;
+                        case "x":
+                            send2usb(134);
+                            send2usb(0);
+                            send2usb(134);
+                            send2usb(1);
+                            send2usb(134);
+                            send2usb(2);
+                            send2usb(134);
+                            send2usb(3);
+                            break;
+                        case "x0":
+                            send2usb(134);
+                            send2usb(0);
+                            break;
+                        case "x1":
+                            send2usb(134);
+                            send2usb(1);
+                            break;
+                        case "x2":
+                            send2usb(134);
+                            send2usb(2);
+                            break;
+                        case "x3":
+                            send2usb(134);
+                            send2usb(3);
+                            break;
+                        default:
+                            display.append(data + "\n");
+                            int di;
+                            try {
+                                di = Integer.parseInt(data);
+                            } catch (NumberFormatException e) {
+                                di = -1;
+                            }
+                            if (di >= 0 && di <= 255)
+                                send2usb(di); // only send if it was a positive integer, 0-255
+                            else display.append("bad/unknown command!\n");
+                            break;
                     }
-                    else if (data.equals("p") || data.equals("P")) {
-                        autogo = !autogo;
-                        waitalittle(); send2usb(10); // get an event to keep things rollin
-                    }
-                    else if (data.equals("(") || data.equals("( ")) {
-                        if (downsample<15) {
-                            downsample += 1;
-                            display.append("downsample is "+String.valueOf(downsample)+" \n");
-                            send2usb(124); send2usb(downsample);
-                            int ds=downsample-3;
-                            if (ds<1) ds=1;
-                            if (ds>8) ds=8; // otherwise we timeout upon readout
-                            send2usb(125); send2usb(ds);
-                            setupgraph();
-                        }
-                    }
-                    else if (data.equals(")") || data.equals(") ")) {
-                        if (downsample>0) {
-                            downsample -= 1;
-                            display.append("downsample is "+String.valueOf(downsample)+" \n");
-                            send2usb(124); send2usb(downsample);
-                            int ds=downsample-3;
-                            if (ds<1) ds=1;
-                            if (ds>8) ds=8; // otherwise we timeout upon readout
-                            send2usb(125); send2usb(ds);
-                            setupgraph();
-                        }
-                    }
-                    else if (data.equals("x")) {
-                        send2usb(134); send2usb(0);
-                        send2usb(134); send2usb(1);
-                        send2usb(134); send2usb(2);
-                        send2usb(134); send2usb(3);
-                    }
-                    else if (data.equals("x0")) {
-                        send2usb(134); send2usb(0);
-                    }
-                    else if (data.equals("x1")) {
-                        send2usb(134); send2usb(1);
-                    }
-                    else if (data.equals("x2")) {
-                        send2usb(134); send2usb(2);
-                    }
-                    else if (data.equals("x3")) {
-                        send2usb(134); send2usb(3);
-                    }
-                    else if (usbService != null) { // if UsbService was correctly bound, send data
-                        display.append(data+"\n");
-                        send2usb(Integer.parseInt(data));
-                    }
+                    donewaitalot();
                 }
             }
         });
+    }
+
+    void send_initialize(){
+        waitalittle();
+        send2usb(0); send2usb(20); // board ID 0
+        send2usb(30); send2usb(142); // get board ID
+        waitalittle();
+        send2usb(135); send2usb(3); send2usb(100); // serialdelaytimerwait
+        send2usb(143); // enable highres mode
+        waitalittle(); send2usb(139); // auto-rearm trigger
+        send2usb(100);//final arming
+
+        //send2usb(122); send2usb(1); send2usb(0); // 256 samples per channel
+        send2usb(122); send2usb(numsamples/256); send2usb(numsamples%256); // samples per channel
+
+        send2usb(123); send2usb(0); // send increment
+        send2usb(124); send2usb(downsample); // downsample 3
+        send2usb(125); send2usb(1); // tickstowait 1
+
+        //100, 10 // get event (or just 10 if auto-rearming)
+
+        waitalittle(); send2usb(136); send2usb(2); send2usb(32); send2usb(0); send2usb(0); send2usb(255); send2usb(200);// io expanders on
+        waitalittle(); send2usb(136); send2usb(2); send2usb(32); send2usb(1); send2usb(0); send2usb(255); send2usb(200);// io expanders on
+        waitalittle(); send2usb(136); send2usb(2); send2usb(33); send2usb(0); send2usb(0); send2usb(255); send2usb(200);// io expanders on
+        waitalittle(); send2usb(136); send2usb(2); send2usb(33); send2usb(1); send2usb(0); send2usb(255); send2usb(200);// io expanders on
+        waitalittle(); send2usb(136); send2usb(2); send2usb(32); send2usb(18); send2usb(240); send2usb(255); send2usb(200);// init, and turn on ADCs!
+        waitalittle(); send2usb(136); send2usb(2); send2usb(32); send2usb(19); send2usb(15); send2usb(255); send2usb(200);// init, and turn on ADCs!
+        waitalittle(); send2usb(136); send2usb(2); send2usb(33); send2usb(18); send2usb(0); send2usb(255); send2usb(200);// init, and turn on ADCs!
+        waitalittle(); send2usb(136); send2usb(2); send2usb(33); send2usb(19); send2usb(0); send2usb(255); send2usb(200);// init, and turn on ADCs!
+
+        waitalittle(); send2usb(131);  send2usb(8); send2usb(0); // spi offset
+        waitalittle(); send2usb(131);  send2usb(6); send2usb(16); // spi offset binary output
+        //waitalittle(); send2usb(131);  send2usb(6); send2usb(80); // spi offset binary output - test pattern
+        waitalittle(); send2usb(131);  send2usb(1); send2usb(0 ); // spi not multiplexed output
+
+        waitalittle(); send2usb(136); send2usb(3); send2usb(96); send2usb(80); send2usb(136); send2usb(22); send2usb(0); // board 0 calib, chan 0
+        waitalittle(); send2usb(136); send2usb(3); send2usb(96); send2usb(82); send2usb(135); send2usb(248); send2usb(0); // board 0 calib, chan 1
+        waitalittle(); send2usb(136); send2usb(3); send2usb(96); send2usb(84); send2usb(136); send2usb(52); send2usb(0); // board 0 calib, chan 2
+        waitalittle(); send2usb(136); send2usb(3); send2usb(96); send2usb(86); send2usb(136); send2usb(52); send2usb(0); // board 0 calib, chan 3
+
+        waitalittle();
+        display.append("sent initialization commands \n");
     }
 
     protected void setupgraph(){
@@ -325,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
         double yoffset = 0.;
         int p=0;
         String debug = "";
-        for (byte b : bd) {
+        for (byte ignored : bd) {
             //formatter.format("%02x ", b); // for debugging
             int bdp = bd[p];
             //convert to unsigned, then subtract 128
@@ -359,10 +392,10 @@ public class MainActivity extends AppCompatActivity {
         return sb.toString();
     }
 
-    private class MyHandler extends Handler {
+    static class MyHandler extends Handler {
         private final WeakReference<MainActivity> mActivity;
 
-        public MyHandler(MainActivity activity) {
+        private MyHandler(MainActivity activity) {
             mActivity = new WeakReference<>(activity);
         }
 
@@ -374,47 +407,47 @@ public class MainActivity extends AppCompatActivity {
 
                     if (8==bd.length) {
                         //get the board id and save it, from the initial 142 call probably
-                        if (myboardid.isEmpty()) {
-                            myboardid = byteArrayToHex(bd);
-                            mActivity.get().display.append("myboardid = " + myboardid+"\n");
-                            synced = true;
-                        } else if (byteArrayToHex(bd).equals(myboardid)) {
-                            synced = true; // if we got a matching board id, we're synced up
-                            if (autogo) send2usb(10);//get another event
+                        if (mActivity.get().myboardid.isEmpty()) {
+                            mActivity.get().myboardid = byteArrayToHex(bd);
+                            mActivity.get().display.append("myboardid = " + mActivity.get().myboardid+"\n");
+                            mActivity.get().synced = true;
+                        } else if (byteArrayToHex(bd).equals(mActivity.get().myboardid)) {
+                            mActivity.get().synced = true; // if we got a matching board id, we're synced up
+                            if (mActivity.get().autogo) mActivity.get().send2usb(10);//get another event
                         }
-                        else synced=false;
-                        myserialBuffer.position(0);
-                        myserialBuffer.clear();
-                        mActivity.get().display.append("synced now "+String.valueOf(synced)+" - "+String.valueOf(eventn)+"\n");
+                        else mActivity.get().synced=false;
+                        mActivity.get().myserialBuffer.position(0);
+                        mActivity.get().myserialBuffer.clear();
+                        mActivity.get().display.append("synced now "+String.valueOf(mActivity.get().synced)+" - "+String.valueOf(mActivity.get().eventn)+"\n");
                     }
                     else{
                         //deal with other sized packet
-                        myserialBuffer.put(bd); // TODO: make sure we have enough room in the buffer
+                        mActivity.get().myserialBuffer.put(bd); // TODO: make sure we have enough room in the buffer
                     }
 
                     //make sure we have the expected number of bytes
                     //check via a call to get board id to make sure we know where we are in the serial stream
                     String res="";
-                    if (synced && myserialBuffer.position()==numsamples*4) {//good!
-                        byte[] dst = new byte[myserialBuffer.position()];
-                        myserialBuffer.position(0);
-                        myserialBuffer.get(dst, 0, dst.length);
-                        myserialBuffer.clear();
-                        res = processdata(dst);
+                    if (mActivity.get().synced && mActivity.get().myserialBuffer.position()==mActivity.get().numsamples*4) {//good!
+                        byte[] dst = new byte[mActivity.get().myserialBuffer.position()];
+                        mActivity.get().myserialBuffer.position(0);
+                        mActivity.get().myserialBuffer.get(dst, 0, dst.length);
+                        mActivity.get().myserialBuffer.clear();
+                        res = mActivity.get().processdata(dst);
                     }
-                    else if (myserialBuffer.position()>numsamples*4 || myserialBuffer.position()%numsamples!=0) {//oops, we got too much data or a weird amount? better resync!
-                        myserialBuffer.position(0);
-                        myserialBuffer.clear();
-                        synced=false;
+                    else if (mActivity.get().myserialBuffer.position()>mActivity.get().numsamples*4 || mActivity.get().myserialBuffer.position()%mActivity.get().numsamples!=0) {//oops, we got too much data or a weird amount? better resync!
+                        mActivity.get().myserialBuffer.position(0);
+                        mActivity.get().myserialBuffer.clear();
+                        mActivity.get().synced=false;
                     }
-                    if (!synced){
-                        myserialBuffer.position(0);
-                        myserialBuffer.clear();
-                        send2usb(142);//request the board ID
+                    if (!mActivity.get().synced){
+                        mActivity.get().myserialBuffer.position(0);
+                        mActivity.get().myserialBuffer.clear();
+                        mActivity.get().send2usb(142);//request the board ID
                     }
 
                     if (mActivity.get().display.getLineCount()>10) mActivity.get().display.setText("");
-                    if (bd.length!=numsamples || !res.equals("")) mActivity.get().display.append(res +" - "+String.valueOf(eventn)+" - "+String.valueOf(bd.length)+"\n");
+                    if (bd.length!=mActivity.get().numsamples || !res.equals("")) mActivity.get().display.append(res +" - "+String.valueOf(mActivity.get().eventn)+" - "+String.valueOf(bd.length)+"\n");
 
                     break;
                 case UsbService.CTS_CHANGE:
@@ -433,6 +466,21 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    protected void waitalot(){
+        oldautogo = autogo;
+        autogo=false;
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    protected void donewaitalot(){
+        autogo=oldautogo;
+        if (autogo) send2usb(10);//for good luck
+
     }
 
     protected void send2usb(int x){
@@ -457,9 +505,13 @@ public class MainActivity extends AppCompatActivity {
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            if (intent.getAction() == null) return;
             switch (intent.getAction()) {
                 case UsbService.ACTION_USB_PERMISSION_GRANTED: // USB PERMISSION GRANTED
-                    Toast.makeText(context, "USB Ready", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Haasoscope USB Ready", Toast.LENGTH_SHORT).show();
+                    waitalot();
+                    send_initialize();
+                    donewaitalot();
                     break;
                 case UsbService.ACTION_USB_PERMISSION_NOT_GRANTED: // USB PERMISSION NOT GRANTED
                     Toast.makeText(context, "USB Permission not granted", Toast.LENGTH_SHORT).show();
@@ -481,7 +533,7 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         setFilters();  // Start listening notifications from UsbService
-        startService(UsbService.class, usbConnection, null); // Start UsbService(if it was not started before) and Bind it
+        startService(UsbService.class, usbConnection); // Start UsbService(if it was not started before) and Bind it
     }
 
     @Override
@@ -491,17 +543,9 @@ public class MainActivity extends AppCompatActivity {
         unbindService(usbConnection);
     }
 
-    private void startService(Class<?> service, ServiceConnection serviceConnection, Bundle extras) {
+    private void startService(Class<?> service, ServiceConnection serviceConnection) {
         if (!UsbService.SERVICE_CONNECTED) {
-            Intent startService = new Intent(this, service);
-            if (extras != null && !extras.isEmpty()) {
-                Set<String> keys = extras.keySet();
-                for (String key : keys) {
-                    String extra = extras.getString(key);
-                    startService.putExtra(key, extra);
-                }
-            }
-            startService(startService);
+            startService(new Intent(this, service));
         }
         Intent bindingIntent = new Intent(this, service);
         bindService(bindingIntent, serviceConnection, Context.BIND_AUTO_CREATE);
