@@ -65,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (savedInstanceState!=null) {
+            autogo = savedInstanceState.getBoolean("autogo");
+        }
+
         init_graph();
         setupgraph();
 
@@ -216,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // a little kickstart for autogo...
-        new kickstartThread().start();
+        if (autogo) new kickstartThread().start();
     }
 
     private boolean gotaneventlately=false;
@@ -229,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
                     kickstartThread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                    return;
                 }
                 if (!gotaneventlately) {
                     send2usb(10);
@@ -236,6 +241,13 @@ public class MainActivity extends AppCompatActivity {
                 else return;
             }
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        savedInstanceState.putBoolean("autogo", autogo);
     }
 
     void send_initialize(){
