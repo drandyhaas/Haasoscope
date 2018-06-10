@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     protected LineGraphSeries<DataPoint> _series_hl;
     protected LineGraphSeries<DataPoint> _series_vl;
     protected GraphView graph;
-    private int numsamples = 400; // <4096 please
+    private int numsamples = 125*3; // <4096 please
     private int eventn = 0;
     private int downsample = 3;
     private boolean autogo = true;
@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private double xscaling = 1.0; // account for xaxis ns, us, ms
     protected float lastscreenX=0, lastscreenY=0;
     protected float lastscreenfracX=0, lastscreenfracY=0;
+    protected int selectedchannel=-1;
 
     // this function is called upon creation, and whenever the layout (e.g. portrait/landscape) changes
     @SuppressLint("ClickableViewAccessibility")
@@ -289,11 +290,21 @@ public class MainActivity extends AppCompatActivity {
             if (velocityX<-10000) {
                 display.append("fling left\n");
                 //waitalot(); downsample_minus(); donewaitalot();
+                return true;
             }
             if (velocityX>10000) {
                 display.append("fling right\n");
                 //waitalot(); downsample_plus(); donewaitalot();
+                return true;
             }
+            if (selectedchannel>=0 && selectedchannel<=3){
+                int dy = (int)(event2.getY() - event1.getY());
+                display.append("dy = "+dy+"\n");
+                waitalot();
+                setdac(selectedchannel,daclevel[selectedchannel]+dy);
+                donewaitalot();
+            }
+
             return true;
         }
     }
@@ -358,10 +369,14 @@ public class MainActivity extends AppCompatActivity {
         //waitalittle(); send2usb(131);  send2usb(6); send2usb(80); // spi offset binary output - test pattern
         waitalittle(); send2usb(131);  send2usb(1); send2usb(0 ); // spi not multiplexed output
 
-        waitalittle(); send2usb(136); send2usb(3); send2usb(96); send2usb(80); send2usb(136); send2usb(22); send2usb(0); // board 0 calib, chan 0
-        waitalittle(); send2usb(136); send2usb(3); send2usb(96); send2usb(82); send2usb(135); send2usb(248); send2usb(0); // board 0 calib, chan 1
-        waitalittle(); send2usb(136); send2usb(3); send2usb(96); send2usb(84); send2usb(136); send2usb(52); send2usb(0); // board 0 calib, chan 2
-        waitalittle(); send2usb(136); send2usb(3); send2usb(96); send2usb(86); send2usb(136); send2usb(52); send2usb(0); // board 0 calib, chan 3
+        //waitalittle(); send2usb(136); send2usb(3); send2usb(96); send2usb(80); send2usb(136); send2usb(22); send2usb(0); // board 0 calib, chan 0
+        //waitalittle(); send2usb(136); send2usb(3); send2usb(96); send2usb(82); send2usb(135); send2usb(248); send2usb(0); // board 0 calib, chan 1
+        //waitalittle(); send2usb(136); send2usb(3); send2usb(96); send2usb(84); send2usb(136); send2usb(52); send2usb(0); // board 0 calib, chan 2
+        //waitalittle(); send2usb(136); send2usb(3); send2usb(96); send2usb(86); send2usb(136); send2usb(52); send2usb(0); // board 0 calib, chan 3
+        waitalittle(); setdac(0,2070);
+        waitalittle(); setdac(1,2040);
+        waitalittle(); setdac(2,2100);
+        waitalittle(); setdac(3,2100);
 
         waitalittle();
         display.append("sent initialization commands \n");
@@ -574,13 +589,16 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onTap(Series series, DataPointInterface dataPoint) {
                     display.append("clicked: " + series.getTitle() + "  " + dataPoint.toString()+"\n");
+                    int i=0; selectedchannel=-1;
                     for (LineGraphSeries s : myseries) {
                         if (s.getTitle().equals(series.getTitle())) {
                             s.setThickness(2 * thickness);
+                            selectedchannel=i;
                         }
                         else{
                             s.setThickness(thickness);
                         }
+                        ++i;
                     }
                     graph.invalidate();
                 }
@@ -644,6 +662,31 @@ public class MainActivity extends AppCompatActivity {
         autogo=oldautogo;
         if (autogo) send2usb(10);//for good luck
 
+    }
+
+    protected int [] daclevel = {0,0,0,0};
+    protected void setdac(int chan, int val){
+        // channel 0 , board 0 calib
+        // 136, 3, // header for i2c command with 3 bytes of data
+        // 96, // i2c address of dac
+        // 80, // channel 80,82,84,86 for chan 0,1,2,3
+        // 136, 22, // high 4 bits can be 8 or 9 (internal ref 2V or 4V, respectively), next 12 bits are the 0-4095 level
+        // 0 // send to board 0 (200 for all boards)
+
+        if (chan<0 || chan>3) return;
+        if (val>4096*2-1 || val<0) return;
+        daclevel[chan]=val; //remember it
+        int d=8*16; //internal ref, gain=1 (0-2V)
+        if (val>4095) {
+            d=9*16; //internal ref, gain=2 (0-4V)
+            val/=2;
+        }
+        send2usb(136); send2usb(3);
+        send2usb(96);
+        send2usb(80+2*chan);
+        send2usb(d+val/256);
+        send2usb(val%256);
+        send2usb(200);
     }
 
     protected void send2usb(int x){

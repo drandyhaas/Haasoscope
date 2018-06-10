@@ -344,6 +344,14 @@ class Haasoscope():
             d="9" #internal ref, gain=2 (0-4V)
             val/=2
         self.sendi2c("60 "+c+d+('%0*x' % (3,val)),  board) #DAC, can go from 000 to 0fff in last 12 bits, and only send to the selected board
+        
+        # example:
+        # channel 0 , board 0 calib
+        # 136, 3, // header for i2c command with 3 bytes of data
+        # 96, // i2c address of dac
+        # 80,
+        # 136, 22, // high 4 bits can be 8 or 9 (internal ref 2V or 4V, respectively), next 12 bits are the 0-4095 level
+        # 0 // send to board 0 (200 for all boards)
     
     def shutdownadcs(self):
         self.b20= int('ff',16)  # shdn (set first char to f to turn off) / ac coupling (?)
