@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     protected int selectedchannel=-1; // the selected channel, or -1 if none
     protected boolean [] gain = {false,false,false,false}; // true if high gain
     protected int [] daclevel = {0,0,0,0}; // the dac level of each channel
+    protected static final boolean debugme = false;
 
     // this function is called upon creation, and whenever the layout (e.g. portrait/landscape) changes
     @SuppressLint("ClickableViewAccessibility")
@@ -495,6 +496,7 @@ public class MainActivity extends AppCompatActivity {
 
             eventn++;//count the events
             gotaneventlately=true;
+            if (eventn%100==0) display.append("event "+String.valueOf(eventn)+"\n");
             if (autogo) send2usb(10); // get another event
         }
         return debug; //formatter.toString();
@@ -519,12 +521,11 @@ public class MainActivity extends AppCompatActivity {
             switch (msg.what) {
                 case UsbService.MESSAGE_FROM_SERIAL_PORT:
                     byte [] bd = (byte[])msg.obj;
-
                     if (8==bd.length) {
                         //get the board id and save it, from the initial 142 call probably
                         if (mActivity.get().myboardid.isEmpty()) {
                             mActivity.get().myboardid = byteArrayToHex(bd);
-                            mActivity.get().display.append("myboardid = " + mActivity.get().myboardid+"\n");
+                            if (debugme) mActivity.get().display.append("myboardid = " + mActivity.get().myboardid+"\n");
                             mActivity.get().synced = true;
                         } else if (byteArrayToHex(bd).equals(mActivity.get().myboardid)) {
                             mActivity.get().synced = true; // if we got a matching board id, we're synced up
@@ -533,7 +534,7 @@ public class MainActivity extends AppCompatActivity {
                         else mActivity.get().synced=false;
                         mActivity.get().myserialBuffer.position(0);
                         mActivity.get().myserialBuffer.clear();
-                        mActivity.get().display.append("synced now "+String.valueOf(mActivity.get().synced)+" - "+String.valueOf(mActivity.get().eventn)+"\n");
+                        if (debugme) mActivity.get().display.append("synced now "+String.valueOf(mActivity.get().synced)+" - "+String.valueOf(mActivity.get().eventn)+"\n");
                     }
                     else{
                         //deal with other sized packet
@@ -548,7 +549,8 @@ public class MainActivity extends AppCompatActivity {
                         mActivity.get().myserialBuffer.position(0);
                         mActivity.get().myserialBuffer.get(dst, 0, dst.length);
                         mActivity.get().myserialBuffer.clear();
-                        res = mActivity.get().processdata(dst);
+                        if (debugme) res = mActivity.get().processdata(dst);
+                        else mActivity.get().processdata(dst);
                     }
                     else if (mActivity.get().myserialBuffer.position()>mActivity.get().numsamples*4 || mActivity.get().myserialBuffer.position()%mActivity.get().numsamples!=0) {//oops, we got too much data or a weird amount? better resync!
                         mActivity.get().myserialBuffer.position(0);
@@ -562,7 +564,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     if (mActivity.get().display.getLineCount()>10) mActivity.get().display.setText("");
-                    if (bd.length!=mActivity.get().numsamples || !res.equals("")) mActivity.get().display.append(res +" - "+String.valueOf(mActivity.get().eventn)+" - "+String.valueOf(bd.length)+"\n");
+                    if (debugme) if (bd.length!=mActivity.get().numsamples || !res.equals("")) mActivity.get().display.append(res +" - "+String.valueOf(mActivity.get().eventn)+" - "+String.valueOf(bd.length)+"\n");
 
                     break;
                 case UsbService.CTS_CHANGE:
