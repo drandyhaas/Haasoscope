@@ -45,7 +45,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/editText1"
-        android:layout_above="@id/button_share"
         android:background="@android:color/white" />
 
     <ImageButton
@@ -74,10 +73,12 @@
         android:id="@+id/button_share"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:layout_below="@+id/textView1"
+        android:layout_marginEnd="105dp"
         android:contentDescription="@string/share"
         app:srcCompat="@android:drawable/ic_menu_share"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="105dp" />
 
 </RelativeLayout>

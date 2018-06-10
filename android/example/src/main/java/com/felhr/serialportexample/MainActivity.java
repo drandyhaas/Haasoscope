@@ -1,5 +1,6 @@
 package com.felhr.serialportexample;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -7,14 +8,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
+//import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,7 +39,7 @@ import com.jjoe64.graphview.series.Series;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.List;
+//import java.util.List;
 //import java.util.Formatter;
 //import java.util.Set;
 
@@ -142,6 +147,19 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //display.append("down\n");
                 waitalot(); downsample_minus(); donewaitalot();
+            }
+        });
+        final ImageButton button_share = findViewById(R.id.button_share);
+        button_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //display.append("share\n");
+                if (isStoragePermissionGranted()){
+                    graph.takeSnapshotAndShare(graph.getContext(), "Haasoscope share", "Haasoscope share");
+                }
+                else{
+                    display.append("no permissions?\n");
+                }
             }
         });
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -269,9 +287,11 @@ public class MainActivity extends AppCompatActivity {
                                float velocityX, float velocityY) {
             //display.append( "onFling: " + event1.toString() + event2.toString() +"\n" + velocityX + " " + velocityY +"\n");
             if (velocityX<-10000) {
+                display.append("fling left\n");
                 //waitalot(); downsample_minus(); donewaitalot();
             }
             if (velocityX>10000) {
+                display.append("fling right\n");
                 //waitalot(); downsample_plus(); donewaitalot();
             }
             return true;
@@ -490,6 +510,11 @@ public class MainActivity extends AppCompatActivity {
         final int thickness = 4;
 
         graph = findViewById(R.id.graph);
+        graph.getViewport().setBackgroundColor(Color.WHITE);
+        graph.getViewport().setDrawBorder(true);
+        graph.getGridLabelRenderer().setHighlightZeroLines(false);
+        graph.getGridLabelRenderer().setPadding(60);
+
         _series0 = new LineGraphSeries<>(new DataPoint[] {
                 new DataPoint(-12, 1),
                 new DataPoint(-6, 2),
@@ -519,7 +544,7 @@ public class MainActivity extends AppCompatActivity {
         _series2 = new LineGraphSeries<>(new DataPoint[] {
                 new DataPoint(-12, 3),
                 new DataPoint(-6, 2),
-                new DataPoint(0, 3),
+                new DataPoint(0, 2),
                 new DataPoint(6, -1),
                 new DataPoint(12, -2)
         });
@@ -581,6 +606,21 @@ public class MainActivity extends AppCompatActivity {
         _series_vl.setDrawDataPoints(false);
         _series_vl.setThickness(thickness);
         graph.addSeries(_series_vl);
+    }
+
+    public boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            return true;
+        }
     }
 
     protected void waitalittle(){
