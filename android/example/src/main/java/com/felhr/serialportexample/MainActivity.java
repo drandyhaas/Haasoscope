@@ -13,21 +13,28 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.OnDataPointTapListener;
+import com.jjoe64.graphview.series.Series;
 
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.util.List;
 //import java.util.Formatter;
 //import java.util.Set;
 
@@ -37,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     protected TextView display;
     protected EditText editText;
     protected MyHandler mHandler;
+    private GestureDetectorCompat mDetector;
     protected LineGraphSeries<DataPoint> _series0;
     protected LineGraphSeries<DataPoint> _series1;
     protected LineGraphSeries<DataPoint> _series2;
@@ -64,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mDetector = new GestureDetectorCompat(this, new MyGestureListener());
 
         if (savedInstanceState!=null) {
             autogo = savedInstanceState.getBoolean("autogo");
@@ -74,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
         graph.setOnTouchListener(new View.OnTouchListener(){
             public boolean onTouch(View v, MotionEvent event) {
+                mDetector.onTouchEvent(event);
                 if(event.getAction() == MotionEvent.ACTION_DOWN) {
                     lastscreenfracX = (event.getX()-graph.getGraphContentLeft())/graph.getGraphContentWidth();
                     lastscreenfracY = (event.getY()-graph.getGraphContentTop())/graph.getGraphContentHeight();
@@ -118,6 +128,22 @@ public class MainActivity extends AppCompatActivity {
 
         editText = findViewById(R.id.editText1);
         display = findViewById(R.id.textView1);
+        final ImageButton button_up = findViewById(R.id.button_up);
+        button_up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //display.append("up\n");
+                waitalot(); downsample_plus(); donewaitalot();
+            }
+        });
+        final ImageButton button_down = findViewById(R.id.button_down);
+        button_down.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //display.append("down\n");
+                waitalot(); downsample_minus(); donewaitalot();
+            }
+        });
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             display.setVisibility(View.GONE);
         }
@@ -144,33 +170,11 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case "(":
                         case "( ":
-                            if (downsample < 15) {
-                                downsample += 1;
-                                display.append("downsample is " + String.valueOf(downsample) + " \n");
-                                send2usb(124);
-                                send2usb(downsample);
-                                int ds = downsample - 3;
-                                if (ds < 1) ds = 1;
-                                if (ds > 8) ds = 8; // otherwise we timeout upon readout
-                                send2usb(125);
-                                send2usb(ds);
-                                setupgraph();
-                            }
+                            downsample_plus();
                             break;
                         case ")":
                         case ") ":
-                            if (downsample > 0) {
-                                downsample -= 1;
-                                display.append("downsample is " + String.valueOf(downsample) + " \n");
-                                send2usb(124);
-                                send2usb(downsample);
-                                int ds = downsample - 3;
-                                if (ds < 1) ds = 1;
-                                if (ds > 8) ds = 8; // otherwise we timeout upon readout
-                                send2usb(125);
-                                send2usb(ds);
-                                setupgraph();
-                            }
+                            downsample_minus();
                             break;
                         case "x":
                             send2usb(134);
@@ -223,6 +227,55 @@ public class MainActivity extends AppCompatActivity {
         if (autogo) new kickstartThread().start();
 
         display.append("Haasoscope "+BuildConfig.VERSION_NAME+"\n");
+    }
+
+    private void downsample_plus(){
+        if (downsample < 15) {
+            downsample += 1;
+            display.append("downsample is " + String.valueOf(downsample) + " \n");
+            send2usb(124);
+            send2usb(downsample);
+            int ds = downsample - 3;
+            if (ds < 1) ds = 1;
+            if (ds > 8) ds = 8; // otherwise we timeout upon readout
+            send2usb(125);
+            send2usb(ds);
+            setupgraph();
+        }
+    }
+
+    private void downsample_minus(){
+        if (downsample > 0) {
+            downsample -= 1;
+            display.append("downsample is " + String.valueOf(downsample) + " \n");
+            send2usb(124);
+            send2usb(downsample);
+            int ds = downsample - 3;
+            if (ds < 1) ds = 1;
+            if (ds > 8) ds = 8; // otherwise we timeout upon readout
+            send2usb(125);
+            send2usb(ds);
+            setupgraph();
+        }
+    }
+
+    class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onDown(MotionEvent event) {
+            return true;
+        }
+        @Override
+        public boolean onFling(MotionEvent event1, MotionEvent event2,
+                               float velocityX, float velocityY) {
+            //display.append( "onFling: " + event1.toString() + event2.toString() +"\n" + velocityX + " " + velocityY +"\n");
+            if (velocityX<-10000) {
+                //waitalot(); downsample_minus(); donewaitalot();
+            }
+            if (velocityX>10000) {
+                //waitalot(); downsample_plus(); donewaitalot();
+            }
+            return true;
+        }
     }
 
     private boolean gotaneventlately=false;
@@ -433,8 +486,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void init_graph(){
-        int radius = 6;
-        int thickness = 4;
+        final int radius = 6;
+        final int thickness = 4;
 
         graph = findViewById(R.id.graph);
         _series0 = new LineGraphSeries<>(new DataPoint[] {
@@ -489,6 +542,25 @@ public class MainActivity extends AppCompatActivity {
         _series3.setDataPointsRadius(radius);
         _series3.setThickness(thickness);
         graph.addSeries(_series3);
+
+        final LineGraphSeries [] myseries = new LineGraphSeries[] {_series0, _series1, _series2, _series3};
+        for (LineGraphSeries s : myseries) {
+            s.setOnDataPointTapListener(new OnDataPointTapListener() {
+                @Override
+                public void onTap(Series series, DataPointInterface dataPoint) {
+                    display.append("clicked: " + series.getTitle() + "  " + dataPoint.toString()+"\n");
+                    for (LineGraphSeries s : myseries) {
+                        if (s.getTitle().equals(series.getTitle())) {
+                            s.setThickness(2 * thickness);
+                        }
+                        else{
+                            s.setThickness(thickness);
+                        }
+                    }
+                    graph.invalidate();
+                }
+            });
+        }
 
         _series_hl = new LineGraphSeries<>(new DataPoint[] {
                 new DataPoint(-12, 0),

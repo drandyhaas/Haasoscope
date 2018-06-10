@@ -1,5 +1,6 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,6 +8,7 @@
     android:keepScreenOn="true"
     tools:context="com.felhr.serialportexample.MainActivity">
 
+    <!--android:layout_height="160dp" for debugging-->
     <TextView
         android:id="@+id/textView1"
         android:layout_width="match_parent"
@@ -19,15 +21,16 @@
 
     <EditText
         android:id="@+id/editText1"
-        android:layout_width="wrap_content"
+        android:layout_width="95dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView1"
-        android:layout_marginRight="10dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
         android:ems="10"
         android:hint="@string/command"
         android:inputType="text">
-        <requestFocus/>
+
+        <requestFocus />
     </EditText>
 
     <Button
@@ -46,5 +49,27 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/editText1"
         />
+
+    <ImageButton
+        android:id="@+id/button_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/textView1"
+        android:layout_marginEnd="12dp"
+        app:srcCompat="@android:drawable/arrow_down_float"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="12dp"
+        android:contentDescription="@string/button_up" />
+
+    <ImageButton
+        android:id="@+id/button_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView1"
+        android:layout_toStartOf="@+id/button_down"
+        app:srcCompat="@android:drawable/arrow_up_float"
+        android:layout_toLeftOf="@+id/button_down"
+        android:contentDescription="@string/button_down" />
 
 </RelativeLayout>

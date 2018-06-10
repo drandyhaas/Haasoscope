@@ -7,5 +7,7 @@
     <string name="serial_port">Serial Port</string>
     <string name="send">Send</string>
     <string name="command">command</string>
+    <string name="button_down">button down</string>
+    <string name="button_up">button_up</string>
 
 </resources>
