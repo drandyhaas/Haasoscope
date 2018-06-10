@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true"
-    android:padding="0dp"
+    android:padding="5dp"
     tools:context="com.felhr.serialportexample.MainActivity">
 
     <!--android:layout_height="160dp" for debugging-->
     <TextView
         android:id="@+id/textView1"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="75dp"
         android:layout_centerHorizontal="true"
         android:background="#FFFFFF"
         android:gravity="bottom"
@@ -89,5 +89,14 @@
         android:layout_toStartOf="@+id/button_up"
         app:srcCompat="@android:drawable/ic_media_pause"
         android:contentDescription="@string/pause" />
+
+    <ToggleButton
+        android:id="@+id/toggle_selectchan"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/textView1"
+        android:layout_toLeftOf="@+id/button_pause"
+        android:layout_toStartOf="@+id/button_pause"
+        android:text="@string/_1" />
 
 </RelativeLayout>

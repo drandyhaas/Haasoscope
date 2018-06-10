@@ -28,6 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     protected EditText editText;
     protected MyHandler mHandler;
     private GestureDetectorCompat mDetector;
+    protected ToggleButton toggle_selectchan;
     protected LineGraphSeries<DataPoint> _series0;
     protected LineGraphSeries<DataPoint> _series1;
     protected LineGraphSeries<DataPoint> _series2;
@@ -136,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
         editText = findViewById(R.id.editText1);
         display = findViewById(R.id.textView1);
+        toggle_selectchan = findViewById(R.id.toggle_selectchan);
         final ImageButton button_up = findViewById(R.id.button_up);
         button_up.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,6 +177,30 @@ public class MainActivity extends AppCompatActivity {
                 autogo = !oldautogo;
                 oldautogo = autogo;
                 donewaitalot();
+            }
+        });
+        toggle_selectchan.setTextOff("-1");
+        toggle_selectchan.setChecked(false);
+        toggle_selectchan.invalidate();
+        toggle_selectchan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (selectedchannel>=0) {
+                    myseries[selectedchannel].setThickness(thickness);
+                    graph.invalidate();
+                    selectedchannel = -1;
+                    toggle_selectchan.setTextOff("-1");
+                    toggle_selectchan.setChecked(false);
+                    toggle_selectchan.invalidate();
+                }
+                else{
+                    selectedchannel = 0;
+                    myseries[selectedchannel].setThickness(2*thickness);
+                    graph.invalidate();
+                    toggle_selectchan.setTextOn("0");
+                    toggle_selectchan.setChecked(true);
+                    toggle_selectchan.invalidate();
+                }
             }
         });
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -548,9 +575,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    final int radius = 6;
+    final int thickness = 4;
+    protected LineGraphSeries [] myseries;
+
     protected void init_graph(){
-        final int radius = 6;
-        final int thickness = 4;
 
         graph = findViewById(R.id.graph);
         graph.getViewport().setBackgroundColor(Color.WHITE);
@@ -610,8 +639,8 @@ public class MainActivity extends AppCompatActivity {
         _series3.setDataPointsRadius(radius);
         _series3.setThickness(thickness);
         graph.addSeries(_series3);
+        myseries = new LineGraphSeries[] {_series0, _series1, _series2, _series3};
 
-        final LineGraphSeries [] myseries = new LineGraphSeries[] {_series0, _series1, _series2, _series3};
         for (LineGraphSeries s : myseries) {
             s.setOnDataPointTapListener(new OnDataPointTapListener() {
                 @Override
@@ -620,8 +649,16 @@ public class MainActivity extends AppCompatActivity {
                     int i=0; selectedchannel=-1;
                     for (LineGraphSeries s : myseries) {
                         if (s.getTitle().equals(series.getTitle())) {
-                            s.setThickness(2 * thickness);
-                            selectedchannel=i;
+                            if (toggle_selectchan.isChecked()) {
+                                s.setThickness(2 * thickness);
+                                selectedchannel = i;
+                                toggle_selectchan.setTextOn(String.valueOf(selectedchannel));
+                                toggle_selectchan.setChecked(true);
+                                toggle_selectchan.invalidate();
+                            }
+                            else {
+                                display.append("Locked! Click -1 button to unlock.\n");
+                            }
                         }
                         else{
                             s.setThickness(thickness);
