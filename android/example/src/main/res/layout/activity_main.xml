@@ -49,6 +49,16 @@
         android:background="@android:color/white" />
 
     <ImageButton
+        android:id="@+id/button_share"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/share"
+        app:srcCompat="@android:drawable/ic_menu_share"
+        android:layout_alignParentRight="true" />
+
+    <ImageButton
         android:id="@+id/button_down"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -71,13 +81,13 @@
         app:srcCompat="@android:drawable/arrow_up_float" />
 
     <ImageButton
-        android:id="@+id/button_share"
+        android:id="@+id/button_pause"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:contentDescription="@string/share"
-        app:srcCompat="@android:drawable/ic_menu_share"
-        android:layout_alignParentRight="true" />
+        android:layout_below="@+id/textView1"
+        android:layout_toLeftOf="@+id/button_up"
+        android:layout_toStartOf="@+id/button_up"
+        app:srcCompat="@android:drawable/ic_media_pause"
+        android:contentDescription="@string/pause" />
 
 </RelativeLayout>

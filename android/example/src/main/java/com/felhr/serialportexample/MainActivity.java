@@ -70,7 +70,9 @@ public class MainActivity extends AppCompatActivity {
     private double xscaling = 1.0; // account for xaxis ns, us, ms
     protected float lastscreenX=0, lastscreenY=0;
     protected float lastscreenfracX=0, lastscreenfracY=0;
-    protected int selectedchannel=-1;
+    protected int selectedchannel=-1; // the selected channel, or -1 if none
+    protected boolean [] gain = {false,false,false,false}; // true if high gain
+    protected int [] daclevel = {0,0,0,0}; // the dac level of each channel
 
     // this function is called upon creation, and whenever the layout (e.g. portrait/landscape) changes
     @SuppressLint("ClickableViewAccessibility")
@@ -163,6 +165,17 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        final ImageButton button_pause = findViewById(R.id.button_pause);
+        button_pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //display.append("pause\n");
+                waitalot();
+                autogo = !oldautogo;
+                oldautogo = autogo;
+                donewaitalot();
+            }
+        });
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             display.setVisibility(View.GONE);
         }
@@ -198,28 +211,36 @@ public class MainActivity extends AppCompatActivity {
                         case "x":
                             send2usb(134);
                             send2usb(0);
+                            togglegain(0);
                             send2usb(134);
                             send2usb(1);
+                            togglegain(1);
                             send2usb(134);
                             send2usb(2);
+                            togglegain(2);
                             send2usb(134);
                             send2usb(3);
+                            togglegain(3);
                             break;
                         case "x0":
                             send2usb(134);
                             send2usb(0);
+                            togglegain(0);
                             break;
                         case "x1":
                             send2usb(134);
                             send2usb(1);
+                            togglegain(1);
                             break;
                         case "x2":
                             send2usb(134);
                             send2usb(2);
+                            togglegain(2);
                             break;
                         case "x3":
                             send2usb(134);
                             send2usb(3);
+                            togglegain(3);
                             break;
                         default:
                             display.append(data + "\n");
@@ -246,6 +267,13 @@ public class MainActivity extends AppCompatActivity {
         if (autogo) new kickstartThread().start();
 
         display.append("Haasoscope "+BuildConfig.VERSION_NAME+"\n");
+    }
+
+    private void togglegain(int chan){
+        gain[chan]=!gain[chan];
+        waitalittle();
+        if (gain[chan]) setdac(chan,daclevel[chan]+800);
+        else setdac(chan,daclevel[chan]-800);
     }
 
     private void downsample_plus(){
@@ -664,7 +692,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    protected int [] daclevel = {0,0,0,0};
     protected void setdac(int chan, int val){
         // channel 0 , board 0 calib
         // 136, 3, // header for i2c command with 3 bytes of data

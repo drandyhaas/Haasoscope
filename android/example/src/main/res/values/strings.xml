@@ -10,5 +10,6 @@
     <string name="button_down">button down</string>
     <string name="button_up">button_up</string>
     <string name="share">share</string>
+    <string name="pause">pause</string>
 
 </resources>
