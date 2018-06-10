@@ -349,7 +349,7 @@ class Haasoscope():
         # channel 0 , board 0 calib
         # 136, 3, // header for i2c command with 3 bytes of data
         # 96, // i2c address of dac
-        # 80,
+        # 80, // channel 80,82,84,86 for chan 0,1,2,3
         # 136, 22, // high 4 bits can be 8 or 9 (internal ref 2V or 4V, respectively), next 12 bits are the 0-4095 level
         # 0 // send to board 0 (200 for all boards)
     
