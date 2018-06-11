@@ -19695,24 +19695,24 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </part>
 <part name="R10M_1" library="rcl@1" deviceset="R-US_" device="R0805" value="10M"/>
 <part name="GND9" library="supply1" deviceset="GND" device=""/>
-<part name="RIN1" library="resistor" deviceset="R-EU_" device="R0805" value="1M">
+<part name="RIN1" library="resistor" deviceset="R-EU_" device="R0805" value="1.1M">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
+<attribute name="MPN" value="CRCW08051M10FKEA"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="RIN2" library="resistor" deviceset="R-EU_" device="R0805" value="1M">
+<part name="RIN2" library="resistor" deviceset="R-EU_" device="R0805" value="1.1M">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
+<attribute name="MPN" value="CRCW08051M10FKEA"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="RIN3" library="resistor" deviceset="R-EU_" device="R0805" value="1M">
+<part name="RIN3" library="resistor" deviceset="R-EU_" device="R0805" value="1.1M">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
+<attribute name="MPN" value="CRCW08051M10FKEA"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="RIN4" library="resistor" deviceset="R-EU_" device="R0805" value="1M">
+<part name="RIN4" library="resistor" deviceset="R-EU_" device="R0805" value="1.1M">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
+<attribute name="MPN" value="CRCW08051M10FKEA"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="C5VOPAMP2" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
@@ -20028,24 +20028,24 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="PIN_ANALOG_IOEXP" library="pinhead+" deviceset="PINHD-2X8" device="SMT" value="15-91-2160">
 <attribute name="MPN" value="15-91-2160"/>
 </part>
-<part name="RIN1_10K" library="resistor" deviceset="R-EU_" device="R0805" value="10K">
+<part name="RIN1_11K" library="resistor" deviceset="R-EU_" device="R0805" value="11K">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-10K"/>
+<attribute name="MPN" value="CRCW080511K0FKEA"/>
 <attribute name="OC_NEWARK" value="05M4535"/>
 </part>
-<part name="RIN2_10K" library="resistor" deviceset="R-EU_" device="R0805" value="10K">
+<part name="RIN2_11K" library="resistor" deviceset="R-EU_" device="R0805" value="11K">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-10K"/>
+<attribute name="MPN" value="CRCW080511K0FKEA"/>
 <attribute name="OC_NEWARK" value="05M4535"/>
 </part>
-<part name="RIN3_10K" library="resistor" deviceset="R-EU_" device="R0805" value="10K">
+<part name="RIN3_11K" library="resistor" deviceset="R-EU_" device="R0805" value="11K">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-10K"/>
+<attribute name="MPN" value="CRCW080511K0FKEA"/>
 <attribute name="OC_NEWARK" value="05M4535"/>
 </part>
-<part name="RIN4_10K" library="resistor" deviceset="R-EU_" device="R0805" value="10K">
+<part name="RIN4_11K" library="resistor" deviceset="R-EU_" device="R0805" value="11K">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-10K"/>
+<attribute name="MPN" value="CRCW080511K0FKEA"/>
 <attribute name="OC_NEWARK" value="05M4535"/>
 </part>
 <part name="RLED6" library="resistor" deviceset="R-EU_" device="R0805" value="560">
@@ -20157,24 +20157,24 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="COFFSETA3" library="rcl@1" deviceset="C-US" device="C1206" value="10uF">
 <attribute name="MPN" value="MF-CAP-1206-10uF"/>
 </part>
-<part name="RIN5" library="resistor" deviceset="R-EU_" device="R0805" value="1M">
+<part name="RIN5" library="resistor" deviceset="R-EU_" device="R0805" value="10M">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
+<attribute name="MPN" value="CRCW080510M0FKEB"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="RIN6" library="resistor" deviceset="R-EU_" device="R0805" value="1M">
+<part name="RIN6" library="resistor" deviceset="R-EU_" device="R0805" value="10M">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
+<attribute name="MPN" value="CRCW080510M0FKEB"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="RIN7" library="resistor" deviceset="R-EU_" device="R0805" value="1M">
+<part name="RIN7" library="resistor" deviceset="R-EU_" device="R0805" value="10M">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
+<attribute name="MPN" value="CRCW080510M0FKEB"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="RIN8" library="resistor" deviceset="R-EU_" device="R0805" value="1M">
+<part name="RIN8" library="resistor" deviceset="R-EU_" device="R0805" value="10M">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
+<attribute name="MPN" value="CRCW080510M0FKEB"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="GND77" library="supply1" deviceset="GND" device=""/>
@@ -20502,25 +20502,25 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </instance>
 <instance part="R10M_1" gate="G$1" x="-223.52" y="-68.58" rot="R270"/>
 <instance part="GND9" gate="1" x="-223.52" y="-60.96" rot="R180"/>
-<instance part="RIN1" gate="G$1" x="-238.76" y="-121.92" rot="R270">
-<attribute name="OC_NEWARK" x="-238.76" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MF" x="-238.76" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MPN" x="-238.76" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
+<instance part="RIN1" gate="G$1" x="-215.9" y="-142.24" rot="R270">
+<attribute name="OC_NEWARK" x="-215.9" y="-142.24" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MF" x="-215.9" y="-142.24" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MPN" x="-215.9" y="-142.24" size="1.778" layer="96" rot="R180" display="off"/>
 </instance>
-<instance part="RIN2" gate="G$1" x="-205.74" y="-121.92" rot="R270">
-<attribute name="OC_NEWARK" x="-205.74" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MF" x="-205.74" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MPN" x="-205.74" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
+<instance part="RIN2" gate="G$1" x="-182.88" y="-142.24" rot="R270">
+<attribute name="OC_NEWARK" x="-182.88" y="-142.24" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MF" x="-182.88" y="-142.24" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MPN" x="-182.88" y="-142.24" size="1.778" layer="96" rot="R180" display="off"/>
 </instance>
-<instance part="RIN3" gate="G$1" x="-172.72" y="-121.92" rot="R270">
-<attribute name="OC_NEWARK" x="-172.72" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MF" x="-172.72" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MPN" x="-172.72" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
+<instance part="RIN3" gate="G$1" x="-147.32" y="-142.24" rot="R270">
+<attribute name="OC_NEWARK" x="-147.32" y="-142.24" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MF" x="-147.32" y="-142.24" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MPN" x="-147.32" y="-142.24" size="1.778" layer="96" rot="R180" display="off"/>
 </instance>
-<instance part="RIN4" gate="G$1" x="-142.24" y="-121.92" rot="R270">
-<attribute name="OC_NEWARK" x="-142.24" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MF" x="-142.24" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MPN" x="-142.24" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
+<instance part="RIN4" gate="G$1" x="-114.3" y="-142.24" rot="R270">
+<attribute name="OC_NEWARK" x="-114.3" y="-142.24" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MF" x="-114.3" y="-142.24" size="1.778" layer="96" rot="R180" display="off"/>
+<attribute name="MPN" x="-114.3" y="-142.24" size="1.778" layer="96" rot="R180" display="off"/>
 </instance>
 <instance part="C5VOPAMP2" gate="G$1" x="-106.68" y="-200.66" smashed="yes" rot="R90">
 <attribute name="MPN" x="-106.68" y="-200.66" size="1.778" layer="96" rot="R90" display="off"/>
@@ -20865,22 +20865,22 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <attribute name="NAME" x="-504.19" y="26.035" size="1.778" layer="95"/>
 <attribute name="VALUE" x="-499.11" y="0" size="1.778" layer="96"/>
 </instance>
-<instance part="RIN1_10K" gate="G$1" x="-233.68" y="-139.7" rot="R270">
-<attribute name="OC_NEWARK" x="-233.68" y="-139.7" size="1.778" layer="96" display="off"/>
-<attribute name="MF" x="-233.68" y="-139.7" size="1.778" layer="96" display="off"/>
-<attribute name="MPN" x="-233.68" y="-139.7" size="1.778" layer="96" display="off"/>
+<instance part="RIN1_11K" gate="G$1" x="-238.76" y="-139.7" rot="R270">
+<attribute name="OC_NEWARK" x="-238.76" y="-139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MF" x="-238.76" y="-139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="-238.76" y="-139.7" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="RIN2_10K" gate="G$1" x="-200.66" y="-139.7" rot="R270">
-<attribute name="OC_NEWARK" x="-200.66" y="-139.7" size="1.778" layer="96" display="off"/>
-<attribute name="MF" x="-200.66" y="-139.7" size="1.778" layer="96" display="off"/>
-<attribute name="MPN" x="-200.66" y="-139.7" size="1.778" layer="96" display="off"/>
+<instance part="RIN2_11K" gate="G$1" x="-205.74" y="-139.7" rot="R270">
+<attribute name="OC_NEWARK" x="-205.74" y="-139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MF" x="-205.74" y="-139.7" size="1.778" layer="96" display="off"/>
+<attribute name="MPN" x="-205.74" y="-139.7" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="RIN3_10K" gate="G$1" x="-170.18" y="-139.7" rot="R270">
+<instance part="RIN3_11K" gate="G$1" x="-170.18" y="-139.7" rot="R270">
 <attribute name="OC_NEWARK" x="-170.18" y="-139.7" size="1.778" layer="96" display="off"/>
 <attribute name="MF" x="-170.18" y="-139.7" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="-170.18" y="-139.7" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="RIN4_10K" gate="G$1" x="-137.16" y="-139.7" rot="R270">
+<instance part="RIN4_11K" gate="G$1" x="-137.16" y="-139.7" rot="R270">
 <attribute name="OC_NEWARK" x="-137.16" y="-139.7" size="1.778" layer="96" display="off"/>
 <attribute name="MF" x="-137.16" y="-139.7" size="1.778" layer="96" display="off"/>
 <attribute name="MPN" x="-137.16" y="-139.7" size="1.778" layer="96" display="off"/>
@@ -20918,13 +20918,13 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <attribute name="MPN" x="-109.22" y="111.76" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="-112.776" y="116.332" size="1.778" layer="95" rot="R270"/>
 </instance>
-<instance part="CIN1NF_1" gate="G$1" x="-227.33" y="-142.24" smashed="yes">
-<attribute name="NAME" x="-231.14" y="-140.97" size="1.27" layer="95" ratio="10"/>
-<attribute name="MPN" x="-227.33" y="-142.24" size="1.778" layer="96" display="off"/>
+<instance part="CIN1NF_1" gate="G$1" x="-232.41" y="-142.24" smashed="yes">
+<attribute name="NAME" x="-236.22" y="-140.97" size="1.27" layer="95" ratio="10"/>
+<attribute name="MPN" x="-232.41" y="-142.24" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="CIN1NF_2" gate="G$1" x="-194.31" y="-142.24" smashed="yes">
-<attribute name="NAME" x="-198.12" y="-140.97" size="1.27" layer="95" ratio="10"/>
-<attribute name="MPN" x="-194.31" y="-142.24" size="1.778" layer="96" display="off"/>
+<instance part="CIN1NF_2" gate="G$1" x="-199.39" y="-142.24" smashed="yes">
+<attribute name="NAME" x="-203.2" y="-140.97" size="1.27" layer="95" ratio="10"/>
+<attribute name="MPN" x="-199.39" y="-142.24" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="CIN1NF_3" gate="G$1" x="-163.83" y="-142.24" smashed="yes">
 <attribute name="NAME" x="-167.64" y="-140.97" size="1.27" layer="95" ratio="10"/>
@@ -21033,8 +21033,8 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </instance>
 <instance part="SW_SUPER1" gate="G$1" x="-231.14" y="-127" rot="R270"/>
 <instance part="SW_SUPER2" gate="G$1" x="-198.12" y="-127" rot="R270"/>
-<instance part="SW_SUPER3" gate="G$1" x="-167.64" y="-127" rot="R270"/>
-<instance part="SW_SUPER4" gate="G$1" x="-134.62" y="-127" rot="R270"/>
+<instance part="SW_SUPER3" gate="G$1" x="-162.56" y="-127" rot="R270"/>
+<instance part="SW_SUPER4" gate="G$1" x="-129.54" y="-127" rot="R270"/>
 <instance part="CL1" gate="G$1" x="-317.5" y="-189.23" rot="R90">
 <attribute name="MPN" x="-317.5" y="-189.23" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
@@ -21056,21 +21056,21 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <instance part="CH4" gate="G$1" x="-58.42" y="-228.6" rot="R90">
 <attribute name="MPN" x="-58.42" y="-228.6" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
-<instance part="CIN5_1" gate="G$1" x="-242.57" y="-121.92" smashed="yes" rot="R180">
-<attribute name="NAME" x="-238.76" y="-123.19" size="1.27" layer="95" ratio="10" rot="R180"/>
-<attribute name="MPN" x="-242.57" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
+<instance part="CIN5_1" gate="G$1" x="-219.71" y="-142.24" smashed="yes">
+<attribute name="NAME" x="-223.52" y="-140.97" size="1.27" layer="95" ratio="10"/>
+<attribute name="MPN" x="-219.71" y="-142.24" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="CIN5_2" gate="G$1" x="-209.55" y="-121.92" smashed="yes" rot="R180">
-<attribute name="NAME" x="-205.74" y="-123.19" size="1.27" layer="95" ratio="10" rot="R180"/>
-<attribute name="MPN" x="-209.55" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
+<instance part="CIN5_2" gate="G$1" x="-186.69" y="-142.24" smashed="yes">
+<attribute name="NAME" x="-190.5" y="-140.97" size="1.27" layer="95" ratio="10"/>
+<attribute name="MPN" x="-186.69" y="-142.24" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="CIN5_3" gate="G$1" x="-176.53" y="-121.92" smashed="yes" rot="R180">
-<attribute name="NAME" x="-172.72" y="-123.19" size="1.27" layer="95" ratio="10" rot="R180"/>
-<attribute name="MPN" x="-176.53" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
+<instance part="CIN5_3" gate="G$1" x="-151.13" y="-142.24" smashed="yes">
+<attribute name="NAME" x="-154.94" y="-140.97" size="1.27" layer="95" ratio="10"/>
+<attribute name="MPN" x="-151.13" y="-142.24" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="CIN5_4" gate="G$1" x="-146.05" y="-121.92" smashed="yes" rot="R180">
-<attribute name="NAME" x="-142.24" y="-123.19" size="1.27" layer="95" ratio="10" rot="R180"/>
-<attribute name="MPN" x="-146.05" y="-121.92" size="1.778" layer="96" rot="R180" display="off"/>
+<instance part="CIN5_4" gate="G$1" x="-118.11" y="-142.24" smashed="yes">
+<attribute name="NAME" x="-121.92" y="-140.97" size="1.27" layer="95" ratio="10"/>
+<attribute name="MPN" x="-118.11" y="-142.24" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="RLEDPOW" gate="G$1" x="-530.86" y="-71.12" rot="R270">
 <attribute name="OC_NEWARK" x="-530.86" y="-71.12" size="1.778" layer="96" rot="R180" display="off"/>
@@ -21083,13 +21083,13 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <attribute name="MPN" x="-535.94" y="-66.04" size="1.778" layer="96" rot="R90" display="off"/>
 <attribute name="NAME" x="-531.368" y="-62.484" size="1.778" layer="95" rot="R180"/>
 </instance>
-<instance part="CIN56_1" gate="G$1" x="-222.25" y="-142.24" smashed="yes">
-<attribute name="NAME" x="-226.06" y="-140.97" size="1.27" layer="95" ratio="10"/>
-<attribute name="MPN" x="-222.25" y="-142.24" size="1.778" layer="96" display="off"/>
+<instance part="CIN56_1" gate="G$1" x="-227.33" y="-142.24" smashed="yes">
+<attribute name="NAME" x="-231.14" y="-140.97" size="1.27" layer="95" ratio="10"/>
+<attribute name="MPN" x="-227.33" y="-142.24" size="1.778" layer="96" display="off"/>
 </instance>
-<instance part="CIN56_2" gate="G$1" x="-189.23" y="-142.24" smashed="yes">
-<attribute name="NAME" x="-193.04" y="-140.97" size="1.27" layer="95" ratio="10"/>
-<attribute name="MPN" x="-189.23" y="-142.24" size="1.778" layer="96" display="off"/>
+<instance part="CIN56_2" gate="G$1" x="-194.31" y="-142.24" smashed="yes">
+<attribute name="NAME" x="-198.12" y="-140.97" size="1.27" layer="95" ratio="10"/>
+<attribute name="MPN" x="-194.31" y="-142.24" size="1.778" layer="96" display="off"/>
 </instance>
 <instance part="CIN56_3" gate="G$1" x="-158.75" y="-142.24" smashed="yes">
 <attribute name="NAME" x="-162.56" y="-140.97" size="1.27" layer="95" ratio="10"/>
@@ -23192,9 +23192,8 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="-251.46" y1="-248.92" x2="-251.46" y2="-256.54" width="0.1524" layer="91"/>
 <wire x1="-251.46" y1="-256.54" x2="-251.46" y2="-264.16" width="0.1524" layer="91"/>
 <wire x1="-251.46" y1="-264.16" x2="-251.46" y2="-265.43" width="0.1524" layer="91"/>
-<wire x1="-200.66" y1="-144.78" x2="-200.66" y2="-152.4" width="0.1524" layer="91"/>
 <pinref part="U1" gate="A" pin="-INB"/>
-<wire x1="-200.66" y1="-152.4" x2="-200.66" y2="-210.82" width="0.1524" layer="91"/>
+<wire x1="-200.66" y1="-154.94" x2="-200.66" y2="-210.82" width="0.1524" layer="91"/>
 <wire x1="-200.66" y1="-210.82" x2="-198.12" y2="-210.82" width="0.1524" layer="91"/>
 <label x="-200.66" y="-187.96" size="1.778" layer="95" rot="R90"/>
 <wire x1="-198.12" y1="-210.82" x2="-190.5" y2="-210.82" width="0.1524" layer="91"/>
@@ -23207,30 +23206,37 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <junction x="-251.46" y="-248.92"/>
 <pinref part="RGAIN2_2" gate="G$1" pin="2"/>
 <junction x="-251.46" y="-256.54"/>
-<pinref part="RIN2_10K" gate="G$1" pin="2"/>
-<pinref part="RIN2" gate="G$1" pin="2"/>
-<wire x1="-209.55" y1="-124.46" x2="-205.74" y2="-127" width="0.1524" layer="91"/>
-<junction x="-205.74" y="-127"/>
-<wire x1="-205.74" y1="-127" x2="-205.74" y2="-152.4" width="0.1524" layer="91"/>
-<wire x1="-205.74" y1="-152.4" x2="-200.66" y2="-152.4" width="0.1524" layer="91"/>
-<junction x="-200.66" y="-152.4"/>
-<junction x="-200.66" y="-144.78"/>
-<pinref part="CIN1NF_2" gate="G$1" pin="2"/>
-<wire x1="-200.66" y1="-152.4" x2="-194.31" y2="-147.32" width="0.1524" layer="91"/>
-<pinref part="CIN5_2" gate="G$1" pin="1"/>
-<pinref part="CIN56_2" gate="G$1" pin="2"/>
-<wire x1="-194.31" y1="-147.32" x2="-189.23" y2="-147.32" width="0.1524" layer="91"/>
-<junction x="-194.31" y="-147.32"/>
 <pinref part="CH2" gate="G$1" pin="3"/>
 <junction x="-251.46" y="-264.16"/>
 <pinref part="CL2" gate="G$1" pin="3"/>
 <wire x1="-251.46" y1="-237.49" x2="-251.46" y2="-242.57" width="0.1524" layer="91"/>
+<wire x1="-205.74" y1="-154.94" x2="-200.66" y2="-154.94" width="0.1524" layer="91"/>
+<pinref part="CIN56_2" gate="G$1" pin="2"/>
+<pinref part="CIN1NF_2" gate="G$1" pin="2"/>
+<wire x1="-199.39" y1="-147.32" x2="-194.31" y2="-147.32" width="0.1524" layer="91"/>
+<wire x1="-199.39" y1="-147.32" x2="-199.39" y2="-154.94" width="0.1524" layer="91"/>
+<wire x1="-199.39" y1="-154.94" x2="-200.66" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-199.39" y="-147.32"/>
+<junction x="-200.66" y="-154.94"/>
+<junction x="-194.31" y="-147.32"/>
+<pinref part="RIN2_11K" gate="G$1" pin="2"/>
+<wire x1="-205.74" y1="-144.78" x2="-205.74" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-205.74" y="-154.94"/>
+<pinref part="RIN2" gate="G$1" pin="2"/>
+<pinref part="CIN5_2" gate="G$1" pin="2"/>
+<wire x1="-182.88" y1="-147.32" x2="-186.69" y2="-147.32" width="0.1524" layer="91"/>
+<wire x1="-186.69" y1="-147.32" x2="-186.69" y2="-154.94" width="0.1524" layer="91"/>
+<wire x1="-186.69" y1="-154.94" x2="-199.39" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-186.69" y="-147.32"/>
+<junction x="-199.39" y="-154.94"/>
+<wire x1="-199.39" y1="-154.94" x2="-200.66" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-186.69" y="-154.94"/>
 </segment>
 </net>
 <net name="INBMINUS2" class="0">
 <segment>
 <pinref part="U2" gate="A" pin="-INB"/>
-<wire x1="-137.16" y1="-152.4" x2="-137.16" y2="-210.82" width="0.1524" layer="91"/>
+<wire x1="-137.16" y1="-154.94" x2="-137.16" y2="-210.82" width="0.1524" layer="91"/>
 <wire x1="-137.16" y1="-210.82" x2="-109.22" y2="-210.82" width="0.1524" layer="91"/>
 <label x="-137.668" y="-189.23" size="1.778" layer="95" rot="R90"/>
 <wire x1="-63.5" y1="-207.01" x2="-63.5" y2="-210.82" width="0.1524" layer="91"/>
@@ -23245,25 +23251,29 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="RGAIN2_4" gate="G$1" pin="2"/>
 <junction x="-63.5" y="-220.98"/>
 <pinref part="CGAIN1_4" gate="G$1" pin="1"/>
-<pinref part="RIN4_10K" gate="G$1" pin="2"/>
-<wire x1="-137.16" y1="-144.78" x2="-137.16" y2="-152.4" width="0.1524" layer="91"/>
-<pinref part="RIN4" gate="G$1" pin="2"/>
-<wire x1="-146.05" y1="-124.46" x2="-142.24" y2="-127" width="0.1524" layer="91"/>
-<wire x1="-142.24" y1="-127" x2="-142.24" y2="-152.4" width="0.1524" layer="91"/>
-<wire x1="-142.24" y1="-152.4" x2="-137.16" y2="-152.4" width="0.1524" layer="91"/>
-<junction x="-142.24" y="-127"/>
-<junction x="-137.16" y="-152.4"/>
-<junction x="-137.16" y="-144.78"/>
-<pinref part="CIN1NF_4" gate="G$1" pin="2"/>
-<wire x1="-137.16" y1="-152.4" x2="-130.81" y2="-147.32" width="0.1524" layer="91"/>
-<pinref part="CIN5_4" gate="G$1" pin="1"/>
-<pinref part="CIN56_4" gate="G$1" pin="2"/>
-<wire x1="-130.81" y1="-147.32" x2="-125.73" y2="-147.32" width="0.1524" layer="91"/>
-<junction x="-130.81" y="-147.32"/>
 <pinref part="CH4" gate="G$1" pin="3"/>
 <pinref part="CL4" gate="G$1" pin="3"/>
 <wire x1="-63.5" y1="-201.93" x2="-63.5" y2="-207.01" width="0.1524" layer="91"/>
 <junction x="-63.5" y="-207.01"/>
+<pinref part="CIN56_4" gate="G$1" pin="2"/>
+<pinref part="CIN1NF_4" gate="G$1" pin="2"/>
+<wire x1="-130.81" y1="-147.32" x2="-125.73" y2="-147.32" width="0.1524" layer="91"/>
+<wire x1="-130.81" y1="-147.32" x2="-130.81" y2="-154.94" width="0.1524" layer="91"/>
+<wire x1="-130.81" y1="-154.94" x2="-137.16" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-130.81" y="-147.32"/>
+<junction x="-125.73" y="-147.32"/>
+<pinref part="RIN4_11K" gate="G$1" pin="2"/>
+<wire x1="-137.16" y1="-144.78" x2="-137.16" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-137.16" y="-154.94"/>
+<pinref part="RIN4" gate="G$1" pin="2"/>
+<pinref part="CIN5_4" gate="G$1" pin="2"/>
+<wire x1="-114.3" y1="-147.32" x2="-118.11" y2="-147.32" width="0.1524" layer="91"/>
+<wire x1="-118.11" y1="-147.32" x2="-118.11" y2="-154.94" width="0.1524" layer="91"/>
+<wire x1="-118.11" y1="-154.94" x2="-130.81" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-118.11" y="-147.32"/>
+<junction x="-130.81" y="-154.94"/>
+<wire x1="-130.81" y1="-154.94" x2="-137.16" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-118.11" y="-154.94"/>
 </segment>
 </net>
 <net name="DCLKA1" class="0">
@@ -23359,8 +23369,8 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </net>
 <net name="INAMINUS1" class="0">
 <segment>
-<wire x1="-233.68" y1="-152.4" x2="-233.68" y2="-208.28" width="0.1524" layer="91"/>
 <pinref part="U1" gate="A" pin="-INA"/>
+<wire x1="-233.68" y1="-154.94" x2="-233.68" y2="-208.28" width="0.1524" layer="91"/>
 <wire x1="-233.68" y1="-208.28" x2="-246.38" y2="-208.28" width="0.1524" layer="91"/>
 <label x="-233.68" y="-175.26" size="1.778" layer="95" rot="R270"/>
 <wire x1="-233.68" y1="-208.28" x2="-233.68" y2="-226.06" width="0.1524" layer="91"/>
@@ -23374,27 +23384,33 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="-233.68" y1="-226.06" x2="-322.58" y2="-226.06" width="0.1524" layer="91"/>
 <wire x1="-322.58" y1="-226.06" x2="-322.58" y2="-218.44" width="0.1524" layer="91"/>
 <pinref part="CGAIN1_1" gate="G$1" pin="1"/>
-<pinref part="RIN1" gate="G$1" pin="2"/>
 <wire x1="-322.58" y1="-218.44" x2="-322.58" y2="-210.82" width="0.1524" layer="91"/>
-<wire x1="-242.57" y1="-124.46" x2="-238.76" y2="-127" width="0.1524" layer="91"/>
-<wire x1="-238.76" y1="-127" x2="-238.76" y2="-152.4" width="0.1524" layer="91"/>
-<junction x="-238.76" y="-127"/>
-<wire x1="-238.76" y1="-152.4" x2="-233.68" y2="-152.4" width="0.1524" layer="91"/>
-<pinref part="RIN1_10K" gate="G$1" pin="2"/>
-<wire x1="-233.68" y1="-144.78" x2="-233.68" y2="-152.4" width="0.1524" layer="91"/>
-<junction x="-233.68" y="-152.4"/>
-<junction x="-233.68" y="-144.78"/>
-<pinref part="CIN1NF_1" gate="G$1" pin="2"/>
-<wire x1="-227.33" y1="-147.32" x2="-233.68" y2="-152.4" width="0.1524" layer="91"/>
-<pinref part="CIN5_1" gate="G$1" pin="1"/>
-<pinref part="CIN56_1" gate="G$1" pin="2"/>
-<wire x1="-227.33" y1="-147.32" x2="-222.25" y2="-147.32" width="0.1524" layer="91"/>
-<junction x="-227.33" y="-147.32"/>
 <pinref part="CH1" gate="G$1" pin="3"/>
 <junction x="-322.58" y="-218.44"/>
 <pinref part="CL1" gate="G$1" pin="3"/>
 <wire x1="-322.58" y1="-196.85" x2="-322.58" y2="-189.23" width="0.1524" layer="91"/>
 <junction x="-322.58" y="-196.85"/>
+<wire x1="-238.76" y1="-154.94" x2="-233.68" y2="-154.94" width="0.1524" layer="91"/>
+<pinref part="CIN56_1" gate="G$1" pin="2"/>
+<pinref part="CIN1NF_1" gate="G$1" pin="2"/>
+<wire x1="-232.41" y1="-147.32" x2="-227.33" y2="-147.32" width="0.1524" layer="91"/>
+<wire x1="-232.41" y1="-147.32" x2="-232.41" y2="-154.94" width="0.1524" layer="91"/>
+<wire x1="-232.41" y1="-154.94" x2="-233.68" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-232.41" y="-147.32"/>
+<junction x="-233.68" y="-154.94"/>
+<junction x="-227.33" y="-147.32"/>
+<pinref part="RIN1_11K" gate="G$1" pin="2"/>
+<wire x1="-238.76" y1="-144.78" x2="-238.76" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-238.76" y="-154.94"/>
+<pinref part="RIN1" gate="G$1" pin="2"/>
+<pinref part="CIN5_1" gate="G$1" pin="2"/>
+<wire x1="-215.9" y1="-147.32" x2="-219.71" y2="-147.32" width="0.1524" layer="91"/>
+<wire x1="-219.71" y1="-147.32" x2="-219.71" y2="-154.94" width="0.1524" layer="91"/>
+<wire x1="-219.71" y1="-154.94" x2="-232.41" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-219.71" y="-147.32"/>
+<junction x="-232.41" y="-154.94"/>
+<wire x1="-232.41" y1="-154.94" x2="-233.68" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-219.71" y="-154.94"/>
 </segment>
 </net>
 <net name="OFFSET2" class="0">
@@ -23827,7 +23843,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <junction x="-495.3" y="5.08"/>
 </segment>
 </net>
-<net name="N$25" class="0">
+<net name="N$25" class="3">
 <segment>
 <pinref part="R50-6" gate="G$1" pin="1"/>
 <pinref part="R50-7" gate="G$1" pin="1"/>
@@ -23842,7 +23858,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <junction x="-195.58" y="-73.66"/>
 </segment>
 </net>
-<net name="N$26" class="0">
+<net name="N$26" class="3">
 <segment>
 <pinref part="R50-10" gate="G$1" pin="1"/>
 <pinref part="R50-11" gate="G$1" pin="1"/>
@@ -23857,7 +23873,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <junction x="-162.56" y="-73.66"/>
 </segment>
 </net>
-<net name="N$28" class="0">
+<net name="N$28" class="3">
 <segment>
 <pinref part="R50-14" gate="G$1" pin="1"/>
 <pinref part="R50-15" gate="G$1" pin="1"/>
@@ -23872,7 +23888,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <junction x="-132.08" y="-73.66"/>
 </segment>
 </net>
-<net name="N$29" class="0">
+<net name="N$29" class="3">
 <segment>
 <pinref part="SW_TERM1" gate="G$1" pin="1"/>
 <pinref part="R50-4" gate="G$1" pin="1"/>
@@ -24208,16 +24224,11 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="-238.76" y1="-109.22" x2="-238.76" y2="-106.68" width="0.1524" layer="91"/>
 <wire x1="-238.76" y1="-106.68" x2="-238.76" y2="-111.76" width="0.1524" layer="91"/>
 <junction x="-238.76" y="-106.68"/>
-<wire x1="-238.76" y1="-111.76" x2="-238.76" y2="-116.84" width="0.1524" layer="91"/>
-<pinref part="RIN1" gate="G$1" pin="1"/>
-<junction x="-238.76" y="-116.84"/>
 <pinref part="RIN5" gate="G$1" pin="1"/>
-<junction x="-238.76" y="-111.76"/>
 <pinref part="SW_SUPER1" gate="G$1" pin="C"/>
-<wire x1="-231.14" y1="-119.38" x2="-238.76" y2="-119.38" width="0.1524" layer="91"/>
-<wire x1="-238.76" y1="-119.38" x2="-238.76" y2="-116.84" width="0.1524" layer="91"/>
-<wire x1="-238.76" y1="-116.84" x2="-242.57" y2="-116.84" width="0.1524" layer="91"/>
-<pinref part="CIN5_1" gate="G$1" pin="2"/>
+<wire x1="-238.76" y1="-111.76" x2="-238.76" y2="-119.38" width="0.1524" layer="91"/>
+<wire x1="-238.76" y1="-119.38" x2="-231.14" y2="-119.38" width="0.1524" layer="91"/>
+<junction x="-238.76" y="-111.76"/>
 </segment>
 </net>
 <net name="INJ2" class="0">
@@ -24243,16 +24254,11 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="-205.74" y1="-109.22" x2="-205.74" y2="-106.68" width="0.1524" layer="91"/>
 <wire x1="-205.74" y1="-109.22" x2="-205.74" y2="-111.76" width="0.1524" layer="91"/>
 <junction x="-205.74" y="-109.22"/>
-<pinref part="RIN2" gate="G$1" pin="1"/>
-<wire x1="-205.74" y1="-111.76" x2="-205.74" y2="-116.84" width="0.1524" layer="91"/>
-<junction x="-205.74" y="-116.84"/>
 <pinref part="RIN6" gate="G$1" pin="1"/>
+<wire x1="-205.74" y1="-111.76" x2="-205.74" y2="-119.38" width="0.1524" layer="91"/>
 <junction x="-205.74" y="-111.76"/>
 <pinref part="SW_SUPER2" gate="G$1" pin="C"/>
-<wire x1="-198.12" y1="-119.38" x2="-205.74" y2="-119.38" width="0.1524" layer="91"/>
-<wire x1="-205.74" y1="-119.38" x2="-205.74" y2="-116.84" width="0.1524" layer="91"/>
-<pinref part="CIN5_2" gate="G$1" pin="2"/>
-<wire x1="-209.55" y1="-116.84" x2="-205.74" y2="-116.84" width="0.1524" layer="91"/>
+<wire x1="-205.74" y1="-119.38" x2="-198.12" y2="-119.38" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="INJ3" class="0">
@@ -24345,25 +24351,32 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </net>
 <net name="N$20" class="0">
 <segment>
-<pinref part="RIN1_10K" gate="G$1" pin="1"/>
-<pinref part="CIN1NF_1" gate="G$1" pin="1"/>
-<wire x1="-227.33" y1="-139.7" x2="-233.68" y2="-134.62" width="0.1524" layer="91"/>
+<pinref part="RIN1_11K" gate="G$1" pin="1"/>
 <pinref part="SW_SUPER1" gate="G$1" pin="2"/>
-<junction x="-233.68" y="-134.62"/>
+<wire x1="-238.76" y1="-134.62" x2="-233.68" y2="-134.62" width="0.1524" layer="91"/>
 <pinref part="CIN56_1" gate="G$1" pin="1"/>
-<wire x1="-227.33" y1="-139.7" x2="-222.25" y2="-139.7" width="0.1524" layer="91"/>
+<pinref part="CIN1NF_1" gate="G$1" pin="1"/>
+<wire x1="-232.41" y1="-139.7" x2="-227.33" y2="-139.7" width="0.1524" layer="91"/>
+<wire x1="-233.68" y1="-134.62" x2="-233.68" y2="-139.7" width="0.1524" layer="91"/>
+<wire x1="-233.68" y1="-139.7" x2="-232.41" y2="-139.7" width="0.1524" layer="91"/>
+<junction x="-233.68" y="-134.62"/>
+<junction x="-232.41" y="-139.7"/>
 <junction x="-227.33" y="-139.7"/>
 </segment>
 </net>
 <net name="N$38" class="0">
 <segment>
-<pinref part="RIN2_10K" gate="G$1" pin="1"/>
 <pinref part="CIN1NF_2" gate="G$1" pin="1"/>
-<wire x1="-200.66" y1="-134.62" x2="-194.31" y2="-139.7" width="0.1524" layer="91"/>
-<pinref part="SW_SUPER2" gate="G$1" pin="2"/>
-<junction x="-200.66" y="-134.62"/>
 <pinref part="CIN56_2" gate="G$1" pin="1"/>
-<wire x1="-194.31" y1="-139.7" x2="-189.23" y2="-139.7" width="0.1524" layer="91"/>
+<wire x1="-199.39" y1="-139.7" x2="-198.12" y2="-139.7" width="0.1524" layer="91"/>
+<pinref part="RIN2_11K" gate="G$1" pin="1"/>
+<pinref part="SW_SUPER2" gate="G$1" pin="2"/>
+<wire x1="-198.12" y1="-139.7" x2="-194.31" y2="-139.7" width="0.1524" layer="91"/>
+<wire x1="-205.74" y1="-134.62" x2="-200.66" y2="-134.62" width="0.1524" layer="91"/>
+<wire x1="-199.39" y1="-139.7" x2="-200.66" y2="-139.7" width="0.1524" layer="91"/>
+<wire x1="-200.66" y1="-139.7" x2="-200.66" y2="-134.62" width="0.1524" layer="91"/>
+<junction x="-200.66" y="-134.62"/>
+<junction x="-199.39" y="-139.7"/>
 <junction x="-194.31" y="-139.7"/>
 </segment>
 </net>
@@ -24375,48 +24388,26 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="-172.72" y1="-109.22" x2="-172.72" y2="-106.68" width="0.1524" layer="91"/>
 <wire x1="-172.72" y1="-109.22" x2="-172.72" y2="-111.76" width="0.1524" layer="91"/>
 <junction x="-172.72" y="-109.22"/>
-<pinref part="RIN3" gate="G$1" pin="1"/>
-<wire x1="-172.72" y1="-111.76" x2="-172.72" y2="-116.84" width="0.1524" layer="91"/>
-<junction x="-172.72" y="-116.84"/>
 <pinref part="RIN7" gate="G$1" pin="1"/>
+<wire x1="-172.72" y1="-111.76" x2="-172.72" y2="-119.38" width="0.1524" layer="91"/>
 <junction x="-172.72" y="-111.76"/>
 <pinref part="SW_SUPER3" gate="G$1" pin="C"/>
-<wire x1="-167.64" y1="-119.38" x2="-172.72" y2="-119.38" width="0.1524" layer="91"/>
-<wire x1="-172.72" y1="-119.38" x2="-172.72" y2="-116.84" width="0.1524" layer="91"/>
-<pinref part="CIN5_3" gate="G$1" pin="2"/>
-<wire x1="-176.53" y1="-116.84" x2="-172.72" y2="-116.84" width="0.1524" layer="91"/>
+<wire x1="-172.72" y1="-119.38" x2="-162.56" y2="-119.38" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$40" class="0">
 <segment>
-<pinref part="RIN3_10K" gate="G$1" pin="1"/>
-<pinref part="CIN1NF_3" gate="G$1" pin="1"/>
-<wire x1="-170.18" y1="-134.62" x2="-163.83" y2="-139.7" width="0.1524" layer="91"/>
+<pinref part="RIN3_11K" gate="G$1" pin="1"/>
 <pinref part="SW_SUPER3" gate="G$1" pin="2"/>
-<junction x="-170.18" y="-134.62"/>
+<wire x1="-165.1" y1="-134.62" x2="-170.18" y2="-134.62" width="0.1524" layer="91"/>
+<pinref part="CIN1NF_3" gate="G$1" pin="1"/>
+<wire x1="-165.1" y1="-134.62" x2="-165.1" y2="-139.7" width="0.1524" layer="91"/>
+<wire x1="-165.1" y1="-139.7" x2="-163.83" y2="-139.7" width="0.1524" layer="91"/>
+<junction x="-165.1" y="-134.62"/>
 <pinref part="CIN56_3" gate="G$1" pin="1"/>
 <wire x1="-163.83" y1="-139.7" x2="-158.75" y2="-139.7" width="0.1524" layer="91"/>
 <junction x="-163.83" y="-139.7"/>
-</segment>
-</net>
-<net name="N$41" class="0">
-<segment>
-<pinref part="C_AC4" gate="G$1" pin="1"/>
-<pinref part="K4" gate="G$1" pin="DS1"/>
-<wire x1="-146.05" y1="-109.22" x2="-142.24" y2="-109.22" width="0.1524" layer="91"/>
-<wire x1="-142.24" y1="-109.22" x2="-142.24" y2="-106.68" width="0.1524" layer="91"/>
-<wire x1="-142.24" y1="-109.22" x2="-142.24" y2="-111.76" width="0.1524" layer="91"/>
-<junction x="-142.24" y="-109.22"/>
-<pinref part="RIN4" gate="G$1" pin="1"/>
-<wire x1="-142.24" y1="-111.76" x2="-142.24" y2="-116.84" width="0.1524" layer="91"/>
-<junction x="-142.24" y="-116.84"/>
-<pinref part="RIN8" gate="G$1" pin="1"/>
-<junction x="-142.24" y="-111.76"/>
-<pinref part="SW_SUPER4" gate="G$1" pin="C"/>
-<wire x1="-134.62" y1="-119.38" x2="-142.24" y2="-119.38" width="0.1524" layer="91"/>
-<wire x1="-142.24" y1="-119.38" x2="-142.24" y2="-116.84" width="0.1524" layer="91"/>
-<pinref part="CIN5_4" gate="G$1" pin="2"/>
-<wire x1="-146.05" y1="-116.84" x2="-142.24" y2="-116.84" width="0.1524" layer="91"/>
+<junction x="-158.75" y="-139.7"/>
 </segment>
 </net>
 <net name="N$16" class="0">
@@ -24478,8 +24469,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </net>
 <net name="INAMINUS2" class="0">
 <segment>
-<pinref part="RIN3_10K" gate="G$1" pin="2"/>
-<wire x1="-170.18" y1="-144.78" x2="-170.18" y2="-154.94" width="0.1524" layer="91"/>
 <pinref part="U2" gate="A" pin="-INA"/>
 <label x="-154.94" y="-187.96" size="1.778" layer="95" rot="R90"/>
 <wire x1="-165.1" y1="-208.28" x2="-154.94" y2="-208.28" width="0.1524" layer="91"/>
@@ -24502,23 +24491,29 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <junction x="-160.02" y="-242.57"/>
 <wire x1="-154.94" y1="-208.28" x2="-154.94" y2="-154.94" width="0.1524" layer="91"/>
 <junction x="-154.94" y="-208.28"/>
-<wire x1="-170.18" y1="-154.94" x2="-154.94" y2="-154.94" width="0.1524" layer="91"/>
-<pinref part="RIN3" gate="G$1" pin="2"/>
-<wire x1="-176.53" y1="-124.46" x2="-172.72" y2="-127" width="0.1524" layer="91"/>
-<wire x1="-172.72" y1="-127" x2="-172.72" y2="-154.94" width="0.1524" layer="91"/>
-<wire x1="-172.72" y1="-154.94" x2="-170.18" y2="-154.94" width="0.1524" layer="91"/>
-<junction x="-172.72" y="-127"/>
-<junction x="-170.18" y="-154.94"/>
-<junction x="-170.18" y="-144.78"/>
-<pinref part="CIN5_3" gate="G$1" pin="1"/>
-<pinref part="CIN56_3" gate="G$1" pin="2"/>
-<pinref part="CIN1NF_3" gate="G$1" pin="2"/>
-<wire x1="-163.83" y1="-147.32" x2="-158.75" y2="-147.32" width="0.1524" layer="91"/>
-<wire x1="-163.83" y1="-147.32" x2="-170.18" y2="-154.94" width="0.1524" layer="91"/>
-<junction x="-163.83" y="-147.32"/>
 <pinref part="CL3" gate="G$1" pin="3"/>
 <junction x="-160.02" y="-237.49"/>
 <pinref part="CH3" gate="G$1" pin="3"/>
+<pinref part="CIN1NF_3" gate="G$1" pin="2"/>
+<wire x1="-163.83" y1="-147.32" x2="-163.83" y2="-154.94" width="0.1524" layer="91"/>
+<pinref part="CIN56_3" gate="G$1" pin="2"/>
+<wire x1="-163.83" y1="-154.94" x2="-170.18" y2="-154.94" width="0.1524" layer="91"/>
+<wire x1="-163.83" y1="-147.32" x2="-158.75" y2="-147.32" width="0.1524" layer="91"/>
+<junction x="-163.83" y="-147.32"/>
+<wire x1="-163.83" y1="-154.94" x2="-154.94" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-163.83" y="-154.94"/>
+<junction x="-158.75" y="-147.32"/>
+<pinref part="RIN3_11K" gate="G$1" pin="2"/>
+<wire x1="-170.18" y1="-144.78" x2="-170.18" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-170.18" y="-154.94"/>
+<pinref part="RIN3" gate="G$1" pin="2"/>
+<pinref part="CIN5_3" gate="G$1" pin="2"/>
+<wire x1="-147.32" y1="-147.32" x2="-151.13" y2="-147.32" width="0.1524" layer="91"/>
+<wire x1="-151.13" y1="-147.32" x2="-151.13" y2="-154.94" width="0.1524" layer="91"/>
+<wire x1="-151.13" y1="-154.94" x2="-154.94" y2="-154.94" width="0.1524" layer="91"/>
+<junction x="-151.13" y="-147.32"/>
+<junction x="-154.94" y="-154.94"/>
+<junction x="-151.13" y="-154.94"/>
 </segment>
 </net>
 <net name="N$44" class="0">
@@ -24721,20 +24716,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="LEDPOW" gate="G$1" pin="C"/>
 </segment>
 </net>
-<net name="N$36" class="0">
-<segment>
-<pinref part="CIN56_4" gate="G$1" pin="1"/>
-<wire x1="-129.54" y1="-139.7" x2="-125.73" y2="-139.7" width="0.1524" layer="91"/>
-<pinref part="RIN4_10K" gate="G$1" pin="1"/>
-<pinref part="CIN1NF_4" gate="G$1" pin="1"/>
-<wire x1="-137.16" y1="-134.62" x2="-130.81" y2="-139.7" width="0.1524" layer="91"/>
-<pinref part="SW_SUPER4" gate="G$1" pin="2"/>
-<junction x="-137.16" y="-134.62"/>
-<wire x1="-125.73" y1="-139.7" x2="-130.81" y2="-139.7" width="0.1524" layer="91"/>
-<junction x="-125.73" y="-139.7"/>
-<junction x="-130.81" y="-139.7"/>
-</segment>
-</net>
 <net name="TRIGINFROMLEFT_28" class="0">
 <segment>
 <pinref part="FPGA" gate="G$1" pin="CLK1N"/>
@@ -24758,6 +24739,86 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="PIN_IO_1" gate="G$1" pin="9"/>
 <wire x1="-464.82" y1="81.28" x2="-464.82" y2="71.12" width="0.1524" layer="91"/>
 <label x="-464.82" y="71.12" size="1.778" layer="95" rot="R90"/>
+</segment>
+</net>
+<net name="N$37" class="0">
+<segment>
+<pinref part="SW_SUPER1" gate="G$1" pin="1"/>
+<wire x1="-228.6" y1="-134.62" x2="-215.9" y2="-134.62" width="0.1524" layer="91"/>
+<pinref part="RIN1" gate="G$1" pin="1"/>
+<wire x1="-215.9" y1="-134.62" x2="-215.9" y2="-137.16" width="0.1524" layer="91"/>
+<junction x="-228.6" y="-134.62"/>
+<wire x1="-215.9" y1="-137.16" x2="-219.71" y2="-137.16" width="0.1524" layer="91"/>
+<junction x="-215.9" y="-137.16"/>
+<pinref part="CIN5_1" gate="G$1" pin="1"/>
+<wire x1="-219.71" y1="-137.16" x2="-219.71" y2="-139.7" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$53" class="0">
+<segment>
+<pinref part="RIN4_11K" gate="G$1" pin="1"/>
+<pinref part="SW_SUPER4" gate="G$1" pin="2"/>
+<wire x1="-132.08" y1="-134.62" x2="-137.16" y2="-134.62" width="0.1524" layer="91"/>
+<wire x1="-132.08" y1="-134.62" x2="-132.08" y2="-139.7" width="0.1524" layer="91"/>
+<junction x="-132.08" y="-134.62"/>
+<pinref part="CIN56_4" gate="G$1" pin="1"/>
+<wire x1="-129.54" y1="-139.7" x2="-125.73" y2="-139.7" width="0.1524" layer="91"/>
+<pinref part="CIN1NF_4" gate="G$1" pin="1"/>
+<wire x1="-125.73" y1="-139.7" x2="-130.81" y2="-139.7" width="0.1524" layer="91"/>
+<junction x="-125.73" y="-139.7"/>
+<wire x1="-132.08" y1="-139.7" x2="-130.81" y2="-139.7" width="0.1524" layer="91"/>
+<junction x="-130.81" y="-139.7"/>
+</segment>
+</net>
+<net name="N$50" class="0">
+<segment>
+<pinref part="K4" gate="G$1" pin="DS1"/>
+<pinref part="C_AC4" gate="G$1" pin="1"/>
+<wire x1="-146.05" y1="-109.22" x2="-142.24" y2="-109.22" width="0.1524" layer="91"/>
+<wire x1="-142.24" y1="-109.22" x2="-142.24" y2="-106.68" width="0.1524" layer="91"/>
+<junction x="-142.24" y="-109.22"/>
+<wire x1="-142.24" y1="-109.22" x2="-142.24" y2="-111.76" width="0.1524" layer="91"/>
+<pinref part="RIN8" gate="G$1" pin="1"/>
+<wire x1="-142.24" y1="-111.76" x2="-142.24" y2="-119.38" width="0.1524" layer="91"/>
+<junction x="-142.24" y="-111.76"/>
+<pinref part="SW_SUPER4" gate="G$1" pin="C"/>
+<wire x1="-142.24" y1="-119.38" x2="-129.54" y2="-119.38" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$61" class="0">
+<segment>
+<pinref part="SW_SUPER2" gate="G$1" pin="1"/>
+<pinref part="RIN2" gate="G$1" pin="1"/>
+<wire x1="-195.58" y1="-134.62" x2="-182.88" y2="-134.62" width="0.1524" layer="91"/>
+<wire x1="-182.88" y1="-134.62" x2="-182.88" y2="-137.16" width="0.1524" layer="91"/>
+<wire x1="-182.88" y1="-137.16" x2="-186.69" y2="-137.16" width="0.1524" layer="91"/>
+<junction x="-182.88" y="-137.16"/>
+<pinref part="CIN5_2" gate="G$1" pin="1"/>
+<wire x1="-186.69" y1="-137.16" x2="-186.69" y2="-139.7" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$42" class="0">
+<segment>
+<pinref part="RIN3" gate="G$1" pin="1"/>
+<wire x1="-147.32" y1="-137.16" x2="-151.13" y2="-137.16" width="0.1524" layer="91"/>
+<pinref part="CIN5_3" gate="G$1" pin="1"/>
+<wire x1="-151.13" y1="-137.16" x2="-151.13" y2="-139.7" width="0.1524" layer="91"/>
+<pinref part="SW_SUPER3" gate="G$1" pin="1"/>
+<wire x1="-160.02" y1="-134.62" x2="-147.32" y2="-134.62" width="0.1524" layer="91"/>
+<wire x1="-147.32" y1="-134.62" x2="-147.32" y2="-137.16" width="0.1524" layer="91"/>
+<junction x="-147.32" y="-137.16"/>
+</segment>
+</net>
+<net name="N$52" class="0">
+<segment>
+<pinref part="CIN5_4" gate="G$1" pin="1"/>
+<pinref part="RIN4" gate="G$1" pin="1"/>
+<wire x1="-118.11" y1="-139.7" x2="-118.11" y2="-137.16" width="0.1524" layer="91"/>
+<wire x1="-118.11" y1="-137.16" x2="-114.3" y2="-137.16" width="0.1524" layer="91"/>
+<pinref part="SW_SUPER4" gate="G$1" pin="1"/>
+<wire x1="-127" y1="-134.62" x2="-114.3" y2="-134.62" width="0.1524" layer="91"/>
+<wire x1="-114.3" y1="-134.62" x2="-114.3" y2="-137.16" width="0.1524" layer="91"/>
+<junction x="-114.3" y="-137.16"/>
 </segment>
 </net>
 </nets>
