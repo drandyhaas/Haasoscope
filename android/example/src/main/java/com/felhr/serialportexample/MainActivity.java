@@ -19,7 +19,6 @@ import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
-//import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,9 +39,6 @@ import com.jjoe64.graphview.series.Series;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-//import java.util.List;
-//import java.util.Formatter;
-//import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     protected LineGraphSeries<DataPoint> _series_hl;
     protected LineGraphSeries<DataPoint> _series_vl;
     protected GraphView graph;
-    private int numsamples = 125*3; // <4096 please
+    private int numsamples = (int)Math.pow(2,9)+1; // <4096 please, and odd (why?), and close to a power of 2 for FFT
     private int eventn = 0;
     private int downsample = 3;
     private boolean autogo = true;
@@ -75,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     protected int selectedchannel=-1; // the selected channel, or -1 if none
     protected boolean [] gain = {false,false,false,false}; // true if high gain
     protected int [] daclevel = {0,0,0,0}; // the dac level of each channel
+    protected boolean doingfft = false;
     protected static final boolean debugme = false;
 
     // this function is called upon creation, and whenever the layout (e.g. portrait/landscape) changes
@@ -87,6 +84,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState!=null) {
             autogo = savedInstanceState.getBoolean("autogo");
+            doingfft = savedInstanceState.getBoolean("doingfft");
+            downsample = savedInstanceState.getInt("downsample");
+            lastscreenX = savedInstanceState.getFloat("lastscreenX");
+            lastscreenY = savedInstanceState.getFloat("lastscreenY");
         }
 
         init_graph();
@@ -107,7 +108,8 @@ public class MainActivity extends AppCompatActivity {
         });
         graph.setOnLongClickListener(new View.OnLongClickListener(){
             public boolean onLongClick(View v) {
-                display.append("Click "+String.valueOf(lastscreenX)+" "+String.valueOf(lastscreenY)+"\n");
+                if (doingfft) return true;
+                display.append("Long click "+String.valueOf(lastscreenX)+" "+String.valueOf(lastscreenY)+"\n");
                 DataPoint[] hl = new DataPoint[] {
                         new DataPoint(-1.5*Math.pow(2,downsample), lastscreenY),
                         new DataPoint(1.5*Math.pow(2,downsample), lastscreenY)
@@ -227,6 +229,23 @@ public class MainActivity extends AppCompatActivity {
                         case "P":
                             autogo = !oldautogo;
                             oldautogo = autogo;
+                            break;
+                        case "f":
+                        case "F":
+                            doingfft = !doingfft;
+                            display.append("dofft now = "+doingfft+"\n");
+                            if (doingfft){
+                                graph.getViewport().setXAxisBoundsManual(false);
+                                graph.getViewport().setYAxisBoundsManual(false);
+                                graph.getViewport().setScrollableY(true);
+                                graph.getViewport().setScalableY(true);
+                            }
+                            else{
+                                graph.getViewport().setXAxisBoundsManual(true);
+                                graph.getViewport().setYAxisBoundsManual(true);
+                                graph.getViewport().setScrollableY(false);
+                                graph.getViewport().setScalableY(false);
+                            }
                             break;
                         case "(":
                         case "( ":
@@ -390,6 +409,10 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
         // Save UI state changes to the savedInstanceState.
         savedInstanceState.putBoolean("autogo", autogo);
+        savedInstanceState.putBoolean("doingfft",doingfft);
+        savedInstanceState.putInt("downsamples",downsample);
+        savedInstanceState.putFloat("lastscreenX",lastscreenX);
+        savedInstanceState.putFloat("lastscreenY",lastscreenY);
     }
 
     void send_initialize(){
@@ -454,8 +477,8 @@ public class MainActivity extends AppCompatActivity {
         graph.getViewport().setMinY(-yscale/2.-.25);
         graph.getViewport().setMaxY(yscale/2.+.25);
         graph.getViewport().setYAxisBoundsManual(true);
+        graph.getViewport().setScrollable(true);
         graph.getViewport().setScalable(true);
-        //graph.getViewport().setScalableY(true);
         graph.getGridLabelRenderer().setNumHorizontalLabels(7);
         graph.getGridLabelRenderer().setHumanRounding(false,false);
         graph.getGridLabelRenderer().setVerticalAxisTitle("Volts");
@@ -464,42 +487,51 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String processdata(byte [] bd){
-        //Formatter formatter = new Formatter();
         int histlen=bd.length/4;
-        DataPoint [] series0 = new DataPoint[histlen];
-        DataPoint [] series1 = new DataPoint[histlen];
-        DataPoint [] series2 = new DataPoint[histlen];
-        DataPoint [] series3 = new DataPoint[histlen];
         double yoffset = 0.;
-        int p=0;
         String debug = "";
-        for (byte ignored : bd) {
-            //formatter.format("%02x ", b); // for debugging
-            int bdp = bd[p];
-            //convert to unsigned, then subtract 128
-            if (bdp < 0) bdp += 256;
-            bdp -= 128;
-            double yval=(yoffset-bdp)*(yscale/256.); // got to flip it, since it's a negative feedback op amp
-            double xoffset = (p-(p/histlen)*histlen-numsamples/2)*(Math.pow(2,downsample)/clkrate/xscaling);
-            if (p<histlen) series0[p] = new DataPoint(xoffset, yval);
-            else if (p<2*histlen) series1[p-histlen] = new DataPoint(xoffset, yval);
-            else if (p<3*histlen) series2[p-2*histlen] = new DataPoint(xoffset, yval);
-            else if (p<4*histlen) series3[p-3*histlen] = new DataPoint(xoffset, yval);
-            else break;
-            p++;
+        DataPoint [] [] seriesies = new DataPoint[4][histlen-1];
+        int s=0;
+        for (int ss=0; ss<4; ++ss) {
+            for (int p = 0; p < histlen - 1; ++p) {
+                int bdp = bd[1+p+s];//ignore the first sample in each channel
+                if (bdp < 0) bdp += 256;
+                bdp -= 128;
+                double yval = (yoffset - bdp) * (yscale / 256.); // got to flip it, since it's a negative feedback op amp
+                double xoffset = (p - (p / histlen) * histlen - numsamples / 2) * (Math.pow(2, downsample) / clkrate / xscaling);
+                seriesies[ss][p] = new DataPoint(xoffset, yval);
+            }
+            s+=histlen;
         }
-        if (p>numsamples-2) {
-            _series0.resetData(series0);
-            _series1.resetData(series1);
-            _series2.resetData(series2);
-            _series3.resetData(series3);
 
-            eventn++;//count the events
-            gotaneventlately=true;
-            if (eventn%100==0) display.append("event "+String.valueOf(eventn)+"\n");
-            if (autogo) send2usb(10); // get another event
+        if (doingfft){
+            for (int ss=0; ss<4; ++ss) {
+                double[] x = new double[seriesies[ss].length];
+                for (int i = 0; i < seriesies[ss].length; ++i) {
+                    x[i] = seriesies[ss][i].getY();
+                    ++i;
+                }
+                FFT myfft = new FFT();
+                FFT.FFTresult ffTresult = myfft.calculateFFT(x);
+                //display.append("FFT "+x.length+" points: "+ffTresult.absSignal.length+" freqs\n");
+                seriesies[ss] = new DataPoint[ffTresult.absSignal.length/2-1];
+                for (int i = 0; i < ffTresult.absSignal.length/2-1; ++i) {
+                    double freq = (i+1)*0.145;
+                    seriesies[ss][i] = new DataPoint(freq, ffTresult.absSignal[i+1]);
+                }
+            }
         }
-        return debug; //formatter.toString();
+
+        _series0.resetData(seriesies[0]);
+        _series1.resetData(seriesies[1]);
+        _series2.resetData(seriesies[2]);
+        _series3.resetData(seriesies[3]);
+
+        eventn++;//count the events
+        gotaneventlately=true;
+        if (eventn%100==0) display.append("event "+String.valueOf(eventn)+"\n");
+        if (autogo) send2usb(10); // get another event
+        return debug;
     }
 
     public static String byteArrayToHex(byte[] a) {
@@ -563,7 +595,7 @@ public class MainActivity extends AppCompatActivity {
                         mActivity.get().send2usb(142);//request the board ID
                     }
 
-                    if (mActivity.get().display.getLineCount()>10) mActivity.get().display.setText("");
+                    //if (mActivity.get().display.getLineCount()>10) mActivity.get().display.setText("");
                     if (debugme) if (bd.length!=mActivity.get().numsamples || !res.equals("")) mActivity.get().display.append(res +" - "+String.valueOf(mActivity.get().eventn)+" - "+String.valueOf(bd.length)+"\n");
 
                     break;
@@ -673,8 +705,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         _series_hl = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(-12, 0),
-                new DataPoint(12, 0)
+                new DataPoint(-1.5*Math.pow(2,downsample), lastscreenY),
+                new DataPoint(1.5*Math.pow(2,downsample), lastscreenY)
         });
         _series_hl.setTitle("Trig thresh");
         _series_hl.setColor(Color.GRAY);
@@ -683,8 +715,8 @@ public class MainActivity extends AppCompatActivity {
         graph.addSeries(_series_hl);
 
         _series_vl = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(0, 4),
-                new DataPoint(0, -4)
+                new DataPoint(lastscreenX, 4),
+                new DataPoint(lastscreenX, -4)
         });
         _series_vl.setTitle("Trig pos");
         _series_vl.setColor(Color.GRAY);
