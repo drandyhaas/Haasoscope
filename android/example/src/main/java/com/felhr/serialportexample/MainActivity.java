@@ -109,22 +109,15 @@ public class MainActivity extends AppCompatActivity {
         graph.setOnLongClickListener(new View.OnLongClickListener(){
             public boolean onLongClick(View v) {
                 if (doingfft) return true;
-                display.append("Long click "+String.valueOf(lastscreenX)+" "+String.valueOf(lastscreenY)+"\n");
-                DataPoint[] hl = new DataPoint[] {
-                        new DataPoint(-1.5*Math.pow(2,downsample), lastscreenY),
-                        new DataPoint(1.5*Math.pow(2,downsample), lastscreenY)
-                };
-                _series_hl.resetData(hl);
+                //display.append("Long click "+String.valueOf(lastscreenX)+" "+String.valueOf(lastscreenY)+"\n");
+                graph.removeSeries(_series_hl);
+                graph.removeSeries(_series_vl);
+                add_vl_hl();
                 int thresh = (int)(255*lastscreenfracY);
                 if (thresh<0) thresh=0;
                 if (thresh>255) thresh=255;
                 waitalot();
                 send2usb(127); send2usb(thresh);
-                DataPoint [] vl = new DataPoint[] {
-                        new DataPoint(lastscreenX, 4),
-                        new DataPoint(lastscreenX, -4)
-                };
-                _series_vl.resetData(vl);
                 int tt = (int)((numsamples-1)*lastscreenfracX);
                 if (tt<5) tt=5;
                 if (tt>numsamples-5) tt=numsamples-5;
@@ -234,18 +227,7 @@ public class MainActivity extends AppCompatActivity {
                         case "F":
                             doingfft = !doingfft;
                             display.append("dofft now = "+doingfft+"\n");
-                            if (doingfft){
-                                graph.getViewport().setXAxisBoundsManual(false);
-                                graph.getViewport().setYAxisBoundsManual(false);
-                                graph.getViewport().setScrollableY(true);
-                                graph.getViewport().setScalableY(true);
-                            }
-                            else{
-                                graph.getViewport().setXAxisBoundsManual(true);
-                                graph.getViewport().setYAxisBoundsManual(true);
-                                graph.getViewport().setScrollableY(false);
-                                graph.getViewport().setScalableY(false);
-                            }
+                            setupgraph();
                             break;
                         case "(":
                         case "( ":
@@ -410,7 +392,7 @@ public class MainActivity extends AppCompatActivity {
         // Save UI state changes to the savedInstanceState.
         savedInstanceState.putBoolean("autogo", autogo);
         savedInstanceState.putBoolean("doingfft",doingfft);
-        savedInstanceState.putInt("downsamples",downsample);
+        savedInstanceState.putInt("downsample",downsample);
         savedInstanceState.putFloat("lastscreenX",lastscreenX);
         savedInstanceState.putFloat("lastscreenY",lastscreenY);
     }
@@ -462,28 +444,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void setupgraph(){
-        double range = (numsamples/2)*(Math.pow(2,downsample)/clkrate);
-        if (range>1000.) {
-            xscaling=1000.;
-            graph.getGridLabelRenderer().setHorizontalAxisTitle("Time (ms)");
+        if (doingfft){
+            double range = (clkrate/2.)/Math.pow(2,downsample);
+            graph.getViewport().setMinX(0.);
+            if (range>1.) {
+                xscaling = 1.;
+                graph.getGridLabelRenderer().setHorizontalAxisTitle("Frequency (MHz)");
+            }
+            else if (range<1.){
+                xscaling = .001;
+                graph.getGridLabelRenderer().setHorizontalAxisTitle("Frequency (kHz)");
+            }
+            graph.getViewport().setMaxX(range/xscaling);
+
+            graph.removeSeries(_series_hl);
+            graph.removeSeries(_series_vl);
         }
         else {
-            graph.getGridLabelRenderer().setHorizontalAxisTitle("Time (us)");
-            xscaling=1.;
+            double range = (numsamples/2)*(Math.pow(2,downsample)/clkrate);
+            if (range>1000.) {
+                xscaling=1000.;
+                graph.getGridLabelRenderer().setHorizontalAxisTitle("Time (ms)");
+            }
+            else {
+                graph.getGridLabelRenderer().setHorizontalAxisTitle("Time (us)");
+                xscaling=1.;
+            }
+            graph.getViewport().setMinX(-range/xscaling);
+            graph.getViewport().setMaxX(range/xscaling);
+
+            graph.removeSeries(_series_hl);
+            graph.removeSeries(_series_vl);
+            add_vl_hl();
         }
-        graph.getViewport().setXAxisBoundsManual(true);
-        graph.getViewport().setMinX(-(numsamples/2)*(Math.pow(2,downsample)/clkrate/xscaling));
-        graph.getViewport().setMaxX((numsamples/2)*(Math.pow(2,downsample)/clkrate/xscaling));
-        graph.getViewport().setMinY(-yscale/2.-.25);
-        graph.getViewport().setMaxY(yscale/2.+.25);
-        graph.getViewport().setYAxisBoundsManual(true);
-        graph.getViewport().setScrollable(true);
-        graph.getViewport().setScalable(true);
-        graph.getGridLabelRenderer().setNumHorizontalLabels(7);
-        graph.getGridLabelRenderer().setHumanRounding(false,false);
-        graph.getGridLabelRenderer().setVerticalAxisTitle("Volts");
-        graph.getGridLabelRenderer().setNumVerticalLabels(9);
-        //graph.getGridLabelRenderer().invalidate(false,true);
+        graph.invalidate();
     }
 
     private String processdata(byte [] bd){
@@ -505,6 +499,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (doingfft){
+            FFT.FFTresult [] ffTresult = new FFT.FFTresult[4];
+            double MaxFFTSample = 0.;
             for (int ss=0; ss<4; ++ss) {
                 double[] x = new double[seriesies[ss].length];
                 for (int i = 0; i < seriesies[ss].length; ++i) {
@@ -512,12 +508,15 @@ public class MainActivity extends AppCompatActivity {
                     ++i;
                 }
                 FFT myfft = new FFT();
-                FFT.FFTresult ffTresult = myfft.calculateFFT(x);
-                //display.append("FFT "+x.length+" points: "+ffTresult.absSignal.length+" freqs\n");
-                seriesies[ss] = new DataPoint[ffTresult.absSignal.length/2-1];
-                for (int i = 0; i < ffTresult.absSignal.length/2-1; ++i) {
-                    double freq = (i+1)*0.145;
-                    seriesies[ss][i] = new DataPoint(freq, ffTresult.absSignal[i+1]);
+                ffTresult[ss] = myfft.calculateFFT(x);
+                if (ffTresult[ss].mMaxFFTSample>MaxFFTSample) MaxFFTSample=ffTresult[ss].mMaxFFTSample;
+            }
+            for (int ss=0; ss<4; ++ss) {
+                seriesies[ss] = new DataPoint[ffTresult[ss].absSignal.length/2-1];
+                double fftscale = 8.0/MaxFFTSample;
+                for (int i = 0; i < ffTresult[ss].absSignal.length/2-1; ++i) {
+                    double freq = (clkrate/2./xscaling)*(i+1)/(ffTresult[ss].absSignal.length/2)/Math.pow(2,downsample);
+                    seriesies[ss][i] = new DataPoint(freq, -4.0 + fftscale * ffTresult[ss].absSignal[i+1]);
                 }
             }
         }
@@ -613,7 +612,7 @@ public class MainActivity extends AppCompatActivity {
     final int thickness = 4;
     protected LineGraphSeries [] myseries;
 
-    protected void init_graph(){
+    protected void init_graph() {
 
         graph = findViewById(R.id.graph);
         graph.getViewport().setBackgroundColor(Color.WHITE);
@@ -621,7 +620,7 @@ public class MainActivity extends AppCompatActivity {
         graph.getGridLabelRenderer().setHighlightZeroLines(false);
         graph.getGridLabelRenderer().setPadding(60);
 
-        _series0 = new LineGraphSeries<>(new DataPoint[] {
+        _series0 = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(-12, 1),
                 new DataPoint(-6, 2),
                 new DataPoint(0, 3),
@@ -634,7 +633,7 @@ public class MainActivity extends AppCompatActivity {
         _series0.setDataPointsRadius(radius);
         _series0.setThickness(thickness);
         graph.addSeries(_series0);
-        _series1 = new LineGraphSeries<>(new DataPoint[] {
+        _series1 = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(-12, 2),
                 new DataPoint(-6, 1),
                 new DataPoint(0, -1),
@@ -647,7 +646,7 @@ public class MainActivity extends AppCompatActivity {
         _series1.setDataPointsRadius(radius);
         _series1.setThickness(thickness);
         graph.addSeries(_series1);
-        _series2 = new LineGraphSeries<>(new DataPoint[] {
+        _series2 = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(-12, 3),
                 new DataPoint(-6, 2),
                 new DataPoint(0, 2),
@@ -660,7 +659,7 @@ public class MainActivity extends AppCompatActivity {
         _series2.setDataPointsRadius(radius);
         _series2.setThickness(thickness);
         graph.addSeries(_series2);
-        _series3 = new LineGraphSeries<>(new DataPoint[] {
+        _series3 = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(-12, -3),
                 new DataPoint(-6, -2),
                 new DataPoint(0, -3),
@@ -673,14 +672,15 @@ public class MainActivity extends AppCompatActivity {
         _series3.setDataPointsRadius(radius);
         _series3.setThickness(thickness);
         graph.addSeries(_series3);
-        myseries = new LineGraphSeries[] {_series0, _series1, _series2, _series3};
+        myseries = new LineGraphSeries[]{_series0, _series1, _series2, _series3};
 
         for (LineGraphSeries s : myseries) {
             s.setOnDataPointTapListener(new OnDataPointTapListener() {
                 @Override
                 public void onTap(Series series, DataPointInterface dataPoint) {
-                    display.append("clicked: " + series.getTitle() + "  " + dataPoint.toString()+"\n");
-                    int i=0; selectedchannel=-1;
+                    display.append("clicked: " + series.getTitle() + "  " + dataPoint.toString() + "\n");
+                    int i = 0;
+                    selectedchannel = -1;
                     for (LineGraphSeries s : myseries) {
                         if (s.getTitle().equals(series.getTitle())) {
                             if (toggle_selectchan.isChecked()) {
@@ -689,12 +689,10 @@ public class MainActivity extends AppCompatActivity {
                                 toggle_selectchan.setTextOn(String.valueOf(selectedchannel));
                                 toggle_selectchan.setChecked(true);
                                 toggle_selectchan.invalidate();
-                            }
-                            else {
+                            } else {
                                 display.append("Locked! Click -1 button to unlock.\n");
                             }
-                        }
-                        else{
+                        } else {
                             s.setThickness(thickness);
                         }
                         ++i;
@@ -704,9 +702,27 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        _series_hl = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(-1.5*Math.pow(2,downsample), lastscreenY),
-                new DataPoint(1.5*Math.pow(2,downsample), lastscreenY)
+        if (!doingfft) {
+            add_vl_hl();
+        }
+
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinY(-yscale/2.-.25);
+        graph.getViewport().setMaxY(yscale/2.+.25);
+        graph.getViewport().setYAxisBoundsManual(true);
+        graph.getViewport().setScrollable(true);
+        graph.getViewport().setScalable(true);
+        graph.getGridLabelRenderer().setNumHorizontalLabels(7);
+        graph.getGridLabelRenderer().setHumanRounding(true,false);
+        graph.getGridLabelRenderer().setVerticalAxisTitle("Volts");
+        graph.getGridLabelRenderer().setNumVerticalLabels(9);
+    }
+
+    protected void add_vl_hl() {
+        if (graph.getSeries().contains(_series_hl)) return;
+        _series_hl = new LineGraphSeries<>(new DataPoint[]{
+                new DataPoint(-numsamples/2/clkrate/xscaling * Math.pow(2, downsample), lastscreenY),
+                new DataPoint( numsamples/2/clkrate/xscaling * Math.pow(2, downsample), lastscreenY)
         });
         _series_hl.setTitle("Trig thresh");
         _series_hl.setColor(Color.GRAY);
@@ -714,7 +730,7 @@ public class MainActivity extends AppCompatActivity {
         _series_hl.setThickness(thickness);
         graph.addSeries(_series_hl);
 
-        _series_vl = new LineGraphSeries<>(new DataPoint[] {
+        _series_vl = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(lastscreenX, 4),
                 new DataPoint(lastscreenX, -4)
         });

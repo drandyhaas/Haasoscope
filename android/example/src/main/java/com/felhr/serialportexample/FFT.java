@@ -58,7 +58,7 @@ public class FFT {
         for(int i = 0; i < (mNumberOfFFTPoints/2); i++)
         {
             absSignal[i] = Math.sqrt(Math.pow(y[i].re(), 2) + Math.pow(y[i].im(), 2));
-            if(absSignal[i] > mMaxFFTSample)
+            if(i>0 && i<absSignal.length/2 && absSignal[i] > mMaxFFTSample) // ignore DC component
             {
                 mMaxFFTSample = absSignal[i];
                 mPeakPos = i;
