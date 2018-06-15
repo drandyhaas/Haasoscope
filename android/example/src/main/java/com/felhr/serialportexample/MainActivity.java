@@ -19,7 +19,6 @@ import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
-//import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,9 +39,6 @@ import com.jjoe64.graphview.series.Series;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-//import java.util.List;
-//import java.util.Formatter;
-//import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     protected LineGraphSeries<DataPoint> _series_hl;
     protected LineGraphSeries<DataPoint> _series_vl;
     protected GraphView graph;
-    private int numsamples = 125*3; // <4096 please
+    private int numsamples = (int)Math.pow(2,9)+1; // <4096 please, and odd (why?), and close to a power of 2 for FFT
     private int eventn = 0;
     private int downsample = 3;
     private boolean autogo = true;
@@ -75,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     protected int selectedchannel=-1; // the selected channel, or -1 if none
     protected boolean [] gain = {false,false,false,false}; // true if high gain
     protected int [] daclevel = {0,0,0,0}; // the dac level of each channel
+    protected boolean doingfft = false;
     protected static final boolean debugme = false;
 
     // this function is called upon creation, and whenever the layout (e.g. portrait/landscape) changes
@@ -87,6 +84,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState!=null) {
             autogo = savedInstanceState.getBoolean("autogo");
+            doingfft = savedInstanceState.getBoolean("doingfft");
+            downsample = savedInstanceState.getInt("downsample");
+            lastscreenX = savedInstanceState.getFloat("lastscreenX");
+            lastscreenY = savedInstanceState.getFloat("lastscreenY");
         }
 
         init_graph();
@@ -107,22 +108,16 @@ public class MainActivity extends AppCompatActivity {
         });
         graph.setOnLongClickListener(new View.OnLongClickListener(){
             public boolean onLongClick(View v) {
-                display.append("Click "+String.valueOf(lastscreenX)+" "+String.valueOf(lastscreenY)+"\n");
-                DataPoint[] hl = new DataPoint[] {
-                        new DataPoint(-1.5*Math.pow(2,downsample), lastscreenY),
-                        new DataPoint(1.5*Math.pow(2,downsample), lastscreenY)
-                };
-                _series_hl.resetData(hl);
+                if (doingfft) return true;
+                //display.append("Long click "+String.valueOf(lastscreenX)+" "+String.valueOf(lastscreenY)+"\n");
+                graph.removeSeries(_series_hl);
+                graph.removeSeries(_series_vl);
+                add_vl_hl();
                 int thresh = (int)(255*lastscreenfracY);
                 if (thresh<0) thresh=0;
                 if (thresh>255) thresh=255;
                 waitalot();
                 send2usb(127); send2usb(thresh);
-                DataPoint [] vl = new DataPoint[] {
-                        new DataPoint(lastscreenX, 4),
-                        new DataPoint(lastscreenX, -4)
-                };
-                _series_vl.resetData(vl);
                 int tt = (int)((numsamples-1)*lastscreenfracX);
                 if (tt<5) tt=5;
                 if (tt>numsamples-5) tt=numsamples-5;
@@ -227,6 +222,12 @@ public class MainActivity extends AppCompatActivity {
                         case "P":
                             autogo = !oldautogo;
                             oldautogo = autogo;
+                            break;
+                        case "f":
+                        case "F":
+                            doingfft = !doingfft;
+                            display.append("dofft now = "+doingfft+"\n");
+                            setupgraph();
                             break;
                         case "(":
                         case "( ":
@@ -390,6 +391,10 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
         // Save UI state changes to the savedInstanceState.
         savedInstanceState.putBoolean("autogo", autogo);
+        savedInstanceState.putBoolean("doingfft",doingfft);
+        savedInstanceState.putInt("downsample",downsample);
+        savedInstanceState.putFloat("lastscreenX",lastscreenX);
+        savedInstanceState.putFloat("lastscreenY",lastscreenY);
     }
 
     void send_initialize(){
@@ -439,67 +444,93 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void setupgraph(){
-        double range = (numsamples/2)*(Math.pow(2,downsample)/clkrate);
-        if (range>1000.) {
-            xscaling=1000.;
-            graph.getGridLabelRenderer().setHorizontalAxisTitle("Time (ms)");
+        if (doingfft){
+            double range = (clkrate/2.)/Math.pow(2,downsample);
+            graph.getViewport().setMinX(0.);
+            if (range>1.) {
+                xscaling = 1.;
+                graph.getGridLabelRenderer().setHorizontalAxisTitle("Frequency (MHz)");
+            }
+            else if (range<1.){
+                xscaling = .001;
+                graph.getGridLabelRenderer().setHorizontalAxisTitle("Frequency (kHz)");
+            }
+            graph.getViewport().setMaxX(range/xscaling);
+
+            graph.removeSeries(_series_hl);
+            graph.removeSeries(_series_vl);
         }
         else {
-            graph.getGridLabelRenderer().setHorizontalAxisTitle("Time (us)");
-            xscaling=1.;
+            double range = (numsamples/2)*(Math.pow(2,downsample)/clkrate);
+            if (range>1000.) {
+                xscaling=1000.;
+                graph.getGridLabelRenderer().setHorizontalAxisTitle("Time (ms)");
+            }
+            else {
+                graph.getGridLabelRenderer().setHorizontalAxisTitle("Time (us)");
+                xscaling=1.;
+            }
+            graph.getViewport().setMinX(-range/xscaling);
+            graph.getViewport().setMaxX(range/xscaling);
+
+            graph.removeSeries(_series_hl);
+            graph.removeSeries(_series_vl);
+            add_vl_hl();
         }
-        graph.getViewport().setXAxisBoundsManual(true);
-        graph.getViewport().setMinX(-(numsamples/2)*(Math.pow(2,downsample)/clkrate/xscaling));
-        graph.getViewport().setMaxX((numsamples/2)*(Math.pow(2,downsample)/clkrate/xscaling));
-        graph.getViewport().setMinY(-yscale/2.-.25);
-        graph.getViewport().setMaxY(yscale/2.+.25);
-        graph.getViewport().setYAxisBoundsManual(true);
-        graph.getViewport().setScalable(true);
-        //graph.getViewport().setScalableY(true);
-        graph.getGridLabelRenderer().setNumHorizontalLabels(7);
-        graph.getGridLabelRenderer().setHumanRounding(false,false);
-        graph.getGridLabelRenderer().setVerticalAxisTitle("Volts");
-        graph.getGridLabelRenderer().setNumVerticalLabels(9);
-        //graph.getGridLabelRenderer().invalidate(false,true);
+        graph.invalidate();
     }
 
     private String processdata(byte [] bd){
-        //Formatter formatter = new Formatter();
         int histlen=bd.length/4;
-        DataPoint [] series0 = new DataPoint[histlen];
-        DataPoint [] series1 = new DataPoint[histlen];
-        DataPoint [] series2 = new DataPoint[histlen];
-        DataPoint [] series3 = new DataPoint[histlen];
         double yoffset = 0.;
-        int p=0;
         String debug = "";
-        for (byte ignored : bd) {
-            //formatter.format("%02x ", b); // for debugging
-            int bdp = bd[p];
-            //convert to unsigned, then subtract 128
-            if (bdp < 0) bdp += 256;
-            bdp -= 128;
-            double yval=(yoffset-bdp)*(yscale/256.); // got to flip it, since it's a negative feedback op amp
-            double xoffset = (p-(p/histlen)*histlen-numsamples/2)*(Math.pow(2,downsample)/clkrate/xscaling);
-            if (p<histlen) series0[p] = new DataPoint(xoffset, yval);
-            else if (p<2*histlen) series1[p-histlen] = new DataPoint(xoffset, yval);
-            else if (p<3*histlen) series2[p-2*histlen] = new DataPoint(xoffset, yval);
-            else if (p<4*histlen) series3[p-3*histlen] = new DataPoint(xoffset, yval);
-            else break;
-            p++;
+        DataPoint [] [] seriesies = new DataPoint[4][histlen-1];
+        int s=0;
+        for (int ss=0; ss<4; ++ss) {
+            for (int p = 0; p < histlen - 1; ++p) {
+                int bdp = bd[1+p+s];//ignore the first sample in each channel
+                if (bdp < 0) bdp += 256;
+                bdp -= 128;
+                double yval = (yoffset - bdp) * (yscale / 256.); // got to flip it, since it's a negative feedback op amp
+                double xoffset = (p - (p / histlen) * histlen - numsamples / 2) * (Math.pow(2, downsample) / clkrate / xscaling);
+                seriesies[ss][p] = new DataPoint(xoffset, yval);
+            }
+            s+=histlen;
         }
-        if (p>numsamples-2) {
-            _series0.resetData(series0);
-            _series1.resetData(series1);
-            _series2.resetData(series2);
-            _series3.resetData(series3);
 
-            eventn++;//count the events
-            gotaneventlately=true;
-            if (eventn%100==0) display.append("event "+String.valueOf(eventn)+"\n");
-            if (autogo) send2usb(10); // get another event
+        if (doingfft){
+            FFT.FFTresult [] ffTresult = new FFT.FFTresult[4];
+            double MaxFFTSample = 0.;
+            for (int ss=0; ss<4; ++ss) {
+                double[] x = new double[seriesies[ss].length];
+                for (int i = 0; i < seriesies[ss].length; ++i) {
+                    x[i] = seriesies[ss][i].getY();
+                    ++i;
+                }
+                FFT myfft = new FFT();
+                ffTresult[ss] = myfft.calculateFFT(x);
+                if (ffTresult[ss].mMaxFFTSample>MaxFFTSample) MaxFFTSample=ffTresult[ss].mMaxFFTSample;
+            }
+            for (int ss=0; ss<4; ++ss) {
+                seriesies[ss] = new DataPoint[ffTresult[ss].absSignal.length/2-1];
+                double fftscale = 8.0/MaxFFTSample;
+                for (int i = 0; i < ffTresult[ss].absSignal.length/2-1; ++i) {
+                    double freq = (clkrate/2./xscaling)*(i+1)/(ffTresult[ss].absSignal.length/2)/Math.pow(2,downsample);
+                    seriesies[ss][i] = new DataPoint(freq, -4.0 + fftscale * ffTresult[ss].absSignal[i+1]);
+                }
+            }
         }
-        return debug; //formatter.toString();
+
+        _series0.resetData(seriesies[0]);
+        _series1.resetData(seriesies[1]);
+        _series2.resetData(seriesies[2]);
+        _series3.resetData(seriesies[3]);
+
+        eventn++;//count the events
+        gotaneventlately=true;
+        if (eventn%100==0) display.append("event "+String.valueOf(eventn)+"\n");
+        if (autogo) send2usb(10); // get another event
+        return debug;
     }
 
     public static String byteArrayToHex(byte[] a) {
@@ -563,7 +594,7 @@ public class MainActivity extends AppCompatActivity {
                         mActivity.get().send2usb(142);//request the board ID
                     }
 
-                    if (mActivity.get().display.getLineCount()>10) mActivity.get().display.setText("");
+                    //if (mActivity.get().display.getLineCount()>10) mActivity.get().display.setText("");
                     if (debugme) if (bd.length!=mActivity.get().numsamples || !res.equals("")) mActivity.get().display.append(res +" - "+String.valueOf(mActivity.get().eventn)+" - "+String.valueOf(bd.length)+"\n");
 
                     break;
@@ -581,7 +612,7 @@ public class MainActivity extends AppCompatActivity {
     final int thickness = 4;
     protected LineGraphSeries [] myseries;
 
-    protected void init_graph(){
+    protected void init_graph() {
 
         graph = findViewById(R.id.graph);
         graph.getViewport().setBackgroundColor(Color.WHITE);
@@ -589,7 +620,7 @@ public class MainActivity extends AppCompatActivity {
         graph.getGridLabelRenderer().setHighlightZeroLines(false);
         graph.getGridLabelRenderer().setPadding(60);
 
-        _series0 = new LineGraphSeries<>(new DataPoint[] {
+        _series0 = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(-12, 1),
                 new DataPoint(-6, 2),
                 new DataPoint(0, 3),
@@ -602,7 +633,7 @@ public class MainActivity extends AppCompatActivity {
         _series0.setDataPointsRadius(radius);
         _series0.setThickness(thickness);
         graph.addSeries(_series0);
-        _series1 = new LineGraphSeries<>(new DataPoint[] {
+        _series1 = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(-12, 2),
                 new DataPoint(-6, 1),
                 new DataPoint(0, -1),
@@ -615,7 +646,7 @@ public class MainActivity extends AppCompatActivity {
         _series1.setDataPointsRadius(radius);
         _series1.setThickness(thickness);
         graph.addSeries(_series1);
-        _series2 = new LineGraphSeries<>(new DataPoint[] {
+        _series2 = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(-12, 3),
                 new DataPoint(-6, 2),
                 new DataPoint(0, 2),
@@ -628,7 +659,7 @@ public class MainActivity extends AppCompatActivity {
         _series2.setDataPointsRadius(radius);
         _series2.setThickness(thickness);
         graph.addSeries(_series2);
-        _series3 = new LineGraphSeries<>(new DataPoint[] {
+        _series3 = new LineGraphSeries<>(new DataPoint[]{
                 new DataPoint(-12, -3),
                 new DataPoint(-6, -2),
                 new DataPoint(0, -3),
@@ -641,14 +672,15 @@ public class MainActivity extends AppCompatActivity {
         _series3.setDataPointsRadius(radius);
         _series3.setThickness(thickness);
         graph.addSeries(_series3);
-        myseries = new LineGraphSeries[] {_series0, _series1, _series2, _series3};
+        myseries = new LineGraphSeries[]{_series0, _series1, _series2, _series3};
 
         for (LineGraphSeries s : myseries) {
             s.setOnDataPointTapListener(new OnDataPointTapListener() {
                 @Override
                 public void onTap(Series series, DataPointInterface dataPoint) {
-                    display.append("clicked: " + series.getTitle() + "  " + dataPoint.toString()+"\n");
-                    int i=0; selectedchannel=-1;
+                    display.append("clicked: " + series.getTitle() + "  " + dataPoint.toString() + "\n");
+                    int i = 0;
+                    selectedchannel = -1;
                     for (LineGraphSeries s : myseries) {
                         if (s.getTitle().equals(series.getTitle())) {
                             if (toggle_selectchan.isChecked()) {
@@ -657,12 +689,10 @@ public class MainActivity extends AppCompatActivity {
                                 toggle_selectchan.setTextOn(String.valueOf(selectedchannel));
                                 toggle_selectchan.setChecked(true);
                                 toggle_selectchan.invalidate();
-                            }
-                            else {
+                            } else {
                                 display.append("Locked! Click -1 button to unlock.\n");
                             }
-                        }
-                        else{
+                        } else {
                             s.setThickness(thickness);
                         }
                         ++i;
@@ -672,9 +702,27 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        _series_hl = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(-12, 0),
-                new DataPoint(12, 0)
+        if (!doingfft) {
+            add_vl_hl();
+        }
+
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinY(-yscale/2.-.25);
+        graph.getViewport().setMaxY(yscale/2.+.25);
+        graph.getViewport().setYAxisBoundsManual(true);
+        graph.getViewport().setScrollable(true);
+        graph.getViewport().setScalable(true);
+        graph.getGridLabelRenderer().setNumHorizontalLabels(7);
+        graph.getGridLabelRenderer().setHumanRounding(true,false);
+        graph.getGridLabelRenderer().setVerticalAxisTitle("Volts");
+        graph.getGridLabelRenderer().setNumVerticalLabels(9);
+    }
+
+    protected void add_vl_hl() {
+        if (graph.getSeries().contains(_series_hl)) return;
+        _series_hl = new LineGraphSeries<>(new DataPoint[]{
+                new DataPoint(-numsamples/2/clkrate/xscaling * Math.pow(2, downsample), lastscreenY),
+                new DataPoint( numsamples/2/clkrate/xscaling * Math.pow(2, downsample), lastscreenY)
         });
         _series_hl.setTitle("Trig thresh");
         _series_hl.setColor(Color.GRAY);
@@ -682,9 +730,9 @@ public class MainActivity extends AppCompatActivity {
         _series_hl.setThickness(thickness);
         graph.addSeries(_series_hl);
 
-        _series_vl = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(0, 4),
-                new DataPoint(0, -4)
+        _series_vl = new LineGraphSeries<>(new DataPoint[]{
+                new DataPoint(lastscreenX, 4),
+                new DataPoint(lastscreenX, -4)
         });
         _series_vl.setTitle("Trig pos");
         _series_vl.setColor(Color.GRAY);
