@@ -29,7 +29,7 @@ class Haasoscope():
         self.nsamp=pow(2,ram_width)-1 #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
         print "num main ADC and max10adc bytes for all boards = ",self.num_bytes*num_board,"and",len(max10adcchans)*self.nsamp
         self.serialdelaytimerwait=0 #150 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
-        self.brate = 1500000 #serial baud rate #1500000 #115200
+        self.brate = 1500000 #serial baud rate #1500000 #115200 #921600
         self.sertimeout = 3.0 #time to wait for serial response #3.0, num_bytes*8*10.0/brate, or None
         self.clkrate=125.0 # ADC sample rate in MHz
         self.serport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
