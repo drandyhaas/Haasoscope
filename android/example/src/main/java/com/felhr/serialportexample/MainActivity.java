@@ -2,6 +2,9 @@ package com.felhr.serialportexample;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -36,11 +39,127 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.Series;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.util.Set;
+import java.util.UUID;
+
+import static com.felhr.serialportexample.UsbService.MESSAGE_FROM_SERIAL_PORT;
 
 public class MainActivity extends AppCompatActivity {
+
+    protected void findBT()
+    {
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(mBluetoothAdapter == null)
+        {
+            display.append("No bluetooth adapter available\n");
+        }
+
+        if(!mBluetoothAdapter.isEnabled())
+        {
+            Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBluetooth, 0);
+        }
+
+        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+        if(pairedDevices.size() > 0)
+        {
+            for(BluetoothDevice device : pairedDevices)
+            {
+                if(device.getName().equals("HC-05"))
+                {
+                    mmDevice = device;
+                    display.append("Bluetooth Device Paired\n");
+                    break;
+                }
+            }
+        }
+    }
+
+    void openBT() throws IOException
+    {
+        UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
+        mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+        mmSocket.connect();
+        mmOutputStream = mmSocket.getOutputStream();
+        mmInputStream = mmSocket.getInputStream();
+
+        beginListenForData();
+        doingusb = false;
+        display.append("Bluetooth Opened\n");
+    }
+
+    void beginListenForData()
+    {
+        final Handler handler = new Handler();
+
+        stopWorker = false;
+        workerThread = new Thread(new Runnable()
+        {
+            public void run()
+            {
+                int bytessofar=0;
+                while(!Thread.currentThread().isInterrupted() && !stopWorker) {
+                    try {
+                        int bytesAvailable = mmInputStream.available();
+                        if(bytesAvailable > 0) {
+                            bytessofar+=bytesAvailable;
+                            byte[] packetBytes = new byte[bytesAvailable];
+                            //noinspection ResultOfMethodCallIgnored
+                            mmInputStream.read(packetBytes);
+                            mHandler.obtainMessage(MESSAGE_FROM_SERIAL_PORT, packetBytes).sendToTarget();
+                            String data = byteArrayToHex(packetBytes);
+                            String deb = "";
+                            if (bytessofar==8) {
+                                if (debugme) deb=" : sync";
+                                bytessofar=0;
+                            }
+                            if (bytessofar==numsamples*4) {
+                                if (debugme) deb=" : event";
+                                bytessofar=0;
+                            }
+                            if (debugme) {
+                                final String dataf = data + deb;
+                                handler.post(new Runnable() {
+                                    public void run() {
+                                        display.append(dataf + "\n");
+                                    }
+                                });
+                            }
+                        }
+                    }
+                    catch (IOException ex){
+                        stopWorker = true;
+                    }
+                }
+            }
+        });
+
+        workerThread.start();
+    }
+
+    void sendData(int x) throws IOException
+    {
+        if (x>127) x -= 256; // since it goes to bytes as twos
+        if (mmOutputStream!=null) mmOutputStream.write(x);
+        //display.append(eventn+" Data Sent: "+x+"\n");
+    }
+
+    void closeBT() throws IOException
+    {
+        stopWorker = true;
+        if (mmOutputStream!=null){
+            mmOutputStream.close();
+            mmInputStream.close();
+            mmSocket.close();
+        }
+        //display.append("Bluetooth Closed\n");
+    }
 
     protected UsbService usbService;
     protected TextView display;
@@ -74,6 +193,23 @@ public class MainActivity extends AppCompatActivity {
     protected boolean doingfft = false;
     protected static final boolean debugme = false;
 
+    BluetoothAdapter mBluetoothAdapter;
+    BluetoothSocket mmSocket;
+    BluetoothDevice mmDevice;
+    OutputStream mmOutputStream;
+    InputStream mmInputStream;
+    Thread workerThread;
+    volatile boolean stopWorker;
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        if (!doingusb) {
+            try {closeBT();}
+            catch (IOException ignored) { }
+        }
+    }
+
     // this function is called upon creation, and whenever the layout (e.g. portrait/landscape) changes
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -88,6 +224,7 @@ public class MainActivity extends AppCompatActivity {
             downsample = savedInstanceState.getInt("downsample");
             lastscreenX = savedInstanceState.getFloat("lastscreenX");
             lastscreenY = savedInstanceState.getFloat("lastscreenY");
+            doingusb = savedInstanceState.getBoolean("doingusb");
         }
 
         init_graph();
@@ -279,8 +416,9 @@ public class MainActivity extends AppCompatActivity {
                             } catch (NumberFormatException e) {
                                 di = -1;
                             }
-                            if (di >= 0 && di <= 255)
+                            if (di >= 0 && di <= 255) {
                                 send2usb(di); // only send if it was a positive integer, 0-255
+                            }
                             else {
                                 display.append("bad/unknown command!\n");
                                 editText.setText("");
@@ -291,6 +429,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        findBT();
+
+        try { openBT(); }
+        catch (IOException ex) {
+            display.append("BT not opened\n");
+        }
 
         // a little kickstart for autogo...
         if (autogo) new kickstartThread().start();
@@ -395,6 +540,7 @@ public class MainActivity extends AppCompatActivity {
         savedInstanceState.putInt("downsample",downsample);
         savedInstanceState.putFloat("lastscreenX",lastscreenX);
         savedInstanceState.putFloat("lastscreenY",lastscreenY);
+        savedInstanceState.putBoolean("doingusb",doingusb);
     }
 
     void send_initialize(){
@@ -402,7 +548,12 @@ public class MainActivity extends AppCompatActivity {
         send2usb(0); send2usb(20); // board ID 0
         send2usb(30); send2usb(142); // get board ID
         waitalittle();
-        send2usb(135); send2usb(3); send2usb(100); // serialdelaytimerwait
+        if (doingusb) {
+            send2usb(135); send2usb(3); send2usb(100); // serialdelaytimerwait
+        }
+        else {
+            send2usb(135); send2usb(0); send2usb(0); // serialdelaytimerwait
+        }
         send2usb(143); // enable highres mode
         waitalittle(); send2usb(139); // auto-rearm trigger
         send2usb(100);//final arming
@@ -550,7 +701,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case UsbService.MESSAGE_FROM_SERIAL_PORT:
+                case MESSAGE_FROM_SERIAL_PORT:
                     byte [] bd = (byte[])msg.obj;
                     if (8==bd.length) {
                         //get the board id and save it, from the initial 142 call probably
@@ -583,11 +734,19 @@ public class MainActivity extends AppCompatActivity {
                         if (debugme) res = mActivity.get().processdata(dst);
                         else mActivity.get().processdata(dst);
                     }
-                    else if (mActivity.get().myserialBuffer.position()>mActivity.get().numsamples*4 || mActivity.get().myserialBuffer.position()%mActivity.get().numsamples!=0) {//oops, we got too much data or a weird amount? better resync!
+                    else if ((mActivity.get().doingusb) && mActivity.get().myserialBuffer.position()%mActivity.get().numsamples!=0){
+                        //oops, we got a weird amount over usb? better resync! (BT often gives odd sized packets)
                         mActivity.get().myserialBuffer.position(0);
                         mActivity.get().myserialBuffer.clear();
                         mActivity.get().synced=false;
                     }
+                    else if (mActivity.get().myserialBuffer.position()>mActivity.get().numsamples*4) {
+                        //oops, we got too much data? better resync!
+                        mActivity.get().myserialBuffer.position(0);
+                        mActivity.get().myserialBuffer.clear();
+                        mActivity.get().synced=false;
+                    }
+
                     if (!mActivity.get().synced){
                         mActivity.get().myserialBuffer.position(0);
                         mActivity.get().myserialBuffer.clear();
@@ -758,7 +917,8 @@ public class MainActivity extends AppCompatActivity {
 
     protected void waitalittle(){
         try {
-            Thread.sleep(5);
+            if (doingusb) Thread.sleep(50);
+            else Thread.sleep(150); // need longer delay for BT??
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -804,6 +964,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void send2usb(int x){
+
+        try{sendData(x);}
+        catch (IOException ex) {
+            display.append("IOexception!");
+        }
+
         if (x>127) x -= 256; // since it goes to bytes as twos
         if (usbService != null) usbService.write( BigInteger.valueOf(x).toByteArray() );
     }
@@ -821,27 +987,33 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    public boolean doingusb=false;
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction() == null) return;
             switch (intent.getAction()) {
                 case UsbService.ACTION_USB_PERMISSION_GRANTED: // USB PERMISSION GRANTED
+                    doingusb=true;
                     Toast.makeText(context, "Haasoscope USB Ready", Toast.LENGTH_SHORT).show();
                     waitalot();
                     send_initialize();
                     donewaitalot();
                     break;
                 case UsbService.ACTION_USB_PERMISSION_NOT_GRANTED: // USB PERMISSION NOT GRANTED
+                    doingusb=false;
                     Toast.makeText(context, "USB Permission not granted", Toast.LENGTH_SHORT).show();
                     break;
                 case UsbService.ACTION_NO_USB: // NO USB CONNECTED
+                    doingusb=false;
                     Toast.makeText(context, "No USB connected", Toast.LENGTH_SHORT).show();
                     break;
                 case UsbService.ACTION_USB_DISCONNECTED: // USB DISCONNECTED
+                    doingusb=false;
                     Toast.makeText(context, "USB disconnected", Toast.LENGTH_SHORT).show();
                     break;
                 case UsbService.ACTION_USB_NOT_SUPPORTED: // USB NOT SUPPORTED
+                    doingusb=false;
                     Toast.makeText(context, "USB device not supported", Toast.LENGTH_SHORT).show();
                     break;
             }
