@@ -52,7 +52,7 @@ import static com.felhr.serialportexample.UsbService.MESSAGE_FROM_SERIAL_PORT;
 
 public class MainActivity extends AppCompatActivity {
 
-    protected void findBT()
+    protected boolean findBT()
     {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(mBluetoothAdapter == null)
@@ -75,10 +75,11 @@ public class MainActivity extends AppCompatActivity {
                 {
                     mmDevice = device;
                     display.append("Bluetooth Device Paired\n");
-                    break;
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     void openBT() throws IOException
@@ -430,11 +431,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        findBT();
-
-        try { openBT(); }
-        catch (IOException ex) {
-            display.append("BT not opened\n");
+        if (findBT()) {
+            try {
+                openBT();
+            } catch (IOException ex) {
+                display.append("BT not opened\n");
+            }
         }
 
         // a little kickstart for autogo...
