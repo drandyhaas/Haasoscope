@@ -21,6 +21,13 @@ import serial.tools.list_ports
 import json, os
 import scipy.optimize
 
+enable_ripyl=False # set to True to use ripyl serial decoding... have to get it from https://github.com/kevinpt/ripyl and then install it first!
+if enable_ripyl:
+    import ripyl.util.plot as rplot
+    from collections import OrderedDict
+    import ripyl.streaming as stream
+    import ripyl.protocol.uart as uart
+
 class Haasoscope():
     
     def construct(self):
@@ -926,6 +933,7 @@ class Haasoscope():
             elif event.key=="I": self.testi2c(); return
             elif event.key=="c": self.readcalib(); return
             elif event.key=="C": self.storecalib(); return
+            elif event.key=="D": self.decode(); return
             elif event.key=="ctrl+r": 
                 if self.ydatarefchan<0: self.ydatarefchan=self.selectedchannel
                 else: self.ydatarefchan=-1
@@ -970,6 +978,33 @@ class Haasoscope():
                 print 'key=%s' % (event.key)
                 print 'x=%d, y=%d, xdata=%f, ydata=%f' % (event.x, event.y, event.xdata, event.ydata)
             except TypeError: pass
+    
+    def decode(self):
+        if not enable_ripyl:
+            print "ripyl not enabled - install it and then set enable_ripyl to True at the top of HaasoscopeLib.py"
+            return
+        raw_samples = self.xydata[self.selectedchannel][1] #ydata
+        sample_period = (1e-6/self.clkrate)*pow(2,self.downsample)
+        txd = stream.samples_to_sample_stream(raw_samples, sample_period)
+        bits = 8 # Anything, not just restricted to the standard 5,6,7,8,9
+        parity = None # or 'odd' or None
+        stop_bits = 1 # Can be 1, 1.5, 2 or any non-standard value greater than 0.5
+        polarity = uart.UARTConfig.IdleHigh # logic level when there's no data
+        baud=1500000 # baud rate -- can set to None if you want to try to determine it automatically!
+        levels=(1.0,1.5) # the low and high logic levels
+        format=stream.AnnotationFormat.Int # can be Hex, Int, or Bin
+        try:
+            records_it = uart.uart_decode(txd, bits, parity, stop_bits, polarity, baud_rate=baud, use_std_baud=False, logic_levels=levels)
+            records = list(records_it) # This consumes the iterator and completes the decode
+            #for rec in records: print "rec: ",rec.nested_status()
+            txd2 = stream.samples_to_sample_stream(raw_samples, sample_period) # for some weird reason, we have to make this again!
+            channels = OrderedDict([('TX', txd2)]) # Define the channels ordered from top to bottom with the y-axis labels
+            title = 'Decoded UART plot'
+            if not hasattr(self,'plotter'):
+                self.plotter = rplot.Plotter()
+            self.plotter.plot(channels, records, title,label_format=format)
+        except stream.StreamError:
+            print "No UART data found for channel",self.selectedchannel
     
     def on_launch(self):        
         self.xydata=np.empty([num_chan_per_board*num_board,2,self.num_samples-1],dtype=float)
