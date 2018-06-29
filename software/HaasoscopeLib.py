@@ -1619,6 +1619,7 @@ class Haasoscope():
         print "usbsermap is",self.usbsermap
         return True
     
+    timedout = False
     def getdata(self,board):
         self.ser.write(chr(10+board))
         if self.db: print time.time()-self.oldtime,"asked for data from board",board   
@@ -1634,6 +1635,7 @@ class Haasoscope():
         if self.db: print time.time()-self.oldtime,"getdata wanted",self.num_bytes,"bytes and got",len(rslt),"from board",board
         byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
         if len(rslt)==self.num_bytes:
+            self.timedout = False
             db2=False #True
             if db2: print byte_array[1:11]
             self.ydata=np.reshape(byte_array,(num_chan_per_board,self.num_samples))
@@ -1646,6 +1648,7 @@ class Haasoscope():
                         val=(self.ydata[c][2*i]+self.ydata[c][2*i+1])/2
                         self.ydata[c][2*i]=val; self.ydata[c][2*i+1]=val;            
         else:
+            self.timedout = True
             if not self.db and self.rollingtrigger: print "getdata asked for",self.num_bytes,"bytes and got",len(rslt),"from board",board
             if len(rslt)>0 and self.rollingtrigger: print byte_array[0:10]
         if self.dologicanalyzer:

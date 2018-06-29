@@ -59,7 +59,7 @@ try:
                 if lastrate>40: tinterval=500.
                 else: tinterval=100.
                 oldnevents=nevents
-            if d.getone: d.paused=True
+            if d.getone and not d.timedout: d.paused=True
         d.redraw()
         if len(plt.get_fignums())==0:
             if d.domaindrawing: break # quit when all the plots have been closed
