@@ -3,7 +3,7 @@
 <eagle version="9.2.0">
 <drawing>
 <settings>
-<setting alwaysvectorfont="no"/>
+<setting alwaysvectorfont="yes"/>
 <setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
@@ -180,7 +180,7 @@
 <wire x1="86" y1="-12" x2="-12" y2="-12" width="0.1524" layer="20"/>
 <text x="39.7" y="63.6" size="0.8128" layer="21" font="vector" rot="R90">Right</text>
 <text x="39" y="59.6" size="0.8128" layer="21" font="vector" rot="R270">USB</text>
-<text x="40.7" y="65.8" size="0.8128" layer="21" font="vector">5V selector</text>
+<text x="40.6" y="65.9" size="0.8128" layer="21" font="vector">5V selector</text>
 <text x="-10.41" y="-7.49" size="1.016" layer="21" font="vector" rot="R90">Haasoscope v9.0</text>
 <rectangle x1="2.4" y1="-3.6" x2="3.4" y2="-1.6" layer="21" rot="R90"/>
 <dimension x1="-12" y1="58" x2="86" y2="58" x3="37" y3="68" textsize="0.8128" layer="21" visible="yes"/>
@@ -206,7 +206,7 @@
 <text x="68.6" y="56.4" size="0.8128" layer="22" font="vector" rot="MR90">0.1uF</text>
 <text x="68.6" y="15" size="0.8128" layer="22" font="vector" rot="MR90">0.1uF</text>
 <text x="68.6" y="37" size="0.8128" layer="22" font="vector" rot="MR90">0.1uF</text>
-<text x="-2.71" y="48.41" size="0.8128" layer="22" font="vector" rot="MR90">22pF</text>
+<text x="-6.21" y="54.31" size="0.8128" layer="22" font="vector" rot="MR90">22pF</text>
 <text x="12" y="10" size="0.8128" layer="21" font="vector" rot="R90">560</text>
 <text x="57.6" y="49.4" size="0.8128" layer="22" font="vector" rot="MR270">10k</text>
 <text x="40.3" y="14.8" size="0.8128" layer="21" font="vector" rot="R90">10nF</text>
@@ -258,7 +258,7 @@ ExtTrig</text>
 <text x="16.81" y="40.11" size="0.8128" layer="21" font="vector">118</text>
 <text x="16.81" y="42.71" size="0.8128" layer="21" font="vector">119</text>
 <text x="16.81" y="45.21" size="0.8128" layer="21" font="vector">105</text>
-<text x="17.79" y="50.21" size="0.8128" layer="21" font="vector" rot="R90">122</text>
+<text x="16.81" y="47.61" size="0.8128" layer="21" font="vector">122</text>
 <text x="-8.49" y="42.91" size="0.8128" layer="21" font="vector">140</text>
 <text x="-8.49" y="40.31" size="0.8128" layer="21" font="vector">135</text>
 <text x="-8.49" y="37.71" size="0.8128" layer="21" font="vector">134</text>
