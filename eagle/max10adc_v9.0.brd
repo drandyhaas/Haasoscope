@@ -6621,22 +6621,22 @@ design rules under a new name.
 <attribute name="MPN" value="MF-RES-0805-10K" x="15" y="17.7" size="0.8128" layer="27" font="vector" display="off"/>
 <attribute name="OC_NEWARK" value="unknown" x="15" y="17.7" size="0.8128" layer="27" font="vector" display="off"/>
 </element>
-<element name="R50-4" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="68.1" y="-8.5" smashed="yes" rot="MR0"/>
-<element name="R50-3" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="68.1" y="-6.4" smashed="yes" rot="MR0"/>
-<element name="R50-2" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="63.9" y="-6.4" smashed="yes" rot="MR0"/>
-<element name="R50-1" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="63.9" y="-8.5" smashed="yes" rot="MR0"/>
-<element name="R50-5" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="69.6" y="20.6" smashed="yes" rot="MR0"/>
-<element name="R50-6" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="74" y="22.8" smashed="yes" rot="MR0"/>
-<element name="R50-7" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="69.6" y="22.8" smashed="yes" rot="MR0"/>
-<element name="R50-8" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="74" y="20.6" smashed="yes" rot="MR0"/>
-<element name="R50-9" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="70.1" y="32.3" smashed="yes" rot="MR0"/>
-<element name="R50-10" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="74.3" y="32.3" smashed="yes" rot="MR0"/>
-<element name="R50-11" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="74.3" y="34.5" smashed="yes" rot="MR0"/>
-<element name="R50-12" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="70.1" y="34.5" smashed="yes" rot="MR0"/>
-<element name="R50-13" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="63.7" y="62.7" smashed="yes" rot="MR0"/>
-<element name="R50-14" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="63.7" y="60.6" smashed="yes" rot="MR0"/>
-<element name="R50-15" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="67.9" y="60.6" smashed="yes" rot="MR0"/>
-<element name="R50-16" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="67.9" y="62.7" smashed="yes" rot="MR0"/>
+<element name="R50-4" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="68.1" y="-8.5" smashed="yes" rot="MR0"/>
+<element name="R50-3" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="68.1" y="-6.4" smashed="yes" rot="MR0"/>
+<element name="R50-2" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="63.9" y="-6.4" smashed="yes" rot="MR0"/>
+<element name="R50-1" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="63.9" y="-8.5" smashed="yes" rot="MR0"/>
+<element name="R50-5" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="69.6" y="20.6" smashed="yes" rot="MR0"/>
+<element name="R50-6" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="74" y="22.8" smashed="yes" rot="MR0"/>
+<element name="R50-7" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="69.6" y="22.8" smashed="yes" rot="MR0"/>
+<element name="R50-8" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="74" y="20.6" smashed="yes" rot="MR0"/>
+<element name="R50-9" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="70.1" y="32.3" smashed="yes" rot="MR0"/>
+<element name="R50-10" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="74.3" y="32.3" smashed="yes" rot="MR0"/>
+<element name="R50-11" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="74.3" y="34.5" smashed="yes" rot="MR0"/>
+<element name="R50-12" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="70.1" y="34.5" smashed="yes" rot="MR0"/>
+<element name="R50-13" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="63.7" y="62.7" smashed="yes" rot="MR0"/>
+<element name="R50-14" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="63.7" y="60.6" smashed="yes" rot="MR0"/>
+<element name="R50-15" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="67.9" y="60.6" smashed="yes" rot="MR0"/>
+<element name="R50-16" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="67.9" y="62.7" smashed="yes" rot="MR0"/>
 <element name="U340G" library="usb-serial" package="SOIC16" value="CH340G" x="7" y="55" smashed="yes" rot="R180"/>
 <element name="Y1" library="SparkFun-FreqCtrl" package="HC49US" value="ABL-12.000MHZ-B2" x="-1.5" y="54.6" smashed="yes" rot="R90"/>
 <element name="C_OSC1" library="rcl@1" package="C0603" value="22pF" x="-4.2" y="52" smashed="yes" rot="MR90">
@@ -6877,12 +6877,12 @@ design rules under a new name.
 <attribute name="MPN" value="MF-CAP-0805-1uF" x="54.8" y="1" size="0.8128" layer="28" font="vector" rot="MR270" display="off"/>
 <attribute name="VALUE" x="55.8" y="0.5" size="0.8128" layer="22" font="vector" rot="MR90"/>
 </element>
-<element name="ROFFSET1" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="65.3" y="26.7" smashed="yes" rot="MR180">
+<element name="ROFFSET1" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="65.3" y="26.7" smashed="yes" rot="MR180">
 <attribute name="VALUE" x="64.265" y="25.54" size="0.8128" layer="22" font="vector" rot="MR180"/>
 </element>
-<element name="ROFFSET2" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="65.3" y="28.9" smashed="yes" rot="MR180"/>
-<element name="ROFFSET3" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="65.3" y="31.1" smashed="yes" rot="MR180"/>
-<element name="ROFFSET4" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200" x="65.3" y="33.3" smashed="yes" rot="MR180"/>
+<element name="ROFFSET2" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="65.3" y="28.9" smashed="yes" rot="MR180"/>
+<element name="ROFFSET3" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="65.3" y="31.1" smashed="yes" rot="MR180"/>
+<element name="ROFFSET4" library="resistor" library_urn="urn:adsk.eagle:library:348" package="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R" x="65.3" y="33.3" smashed="yes" rot="MR180"/>
 <element name="L2" library="SparkFun-Passives" package="1210" value="10uH" x="41.6" y="4" smashed="yes" rot="MR90">
 <attribute name="MPN" value="MF-IND-1210-10uH" x="41.6" y="4" size="0.8128" layer="28" font="vector" rot="MR90" display="off"/>
 <attribute name="VALUE" x="40.3" y="4.3" size="0.8128" layer="22" font="vector" rot="MR180"/>

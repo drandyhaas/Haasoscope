@@ -21758,22 +21758,22 @@ http://www.bobstarr.net</description>
 <attribute name="MPN" value="MF-RES-0805-10K"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="R50-4" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="R50-3" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="R50-2" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="R50-1" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="R50-5" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="R50-6" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="R50-7" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="R50-8" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="R50-9" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="R50-10" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="R50-11" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="R50-12" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="R50-13" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="R50-14" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="R50-15" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="R50-16" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
+<part name="R50-4" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="R50-3" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="R50-2" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="R50-1" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="R50-5" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="R50-6" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="R50-7" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="R50-8" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="R50-9" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="R50-10" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="R50-11" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="R50-12" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="R50-13" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="R50-14" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="R50-15" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="R50-16" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="U340G" library="usb-serial" deviceset="CH340G" device=""/>
 <part name="Y1" library="SparkFun-FreqCtrl" deviceset="CRYSTAL" device="HC49US" value="ABL-12.000MHZ-B2"/>
 <part name="C_OSC1" library="rcl@1" deviceset="C-US" device="C0603" value="22pF">
@@ -21992,10 +21992,10 @@ http://www.bobstarr.net</description>
 <part name="CP9" library="rcl" deviceset="C-EU" device="C0805K" value="1uF">
 <attribute name="MPN" value="MF-CAP-0805-1uF"/>
 </part>
-<part name="ROFFSET1" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="ROFFSET2" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="ROFFSET3" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
-<part name="ROFFSET4" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
+<part name="ROFFSET1" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="ROFFSET2" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="ROFFSET3" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="ROFFSET4" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="U$1" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="VCCA" device=""/>
 <part name="U$2" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="VCCA" device=""/>
 <part name="U$3" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="VCCA" device=""/>
