@@ -24402,7 +24402,7 @@ http://www.bobstarr.net</description>
 <wire x1="210.82" y1="63.5" x2="210.82" y2="71.12" width="0.1524" layer="97"/>
 <wire x1="210.82" y1="71.12" x2="261.62" y2="71.12" width="0.1524" layer="97"/>
 <wire x1="292.1" y1="162.56" x2="292.1" y2="256.54" width="0.1524" layer="95"/>
-<wire x1="335.28" y1="210.82" x2="335.28" y2="116.84" width="0.1524" layer="95"/>
+<wire x1="335.28" y1="210.82" x2="335.28" y2="157.48" width="0.1524" layer="95"/>
 <text x="294.64" y="205.74" size="2.54" layer="95">LEDs</text>
 <wire x1="383.54" y1="210.82" x2="292.1" y2="210.82" width="0.1524" layer="95"/>
 <wire x1="292.1" y1="210.82" x2="292.1" y2="256.54" width="0.1524" layer="95"/>
@@ -24415,7 +24415,7 @@ http://www.bobstarr.net</description>
 <wire x1="292.1" y1="248.92" x2="325.12" y2="248.92" width="0.1524" layer="97"/>
 <wire x1="325.12" y1="248.92" x2="325.12" y2="256.54" width="0.1524" layer="97"/>
 <wire x1="304.8" y1="203.2" x2="292.1" y2="203.2" width="0.1524" layer="97"/>
-<wire x1="335.28" y1="116.84" x2="292.1" y2="116.84" width="0.1524" layer="97"/>
+<wire x1="335.28" y1="157.48" x2="292.1" y2="157.48" width="0.1524" layer="97"/>
 </plain>
 <instances>
 <instance part="FPGA" gate="G$1" x="172.72" y="144.78">
@@ -24630,7 +24630,7 @@ http://www.bobstarr.net</description>
 <attribute name="MPN" x="320.04" y="167.64" size="1.778" layer="96" rot="R270" display="off"/>
 <attribute name="NAME" x="315.468" y="171.704" size="1.778" layer="95"/>
 </instance>
-<instance part="GND71" gate="1" x="299.72" y="121.92"/>
+<instance part="GND71" gate="1" x="299.72" y="162.56"/>
 <instance part="GND23" gate="1" x="350.52" y="215.9"/>
 <instance part="RJ2" gate="G$1" x="342.9" y="238.76">
 <attribute name="OC_NEWARK" x="342.9" y="238.76" size="1.778" layer="96" rot="R90" display="off"/>
@@ -24907,7 +24907,7 @@ http://www.bobstarr.net</description>
 <segment>
 <pinref part="GND71" gate="1" pin="GND"/>
 <pinref part="RLED1" gate="G$1" pin="2"/>
-<wire x1="299.72" y1="124.46" x2="299.72" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="299.72" y1="165.1" x2="299.72" y2="167.64" width="0.1524" layer="91"/>
 <wire x1="299.72" y1="167.64" x2="299.72" y2="177.8" width="0.1524" layer="91"/>
 <wire x1="299.72" y1="177.8" x2="299.72" y2="187.96" width="0.1524" layer="91"/>
 <wire x1="299.72" y1="187.96" x2="299.72" y2="198.12" width="0.1524" layer="91"/>
