@@ -78,6 +78,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 	reg [7:0] i2cdata[8];//up to 8 bytes of data to send
 	reg [3:0] i2c_datacounttosend,i2c_datacount;
 	reg i2cgo=0;
+	reg i2cdoread=0;
 
   localparam READ=0, SOLVING=1, WAITING=2, WRITE_EXT1=3, WRITE_EXT2=4, WAIT_ADC1=5, WAIT_ADC2=6, WRITE_BYTE1=7, WRITE_BYTE2=8, READMORE=9, 
 	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15, //WRITEUSB1=16,WRITEUSB2=17, 
@@ -233,8 +234,8 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 			 i2cdata[1][4]=led5; i2cdata[1][5]=led6; i2cdata[1][6]=led7; i2cdata[1][7]=led8; // set the high 4 bits to be correct for the leds
 			 i2cdata[2]=0; // not used for mcp io expanders
 			 if (i2cstate==READ) begin // if it's busy, we'll do nothing, oh well
-			   i2cgo=1;
-				//state=READ;
+			   i2cdoread = 0;
+				i2cgo=1;
 			 end
 		  end
       end
@@ -503,6 +504,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 					i2cdata[1][7:4]=oversamp; // set the high 4 bits to be correct for the oversampling
 					i2cdata[2]=0; // not used for mcp io expanders
 					if (i2cstate==READ) begin
+						i2cdoread = 0;
 						i2cgo=1;
 					end
 					state=READ;
@@ -533,6 +535,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 					i2cdata[1]=extradata[3];
 					i2cdata[2]=extradata[4];
 					if ((extradata[5]==myid || extradata[5]==200) && i2cstate==READ) begin // only pay attention if the board is broadcast (id 200) or for my id!
+						i2cdoread = 0;
 						i2cgo=1;
 					end
 					state=READ;
@@ -589,6 +592,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 					i2cdata[1][7:4]=oversamp; // set the high 4 bits to be correct for the oversampling
 					i2cdata[2]=0; // not used for mcp io expanders
 					if (i2cstate==READ) begin
+						i2cdoread = 0;
 						i2cgo=1;
 					end
 					state=READ;
@@ -635,6 +639,27 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				else begin
 					blockstosend = extradata[0];
 					state=READ;
+				end
+			end
+			else if (readdata==146) begin // send out a byte read from i2c
+				byteswanted=3;//wait for next bytes which are the chip/address to read from and the board id (or all)
+				comdata=readdata;
+				newcomdata=1; //pass it on
+				if (bytesread<byteswanted) state=READMORE;
+				else begin
+					i2c_addr=extradata[0]; // get chip to read from
+					i2c_datacounttosend=2;
+					i2cdata[0]=extradata[1]; // get address to read from
+					i2cdata[1]=0; // dummy
+					if ((extradata[2]==myid || extradata[2]==200) && i2cstate==READ) begin // only pay attention if the board is broadcast (id 200) or for my id!
+						i2cdoread = 1;
+						i2cgo=1;
+						//send message with read info (note - it won't be correct yet, since it takes time to read, so check back a little later!)
+						ioCountToSend = 1;
+						data[0] = i2c_datard;
+						state=WRITE1;
+					end
+					else state=READ;
 				end
 			end
 			else state=READ; // if we got some other command, just ignore it
@@ -989,11 +1014,10 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 		I2CWAIT: begin
 			if (~i2c_busy) begin
 				//i2c_addr set elsewhere first
-				i2c_rw = 0;
-				i2c_datawr = i2cdata[0];
+				i2c_rw=0;
 				//i2c_datacounttosend set elsewhere first
+				i2c_datawr = i2cdata[0];
 				i2c_datacount=1;
-				//i2c_datard = 
 				i2cstate=I2CSEND1;
 			end
 		end
@@ -1004,6 +1028,9 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 			end
 			else if (i2c_busy) begin
 				i2c_datawr = i2cdata[i2c_datacount];
+				if (i2cdoread) begin
+					i2c_rw=1; // set to read for second byte 
+				end
 				i2cstate=I2CSEND2;
 			end
 		end
