@@ -22183,8 +22183,7 @@ http://www.bobstarr.net</description>
 <text x="7.62" y="251.46" size="2.54" layer="97" font="vector">Front-Ends</text>
 <wire x1="5.08" y1="193.04" x2="167.64" y2="193.04" width="0.1524" layer="97" style="shortdash"/>
 <wire x1="167.64" y1="193.04" x2="193.04" y2="193.04" width="0.1524" layer="97" style="shortdash"/>
-<wire x1="193.04" y1="193.04" x2="193.04" y2="200.66" width="0.1524" layer="97" style="shortdash"/>
-<wire x1="193.04" y1="200.66" x2="193.04" y2="248.92" width="0.1524" layer="97" style="shortdash"/>
+<wire x1="193.04" y1="193.04" x2="193.04" y2="248.92" width="0.1524" layer="97" style="shortdash"/>
 <wire x1="193.04" y1="248.92" x2="193.04" y2="256.54" width="0.1524" layer="97" style="shortdash"/>
 <wire x1="193.04" y1="193.04" x2="358.14" y2="193.04" width="0.1524" layer="97" style="shortdash"/>
 <text x="360.68" y="251.46" size="2.54" layer="97" font="vector">Channel 3</text>
@@ -22207,8 +22206,7 @@ http://www.bobstarr.net</description>
 <wire x1="5.08" y1="33.02" x2="30.48" y2="33.02" width="0.1524" layer="97"/>
 <wire x1="30.48" y1="33.02" x2="162.56" y2="33.02" width="0.1524" layer="97"/>
 <wire x1="162.56" y1="33.02" x2="193.04" y2="33.02" width="0.1524" layer="97"/>
-<wire x1="193.04" y1="33.02" x2="205.74" y2="33.02" width="0.1524" layer="97"/>
-<wire x1="205.74" y1="33.02" x2="383.54" y2="33.02" width="0.1524" layer="97"/>
+<wire x1="193.04" y1="33.02" x2="383.54" y2="33.02" width="0.1524" layer="97"/>
 <wire x1="193.04" y1="134.62" x2="193.04" y2="127" width="0.1524" layer="97" style="shortdash"/>
 <wire x1="193.04" y1="127" x2="193.04" y2="33.02" width="0.1524" layer="97" style="shortdash"/>
 <wire x1="167.64" y1="193.04" x2="167.64" y2="185.42" width="0.1524" layer="97" style="shortdash"/>
@@ -22229,6 +22227,36 @@ http://www.bobstarr.net</description>
 <wire x1="5.08" y1="25.4" x2="30.48" y2="25.4" width="0.1524" layer="97"/>
 <wire x1="30.48" y1="25.4" x2="30.48" y2="33.02" width="0.1524" layer="97"/>
 <wire x1="162.56" y1="33.02" x2="162.56" y2="5.08" width="0.1524" layer="97"/>
+<text x="58.42" y="198.12" size="1.778" layer="91">4 200 Ohm resistors in parallel
+for 50 Ohm termination</text>
+<text x="121.92" y="198.12" size="1.778" layer="91">10M Ohm resistor needed for AC coupling mode
+to bring the DC offset to 0.
+The time constant for the AC couping is
+RC=0.01uF*10M=0.1 sec.</text>
+<text x="121.92" y="213.36" size="1.778" layer="91">These resistors, in parallel with 10M (or 50) Ohm termination, 
+sets the input impedance.
+For the 1.1M case, and high impedance, it is e.g. 
+1/(1/1.1M+1/10M)=0.99M (so close to 1M).
+The caps are for freq compensation.</text>
+<text x="38.1" y="251.46" size="1.778" layer="91">Switch for AC/DC coupling</text>
+<text x="30.48" y="203.2" size="1.778" layer="91">Switch for 1M / 50 Ohm 
+input impedance</text>
+<text x="93.98" y="127" size="1.778" layer="91">Analog switch that sends either
+Ch 0 or Ch2 to the first input of ADC2, for oversampling</text>
+<text x="284.48" y="127" size="1.778" layer="91">Analog switch that sends either
+Ch 1 or Ch3 to the second input of ADC2, for oversampling</text>
+<text x="104.14" y="40.64" size="1.778" layer="91">Dual channel high-bandwidth op-amps</text>
+<text x="73.66" y="106.68" size="1.778" layer="91">x1 or x10 gain switch</text>
+<text x="55.88" y="38.1" size="1.778" layer="91">These caps reduce 
+noise on the offsets</text>
+<text x="7.62" y="40.64" size="1.778" layer="91">Gain for negative feedback op-amp is R2/R1,
+i.e. (1M+1M)/1.1M = ~2 or ~0.2 for 
+low or high gain.
+Compensation must match the inverse, 
+e.g. 5pF/10pF=~1/2 or 
+50pF/10pF=~5 for low or high gain.
+Variable caps are added so it can be
+adjusted in situ.</text>
 </plain>
 <instances>
 <instance part="GND27" gate="1" x="27.94" y="218.44">
@@ -22410,7 +22438,7 @@ http://www.bobstarr.net</description>
 <attribute name="VALUE" x="159.004" y="45.339" size="1.778" layer="96" rot="MR180"/>
 </instance>
 <instance part="GND59" gate="1" x="175.26" y="35.56">
-<attribute name="VALUE" x="172.72" y="33.02" size="1.778" layer="96"/>
+<attribute name="VALUE" x="172.72" y="35.56" size="1.778" layer="96"/>
 </instance>
 <instance part="COFFSETB10" gate="G$1" x="248.92" y="48.26" rot="MR180">
 <attribute name="MPN" x="248.92" y="48.26" size="1.778" layer="96" rot="MR180" display="off"/>
@@ -22897,7 +22925,7 @@ http://www.bobstarr.net</description>
 <attribute name="VALUE" x="30.48" y="154.94" size="1.778" layer="96" rot="MR0"/>
 </instance>
 <instance part="GND73" gate="1" x="109.22" y="137.16" rot="MR0">
-<attribute name="VALUE" x="111.76" y="134.62" size="1.778" layer="96" rot="MR0"/>
+<attribute name="VALUE" x="111.76" y="137.16" size="1.778" layer="96" rot="MR0"/>
 </instance>
 <instance part="GND74" gate="1" x="33.02" y="172.72" rot="MR0">
 <attribute name="VALUE" x="35.56" y="170.18" size="1.778" layer="96" rot="MR0"/>
@@ -22921,7 +22949,7 @@ http://www.bobstarr.net</description>
 <attribute name="VALUE" x="215.9" y="154.94" size="1.778" layer="96"/>
 </instance>
 <instance part="GND31" gate="1" x="299.72" y="137.16" rot="MR0">
-<attribute name="VALUE" x="302.26" y="134.62" size="1.778" layer="96" rot="MR0"/>
+<attribute name="VALUE" x="302.26" y="137.16" size="1.778" layer="96" rot="MR0"/>
 </instance>
 <instance part="GND56" gate="1" x="223.52" y="172.72" rot="MR0">
 <attribute name="VALUE" x="226.06" y="170.18" size="1.778" layer="96" rot="MR0"/>
@@ -22942,7 +22970,7 @@ http://www.bobstarr.net</description>
 <attribute name="VALUE" x="266.7" y="35.56" size="1.778" layer="96"/>
 </instance>
 <instance part="GND57" gate="1" x="365.76" y="35.56">
-<attribute name="VALUE" x="363.22" y="33.02" size="1.778" layer="96"/>
+<attribute name="VALUE" x="363.22" y="35.56" size="1.778" layer="96"/>
 </instance>
 <instance part="U$16" gate="G$1" x="347.98" y="63.5">
 <attribute name="VALUE" x="347.98" y="66.294" size="1.778" layer="96" align="bottom-center"/>
@@ -23083,12 +23111,10 @@ http://www.bobstarr.net</description>
 <segment>
 <pinref part="GND59" gate="1" pin="GND"/>
 <pinref part="COFFSETA1" gate="G$1" pin="1"/>
-<wire x1="175.26" y1="38.1" x2="175.26" y2="40.64" width="0.1524" layer="91"/>
+<wire x1="175.26" y1="38.1" x2="175.26" y2="43.18" width="0.1524" layer="91"/>
 <pinref part="COFFSETB8" gate="G$1" pin="1"/>
-<wire x1="175.26" y1="40.64" x2="175.26" y2="43.18" width="0.1524" layer="91"/>
-<wire x1="157.48" y1="43.18" x2="157.48" y2="40.64" width="0.1524" layer="91"/>
-<wire x1="157.48" y1="40.64" x2="175.26" y2="40.64" width="0.1524" layer="91"/>
-<junction x="175.26" y="40.64"/>
+<wire x1="157.48" y1="43.18" x2="175.26" y2="43.18" width="0.1524" layer="91"/>
+<junction x="175.26" y="43.18"/>
 </segment>
 <segment>
 <pinref part="DAC1" gate="G$1" pin="VSS"/>
@@ -23280,11 +23306,9 @@ http://www.bobstarr.net</description>
 </segment>
 <segment>
 <pinref part="GND57" gate="1" pin="GND"/>
-<wire x1="365.76" y1="38.1" x2="365.76" y2="40.64" width="0.1524" layer="91"/>
-<wire x1="365.76" y1="40.64" x2="365.76" y2="43.18" width="0.1524" layer="91"/>
-<wire x1="347.98" y1="43.18" x2="347.98" y2="40.64" width="0.1524" layer="91"/>
-<wire x1="347.98" y1="40.64" x2="365.76" y2="40.64" width="0.1524" layer="91"/>
-<junction x="365.76" y="40.64"/>
+<wire x1="365.76" y1="38.1" x2="365.76" y2="43.18" width="0.1524" layer="91"/>
+<wire x1="347.98" y1="43.18" x2="365.76" y2="43.18" width="0.1524" layer="91"/>
+<junction x="365.76" y="43.18"/>
 <pinref part="COFFSETA3" gate="G$1" pin="1"/>
 <pinref part="COFFSETB12" gate="G$1" pin="1"/>
 </segment>
@@ -24584,6 +24608,11 @@ http://www.bobstarr.net</description>
 <wire x1="325.12" y1="248.92" x2="325.12" y2="256.54" width="0.1524" layer="97"/>
 <wire x1="304.8" y1="203.2" x2="292.1" y2="203.2" width="0.1524" layer="97"/>
 <wire x1="335.28" y1="157.48" x2="292.1" y2="157.48" width="0.1524" layer="97"/>
+<text x="243.84" y="35.56" size="1.778" layer="91">Can take 5V from either the
+right side connector
+or the USB connector</text>
+<text x="335.28" y="30.48" size="1.778" layer="91">Chip that talks UART
+over USB</text>
 </plain>
 <instances>
 <instance part="FPGA" gate="G$1" x="172.72" y="144.78">
@@ -26765,7 +26794,7 @@ http://www.bobstarr.net</description>
 <description>ADCs &amp; Power</description>
 <plain>
 <wire x1="218.44" y1="256.54" x2="218.44" y2="132.08" width="0.1524" layer="95"/>
-<wire x1="218.44" y1="132.08" x2="5.08" y2="132.08" width="0.1524" layer="95"/>
+<wire x1="218.44" y1="132.08" x2="119.38" y2="132.08" width="0.1524" layer="95"/>
 <text x="7.62" y="251.46" size="2.54" layer="95">ADCs</text>
 <wire x1="5.08" y1="248.92" x2="17.78" y2="248.92" width="0.1524" layer="97"/>
 <wire x1="17.78" y1="248.92" x2="17.78" y2="256.54" width="0.1524" layer="97"/>
@@ -26784,8 +26813,7 @@ http://www.bobstarr.net</description>
 <wire x1="119.38" y1="124.46" x2="106.68" y2="124.46" width="0.1524" layer="97" style="shortdash"/>
 <wire x1="106.68" y1="124.46" x2="106.68" y2="132.08" width="0.1524" layer="97" style="shortdash"/>
 <wire x1="109.22" y1="132.08" x2="109.22" y2="248.92" width="0.1524" layer="97" style="shortdash"/>
-<wire x1="109.22" y1="248.92" x2="109.22" y2="254" width="0.1524" layer="97" style="shortdash"/>
-<wire x1="109.22" y1="254" x2="109.22" y2="256.54" width="0.1524" layer="97" style="shortdash"/>
+<wire x1="109.22" y1="248.92" x2="109.22" y2="256.54" width="0.1524" layer="97" style="shortdash"/>
 <text x="81.28" y="251.46" size="2.54" layer="97" font="vector">Channel 1+2</text>
 <text x="193.04" y="251.46" size="2.54" layer="97" font="vector">Channel 3+4</text>
 <wire x1="78.74" y1="256.54" x2="78.74" y2="248.92" width="0.1524" layer="97" style="shortdash"/>
@@ -26794,6 +26822,25 @@ http://www.bobstarr.net</description>
 <wire x1="190.5" y1="248.92" x2="218.44" y2="248.92" width="0.1524" layer="97" style="shortdash"/>
 <text x="5.08" y="50.8" size="2.54" layer="97" font="vector">Misc.</text>
 <wire x1="119.38" y1="55.88" x2="119.38" y2="5.08" width="0.1524" layer="97"/>
+<text x="66.04" y="226.06" size="1.778" layer="91">Note that the two ADCs have separate 
+clocks (32 and 33), which can be 
+50% out of phase, for oversampling.</text>
+<text x="83.82" y="167.64" size="1.778" layer="91">SHDN is used to turn
+off the ADCs when 
+inactive, to save power</text>
+<text x="86.36" y="187.96" size="1.778" layer="91">SDIN/SCLK,CS
+is the SPI interface</text>
+<text x="15.24" y="193.04" size="1.778" layer="91">Dual 8-bit 
+ADC outputs</text>
+<text x="114.3" y="165.1" size="1.778" layer="91">Inputs to this ADC
+are from the 
+oversampling switches</text>
+<text x="22.352" y="92.964" size="1.778" layer="91">For reducing noise on the power.
+The inductor helps reduce low-freq
+noise on the USB 5V power input.</text>
+<text x="22.352" y="57.404" size="1.778" layer="91">Separate 3.3V power rail for the
+analog components, so noise from
+FPGA etc. doesn't get into ADCs.</text>
 </plain>
 <instances>
 <instance part="GND4" gate="1" x="33.02" y="144.78">
