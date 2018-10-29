@@ -125,8 +125,8 @@ agreement for further details.
 	(port
 		(pt 0 256)
 		(input)
-		(text "downsample[4..0]" (rect 0 0 69 12)(font "Arial" ))
-		(text "downsample[4..0]" (rect 21 251 90 263)(font "Arial" ))
+		(text "downsample[7..0]" (rect 0 0 68 12)(font "Arial" ))
+		(text "downsample[7..0]" (rect 21 251 89 263)(font "Arial" ))
 		(line (pt 0 256)(pt 16 256)(line_width 3))
 	)
 	(port
@@ -212,6 +212,13 @@ agreement for further details.
 		(text "use_ext_trig" (rect 0 0 49 12)(font "Arial" ))
 		(text "use_ext_trig" (rect 21 443 70 455)(font "Arial" ))
 		(line (pt 0 448)(pt 16 448)(line_width 1))
+	)
+	(port
+		(pt 0 464)
+		(input)
+		(text "nsmp[ram_width-1..0]" (rect 0 0 84 12)(font "Arial" ))
+		(text "nsmp[ram_width-1..0]" (rect 21 459 105 471)(font "Arial" ))
+		(line (pt 0 464)(pt 16 464)(line_width 3))
 	)
 	(port
 		(pt 360 32)

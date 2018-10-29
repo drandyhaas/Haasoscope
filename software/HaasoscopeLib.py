@@ -60,7 +60,7 @@ class Haasoscope():
         self.chanforscreen=0 #channel to draw on the mini-display
         self.triggertimethresh=1 #samples for which the trigger must be over/under threshold
         self.downsample=2 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
-        self.maxdownsample=15 # +(12-ram_width) # slowest I can run
+        self.maxdownsample=15 # +(12-ram_width) # slowest I can run (can add 12-ram_width when using newer firmware)
         self.dofft=False #drawing the FFT plot
         self.dousb=False #whether to use USB2 output
         self.sincresample=0 # amount of resampling to do (sinx/x)
@@ -1128,7 +1128,7 @@ class Haasoscope():
                     self.lines[l+self.logicline1].set_ydata(ydatanew)
             for l in np.arange(num_chan_per_board): #this draws the 4 fast ADC data channels for each board
                 thechan=l+(num_board-board-1)*num_chan_per_board
-                if self.db: print time.time()-self.oldtime,"drawing adc line",thechan
+                #if self.db: print time.time()-self.oldtime,"drawing adc line",thechan
                 if len(theydata)<=l: print "don't have channel",l,"on board",board; return
                 if self.dooversample[thechan]==1: # account for oversampling
                     xdatanew = (self.xdata2-self.num_samples)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling/2.) #downsample isn't less than 0 for xscaling

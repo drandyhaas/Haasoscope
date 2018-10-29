@@ -1,7 +1,7 @@
 module oscillo(clk, startTrigger, clk_flash, data_flash1, data_flash2, data_flash3, data_flash4, pwr1, pwr2, shdn_out, spen_out, trig_in, trig_out, rden, rdaddress, 
 data_ready, wraddress_triggerpoint, imthelast, imthefirst,rollingtrigger,trigDebug,triggerpoint,downsample,
 trigthresh,trigchannels,triggertype,triggertot,format_sdin_out,div_sclk_out,outsel_cs_out,clk_spi,SPIsend,SPIsenddata,
-wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig);
+wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig, nsmp);
 input clk,clk_spi;
 input startTrigger;
 input [1:0] trig_in;
@@ -20,20 +20,21 @@ parameter ram_width=10;
 output reg[ram_width-1:0] wraddress_triggerpoint;
 input wire [ram_width-1:0] rdaddress;
 input wire rden;//read enable
-output reg data_ready;
+output reg data_ready=0;
 input wire imthelast, imthefirst;
 input wire rollingtrigger;
 output reg trigDebug=1;
 input [7:0] trigthresh, trigthresh2;
 input [3:0] trigchannels;
 input [ram_width-1:0] triggerpoint;
-input [4:0] downsample; // only record 1 out of every 2^downsample samples
+input [7:0] downsample; // only record 1 out of every 2^downsample samples
 input [3:0] triggertype;
 input [ram_width:0] triggertot; // the top bit says whether to do check every sample or only according to downsample
 input highres;
 parameter maxhighres=5;
 reg [7+maxhighres:0] highres1, highres2, highres3, highres4;
 input ext_trig_in, use_ext_trig;
+input [ram_width-1:0] nsmp;
 
 reg [31:0] SPIcounter=0;//clock counter for SPI
 input [15:0] SPIsenddata;//the bits to send
@@ -85,7 +86,8 @@ reg Threshold1[3:0], Threshold2[3:0];
 reg [ram_width:0] Threshold3[3:0];//keep track of the counter time it was above/below threshold for 
 reg selftrigtemp[3:0];
 reg Trigger;
-reg AcquiringAndTriggered;
+reg AcquiringAndTriggered=0;
+reg HaveFullData=0;
 integer i;
 initial begin
 	Threshold3[0]=0;
@@ -109,7 +111,7 @@ reg [7:0] data_flash3_reg; always @(posedge clk_flash2) data_flash3_reg <= data_
 reg [7:0] data_flash4_reg; always @(posedge clk_flash2) data_flash4_reg <= data_flash4; // no multiplexing
 //reg [7:0] data_flash4_reg; always @(negedge clk_flash2) data_flash4_reg <= data_flash3; // for multiplexing
 
-reg [ram_width-1:0] samplecount;
+reg [ram_width-1:0] samplecount=0;
 output reg [ram_width-1:0] wraddress;
 output reg Acquiring;
 reg PreOrPostAcquiring;
@@ -193,9 +195,6 @@ end
 wire selftrig;
 assign selftrig = (trigchannels[0]&&selftrigtemp[0])||(trigchannels[1]&&selftrigtemp[1])||(trigchannels[2]&&selftrigtemp[2])||(trigchannels[3]&&selftrigtemp[3]) ||(rollingtrigger&thecounter>=25000000) || (use_ext_trig&ext_trig_in_delayed);
 
-reg Acquiring1; always @(posedge clk) Acquiring1 <= AcquiringAndTriggered;
-reg Acquiring2; always @(posedge clk) Acquiring2 <= Acquiring1;
-
 always @(posedge clk_flash)
 if (imthefirst & imthelast) Trigger = selftrig; // we trigger if we triggered ourselves
 else if (imthefirst) Trigger = selftrig||trig_in[1]; // we trigger if we triggered ourselves, or got a trigger in towards the right
@@ -210,23 +209,20 @@ always @(posedge clk_flash)
 if (imthelast) trig_out[1] = selftrig; // we trigger out to the right if we triggered ourselves
 else trig_out[1] = trig_in[1]||selftrig; // we trigger out to the right if we got a trig in towards the right, or we triggered ourselves
 
-reg trigAcquisition;//ready to trigger?
-always @(posedge clk)
-if(~trigAcquisition) trigAcquisition <= startTrigger;
-else if(Acquiring2) trigAcquisition <= 0;
 
-reg startAcquisition;
-always @(posedge clk)
-if(~startAcquisition) startAcquisition <= trigAcquisition;// & Trigger; // always acquiring (the pre-trigger samples)
-else if(Acquiring2) startAcquisition <= 0;
-//assign trigDebug = startAcquisition;
 
+reg startAcquisition;//ready to trigger?
+always @(posedge clk) begin
+	if(~startAcquisition) startAcquisition <= startTrigger; // an input to the module
+	else if(AcquiringAndTriggered2) startAcquisition <= 0;
+	//assign trigDebug = startAcquisition;
+end
 reg startAcquisition1; always @(posedge clk_flash) startAcquisition1 <= startAcquisition;
 reg startAcquisition2; always @(posedge clk_flash) startAcquisition2 <= startAcquisition1;
 
 localparam INIT=0, PREACQ=1, WAITING=2, POSTACQ=3;
 integer state=INIT;
-reg [15:0] thecounter2;//max downsample is ~12
+reg [31:0] thecounter2;//max downsample is ?
 reg [maxhighres:0] thecounter3;//for counting highres
 wire downsamplego;
 assign downsamplego = thecounter2[downsample] || downsample==0; // pay attention to sample when downsamplego is true
@@ -234,7 +230,9 @@ always @(posedge clk_flash) begin
 	case (state)
 	INIT: begin // this is the beginning... wait for the go-ahead to start acquiring the pre-trigger samples
 		if (startAcquisition2) begin
+			samplecount <= 0;
 			Acquiring <= 1; // start acquiring?
+			HaveFullData <= 0;
 			PreOrPostAcquiring <= 1; // preacquiring
 			thecounter2=1;
 			state=PREACQ;
@@ -248,16 +246,17 @@ always @(posedge clk_flash) begin
 	end
 	WAITING: begin
 		if(Trigger) begin // now we wait for the trigger, and then record the triggerpoint
-			AcquiringAndTriggered <= 1; // Trigger? 256 more bytes and we're set
+			AcquiringAndTriggered <= 1; // Trigger? Start getting the rest of the bytes
 			PreOrPostAcquiring <= 1;
 			wraddress_triggerpoint <= wraddress; // keep track of where the trigger happened
 			state=POSTACQ;
 		end
 	end
 	POSTACQ: begin
-		if(&samplecount) begin // got the rest of the bytes? then stop acquiring
+		if(samplecount==nsmp) begin // got the rest of the bytes? then stop acquiring
 			Acquiring <= 0;
 			AcquiringAndTriggered <= 0;
+			HaveFullData <= 1;
 			PreOrPostAcquiring <= 0;
 			state=INIT;
 		end
@@ -303,9 +302,15 @@ always @(posedge clk_flash) begin
 	end
 end
 
+reg AcquiringAndTriggered1; always @(posedge clk) AcquiringAndTriggered1 <= AcquiringAndTriggered;
+reg AcquiringAndTriggered2; always @(posedge clk) AcquiringAndTriggered2 <= AcquiringAndTriggered1;
+
+reg HaveFullData1; always @(posedge clk) HaveFullData1 <= HaveFullData;
+reg HaveFullData2; always @(posedge clk) HaveFullData2 <= HaveFullData1;
+
 always @(posedge clk) begin
-	if (Acquiring2) data_ready=1;
-	if (startTrigger) data_ready=0;//waiting for trigger
+	if (startAcquisition) data_ready=0;//waiting for trigger
+	else if (HaveFullData2) data_ready=1;
 end
 
 endmodule

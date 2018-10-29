@@ -6,7 +6,7 @@ adcdata,adcready,getadcdata,getadcadr,adcvalid,adcreset,adcramdata,writesamp,wri
 triggerpoint,downsample, screendata,screenwren,screenaddr,screenreset,trigthresh,trigchannels,triggertype,triggertot,
 SPIsend,SPIsenddata,delaycounter,carrycounter,usb_siwu,SPIstate,offset,gainsw,do_usb,
 i2c_ena,i2c_addr,i2c_rw,i2c_datawr,i2c_datard,i2c_busy,i2c_ackerror,   usb_clk60,usb_dataio,usb_txe_busy,usb_wr,
-rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_buffer1);
+rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_buffer1, nsmp);
    input clk;
 	input[7:0] rxData;
    input rxReady;
@@ -46,7 +46,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 	output reg [11:0] writesamp;//max of 4096 samples
 	output reg writeadc;
 	output reg [11:0] adctestout;
-	output reg [4:0] downsample;
+	output reg [7:0] downsample;
 	output reg [7:0] screendata;
 	output reg screenwren=0;
 	output reg [9:0] screenaddr = 10'd0;
@@ -98,7 +98,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
   reg thecounterbit, thecounterbitlockin;
   integer clockbitstowait=5, clockbitstowaitlockin=3; //wait 2^clockbitstowait (8?) ticks before sending each data byte
   reg [3:0] sendincrement = 0; //skip 2**sendincrement bytes each time
-  reg [ram_width-1:0] samplestosend = 0;
+  output reg [ram_width-1:0] nsmp = 0; // samplestosend
   reg [7:0] chanforscreen=0;
   reg autorearm=0;
   integer thecounter=0, timeoutcounter=0, serialdelaytimer=0,serialdelaytimerwait=0;
@@ -365,8 +365,8 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				newcomdata=1; //pass it on
 				if (bytesread<byteswanted) state=READMORE;
 				else begin
-					samplestosend=256*extradata[0]+extradata[1];
-					if (triggerpoint>(samplestosend-5)) triggerpoint=samplestosend/2;
+					nsmp=256*extradata[0]+extradata[1];
+					if (triggerpoint>(nsmp-5)) triggerpoint=nsmp/2;
 					state=READ;
 				end
 			end
@@ -807,7 +807,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				SendCount = SendCount + (2**sendincrement);
 				rdaddress = rdaddress + (2**sendincrement);
 				rdaddress2 = rdaddress;
-				if (samplestosend>0 && SendCount[ram_width-1:0]>=samplestosend) begin
+				if (nsmp>0 && SendCount[ram_width-1:0]>=nsmp) begin
 					SendCount[ram_width-1:0]=0;
 					SendCount[ram_width+2:ram_width] = (SendCount[ram_width+2:ram_width] + 1);
 					rdaddress = wraddress_triggerpoint - triggerpoint;// - 1;
@@ -871,7 +871,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				SendCount = SendCount + (2**sendincrement);
 				rdaddress = rdaddress + (2**sendincrement);
 				rdaddress2 = rdaddress;
-				if (samplestosend>0 && SendCount[ram_width-1:0]>=samplestosend) begin
+				if (nsmp>0 && SendCount[ram_width-1:0]>=nsmp) begin
 					SendCount[ram_width-1:0]=0;
 					SendCount[ram_width+2:ram_width] = (SendCount[ram_width+2:ram_width] + 1);
 					rdaddress = wraddress_triggerpoint - triggerpoint;// - 1;
