@@ -60,7 +60,6 @@ class Haasoscope():
         self.chanforscreen=0 #channel to draw on the mini-display
         self.triggertimethresh=1 #samples for which the trigger must be over/under threshold
         self.downsample=2 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
-        self.maxdownsample=15 # +(12-ram_width) # slowest I can run (can add 12-ram_width when using newer firmware)
         self.dofft=False #drawing the FFT plot
         self.dousb=False #whether to use USB2 output
         self.sincresample=0 # amount of resampling to do (sinx/x)
@@ -182,15 +181,31 @@ class Haasoscope():
                 for l in np.arange(8): self.lines[l+self.logicline1].set_visible(False)
         print "dologicanalyzer is now",self.dologicanalyzer
     
+    minfirmwareversion=255
+    def getfirmwareversion(self, board):
+        #get the firmware version of a board
+        oldtime=time.time()
+        self.ser.write(chr(30+board)) #make the next board active (serial_passthrough 0)
+        self.ser.write(chr(147)) #request the firmware version byte
+        self.ser.timeout=0.1; rslt = self.ser.read(1); self.ser.timeout=self.sertimeout # reduce the serial timeout temporarily, since the old firmware versions will return nothing for command 147
+        byte_array = unpack('%dB'%len(rslt),rslt)
+        firmwareversion=0
+        if len(byte_array)>0: firmwareversion=byte_array[0]
+        print "got firmwareversion",firmwareversion,"for board",board,"in",round((time.time()-oldtime)*1000.,2),"ms"
+        return firmwareversion # is 0 if not found (firmware version <5)
+    
     def telltickstowait(self):
         #tell it the number of clock ticks to wait, log2, between sending bytes
         if self.dousb: ds=self.downsample-2
         else: ds=self.downsample-3
         if ds<1: ds=1
-        if ds>8: 
-            ds=8 # otherwise we timeout upon readout
-            if self.num_samples>10: self.settriggerpoint(self.num_samples-10) # set trigger way to the right, so we can capture full event
-            self.otherlines[0].set_visible(False) # don't draw trigger time position line, to indicate it's not really set anymore
+        if self.minfirmwareversion>=5:
+            ds=1
+        else:
+            if ds>8:
+                ds=8 # otherwise we timeout upon readout
+                if self.num_samples>10: self.settriggerpoint(self.num_samples-10) # set trigger way to the right, so we can capture full event - NOTE - screws up mini-screen!
+                self.otherlines[0].set_visible(False) # don't draw trigger time position line, to indicate it's not really set anymore
         self.ser.write(chr(125))
         self.ser.write(chr(ds))
         if self.db: print "clockbitstowait is",ds
@@ -1774,6 +1789,13 @@ class Haasoscope():
     def init(self):
             self.ser.write(chr(0))#tell them their IDs... first one gets 0, next gets 1, ...
             self.ser.write(chr(20+(num_board-1)))#tell them which is the last board
+            for b in range(num_board):
+                firmwareversion = self.getfirmwareversion(b)
+                if firmwareversion<self.minfirmwareversion: self.minfirmwareversion=firmwareversion
+            print "minimum firmwareversion of all boards is",self.minfirmwareversion
+            self.maxdownsample=15 # slowest I can run
+            if self.minfirmwareversion>=5:
+                self.maxdownsample=15 +(12-ram_width) # slowest I can run (can add 12-ram_width when using newer firmware)
             self.tellrolltrig(self.rolltrigger)
             self.tellsamplesmax10adc()
             self.tellsamplessend()
