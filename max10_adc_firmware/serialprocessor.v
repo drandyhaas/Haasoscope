@@ -662,6 +662,19 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 					else state=READ;
 				end
 			end
+			else if (readdata==147) begin // send the firmware version
+				if (serial_passthrough) begin
+					comdata=readdata;
+					newcomdata=1; //pass it on
+					state=READ;
+				end
+				else begin
+					ioCountToSend = 1;
+					data[0]=5; // this is the firmware version
+					state=WRITE1;
+				end
+			end
+			
 			else state=READ; // if we got some other command, just ignore it
       end
 		
