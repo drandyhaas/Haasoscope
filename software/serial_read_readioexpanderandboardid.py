@@ -2,7 +2,8 @@ from serial import Serial
 from struct import unpack
 import time
 
-ser=Serial("COM6",1500000,timeout=1.0)
+serialtimeout=10.0
+ser=Serial("COM5",1500000,timeout=serialtimeout)
 waitlittle = .1 #seconds
 
 #This is a _minimal_ set of example commands needed to send to a board to initialize it properly
@@ -61,19 +62,30 @@ time.sleep(waitlittle)
 
 # OK, we're set up! Now we can read events and get good data out.
 
+oldtime=time.time()
 boa=0 # board to get ID from
-ser.write(chr(30+boa)) #make the next board active (serial_passthrough 0) 
+ser.write(chr(30+boa)) #make the next board active (serial_passthrough 0)
 ser.write(chr(142)) #request the unique ID
 rslt = ser.read(8)
 byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
 uniqueID = ''.join(format(x, '02x') for x in byte_array) 
-print "got uniqueID",uniqueID,"for board",boa
+print "got uniqueID",uniqueID,"for board",boa," in",round((time.time()-oldtime)*1000.,2),"ms"
+
+oldtime=time.time()
+boa=0 # board to get firmware version from
+ser.write(chr(30+boa)) #make the next board active (serial_passthrough 0)
+ser.write(chr(147)) #request the firmware version byte
+ser.timeout=0.1; rslt = ser.read(1); ser.timeout=serialtimeout # reduce the serial timeout temporarily, since the old firmware versions will return nothing for command 147
+byte_array = unpack('%dB'%len(rslt),rslt)
+firmwareversion=0
+if len(byte_array)>0: firmwareversion=byte_array[0]
+print "got firmwareversion",firmwareversion,"for board",boa,"in",round((time.time()-oldtime)*1000.,2),"ms"
 
 oldtime=time.time()
 for i in range(2):
     ser.write(chr(146)) #request the IO expander data - takes about 2ms to send the command and read the i2c data
     ser.write(chr(33)); ser.write(chr(19)) # from 2B
-    ser.write(chr(200)) # for all boards
+    ser.write(chr(0)) # for board 0
     rslt = ser.read(1)
     #print "result is length",len(rslt)
     if len(rslt)>0: 
