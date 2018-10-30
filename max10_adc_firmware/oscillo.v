@@ -95,13 +95,10 @@ initial begin
 	Threshold3[2]=0;
 	Threshold3[3]=0;
 end
-
-//counter for the trigger
-reg[31:0] thecounter;
-always @(posedge clk_flash) begin
-	if (Trigger) thecounter<=0;
-	else thecounter<=thecounter+1;
-end
+reg [ram_width-1:0] samplecount=0;
+output reg [ram_width-1:0] wraddress;
+output reg Acquiring;
+reg PreOrPostAcquiring;
 
 reg [7:0] data_flash1_reg; always @(posedge clk_flash) data_flash1_reg <= data_flash1;
 reg [7:0] data_flash2_reg; always @(posedge clk_flash) data_flash2_reg <= data_flash2; // no multiplexing
@@ -110,11 +107,6 @@ reg [7:0] data_flash2_reg; always @(posedge clk_flash) data_flash2_reg <= data_f
 reg [7:0] data_flash3_reg; always @(posedge clk_flash2) data_flash3_reg <= data_flash3;
 reg [7:0] data_flash4_reg; always @(posedge clk_flash2) data_flash4_reg <= data_flash4; // no multiplexing
 //reg [7:0] data_flash4_reg; always @(negedge clk_flash2) data_flash4_reg <= data_flash3; // for multiplexing
-
-reg [ram_width-1:0] samplecount=0;
-output reg [ram_width-1:0] wraddress;
-output reg Acquiring;
-reg PreOrPostAcquiring;
 
 always @(posedge clk_flash) begin
 	i=0;
@@ -191,8 +183,9 @@ always @(posedge clk_flash) begin
 	ext_trig_in_delay_bits <= {ext_trig_in_delay_bits[12-1:0], ext_trig_in};
 end
 
-//trigger is an OR of all the channels which are active // also trigger every second or so (rolling)
-wire selftrig;
+reg[31:0] thecounter; // counter for the rolling trigger
+always @(posedge clk_flash) if (Trigger) thecounter<=0; else thecounter<=thecounter+1;
+wire selftrig; //trigger is an OR of all the channels which are active // also trigger every second or so (rolling)
 assign selftrig = (trigchannels[0]&&selftrigtemp[0])||(trigchannels[1]&&selftrigtemp[1])||(trigchannels[2]&&selftrigtemp[2])||(trigchannels[3]&&selftrigtemp[3]) ||(rollingtrigger&thecounter>=25000000) || (use_ext_trig&ext_trig_in_delayed);
 
 always @(posedge clk_flash)
@@ -222,10 +215,10 @@ reg startAcquisition2; always @(posedge clk_flash) startAcquisition2 <= startAcq
 
 localparam INIT=0, PREACQ=1, WAITING=2, POSTACQ=3;
 integer state=INIT;
-reg [31:0] thecounter2;//max downsample is ?
-reg [maxhighres:0] thecounter3;//for counting highres
+reg [31:0] downsamplecounter;//max downsample is ?
+reg [maxhighres:0] highrescounter;//for counting highres
 wire downsamplego;
-assign downsamplego = thecounter2[downsample] || downsample==0; // pay attention to sample when downsamplego is true
+assign downsamplego = downsamplecounter[downsample] || downsample==0; // pay attention to sample when downsamplego is true
 always @(posedge clk_flash) begin
 	case (state)
 	INIT: begin // this is the beginning... wait for the go-ahead to start acquiring the pre-trigger samples
@@ -234,7 +227,12 @@ always @(posedge clk_flash) begin
 			Acquiring <= 1; // start acquiring?
 			HaveFullData <= 0;
 			PreOrPostAcquiring <= 1; // preacquiring
-			thecounter2=1;
+			downsamplecounter=1;
+			highrescounter=0;
+			highres1=0;
+			highres2=0;
+			highres3=0;
+			highres4=0;
 			state=PREACQ;
 		end
 	end
@@ -262,15 +260,16 @@ always @(posedge clk_flash) begin
 		end
 	end
 	endcase
-	thecounter2=thecounter2+1;
+	
+	downsamplecounter=downsamplecounter+1;
 	if (highres && downsample>0) begin // doing highres mode (averaging over samples within each downsample)
-		thecounter3=thecounter3+1;
+		highrescounter=highrescounter+1;
 		highres1=highres1+data_flash1_reg;
 		highres2=highres2+data_flash2_reg;
 		highres3=highres3+data_flash3_reg;
 		highres4=highres4+data_flash4_reg;
-		if (downsamplego || thecounter3[maxhighres]) begin
-			thecounter3=0;
+		if (downsamplego || highrescounter[maxhighres]) begin
+			highrescounter=0;
 			if (downsample>maxhighres) begin			
 				dout1=highres1>>maxhighres;
 				dout2=highres2>>maxhighres;
@@ -289,28 +288,28 @@ always @(posedge clk_flash) begin
 			highres4=0;
 		end
 	end
-	else begin
+	else begin // not highres mode, just copy in the data
 		dout1=data_flash1_reg;
 		dout2=data_flash2_reg;
 		dout3=data_flash3_reg;
 		dout4=data_flash4_reg;
 	end
-	if (downsamplego) begin
-		thecounter2=1;
+	if (downsamplego) begin // increment the write address (store new data) every 1/2^downsample samples
+		downsamplecounter=1;
 		if(Acquiring) wraddress <= wraddress + 1;
 		if(PreOrPostAcquiring) samplecount <= samplecount + 1;
 	end
 end
 
+// go from flash clock to fpga main clock domain
 reg AcquiringAndTriggered1; always @(posedge clk) AcquiringAndTriggered1 <= AcquiringAndTriggered;
 reg AcquiringAndTriggered2; always @(posedge clk) AcquiringAndTriggered2 <= AcquiringAndTriggered1;
-
 reg HaveFullData1; always @(posedge clk) HaveFullData1 <= HaveFullData;
 reg HaveFullData2; always @(posedge clk) HaveFullData2 <= HaveFullData1;
 
 always @(posedge clk) begin
-	if (startAcquisition) data_ready=0;//waiting for trigger
-	else if (HaveFullData2) data_ready=1;
+	if (startAcquisition) data_ready=0; // waiting for trigger
+	else if (HaveFullData2) data_ready=1; // ready to read out
 end
 
 endmodule
