@@ -55,7 +55,7 @@ class Haasoscope():
         self.getone=False
         self.rolltrigger=True #roll the trigger
         self.average=False #will average every 2 samples
-        self.rising=True #trigger on rising edge (or else falling edge)
+        self.fallingedge=True #trigger on falling edge
         self.dogrid=True #redraw the grid
         self.chanforscreen=0 #channel to draw on the mini-display
         self.triggertimethresh=1 #samples for which the trigger must be over/under threshold
@@ -231,10 +231,10 @@ class Haasoscope():
         print "Trigger high threshold is",tp
     
     def settriggertype(self,tp):
-        #tell it the trigger type: rising, falling, either, ...
+        #tell it the trigger type: rising edge, falling edge, either, ...
         self.ser.write(chr(128))
         self.ser.write(chr(tp))
-        print "Trigger type is",tp
+        if self.db: print "Trigger type is",tp
         
     def settriggertime(self,ttt):
         #tell it the trigger time over/under threshold required
@@ -933,7 +933,7 @@ class Haasoscope():
             elif event.key=="O": self.oversamp(self.selectedchannel); self.prepareforsamplechange(); return
             elif event.key=="ctrl+o": self.overoversamp(); self.prepareforsamplechange(); return
             elif event.key==">": self.refsinchan=self.selectedchannel; self.oldchanphase=-1.; self.reffreq=0;
-            elif event.key=="t": self.rising=not self.rising;self.settriggertype(self.rising);print "rising toggled",self.rising; return
+            elif event.key=="t": self.fallingedge=not self.fallingedge;self.settriggertype(self.fallingedge);print "trigger falling edge toggled to",self.fallingedge; return
             elif event.key=="g": self.dogrid=not self.dogrid;print "dogrid toggled",self.dogrid; self.ax.grid(self.dogrid); return
             elif event.key=="ctrl+g": self.ax.xaxis.set_major_locator(plt.MultipleLocator( (self.max_x*1000/1024-self.min_x*1000/1024)/8./5. )); return
             elif event.key=="G": self.ax.yaxis.set_major_locator(plt.MultipleLocator(0.2)); return
