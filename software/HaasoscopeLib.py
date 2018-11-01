@@ -1402,44 +1402,35 @@ class Haasoscope():
             Y[0]=0 # to suppress DC
             if not self.fftdrawn: # just the first time, do some setup
                 self.fftdrawn=True
-                self.fftfig, self.fftax = plt.subplots(2,1)
+                self.fftfig, self.fftax = plt.subplots(1,1)
                 self.fftfig.canvas.set_window_title('FFT of channel '+str(self.fftchan))
                 self.fftfig.canvas.mpl_connect('close_event', self.handle_fft_close)
-                self.fftdataplot, = self.fftax[0].plot(t,y) # plotting the data
-                self.fftax[0].set_xlabel('Time (us)')
-                self.fftax[0].set_ylabel('Amplitude')
-                self.fftfreqplot, = self.fftax[1].plot(frq,abs(Y)) # plotting the spectrum
-                self.fftax[1].set_xlabel('Freq (MHz)')
-                self.fftax[1].set_ylabel('|Y(freq)|')
-                self.fftax[0].set_xlim(0,n*uspersample)
-                self.fftax[1].set_xlim(0,frq[n/2-1])
+                self.fftfreqplot, = self.fftax.plot(frq,abs(Y)) # plotting the spectrum
+                self.fftax.set_xlabel('Freq (MHz)')
+                self.fftax.set_ylabel('|Y(freq)|')
+                self.fftax.set_xlim(0,frq[n/2-1])
                 self.oldmaxt = 0 # n*uspersample
                 self.oldmaxfreq = 0 # frq[n/2-1]
                 self.fftfig.tight_layout()
-                self.fftax[1].grid(True)
+                self.fftax.grid(True)
             if self.fftdrawn: # redrawing
-                self.fftdataplot.set_xdata(t)
-                self.fftdataplot.set_ydata(y)
                 if np.max(frq)<.001:
                     self.fftfreqplot.set_xdata(frq*1000000.0)
-                    self.fftax[1].set_xlabel('Freq (Hz)')
-                    if frq[n/2-1] != self.oldmaxfreq: self.fftax[1].set_xlim(0,1000000.0*frq[n/2-1])
+                    self.fftax.set_xlabel('Freq (Hz)')
+                    if frq[n/2-1] != self.oldmaxfreq: self.fftax.set_xlim(0,1000000.0*frq[n/2-1])
                 elif np.max(frq)<1.0:
                     self.fftfreqplot.set_xdata(frq*1000.0)
-                    self.fftax[1].set_xlabel('Freq (kHz)')
-                    if frq[n/2-1] != self.oldmaxfreq: self.fftax[1].set_xlim(0,1000.0*frq[n/2-1])
+                    self.fftax.set_xlabel('Freq (kHz)')
+                    if frq[n/2-1] != self.oldmaxfreq: self.fftax.set_xlim(0,1000.0*frq[n/2-1])
                 else:
                     self.fftfreqplot.set_xdata(frq)
-                    self.fftax[1].set_xlabel('Freq (MHz)')
-                    if frq[n/2-1] != self.oldmaxfreq: self.fftax[1].set_xlim(0,frq[n/2-1])
+                    self.fftax.set_xlabel('Freq (MHz)')
+                    if frq[n/2-1] != self.oldmaxfreq: self.fftax.set_xlim(0,frq[n/2-1])
                 self.fftfreqplot.set_ydata(abs(Y))
-                if n*uspersample != self.oldmaxt: self.fftax[0].set_xlim(0,n*uspersample)
                 self.oldmaxfreq = frq[n/2-1]
                 self.oldmaxt = n*uspersample
-                self.fftax[0].relim()
-                self.fftax[1].relim()
-                self.fftax[0].autoscale_view()
-                self.fftax[1].autoscale_view()
+                self.fftax.relim()
+                self.fftax.autoscale_view()
                 self.fftfig.canvas.draw()
                 self.fftfig.canvas.set_window_title('FFT of channel '+str(self.fftchan))
                 self.fftfig.canvas.flush_events()
