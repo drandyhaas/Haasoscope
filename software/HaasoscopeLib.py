@@ -84,10 +84,6 @@ class Haasoscope():
         self.reffreq = 0.008 #MHz of reference signal on chan 3 for lockin calculations
         self.refsinchan = 3 #the channel number of the ref input signal (for auto reffreq calculation via sin fit)
         
-        self.yscale = 7.5 # Vpp for full scale
-        #self.yscale*=1.1 # if we used 10M / 1.1M / 11k input resistors
-        self.min_y = -self.yscale/2. #-4.0 #0 ADC
-        self.max_y = self.yscale/2. #4.0 #256 ADC
         self.xscaling=1.e0 # for the x-axis scale
         self.lowdaclevel=np.ones(num_board*num_chan_per_board)*2050 # these hold the user set levels for each gain combination
         self.highdaclevel=np.ones(num_board*num_chan_per_board)*2800
@@ -1833,8 +1829,13 @@ class Haasoscope():
                 if firmwareversion<self.minfirmwareversion: self.minfirmwareversion=firmwareversion
             print "minimum firmwareversion of all boards is",self.minfirmwareversion
             self.maxdownsample=15 # slowest I can run
-            if self.minfirmwareversion>=5:
+            if self.minfirmwareversion>=5: #updated firmware
                 self.maxdownsample=15 +(12-ram_width) # slowest I can run (can add 12-ram_width when using newer firmware)
+            self.yscale = 7.5 # Vpp for full scale
+            if self.minfirmwareversion>=15: #v9.0 boards
+                self.yscale*=1.1 # if we used 10M / 1.1M / 11k input resistors
+            self.min_y = -self.yscale/2. #-4.0 #0 ADC
+            self.max_y = self.yscale/2. #4.0 #256 ADC
             self.tellrolltrig(self.rolltrigger)
             self.tellsamplesmax10adc()
             self.tellsamplessend()
