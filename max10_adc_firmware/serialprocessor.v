@@ -671,7 +671,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				end
 				else begin
 					ioCountToSend = 1;
-					data[0]=5; // this is the firmware version
+					data[0]=15; // this is the firmware version
 					state=WRITE1;
 				end
 			end

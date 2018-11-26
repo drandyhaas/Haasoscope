@@ -342,12 +342,17 @@ class Haasoscope():
         self.sendi2c("20 00 00") #port A on IOexp 1 are outputs
         self.sendi2c("20 01 00") #port B on IOexp 1 are outputs
         self.sendi2c("21 00 00") #port A on IOexp 2 are outputs
-        self.sendi2c("21 01 00") #port B on IOexp 2 are outputs
         self.sendi2c("20 12 "+ ('%0*x' % (2,self.a20)) ) #port A of IOexp 1
         self.sendi2c("20 13 "+ ('%0*x' % (2,self.b20)) ) #port B of IOexp 1
         self.sendi2c("21 12 "+ ('%0*x' % (2,self.a21)) ) #port A of IOexp 2
-        self.sendi2c("21 13 "+ ('%0*x' % (2,self.b21)) ) #port B of IOexp 2
-        print "initialized all i2c ports and set to starting values"
+        if self.minfirmwareversion<15:
+            self.sendi2c("21 01 00") #port B on IOexp 2 are outputs
+            self.sendi2c("21 13 "+ ('%0*x' % (2,self.b21)) ) #port B of IOexp 2
+        else:
+            self.sendi2c("21 01 ff") #port B on IOexp 2 are inputs!
+            self.sendi2c("21 0d ff") #port B on IOexp 2 enable pull-up resistors!
+            #print "portB on IOexp2 are inputs now"
+        #print "initialized all i2c ports and set to starting values"
             
     def setdac(self,chan,val,board):        
         if chan==0: c="50"
@@ -608,7 +613,15 @@ class Haasoscope():
         text ="Channel: "+str(self.selectedchannel)
         if self.ydatarefchan>=0: text += " - ref "+str(int(self.ydatarefchan))
         text +="\nLevel="+str(int(self.chanlevel[self.selectedchannel]))
-        text +="\nDC coupled="+str(self.acdc[self.selectedchannel])
+        if self.acdc[self.selectedchannel]:
+            text +="\nDC coupled"
+        else:
+            text +="\nAC coupled"
+        if self.havereadswitchdata:
+            if self.testBit(self.switchpos,self.selectedchannel): #TODO, account for multiple boards
+                text += ", 1M"
+            else:
+                text += ", 50"
         text +="\nTriggering="+str(self.trigsactive[self.selectedchannel])
         if self.domeasure:
             if abs(self.Vmean[self.selectedchannel])>.9: text +="\nMean={0:1.3g} V".format(self.Vmean[self.selectedchannel])
@@ -1751,6 +1764,7 @@ class Haasoscope():
             self.max10adcchan+=1
 
     oldtime=time.time()
+    oldtime2=time.time()
     def getchannels(self):
         if not self.autorearm:
             if self.db: print time.time()-self.oldtime,"priming trigger"
@@ -1774,8 +1788,41 @@ class Haasoscope():
             if elapsedtime>1.0:
                 self.drawtext() #redraws the measurements
                 self.oldtime=thetime
+        if self.minfirmwareversion>=15: #v9.0 and up
+            thetime2=time.time()
+            elapsedtime=thetime2-self.oldtime2
+            if elapsedtime>1.0:
+                for b in range(num_board): self.getswitchdata(b) #gets the dpdt switch positions
+                self.oldtime2=thetime2
         return True
 
+    #get the positions of the dpdt switches from IO expander 2B, and then take action (v9.0 and up!)
+    switchpos=0
+    havereadswitchdata=False
+    def getswitchdata(self,board):
+        for i in range(2): #twice because the first time just reads it into the board's fpga
+            self.ser.write(chr(146)) #request the IO expander data - takes about 2ms to send the command and read the i2c data
+            self.ser.write(chr(33)); self.ser.write(chr(19)) # from 2B
+            self.ser.write(chr(board)) # for board 0
+            rslt = self.ser.read(1)
+            if len(rslt)>0 and i==1:
+                byte_array = unpack('%dB'%len(rslt),rslt)
+                print "i2c data from IO 2B",byte_array[0]
+                newswitchpos=byte_array[0]
+                if newswitchpos!=self.switchpos or not self.havereadswitchdata:
+                    for b in range(8):
+                        if self.testBit(newswitchpos,b) != self.testBit(self.switchpos,b) or not self.havereadswitchdata:
+                            #print "switch",b,"is now",self.testBit(newswitchpos,b)
+                            #switch 0-3 is 50/1M Ohm termination on channels 0-3, on is 1M, off is 50
+                            #switch 4-7 is super/normal gain on channels 0-3, on is super, off is normal
+                            if b>=4:
+                                if self.supergain[b-4] and self.testBit(newswitchpos,b)>0:
+                                    self.togglesupergainchan(b-4)
+                                if not self.supergain[b-4] and not self.testBit(newswitchpos,b)>0:
+                                    self.togglesupergainchan(b-4)
+                    self.switchpos = newswitchpos
+                    self.havereadswitchdata=True
+    
     #initialization
     def init(self):
             self.ser.write(chr(0))#tell them their IDs... first one gets 0, next gets 1, ...
