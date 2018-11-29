@@ -90,9 +90,9 @@ class Haasoscope():
         self.lowdaclevelsuper=np.ones(num_board*num_chan_per_board)*120
         self.highdaclevelsuper=np.ones(num_board*num_chan_per_board)*50
         self.lowdaclevelac=np.ones(num_board*num_chan_per_board)*2250 # these hold the user set levels for each gain combination in ac coupling mode
-        self.highdaclevelac=np.ones(num_board*num_chan_per_board)*4100
-        self.lowdaclevelsuperac=np.ones(num_board*num_chan_per_board)*2100
-        self.highdaclevelsuperac=np.ones(num_board*num_chan_per_board)*2800
+        self.highdaclevelac=np.ones(num_board*num_chan_per_board)*4600
+        self.lowdaclevelsuperac=np.ones(num_board*num_chan_per_board)*2300
+        self.highdaclevelsuperac=np.ones(num_board*num_chan_per_board)*4600
         self.chanlevel=np.ones(num_board*num_chan_per_board)*self.lowdaclevel # the current level for each channel, initially set to lowdaclevel (x1)
         self.gain=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is low gain, 0 is high gain (x10)
         self.supergain=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is normal gain, 0 is super gain (x100)
@@ -478,9 +478,10 @@ class Haasoscope():
                 else:
                     origline.set_label(self.chtext+str(chan)+" x10")
                     self.leg.get_texts()[chan].set_text(self.chtext+str(chan)+" x10")
+        self.selectedchannel=chan
         self.setdacvalue()
         if len(plt.get_fignums())>0: self.figure.canvas.draw()
-        print "Supergain switched for channel",chan,"to",self.gain[chan]
+        print "Supergain switched for channel",chan,"to",self.supergain[chan]
     
     def tellswitchgain(self,chan):
         #tell it to switch the gain of a channel
@@ -1307,7 +1308,7 @@ class Haasoscope():
                     for chan in range(num_chan_per_board*num_board):
                         self.selectedchannel=chan
                         self.tellswitchgain(chan)
-                        self.togglesupergainchan(chan)
+                        if self.minfirmwareversion<15: self.togglesupergainchan(chan)
                     print "done with autocalibration \a" # beep!
     
     doxyplot=False
