@@ -1847,9 +1847,8 @@ class Haasoscope():
             self.tellserialdelaytimerwait()
             self.tellSPIsetup(0) #0.9V CM but not connected
             self.tellSPIsetup(11) #offset binary output
-            if self.minfirmwareversion>=15: #v9.0 boards
-                self.tellSPIsetup(20) #150 Ohm ChA
-                self.tellSPIsetup(22) #150 Ohm ChB
+            self.tellSPIsetup(20) #150 Ohm ChA
+            self.tellSPIsetup(22) #150 Ohm ChB
             #tellSPIsetup(12) #offset binary output and divide clock by 2
             #self.tellSPIsetup(30) # multiplexed output
             self.tellSPIsetup(32) # non-multiplexed output (less noise)
