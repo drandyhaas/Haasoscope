@@ -48,6 +48,10 @@ time.sleep(waitlittle)
 ser.write(chr(131)); ser.write(chr(6)); ser.write(chr(16)); #offset binary output
 #ser.write(chr(131)); ser.write(chr(6)); ser.write(chr(80)); #test pattern output
 time.sleep(waitlittle)
+ser.write(chr(131)); ser.write(chr(4)); ser.write(chr(36)); #300 Ohm termination A
+time.sleep(waitlittle)
+ser.write(chr(131)); ser.write(chr(5)); ser.write(chr(36)); #300 Ohm termination B
+time.sleep(waitlittle)
 ser.write(chr(131)); ser.write(chr(1)); ser.write(chr(0)); #not multiplexed
 time.sleep(waitlittle)
 

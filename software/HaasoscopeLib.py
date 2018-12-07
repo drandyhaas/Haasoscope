@@ -286,10 +286,12 @@ class Haasoscope():
         if what==11: myb=bytearray.fromhex('06 10') #offset binary output + no clock divide
         if what==12: myb=bytearray.fromhex('06 11') #offset binary output + divide clock by 2
         if what==13: myb=bytearray.fromhex('06 12') #offset binary output + divide clock by 4            
-        if what==20: myb=bytearray.fromhex('04 1b') #150 Ohm termination chA
-        if what==21: myb=bytearray.fromhex('04 00') #50 Ohm termination chA (default)
-        if what==22: myb=bytearray.fromhex('05 1b') #150 Ohm termination chB
-        if what==23: myb=bytearray.fromhex('05 00') #50 Ohm termination chB (default)        
+        if what==20: myb=bytearray.fromhex('04 00') #50 Ohm termination chA (default)
+        if what==21: myb=bytearray.fromhex('05 00') #50 Ohm termination chB (default)        
+        if what==22: myb=bytearray.fromhex('04 1b') #150 Ohm termination chA
+        if what==23: myb=bytearray.fromhex('05 1b') #150 Ohm termination chB
+        if what==24: myb=bytearray.fromhex('04 24') #300 Ohm termination chA
+        if what==25: myb=bytearray.fromhex('05 24') #300 Ohm termination chB
         if what==30: myb=bytearray.fromhex('01 02') #multiplexed, with chA first
         if what==31: myb=bytearray.fromhex('01 06') #multiplexed, with chB first
         if what==32: myb=bytearray.fromhex('01 00') # not multiplexed output        
@@ -1847,9 +1849,8 @@ class Haasoscope():
             self.tellserialdelaytimerwait()
             self.tellSPIsetup(0) #0.9V CM but not connected
             self.tellSPIsetup(11) #offset binary output
-            self.tellSPIsetup(20) #150 Ohm ChA
-            self.tellSPIsetup(22) #150 Ohm ChB
-            #tellSPIsetup(12) #offset binary output and divide clock by 2
+            self.tellSPIsetup(24) #300 Ohm termination ChA
+            self.tellSPIsetup(25) #300 Ohm termination ChB
             #self.tellSPIsetup(30) # multiplexed output
             self.tellSPIsetup(32) # non-multiplexed output (less noise)
             self.setupi2c() # sets all ports to be outputs
