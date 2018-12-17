@@ -84,19 +84,15 @@ class Haasoscope():
         self.reffreq = 0.008 #MHz of reference signal on chan 3 for lockin calculations
         self.refsinchan = 3 #the channel number of the ref input signal (for auto reffreq calculation via sin fit)
         
-        self.yscale = 7.5 # Vpp for full scale
-        #self.yscale*=1.1 # if we used 10M / 1.1M / 11k input resistors
-        self.min_y = -self.yscale/2. #-4.0 #0 ADC
-        self.max_y = self.yscale/2. #4.0 #256 ADC
         self.xscaling=1.e0 # for the x-axis scale
         self.lowdaclevel=np.ones(num_board*num_chan_per_board)*2050 # these hold the user set levels for each gain combination
         self.highdaclevel=np.ones(num_board*num_chan_per_board)*2800
         self.lowdaclevelsuper=np.ones(num_board*num_chan_per_board)*120
         self.highdaclevelsuper=np.ones(num_board*num_chan_per_board)*50
         self.lowdaclevelac=np.ones(num_board*num_chan_per_board)*2250 # these hold the user set levels for each gain combination in ac coupling mode
-        self.highdaclevelac=np.ones(num_board*num_chan_per_board)*4100
-        self.lowdaclevelsuperac=np.ones(num_board*num_chan_per_board)*2100
-        self.highdaclevelsuperac=np.ones(num_board*num_chan_per_board)*2800
+        self.highdaclevelac=np.ones(num_board*num_chan_per_board)*4600
+        self.lowdaclevelsuperac=np.ones(num_board*num_chan_per_board)*2300
+        self.highdaclevelsuperac=np.ones(num_board*num_chan_per_board)*4600
         self.chanlevel=np.ones(num_board*num_chan_per_board)*self.lowdaclevel # the current level for each channel, initially set to lowdaclevel (x1)
         self.gain=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is low gain, 0 is high gain (x10)
         self.supergain=np.ones(num_board*num_chan_per_board, dtype=int) # 1 is normal gain, 0 is super gain (x100)
@@ -290,10 +286,12 @@ class Haasoscope():
         if what==11: myb=bytearray.fromhex('06 10') #offset binary output + no clock divide
         if what==12: myb=bytearray.fromhex('06 11') #offset binary output + divide clock by 2
         if what==13: myb=bytearray.fromhex('06 12') #offset binary output + divide clock by 4            
-        if what==20: myb=bytearray.fromhex('04 1b') #150 Ohm termination chA
-        if what==21: myb=bytearray.fromhex('04 00') #50 Ohm termination chA (default)
-        if what==22: myb=bytearray.fromhex('05 1b') #150 Ohm termination chB
-        if what==23: myb=bytearray.fromhex('05 00') #50 Ohm termination chB (default)        
+        if what==20: myb=bytearray.fromhex('04 00') #50 Ohm termination chA (default)
+        if what==21: myb=bytearray.fromhex('05 00') #50 Ohm termination chB (default)        
+        if what==22: myb=bytearray.fromhex('04 1b') #150 Ohm termination chA
+        if what==23: myb=bytearray.fromhex('05 1b') #150 Ohm termination chB
+        if what==24: myb=bytearray.fromhex('04 24') #300 Ohm termination chA
+        if what==25: myb=bytearray.fromhex('05 24') #300 Ohm termination chB
         if what==30: myb=bytearray.fromhex('01 02') #multiplexed, with chA first
         if what==31: myb=bytearray.fromhex('01 06') #multiplexed, with chB first
         if what==32: myb=bytearray.fromhex('01 00') # not multiplexed output        
@@ -482,9 +480,10 @@ class Haasoscope():
                 else:
                     origline.set_label(self.chtext+str(chan)+" x10")
                     self.leg.get_texts()[chan].set_text(self.chtext+str(chan)+" x10")
+        self.selectedchannel=chan
         self.setdacvalue()
         if len(plt.get_fignums())>0: self.figure.canvas.draw()
-        print "Supergain switched for channel",chan,"to",self.gain[chan]
+        print "Supergain switched for channel",chan,"to",self.supergain[chan]
     
     def tellswitchgain(self,chan):
         #tell it to switch the gain of a channel
@@ -618,7 +617,8 @@ class Haasoscope():
         else:
             text +="\nAC coupled"
         if self.havereadswitchdata:
-            if self.testBit(self.switchpos,self.selectedchannel): #TODO, account for multiple boards
+            theboard = num_board-1-self.selectedchannel/num_chan_per_board
+            if self.testBit(self.switchpos[theboard],self.selectedchannel):
                 text += ", 1M"
             else:
                 text += ", 50"
@@ -807,7 +807,8 @@ class Haasoscope():
             lowdaclevelsac=self.lowdaclevelac[sc : sc+4].tolist(),
             highdaclevelsac=self.highdaclevelac[sc : sc+4].tolist(),
             lowdaclevelssuperac=self.lowdaclevelsuperac[sc : sc+4].tolist(),
-            highdaclevelssuperac=self.highdaclevelsuperac[sc : sc+4].tolist()
+            highdaclevelssuperac=self.highdaclevelsuperac[sc : sc+4].tolist(),
+            firmwareversion=self.minfirmwareversion
             )
         #print json.dumps(c,indent=4)
         fname = "calib/calib_"+self.uniqueID[board]+".json.txt"
@@ -838,7 +839,11 @@ class Haasoscope():
             self.lowdaclevelac[sc : sc+4] = c['lowdaclevelsac']
             self.highdaclevelac[sc : sc+4] = c['highdaclevelsac']
             self.lowdaclevelsuperac[sc : sc+4] = c['lowdaclevelssuperac']
-            self.highdaclevelsuperac[sc : sc+4] = c['highdaclevelssuperac']            
+            self.highdaclevelsuperac[sc : sc+4] = c['highdaclevelssuperac']
+            if "firmwareversion" in c:
+                print "calib was written using firmware version",c["firmwareversion"]
+            else:
+                print "calib was written using unknown firmware version"
             self.setdacvalues(sc) #and use the new levels right away
             if not self.firstdrawtext: self.drawtext()
         except IOError:
@@ -1310,7 +1315,7 @@ class Haasoscope():
                     for chan in range(num_chan_per_board*num_board):
                         self.selectedchannel=chan
                         self.tellswitchgain(chan)
-                        self.togglesupergainchan(chan)
+                        if self.minfirmwareversion<15: self.togglesupergainchan(chan)
                     print "done with autocalibration \a" # beep!
     
     doxyplot=False
@@ -1409,7 +1414,7 @@ class Haasoscope():
             n = len(y) # length of the signal
             k = np.arange(n)
             uspersample=(1.0/self.clkrate)*pow(2,max(self.downsample,0))/twoforoversampling # us per sample = 10 ns * 2^downsample, #downsample isn't less than 0 for xscaling
-            t = np.arange(0,1,1.0/n) * (n*uspersample) # time vector in us
+            #t = np.arange(0,1,1.0/n) * (n*uspersample) # time vector in us
             frq = (k/uspersample)[range(n/2)]/n # one side frequency range up to Nyquist
             Y = np.fft.fft(y)[range(n/2)]/n # fft computing and normalization
             Y[0]=0 # to suppress DC
@@ -1792,26 +1797,27 @@ class Haasoscope():
             thetime2=time.time()
             elapsedtime=thetime2-self.oldtime2
             if elapsedtime>1.0:
+                if not self.havereadswitchdata: self.switchpos = [0] * num_board
                 for b in range(num_board): self.getswitchdata(b) #gets the dpdt switch positions
+                self.havereadswitchdata=True
                 self.oldtime2=thetime2
         return True
 
     #get the positions of the dpdt switches from IO expander 2B, and then take action (v9.0 and up!)
-    switchpos=0
     havereadswitchdata=False
     def getswitchdata(self,board):
-        for i in range(2): #twice because the first time just reads it into the board's fpga
+        #for i in range(2): #twice because the first time just reads it into the board's fpga
             self.ser.write(chr(146)) #request the IO expander data - takes about 2ms to send the command and read the i2c data
             self.ser.write(chr(33)); self.ser.write(chr(19)) # from 2B
             self.ser.write(chr(board)) # for board 0
             rslt = self.ser.read(1)
-            if len(rslt)>0 and i==1:
+            if len(rslt)>0:# and i==1:
                 byte_array = unpack('%dB'%len(rslt),rslt)
                 #print "i2c data from IO 2B",byte_array[0]
                 newswitchpos=byte_array[0]
-                if newswitchpos!=self.switchpos or not self.havereadswitchdata:
+                if newswitchpos!=self.switchpos[board] or not self.havereadswitchdata:
                     for b in range(8):
-                        if self.testBit(newswitchpos,b) != self.testBit(self.switchpos,b) or not self.havereadswitchdata:
+                        if self.testBit(newswitchpos,b) != self.testBit(self.switchpos[board],b) or not self.havereadswitchdata:
                             #print "switch",b,"is now",self.testBit(newswitchpos,b)
                             #switch 0-3 is 50/1M Ohm termination on channels 0-3, on is 1M, off is 50
                             #switch 4-7 is super/normal gain on channels 0-3, on is super, off is normal
@@ -1820,8 +1826,7 @@ class Haasoscope():
                                     self.togglesupergainchan(b-4)
                                 if not self.supergain[b-4] and not self.testBit(newswitchpos,b)>0:
                                     self.togglesupergainchan(b-4)
-                    self.switchpos = newswitchpos
-                    self.havereadswitchdata=True
+                    self.switchpos[board] = newswitchpos
     
     #initialization
     def init(self):
@@ -1832,8 +1837,13 @@ class Haasoscope():
                 if firmwareversion<self.minfirmwareversion: self.minfirmwareversion=firmwareversion
             print "minimum firmwareversion of all boards is",self.minfirmwareversion
             self.maxdownsample=15 # slowest I can run
-            if self.minfirmwareversion>=5:
+            if self.minfirmwareversion>=5: #updated firmware
                 self.maxdownsample=15 +(12-ram_width) # slowest I can run (can add 12-ram_width when using newer firmware)
+            self.yscale = 7.5 # Vpp for full scale
+            if self.minfirmwareversion>=15: #v9.0 boards
+                self.yscale*=1.1 # if we used 10M / 1.1M / 11k input resistors
+            self.min_y = -self.yscale/2. #-4.0 #0 ADC
+            self.max_y = self.yscale/2. #4.0 #256 ADC
             self.tellrolltrig(self.rolltrigger)
             self.tellsamplesmax10adc()
             self.tellsamplessend()
@@ -1844,7 +1854,8 @@ class Haasoscope():
             self.tellserialdelaytimerwait()
             self.tellSPIsetup(0) #0.9V CM but not connected
             self.tellSPIsetup(11) #offset binary output
-            #tellSPIsetup(12) #offset binary output and divide clock by 2
+            self.tellSPIsetup(24) #300 Ohm termination ChA
+            self.tellSPIsetup(25) #300 Ohm termination ChB
             #self.tellSPIsetup(30) # multiplexed output
             self.tellSPIsetup(32) # non-multiplexed output (less noise)
             self.setupi2c() # sets all ports to be outputs
