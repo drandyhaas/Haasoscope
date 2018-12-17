@@ -1807,7 +1807,7 @@ class Haasoscope():
             rslt = self.ser.read(1)
             if len(rslt)>0 and i==1:
                 byte_array = unpack('%dB'%len(rslt),rslt)
-                print "i2c data from IO 2B",byte_array[0]
+                #print "i2c data from IO 2B",byte_array[0]
                 newswitchpos=byte_array[0]
                 if newswitchpos!=self.switchpos or not self.havereadswitchdata:
                     for b in range(8):
