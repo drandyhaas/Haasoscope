@@ -807,7 +807,8 @@ class Haasoscope():
             lowdaclevelsac=self.lowdaclevelac[sc : sc+4].tolist(),
             highdaclevelsac=self.highdaclevelac[sc : sc+4].tolist(),
             lowdaclevelssuperac=self.lowdaclevelsuperac[sc : sc+4].tolist(),
-            highdaclevelssuperac=self.highdaclevelsuperac[sc : sc+4].tolist()
+            highdaclevelssuperac=self.highdaclevelsuperac[sc : sc+4].tolist(),
+            firmwareversion=self.minfirmwareversion
             )
         #print json.dumps(c,indent=4)
         fname = "calib/calib_"+self.uniqueID[board]+".json.txt"
@@ -838,7 +839,11 @@ class Haasoscope():
             self.lowdaclevelac[sc : sc+4] = c['lowdaclevelsac']
             self.highdaclevelac[sc : sc+4] = c['highdaclevelsac']
             self.lowdaclevelsuperac[sc : sc+4] = c['lowdaclevelssuperac']
-            self.highdaclevelsuperac[sc : sc+4] = c['highdaclevelssuperac']            
+            self.highdaclevelsuperac[sc : sc+4] = c['highdaclevelssuperac']
+            if "firmwareversion" in c:
+                print "calib was written using firmware version",c["firmwareversion"]
+            else:
+                print "calib was written using unknown firmware version"
             self.setdacvalues(sc) #and use the new levels right away
             if not self.firstdrawtext: self.drawtext()
         except IOError:
