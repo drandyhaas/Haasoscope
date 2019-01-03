@@ -21992,7 +21992,7 @@ http://www.bobstarr.net</description>
 <part name="CP9" library="rcl" deviceset="C-EU" device="C0805K" value="1uF">
 <attribute name="MPN" value="MF-CAP-0805-1uF"/>
 </part>
-<part name="ROFFSET1" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
+<part name="ROFFSET1" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
 <part name="ROFFSET2" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="ROFFSET3" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="ROFFSET4" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
