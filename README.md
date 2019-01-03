@@ -8,6 +8,7 @@ A changelog for the python code is here: https://docs.google.com/document/d/18tj
 
 3D printable cases! 
 https://www.tinkercad.com/things/aYq1lqRAyUU (for v8.81)
+https://www.tinkercad.com/things/kLllpJcaiet (for v9.01)
 
 Original funding campaign: https://www.crowdsupply.com/andy-haas/haasoscope (see the "updates" tab for lots of info)
 
