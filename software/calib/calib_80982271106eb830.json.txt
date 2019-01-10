@@ -1,0 +1,52 @@
+{
+    "highdaclevels": [
+        3196.0, 
+        3083.0, 
+        2740.0, 
+        2730.0
+    ], 
+    "lowdaclevelssuper": [
+        137.0, 
+        134.0, 
+        118.0, 
+        115.0
+    ], 
+    "highdaclevelssuperac": [
+        4744.0, 
+        4709.0, 
+        4723.0, 
+        4707.0
+    ], 
+    "lowdaclevelssuperac": [
+        2490.0, 
+        2490.0, 
+        2330.0, 
+        2330.0
+    ], 
+    "boardID": "80982271106eb830", 
+    "highdaclevelssuper": [
+        53.0, 
+        49.0, 
+        38.0, 
+        37.0
+    ], 
+    "lowdaclevels": [
+        2160.0, 
+        2150.0, 
+        2020.0, 
+        2020.0
+    ], 
+    "highdaclevelsac": [
+        4755.0, 
+        4720.0, 
+        4728.0, 
+        4717.0
+    ], 
+    "lowdaclevelsac": [
+        2510.0, 
+        2490.0, 
+        2340.0, 
+        2340.0
+    ], 
+    "firmwareversion": 15
+}
