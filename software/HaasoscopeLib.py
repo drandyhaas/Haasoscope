@@ -616,9 +616,10 @@ class Haasoscope():
             text +="\nDC coupled"
         else:
             text +="\nAC coupled"
+        chanonboard = self.selectedchannel%num_chan_per_board
+        theboard = num_board-1-self.selectedchannel/num_chan_per_board
         if self.havereadswitchdata:
-            theboard = num_board-1-self.selectedchannel/num_chan_per_board
-            if self.testBit(self.switchpos[theboard],self.selectedchannel):
+            if self.testBit(self.switchpos[theboard],chanonboard):
                 text += ", 1M"
             else:
                 text += ", 50"
@@ -627,8 +628,7 @@ class Haasoscope():
             if abs(self.Vmean[self.selectedchannel])>.9: text +="\nMean={0:1.3g} V".format(self.Vmean[self.selectedchannel])
             else: text +="\nMean={0:1.3g} mV".format(1000.*self.Vmean[self.selectedchannel])
             if abs(self.Vrms[self.selectedchannel])>.9: text +="\nRMS={0:1.3g} V".format(self.Vrms[self.selectedchannel])
-            else: text +="\nRMS={0:1.3g} mV".format(1000.*self.Vrms[self.selectedchannel])
-        chanonboard = self.selectedchannel%num_chan_per_board
+            else: text +="\nRMS={0:1.3g} mV".format(1000.*self.Vrms[self.selectedchannel])        
         if chanonboard<2:
             if self.dooversample[self.selectedchannel]==1: text+= "\nOversampled x2"
             if self.dooversample[self.selectedchannel]==9: text+= "\nOversampled x4"
@@ -1807,13 +1807,14 @@ class Haasoscope():
     havereadswitchdata=False
     def getswitchdata(self,board):
         #for i in range(2): #twice because the first time just reads it into the board's fpga
+            self.ser.write(chr(30+board)) #make the next board active (serial_passthrough 0)
             self.ser.write(chr(146)) #request the IO expander data - takes about 2ms to send the command and read the i2c data
             self.ser.write(chr(33)); self.ser.write(chr(19)) # from 2B
-            self.ser.write(chr(board)) # for board 0
+            self.ser.write(chr(board)) # for board number...
             rslt = self.ser.read(1)
             if len(rslt)>0:# and i==1:
                 byte_array = unpack('%dB'%len(rslt),rslt)
-                #print "i2c data from IO 2B",byte_array[0]
+                #print "i2c data from board",board,"IO 2B",byte_array[0]
                 newswitchpos=byte_array[0]
                 if newswitchpos!=self.switchpos[board] or not self.havereadswitchdata:
                     for b in range(8):
@@ -1822,10 +1823,11 @@ class Haasoscope():
                             #switch 0-3 is 50/1M Ohm termination on channels 0-3, on is 1M, off is 50
                             #switch 4-7 is super/normal gain on channels 0-3, on is super, off is normal
                             if b>=4:
-                                if self.supergain[b-4] and self.testBit(newswitchpos,b)>0:
-                                    self.togglesupergainchan(b-4)
-                                if not self.supergain[b-4] and not self.testBit(newswitchpos,b)>0:
-                                    self.togglesupergainchan(b-4)
+                                thechan=b-4+(num_board-board-1)*num_chan_per_board
+                                if self.supergain[thechan] and self.testBit(newswitchpos,b)>0:
+                                    self.togglesupergainchan(thechan)
+                                if not self.supergain[thechan] and not self.testBit(newswitchpos,b)>0:
+                                    self.togglesupergainchan(thechan)
                     self.switchpos[board] = newswitchpos
     
     #initialization
