@@ -47,7 +47,7 @@ try:
             #if d.fftdrawn: # print some fft info (the freq with the biggest amplitude)
             #    fftxdata = d.fftfreqplot.get_xdata(); fftydata = d.fftfreqplot.get_ydata()
             #    maxfftydata=np.max(fftydata); maxfftfrq=fftxdata[fftydata.argmax()]
-            #    print "max amp=",maxfftydata, "at freq=",maxfftfrq, d.fftax[1].get_xlabel().replace('Freq ','')
+            #    print "max amp=",maxfftydata, "at freq=",maxfftfrq, d.fftax.get_xlabel().replace('Freq ','')
             
             if d.db: print time.time()-d.oldtime,"done with evt",nevents
             nevents+=1
