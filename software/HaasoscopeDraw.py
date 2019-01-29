@@ -32,6 +32,9 @@ try:
     #d.togglelogicanalyzer() # run the logic analyzer
     #d.sendi2c("21 13 f0") # set extra pins E24 B0,1,2,3 off and B4,5,6,7 on
     
+    savetofile=False # save scope data to file
+    if savetofile: outf = open("Haasoscope_out_"+time.strftime("%Y%m%d-%H%M%S")+".csv","wt")
+    
     nevents=0; oldnevents=0; tinterval=100.; oldtime=time.time()
     while 1:
         if d.paused: time.sleep(.1)
@@ -39,6 +42,12 @@ try:
             if not d.getchannels(): break
             
             #print d.xydata[0][0][12], d.xydata[0][1][12] # print the x and y data, respectively, for the 13th sample on fast adc channel 0
+            
+            if savetofile:
+                outf.write(str(nevents)); outf.write(",") # start of each line is the event number
+                outf.write(str(time.time())); outf.write(",") # next column is the time in seconds of the current event
+                d.xydata[0][1].tofile(outf,",",format="%.3f") # save y data (1) from fast adc channel 0
+                outf.write("\n") # newline
             
             #if len(HaasoscopeLib.max10adcchans)>0: print "slow", d.xydataslow[0][0][99], d.xydataslow[0][1][99] # print the x and y data, respectively, for the 100th sample on slow max10 adc channel 0
             
@@ -68,3 +77,4 @@ except SerialException:
     print "serial com failed!"
 finally:
     d.cleanup()
+    if savetofile: outf.close()
