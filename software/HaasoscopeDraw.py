@@ -20,6 +20,10 @@ d.serialdelaytimerwait=100 #150 #300 # 600 # delay (in 2 us steps) between each 
 #d.dolockin=True; d.dolockinplot=d.domaindrawing # whether to calculate the lockin info on the FPGA and read it out (off by default)
 
 try:
+
+    savetofile=False # save scope data to file
+    if savetofile: outf = open("Haasoscope_out_"+time.strftime("%Y%m%d-%H%M%S")+".csv","wt")
+    
     if not d.setup_connections(): sys.exit()
     if not d.init(): sys.exit()
     d.on_launch()
@@ -31,9 +35,6 @@ try:
     #d.toggletriggerchan(d.selectedchannel)
     #d.togglelogicanalyzer() # run the logic analyzer
     #d.sendi2c("21 13 f0") # set extra pins E24 B0,1,2,3 off and B4,5,6,7 on
-    
-    savetofile=False # save scope data to file
-    if savetofile: outf = open("Haasoscope_out_"+time.strftime("%Y%m%d-%H%M%S")+".csv","wt")
     
     nevents=0; oldnevents=0; tinterval=100.; oldtime=time.time()
     while 1:
