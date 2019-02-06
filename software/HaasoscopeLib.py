@@ -37,7 +37,7 @@ class Haasoscope():
         print "num main ADC and max10adc bytes for all boards = ",self.num_bytes*num_board,"and",len(max10adcchans)*self.nsamp
         self.serialdelaytimerwait=100 #150 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
         try:
-            if os.uname()[1]=="raspberrypi":
+            if os.uname()[4].startswith("arm"):
                 print "I'm a raspberry pi?"
                 self.serialdelaytimerwait=600
             else: print "Not a raspberry pi?"
