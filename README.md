@@ -1,5 +1,9 @@
 # Haasoscope
 
+I have provided some mods to original software, to be more comfortable for day to day use
+
+- Added signal Frequency calculation for each channel
+-----------------------------------------------
 Docs, design, firmware, and software for the Haasoscope!
 Read the guide here: https://goo.gl/1Ry1k4 
 
