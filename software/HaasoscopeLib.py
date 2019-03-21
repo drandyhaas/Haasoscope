@@ -111,6 +111,7 @@ class Haasoscope():
         
         self.Vrms=np.zeros(num_board*num_chan_per_board, dtype=float) # the Vrms for each channel
         self.Vmean=np.zeros(num_board*num_chan_per_board, dtype=float) # the Vmean for each channel
+        self.Frequency=np.zeros(num_board*num_chan_per_board, dtype=float) # the Frequency for each channel
         
         #These hold the state of the IO expanders
         self.a20= int('f0',16) # oversamp (set bits 0,1 to 0 to send 0->2 and 1->3) / gain (set second char to 0 for low gain)
@@ -635,7 +636,11 @@ class Haasoscope():
             if abs(self.Vmean[self.selectedchannel])>.9: text +="\nMean={0:1.3g} V".format(self.Vmean[self.selectedchannel])
             else: text +="\nMean={0:1.3g} mV".format(1000.*self.Vmean[self.selectedchannel])
             if abs(self.Vrms[self.selectedchannel])>.9: text +="\nRMS={0:1.3g} V".format(self.Vrms[self.selectedchannel])
-            else: text +="\nRMS={0:1.3g} mV".format(1000.*self.Vrms[self.selectedchannel])        
+            else: text +="\nRMS={0:1.3g} mV".format(1000.*self.Vrms[self.selectedchannel])   
+            if self.Frequency[self.selectedchannel]<1000: text+="\nF={0:5.1f} Hz".format(self.Frequency[self.selectedchannel])
+            else: 
+                if self.Frequency[self.selectedchannel]<1000000: text+="\nF={0:1.3f} kHz".format(self.Frequency[self.selectedchannel]/1000)
+                else: text+="\nF={0:1.6f} MHz".format(self.Frequency[self.selectedchannel]/1000000)
         if chanonboard<2:
             if self.dooversample[self.selectedchannel]==1: text+= "\nOversampled x2"
             if self.dooversample[self.selectedchannel]==9: text+= "\nOversampled x4"
@@ -1212,6 +1217,7 @@ class Haasoscope():
                 if self.domeasure:
                     self.Vmean[thechan] = np.mean(ydatanew)
                     self.Vrms[thechan] = np.sqrt(np.mean((ydatanew-self.Vmean[thechan])**2))
+                    self.Frequency[thechan] = self.calc_freq(xdatanew,ydatanew)
                     gain=1
                     if self.gain[thechan]==0: gain*=10
                     if self.supergain[thechan]==0: gain*=100
@@ -1256,7 +1262,18 @@ class Haasoscope():
             self.oldchanphase=phase
             return res['freq']
         else: print "sin fit failed!"; return 0;
+    
+    #calculate frequency in Hertz
+    def calc_freq(self,xdatanew, ydatanew):
+        try:
+            res = self.fit_sin(xdatanew, ydatanew)
+        except:
+            freq = 0.0
+        else:
+            freq = res['freq']*1000000000./self.xscaling
+        return freq
         
+
     #For finding the frequency of a reference sin wave signal, for lockin calculations
     def fit_sin(self,tt, yy):
         '''Fit sin to the input time sequence, and return fitting parameters "amp", "omega", "phase", "offset", "freq", "period" and "fitfunc"'''
