@@ -11,14 +11,31 @@ num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
 from serial import Serial, SerialException
 from struct import unpack
 import numpy as np
-import time
+import time, json, os
 import matplotlib
-dofast=True #do the fast way of redrawing, just the specific things that could have likely changed
-if dofast: matplotlib.use('Qt4Agg')
+
+mearm=False
+mewin=False
+try:
+    if os.uname()[4].startswith("arm"):
+        print "On a raspberry pi?"
+        mearm=True
+except AttributeError:
+    mewin=True
+    print "Not on Linux?"
+
+dofast=False #do the fast way of redrawing, just the specific things that could have likely changed, only works well on Windows?
+if mewin:
+    dofast=True
+    matplotlib.use('Qt4Agg')
+#to print possible backends
+#import matplotlib.rcsetup as rcsetup
+#print rcsetup.interactive_bk
 import matplotlib.pyplot as plt
+print "matplotlib backend is",plt.get_backend()
+
 from scipy.signal import resample
 import serial.tools.list_ports
-import json, os
 import scipy.optimize
 
 enable_ripyl=False # set to True to use ripyl serial decoding... have to get it from https://github.com/kevinpt/ripyl and then install it first!
@@ -36,13 +53,7 @@ class Haasoscope():
         self.nsamp=pow(2,ram_width)-1 #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
         print "num main ADC and max10adc bytes for all boards = ",self.num_bytes*num_board,"and",len(max10adcchans)*self.nsamp
         self.serialdelaytimerwait=100 #150 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
-        try:
-            if os.uname()[4].startswith("arm"):
-                print "I'm a raspberry pi?"
-                self.serialdelaytimerwait=600
-            else: print "Not a raspberry pi?"
-        except AttributeError:
-            print "Not on Linux?"
+        if mearm: self.serialdelaytimerwait=600
         self.brate = 1500000 #serial baud rate #1500000 #115200 #921600
         self.sertimeout = 3.0 #time to wait for serial response #3.0, num_bytes*8*10.0/brate, or None
         self.clkrate=125.0 # ADC sample rate in MHz
