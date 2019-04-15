@@ -17,7 +17,8 @@ import matplotlib
 mearm=False
 mewin=False
 try:
-    if os.uname()[4].startswith("arm"):
+    print os.uname()
+    if os.uname()[4].startswith("arm") or os.uname()[4].startswith("aarch"):
         print "On a raspberry pi?"
         mearm=True
 except AttributeError:
