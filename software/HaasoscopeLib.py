@@ -34,6 +34,32 @@ if mewin:
 import matplotlib.pyplot as plt
 print "matplotlib backend is",plt.get_backend()
 
+#disable some default key mappings
+#keymap.fullscreen : f, ctrl+f       # toggling
+#keymap.home : h, r, home            # home or reset mnemonic
+#keymap.back : left, c, backspace    # forward / backward keys to enable
+#keymap.forward : right, v           #   left handed quick navigation
+#keymap.pan : p                      # pan mnemonic
+#keymap.zoom : o                     # zoom mnemonic
+#keymap.save : s                     # saving current figure
+#keymap.quit : ctrl+w, cmd+w         # close the current figure
+#keymap.grid : g                     # switching on/off a grid in current axes
+#keymap.yscale : l                   # toggle scaling of y-axes ('log'/'linear')
+#keymap.xscale : L, k                # toggle scaling of x-axes ('log'/'linear')
+#keymap.all_axes : a                 # enable all axes
+plt.rcParams['keymap.fullscreen'] = ''
+plt.rcParams['keymap.home'] = ''
+plt.rcParams['keymap.back'] = ''
+plt.rcParams['keymap.forward'] = ''
+plt.rcParams['keymap.pan'] = ''
+plt.rcParams['keymap.zoom'] = ''
+#plt.rcParams['keymap.save'] = ''
+#plt.rcParams['keymap.quit'] = ''
+plt.rcParams['keymap.grid'] = ''
+#plt.rcParams['keymap.yscale'] = ''
+plt.rcParams['keymap.xscale'] = ''
+plt.rcParams['keymap.all_axes'] = ''
+
 from scipy.signal import resample
 import serial.tools.list_ports
 import scipy.optimize
