@@ -159,8 +159,11 @@ class Haasoscope():
     
     def tellrolltrig(self,rt):
         #tell them to roll the trigger (a self-trigger each ~second), or not
-        if rt: self.ser.write(chr(101).encode()); self.rollingtrigger=True; print("rolling trigger")
-        else:  self.ser.write(chr(102).encode()); self.rollingtrigger=False; print("not rolling trigger")
+        frame=bytearray()
+        if rt: frame.append(101); self.rollingtrigger=True; print("rolling trigger")
+        else:  frame.append(102); self.rollingtrigger=False; print("not rolling trigger")
+        self.ser.write(frame)
+        self.ser.flush()
 
     def tellsamplesmax10adc(self):
         #tell it the number of samples to use for the 1MHz internal Max10 ADC
