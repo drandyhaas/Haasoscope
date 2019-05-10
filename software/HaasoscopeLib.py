@@ -197,10 +197,12 @@ class Haasoscope():
     
     def telllockinnumtoshift(self,numtoshift):
         #tell it the number of samples to shift when calculating 90deg outofphase sum for lockin
-        self.ser.write(chr(138).encode())
+        frame=bytearray()
+        frame.append(138)
         myb=bytearray.fromhex('{:04x}'.format(numtoshift))
-        self.ser.write(chr(myb[0]).encode())
-        self.ser.write(chr(myb[1]).encode())
+        frame.extend(myb)
+        self.ser.write(frame)
+        self.ser.flush()
         if self.db: print(("lockinnumtoshift is",256*myb[0]+1*myb[1]))
         
     def tellserialdelaytimerwait(self):
