@@ -176,11 +176,13 @@ class Haasoscope():
     
     def settriggerpoint(self,tp):
         #tell it the trigger point
-        self.ser.write(chr(121).encode())
+        frame=bytearray()
+        frame.append(121)
         offset=5 #small offset due to drawing and delay
         myb=bytearray.fromhex('{:04x}'.format(tp+offset))
-        self.ser.write(chr(myb[0]).encode())
-        self.ser.write(chr(myb[1]).encode())
+        frame.extend(myb)
+        self.ser.write(frame)
+        self.ser.flush()
         print(("Trigger point is",256*myb[0]+1*myb[1]-offset))
 
     def tellsamplessend(self):
