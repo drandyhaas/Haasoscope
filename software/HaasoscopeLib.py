@@ -492,7 +492,10 @@ class Haasoscope():
             self.telltickstowait()
     
     def togglehighres(self):#toggle whether to do highres averaging during downsampling or not
-            self.ser.write(chr(143).encode())
+            frame=bytearray()
+            frame.append(143)
+            self.ser.write(frame)
+            self.ser.flush()
             self.dohighres = not self.dohighres
             print(("143 do highres is",self.dohighres))
     
