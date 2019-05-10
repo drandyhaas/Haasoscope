@@ -302,7 +302,7 @@ class Haasoscope():
         if level<0: 
             print("level can't be less than 0")
             level=0
-        theboard = num_board-1-chan/num_chan_per_board
+        theboard = int(num_board-1-chan/num_chan_per_board)
         print(("theboard:",theboard," num_board:",num_board," chan:",chan," num_chan_per_board:",num_chan_per_board))
         chanonboard = chan%num_chan_per_board
         self.setdac(chanonboard,level,theboard)
