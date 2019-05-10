@@ -378,42 +378,22 @@ class Haasoscope():
         return(int_type ^ mask)
   
     def sendi2c(self,whattosend,board=200):
-        db2=True
+        db2=False
         time.sleep(.02)
         frame = bytearray()
         frame.append(136)
         myb=bytearray.fromhex(whattosend)
         frame.append(len(myb)-1)
         frame.extend(myb)
+        # pad with extra bytes since the command expects a total of 5 bytes (numtosend, addr, and 3 more bytes)        
         for b in np.arange(4-len(myb)): 
-            frame.append(255) # pad with extra bytes since the command expects a total of 5 bytes (numtosend, addr, and 3 more bytes)
+            frame.append(255)
         frame.append(board)
         self.ser.write(frame)        
         self.ser.flush()
         time.sleep(.02)
-        print("Frame:")
-        for i in range(0,len(frame)):
-            print(frame[i]) #
-
-
-        # myb=bytearray.fromhex(whattosend)
-        # self.ser.write(chr(136).encode())
-        # if db2: print(" sendi2c: 136")
-        # datacounttosend=len(myb)-1 #number of bytes of info to send, not counting the address
-        # self.ser.write(chr(datacounttosend).encode())
-        # if db2: print(datacounttosend)
-        # for b in np.arange(len(myb)): 
-        #     self.ser.write(chr(myb[b]).encode())
-        #     if db2: print((myb[b]))
-        # for b in np.arange(4-len(myb)): 
-        #     self.ser.write(chr(255).encode()) # pad with extra bytes since the command expects a total of 5 bytes (numtosend, addr, and 3 more bytes)
-        #     if db2: print("255")
-        # self.ser.write(chr(int(board)).encode()) #200 (default) will address message to all boards, otherwise only the given board ID will listen
-        # if db2: print((board,"\n"))
-        # if self.db or db2: print(("Tell i2c:","bytestosend:",datacounttosend," and address/data:",whattosend,"for board",board))
-        # self.ser.flush()        
-        # time.sleep(.02)
-    
+        if db2: print("sendi2c frame:",unpack('%dB' % len(frame), frame))
+ 
     def setupi2c(self):
         self.sendi2c("20 00 00") #port A on IOexp 1 are outputs
         self.sendi2c("20 01 00") #port B on IOexp 1 are outputs
