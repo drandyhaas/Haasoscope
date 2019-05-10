@@ -164,11 +164,12 @@ class Haasoscope():
 
     def tellsamplesmax10adc(self):
         #tell it the number of samples to use for the 1MHz internal Max10 ADC
-        self.ser.write(chr(120).encode())
-        myb=bytearray.fromhex('{:04x}'.format(self.nsamp))
-        self.ser.write(chr(myb[0]).encode())
-        self.ser.write(chr(myb[1]).encode())
-        if self.db: print(("Nsamp for max10 ADC is",256*myb[0]+1*myb[1]))
+        frame=bytearray()
+        frame.append(120)
+        frame.extend(bytearray.fromhex('{:04x}'.format(self.nsamp)))
+        self.ser.write(frame)
+        self.ser.flush()
+        if self.db: print(("Nsamp for max10 ADC is ",256*frame[1]+1*frame[2]," self.nsamp:",self.nsamp))
     
     def settriggerpoint(self,tp):
         #tell it the trigger point
