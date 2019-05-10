@@ -208,8 +208,11 @@ class Haasoscope():
     
     def tellbytesskip(self):
         #tell it the number of bytes to skip after each send, log2
-        self.ser.write(chr(123).encode())
-        self.ser.write(chr(sendincrement).encode())
+        frame=bytearray()
+        frame.append(123)
+        frame.append(sendincrement)
+        self.ser.write(frame)
+        self.ser.flush()
         print(("123 send increment is",sendincrement))
     
     def togglelogicanalyzer(self):
