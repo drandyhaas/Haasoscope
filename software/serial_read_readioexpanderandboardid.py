@@ -47,7 +47,7 @@ ser.write(bytearray([30+boa, 142])) #request the unique ID
 rslt = ser.read(8)
 byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
 uniqueID = ''.join(format(x, '02x') for x in byte_array) 
-print "got uniqueID",uniqueID,"for board",boa," in",round((time.time()-oldtime)*1000.,2),"ms"
+print("got uniqueID",uniqueID,"for board",boa," in",round((time.time()-oldtime)*1000.,2),"ms")
 
 oldtime=time.time()
 boa=0 # board to get firmware version from
@@ -56,7 +56,7 @@ ser.timeout=0.1; rslt = ser.read(1); ser.timeout=serialtimeout # reduce the seri
 byte_array = unpack('%dB'%len(rslt),rslt)
 firmwareversion=0
 if len(byte_array)>0: firmwareversion=byte_array[0]
-print "got firmwareversion",firmwareversion,"for board",boa,"in",round((time.time()-oldtime)*1000.,2),"ms"
+print("got firmwareversion",firmwareversion,"for board",boa,"in",round((time.time()-oldtime)*1000.,2),"ms")
 
 oldtime=time.time()
 for i in range(2):
@@ -65,14 +65,14 @@ for i in range(2):
     #print "result is length",len(rslt)
     if len(rslt)>0: 
         byte_array = unpack('%dB'%len(rslt),rslt)
-        print i,byte_array[0]
-print "got i2c data in",round((time.time()-oldtime)*1000./2.,2),"ms"
+        print(i,byte_array[0])
+print("got i2c data in",round((time.time()-oldtime)*1000./2.,2),"ms")
 
 ser.write(bytearray([100, 10])) # arm trigger and get an event
 rslt = ser.read(40)#[0:10]
 byte_array = unpack('%dB'%len(rslt),rslt)
 
 for i in range(4):
-    print byte_array[10*i : 10*i+10] # print out the 4 channels
+    print(byte_array[10*i : 10*i+10]) # print out the 4 channels
 
 ser.close()

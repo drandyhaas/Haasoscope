@@ -43,6 +43,6 @@ result = ser.read(40)
 byte_array = unpack('%dB' % len(result), result)
 
 for i in range(0,4):
-    print byte_array[ 10*i : 10*i + 10 ] # print out the 4 channels
+    print(byte_array[ 10*i : 10*i + 10 ]) # print out the 4 channels
 
 ser.close()

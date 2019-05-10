@@ -1,5 +1,6 @@
 import HaasoscopeLib
-reload(HaasoscopeLib) # in case you changed it, and to always load some defaults
+import imp
+imp.reload(HaasoscopeLib) # in case you changed it, and to always load some defaults
 import time, sys
 import matplotlib.pyplot as plt
 #import numpy as np
@@ -59,12 +60,12 @@ try:
             #    maxfftydata=np.max(fftydata); maxfftfrq=fftxdata[fftydata.argmax()]
             #    print "max amp=",maxfftydata, "at freq=",maxfftfrq, d.fftax.get_xlabel().replace('Freq ','')
             
-            if d.db: print time.time()-d.oldtime,"done with evt",nevents
+            if d.db: print((time.time()-d.oldtime,"done with evt",nevents))
             nevents+=1
             if nevents-oldnevents >= tinterval:
                 elapsedtime=time.time()-oldtime
                 lastrate = round(tinterval/elapsedtime,2)
-                print nevents,"events,",lastrate,"Hz"
+                print((nevents,"events,",lastrate,"Hz"))
                 oldtime=time.time()
                 if lastrate>40: tinterval=500.
                 else: tinterval=100.
@@ -75,7 +76,7 @@ try:
             if d.domaindrawing: break # quit when all the plots have been closed
             elif nevents>50: break
 except SerialException:
-    print "serial com failed!"
+    print("serial com failed!")
 finally:
     d.cleanup()
     if savetofile: outf.close()
