@@ -200,11 +200,12 @@ class Haasoscope():
         
     def tellserialdelaytimerwait(self):
         #tell it the number of microseconds to wait between every 32 (64?) bytes of serial output (for some slow USB serial setups)
-        self.ser.write(chr(135).encode())
-        myb=bytearray.fromhex('{:04x}'.format(self.serialdelaytimerwait))
-        self.ser.write(chr(myb[0]).encode())
-        self.ser.write(chr(myb[1]).encode())
-        print(("serialdelaytimerwait is",256*myb[0]+1*myb[1]))
+        frame=bytearray()
+        frame.append(135)
+        frame.extend(bytearray.fromhex('{:04x}'.format(self.serialdelaytimerwait)))
+        self.ser.write(frame)
+        self.ser.flush()
+        print(("serialdelaytimerwait is",256*frame[1]+1*frame[2]))
     
     def tellbytesskip(self):
         #tell it the number of bytes to skip after each send, log2
