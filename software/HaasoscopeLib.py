@@ -82,9 +82,10 @@ class Haasoscope():
         self.serialdelaytimerwait=100 #150 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
         if mearm: self.serialdelaytimerwait=600
         self.brate = 1500000 #serial baud rate #1500000 #115200 #921600
+        # self.brate = 115200 #serial baud rate #1500000 #115200 #921600
         self.sertimeout = 3.0 #time to wait for serial response #3.0, num_bytes*8*10.0/brate, or None
         self.clkrate=125.0 # ADC sample rate in MHz
-        self.serport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
+        self.serport="/dev/ttyUSB0" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
         self.usbport=[] # the names of the USB2 ports on your computer, connected to Haasoscope, leave blank to detect automatically!
         self.usbser=[]
         self.lines = []
@@ -206,7 +207,7 @@ class Haasoscope():
         #tell it the number of bytes to skip after each send, log2
         self.ser.write(chr(123).encode())
         self.ser.write(chr(sendincrement).encode())
-        print(("send increment is",sendincrement))
+        print(("123 send increment is",sendincrement))
     
     def togglelogicanalyzer(self):
         #tell it start/stop doing logic analyzer
@@ -287,7 +288,7 @@ class Haasoscope():
         myb=bytearray.fromhex('{:04x}'.format(ttt))
         self.ser.write(chr(myb[0]).encode())
         self.ser.write(chr(myb[1]).encode())
-        print(("trigger time over/under thresh now",256*myb[0]+1*myb[1]-pow(2,12),"and usedownsamplefortriggertot is",usedownsamplefortriggertot))
+        print(("129 trigger time over/under thresh now",256*myb[0]+1*myb[1]-pow(2,12),"and usedownsamplefortriggertot is",usedownsamplefortriggertot, "chr(myb[1]).encode()",chr(myb[1])))
     
     def writefirmchan(self,chan):
         theboard = num_board-1-chan/num_chan_per_board
@@ -362,7 +363,7 @@ class Haasoscope():
         return(int_type ^ mask)
   
     def sendi2c(self,whattosend,board=200):
-        db2=False
+        db2=True
         time.sleep(.02)
         myb=bytearray.fromhex(whattosend)
         self.ser.write(chr(136).encode())
@@ -464,7 +465,7 @@ class Haasoscope():
     def togglehighres(self):#toggle whether to do highres averaging during downsampling or not
             self.ser.write(chr(143).encode())
             self.dohighres = not self.dohighres
-            print(("do highres is",self.dohighres))
+            print(("143 do highres is",self.dohighres))
     
     def toggleuseexttrig(self):#toggle whether to use the external trigger input or not
             self.ser.write(chr(144).encode())
@@ -1891,24 +1892,57 @@ class Haasoscope():
                 self.yscale*=1.1 # if we used 10M / 1.1M / 11k input resistors
             self.min_y = -self.yscale/2. #-4.0 #0 ADC
             self.max_y = self.yscale/2. #4.0 #256 ADC
+            waitlittle=0.5
             self.tellrolltrig(self.rolltrigger)
+            time.sleep(waitlittle)
+            firmwareversion = self.getfirmwareversion(0)
             self.tellsamplesmax10adc()
+            time.sleep(waitlittle)
+            firmwareversion = self.getfirmwareversion(0)
             self.tellsamplessend()
+            time.sleep(waitlittle)
+            firmwareversion = self.getfirmwareversion(0)
             self.tellbytesskip()
+            time.sleep(waitlittle)
+            firmwareversion = self.getfirmwareversion(0)
             self.telldownsample(self.downsample)
+            time.sleep(waitlittle)
+            firmwareversion = self.getfirmwareversion(0)
             self.togglehighres()
+            time.sleep(waitlittle)
+            firmwareversion = self.getfirmwareversion(0)
             self.settriggertime(self.triggertimethresh)
+            time.sleep(waitlittle)
+            firmwareversion = self.getfirmwareversion(0)
             self.tellserialdelaytimerwait()
+            time.sleep(waitlittle)
+            firmwareversion = self.getfirmwareversion(0)
             self.tellSPIsetup(0) #0.9V CM but not connected
+            time.sleep(waitlittle)
+            firmwareversion = self.getfirmwareversion(0)
             self.tellSPIsetup(11) #offset binary output
+            time.sleep(waitlittle)
+            firmwareversion = self.getfirmwareversion(0)
             self.tellSPIsetup(24) #300 Ohm termination ChA
+            time.sleep(waitlittle)
+            firmwareversion = self.getfirmwareversion(0)
             self.tellSPIsetup(25) #300 Ohm termination ChB
+            time.sleep(waitlittle)
+
+            firmwareversion = self.getfirmwareversion(0)
+
             #self.tellSPIsetup(30) # multiplexed output
             self.tellSPIsetup(32) # non-multiplexed output (less noise)
+            time.sleep(waitlittle)
+            firmwareversion = self.getfirmwareversion(0)
             self.setupi2c() # sets all ports to be outputs
+            time.sleep(waitlittle)
+            firmwareversion = self.getfirmwareversion(0)
             self.toggledousb() # switch to USB2 connection for readout of events, if available
             if self.dousb:
                 if not self.makeusbsermap(): return False # figure out which usb connection has which board's data
+            time.sleep(waitlittle)
+            firmwareversion = self.getfirmwareversion(0)
             self.getIDs() # get the unique ID of each board, for calibration etc.
             self.readcalib() # get the calibrated DAC values for each board; if it fails then use defaults
             self.domeasure=self.domaindrawing #by default we will calculate measurements if we are drawing
