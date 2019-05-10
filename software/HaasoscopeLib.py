@@ -293,11 +293,12 @@ class Haasoscope():
             print(("trigger time over/under thresh can't be bigger than num samples",self.num_samples)); return
         usedownsamplefortriggertot=True
         if usedownsamplefortriggertot: ttt+=pow(2,12) #set bit [ram_width] (max) = 1
-        self.ser.write(chr(129).encode())
-        myb=bytearray.fromhex('{:04x}'.format(ttt))
-        self.ser.write(chr(myb[0]).encode())
-        self.ser.write(chr(myb[1]).encode())
-        print(("129 trigger time over/under thresh now",256*myb[0]+1*myb[1]-pow(2,12),"and usedownsamplefortriggertot is",usedownsamplefortriggertot, "chr(myb[1]).encode()",chr(myb[1])))
+        frame=bytearray()
+        frame.append(129)
+        frame.extend(bytearray.fromhex('{:04x}'.format(ttt)))
+        self.ser.write(frame)
+        self.ser.flush()
+        print(("129 trigger time over/under thresh now",256*frame[1]+1*frame[2]-pow(2,12),"and usedownsamplefortriggertot is",usedownsamplefortriggertot))
     
     def writefirmchan(self,chan):
         theboard = num_board-1-chan/num_chan_per_board
