@@ -182,11 +182,13 @@ class Haasoscope():
 
     def tellsamplessend(self):
         #tell it the number of samples to send
-        self.ser.write(chr(122).encode())
-        myb=bytearray.fromhex('{:04x}'.format(self.num_samples*pow(2,sendincrement))) # or 0 for all, or num_samples*pow(2,sendincrement)
-        self.ser.write(chr(myb[0]).encode())
-        self.ser.write(chr(myb[1]).encode())
-        print(("num samples is",256*myb[0]+1*myb[1]))
+        frame=bytearray()
+        frame.append(122)
+        # Either 0 for all, or num_samples*pow(2,sendincrement)
+        frame.extend(bytearray.fromhex('{:04x}'.format(self.num_samples*pow(2,sendincrement))))
+        self.ser.write(frame)
+        self.ser.flush()
+        print(("num samples is",256*frame[1]+1*frame[2]))
     
     def telllockinnumtoshift(self,numtoshift):
         #tell it the number of samples to shift when calculating 90deg outofphase sum for lockin
