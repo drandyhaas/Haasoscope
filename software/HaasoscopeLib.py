@@ -323,7 +323,8 @@ class Haasoscope():
     
     def tellSPIsetup(self,what):
         time.sleep(.01) #pause to make sure other SPI writng is done
-        self.ser.write(chr(131).encode())
+        frame=bytearray()
+        frame.append(131)
         myb=bytearray.fromhex('06 10') #default    
         #SPIsenddata[14:8]=7'h08;//Common mode bias voltages
         #SPIsenddata[7:0]=8'b00000000;//off //0x00
@@ -353,7 +354,9 @@ class Haasoscope():
         if what==30: myb=bytearray.fromhex('01 02') #multiplexed, with chA first
         if what==31: myb=bytearray.fromhex('01 06') #multiplexed, with chB first
         if what==32: myb=bytearray.fromhex('01 00') # not multiplexed output        
-        self.ser.write(chr(myb[0]).encode());    self.ser.write(chr(myb[1]).encode()); #write it!
+        frame.extend(myb)
+        self.ser.write(frame)
+        self.ser.flush()
         print(("tell SPI setup: 131 ",myb[0],myb[1]))
         time.sleep(.01) #pause to make sure other SPI writng is done
     
