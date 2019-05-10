@@ -303,6 +303,7 @@ class Haasoscope():
             print("level can't be less than 0")
             level=0
         theboard = num_board-1-chan/num_chan_per_board
+        print(("theboard:",theboard," num_board:",num_board," chan:",chan," num_chan_per_board:",num_chan_per_board))
         chanonboard = chan%num_chan_per_board
         self.setdac(chanonboard,level,theboard)
         self.chanlevel[chan]=level
@@ -414,6 +415,8 @@ class Haasoscope():
         if val>4095:
             d="9" #internal ref, gain=2 (0-4V)
             val/=2
+        print(("val:",val," board",board,"\n"))
+
         self.sendi2c("60 "+c+d+('%0*x' % (3,int(val))),  board) #DAC, can go from 000 to 0fff in last 12 bits, and only send to the selected board
         
         # example:
