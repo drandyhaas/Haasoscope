@@ -227,8 +227,10 @@ class Haasoscope():
     def getfirmwareversion(self, board):
         #get the firmware version of a board
         oldtime=time.time()
-        self.ser.write(chr(30+board).encode()) #make the next board active (serial_passthrough 0)
-        self.ser.write(chr(147).encode()) #request the firmware version byte
+        frame=bytearray()
+        frame.append(30+board)
+        frame.append(147)
+        self.ser.write(frame)
         self.ser.flush()
         self.ser.timeout=0.1; rslt = self.ser.read(1); self.ser.timeout=self.sertimeout # reduce the serial timeout temporarily, since the old firmware versions will return nothing for command 147
         byte_array = unpack('%dB'%len(rslt),rslt)
@@ -1916,54 +1918,37 @@ class Haasoscope():
             waitlittle=0.1
             self.tellrolltrig(self.rolltrigger)
             time.sleep(waitlittle)
-            firmwareversion = self.getfirmwareversion(0)
             self.tellsamplesmax10adc()
             time.sleep(waitlittle)
-            firmwareversion = self.getfirmwareversion(0)
             self.tellsamplessend()
             time.sleep(waitlittle)
-            firmwareversion = self.getfirmwareversion(0)
             self.tellbytesskip()
             time.sleep(waitlittle)
-            firmwareversion = self.getfirmwareversion(0)
             self.telldownsample(self.downsample)
             time.sleep(waitlittle)
-            firmwareversion = self.getfirmwareversion(0)
             self.togglehighres()
             time.sleep(waitlittle)
-            firmwareversion = self.getfirmwareversion(0)
             self.settriggertime(self.triggertimethresh)
             time.sleep(waitlittle)
-            firmwareversion = self.getfirmwareversion(0)
             self.tellserialdelaytimerwait()
             time.sleep(waitlittle)
-            firmwareversion = self.getfirmwareversion(0)
             self.tellSPIsetup(0) #0.9V CM but not connected
             time.sleep(waitlittle)
-            firmwareversion = self.getfirmwareversion(0)
             self.tellSPIsetup(11) #offset binary output
             time.sleep(waitlittle)
-            firmwareversion = self.getfirmwareversion(0)
             self.tellSPIsetup(24) #300 Ohm termination ChA
             time.sleep(waitlittle)
-            firmwareversion = self.getfirmwareversion(0)
             self.tellSPIsetup(25) #300 Ohm termination ChB
             time.sleep(waitlittle)
-
-            firmwareversion = self.getfirmwareversion(0)
-
             #self.tellSPIsetup(30) # multiplexed output
             self.tellSPIsetup(32) # non-multiplexed output (less noise)
             time.sleep(waitlittle)
-            firmwareversion = self.getfirmwareversion(0)
             self.setupi2c() # sets all ports to be outputs
             time.sleep(waitlittle)
-            firmwareversion = self.getfirmwareversion(0)
             self.toggledousb() # switch to USB2 connection for readout of events, if available
             if self.dousb:
                 if not self.makeusbsermap(): return False # figure out which usb connection has which board's data
             time.sleep(waitlittle)
-            firmwareversion = self.getfirmwareversion(0)
             self.getIDs() # get the unique ID of each board, for calibration etc.
             self.readcalib() # get the calibrated DAC values for each board; if it fails then use defaults
             self.domeasure=self.domaindrawing #by default we will calculate measurements if we are drawing
