@@ -225,16 +225,19 @@ class Haasoscope():
     
     def togglelogicanalyzer(self):
         #tell it start/stop doing logic analyzer
+        frame=bytearray()
+        frame.append(145)
         self.dologicanalyzer = not self.dologicanalyzer
-        self.ser.write(chr(145).encode())
         if self.dologicanalyzer: 
-            self.ser.write(chr(5).encode())
+            frame.append(5)
             if len(self.lines)>=8+self.logicline1: # check that we're drawing
                 for l in np.arange(8): self.lines[l+self.logicline1].set_visible(True)
         else:
-            self.ser.write(chr(4).encode())
+            frame.append(4)
             if len(self.lines)>=8+self.logicline1: # check that we're drawing
                 for l in np.arange(8): self.lines[l+self.logicline1].set_visible(False)
+        self.ser.write(frame)
+        self.ser.flush()
         print(("dologicanalyzer is now",self.dologicanalyzer))
     
     minfirmwareversion=255
