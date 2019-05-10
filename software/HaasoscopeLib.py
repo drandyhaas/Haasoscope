@@ -631,9 +631,12 @@ class Haasoscope():
             self.downsample=ds
         else:
             if max(self.dooversample)>0 and ds>0: print("can't change sampling rate while oversampling - must be fastest!"); return False
-            if ds>self.maxdownsample: print(("downsample >",self.maxdownsample,"doesn't work well... I get bored running that slow!")); return False        
-            self.ser.write(chr(124).encode())
-            self.ser.write(chr(ds).encode())
+            if ds>self.maxdownsample: print(("downsample >",self.maxdownsample,"doesn't work well... I get bored running that slow!")); return False
+            frame=bytearray()
+            frame.append(124)
+            frame.append(ds)
+            self.ser.write(frame)
+            self.ser.flush()
             self.downsample=ds
             if self.db: print(("downsample is",self.downsample))        
             if self.dolockin:
