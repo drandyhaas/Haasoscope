@@ -159,73 +159,72 @@ class Haasoscope():
     
     def tellrolltrig(self,rt):
         #tell them to roll the trigger (a self-trigger each ~second), or not
-        frame=bytearray()
+        frame=[]
         if rt: frame.append(101); self.rollingtrigger=True; print("rolling trigger")
         else:  frame.append(102); self.rollingtrigger=False; print("not rolling trigger")
         self.ser.write(frame)
-        self.ser.flush()
 
     def tellsamplesmax10adc(self):
         #tell it the number of samples to use for the 1MHz internal Max10 ADC
-        frame=bytearray()
+        frame=[]
         frame.append(120)
         frame.extend(bytearray.fromhex('{:04x}'.format(self.nsamp)))
         self.ser.write(frame)
-        self.ser.flush()
+        
         if self.db: print(("Nsamp for max10 ADC is ",256*frame[1]+1*frame[2]," self.nsamp:",self.nsamp))
     
     def settriggerpoint(self,tp):
         #tell it the trigger point
-        frame=bytearray()
+        frame=[]
         frame.append(121)
         offset=5 #small offset due to drawing and delay
         myb=bytearray.fromhex('{:04x}'.format(tp+offset))
         frame.extend(myb)
         self.ser.write(frame)
-        self.ser.flush()
+        
         print(("Trigger point is",256*myb[0]+1*myb[1]-offset))
 
     def tellsamplessend(self):
         #tell it the number of samples to send
-        frame=bytearray()
+        frame=[]
         frame.append(122)
         # Either 0 for all, or num_samples*pow(2,sendincrement)
         frame.extend(bytearray.fromhex('{:04x}'.format(self.num_samples*pow(2,sendincrement))))
         self.ser.write(frame)
-        self.ser.flush()
+        
         print(("num samples is",256*frame[1]+1*frame[2]))
     
     def telllockinnumtoshift(self,numtoshift):
         #tell it the number of samples to shift when calculating 90deg outofphase sum for lockin
-        frame=bytearray()
+        frame=[]
         frame.append(138)
         myb=bytearray.fromhex('{:04x}'.format(numtoshift))
         frame.extend(myb)
         self.ser.write(frame)
-        self.ser.flush()
+        
         if self.db: print(("lockinnumtoshift is",256*myb[0]+1*myb[1]))
         
     def tellserialdelaytimerwait(self):
         #tell it the number of microseconds to wait between every 32 (64?) bytes of serial output (for some slow USB serial setups)
-        frame=bytearray()
+        frame=[]
         frame.append(135)
         frame.extend(bytearray.fromhex('{:04x}'.format(self.serialdelaytimerwait)))
         self.ser.write(frame)
-        self.ser.flush()
+        
         print(("serialdelaytimerwait is",256*frame[1]+1*frame[2]))
     
     def tellbytesskip(self):
         #tell it the number of bytes to skip after each send, log2
-        frame=bytearray()
+        frame=[]
         frame.append(123)
         frame.append(sendincrement)
         self.ser.write(frame)
-        self.ser.flush()
+        
         print(("123 send increment is",sendincrement))
     
     def togglelogicanalyzer(self):
         #tell it start/stop doing logic analyzer
-        frame=bytearray()
+        frame=[]
         frame.append(145)
         self.dologicanalyzer = not self.dologicanalyzer
         if self.dologicanalyzer: 
@@ -237,18 +236,18 @@ class Haasoscope():
             if len(self.lines)>=8+self.logicline1: # check that we're drawing
                 for l in np.arange(8): self.lines[l+self.logicline1].set_visible(False)
         self.ser.write(frame)
-        self.ser.flush()
+        
         print(("dologicanalyzer is now",self.dologicanalyzer))
     
     minfirmwareversion=255
     def getfirmwareversion(self, board):
         #get the firmware version of a board
         oldtime=time.time()
-        frame=bytearray()
+        frame=[]
         frame.append(30+board)
         frame.append(147)
         self.ser.write(frame)
-        self.ser.flush()
+        
         self.ser.timeout=0.1; rslt = self.ser.read(1); self.ser.timeout=self.sertimeout # reduce the serial timeout temporarily, since the old firmware versions will return nothing for command 147
         byte_array = unpack('%dB'%len(rslt),rslt)
         firmwareversion=0
@@ -268,49 +267,49 @@ class Haasoscope():
                 ds=8 # otherwise we timeout upon readout
                 if self.num_samples>10: self.settriggerpoint(self.num_samples-10) # set trigger way to the right, so we can capture full event - NOTE - screws up mini-screen!
                 self.otherlines[0].set_visible(False) # don't draw trigger time position line, to indicate it's not really set anymore
-        frame=bytearray()
+        frame=[]
         frame.append(125)
         frame.append(ds)
         self.ser.write(frame)
-        self.ser.flush()
+        
         if self.db: print(("clockbitstowait is",ds))
     
     def tellminidisplaychan(self,ch):
         #tell it the channel to show on the mini-display
-        frame=bytearray()
+        frame=[]
         frame.append(126)
         frame.append(ch)
         self.ser.write(frame)
-        self.ser.flush()
+        
         print(("chanforscreen is",ch))
     
     def settriggerthresh(self,tp):
         #tell it the trigger threshold
         tp=255-tp # need to flip it due to op amp
-        frame=bytearray()
+        frame=[]
         frame.append(127)
         frame.append(tp)
         self.ser.write(frame)
-        self.ser.flush()
+        
         print(("Trigger threshold is",tp))
         
     def settriggerthresh2(self,tp):
         #tell it the high trigger threshold (must be below this to trigger)
         tp=255-tp # need to flip it due to op amp
-        frame=bytearray()
+        frame=[]
         frame.append(140)
         frame.append(tp)
         self.ser.write(frame)
-        self.ser.flush()
+        
         print(("Trigger high threshold is",tp))
     
     def settriggertype(self,tp):
         #tell it the trigger type: rising edge, falling edge, either, ...
-        frame=bytearray()
+        frame=[]
         frame.append(128)
         frame.append(tp)
         self.ser.write(frame)
-        self.ser.flush()
+        
         if self.db: print(("Trigger type is",tp))
         
     def settriggertime(self,ttt):
@@ -319,11 +318,11 @@ class Haasoscope():
             print(("trigger time over/under thresh can't be bigger than num samples",self.num_samples)); return
         usedownsamplefortriggertot=True
         if usedownsamplefortriggertot: ttt+=pow(2,12) #set bit [ram_width] (max) = 1
-        frame=bytearray()
+        frame=[]
         frame.append(129)
         frame.extend(bytearray.fromhex('{:04x}'.format(ttt)))
         self.ser.write(frame)
-        self.ser.flush()
+        
         print(("129 trigger time over/under thresh now",256*frame[1]+1*frame[2]-pow(2,12),"and usedownsamplefortriggertot is",usedownsamplefortriggertot))
     
     def getfirmchan(self,chan):
@@ -349,7 +348,7 @@ class Haasoscope():
     
     def tellSPIsetup(self,what):
         time.sleep(.01) #pause to make sure other SPI writng is done
-        frame=bytearray()
+        frame=[]
         frame.append(131)
         myb=bytearray.fromhex('06 10') #default    
         #SPIsenddata[14:8]=7'h08;//Common mode bias voltages
@@ -382,7 +381,7 @@ class Haasoscope():
         if what==32: myb=bytearray.fromhex('01 00') # not multiplexed output        
         frame.extend(myb)
         self.ser.write(frame)
-        self.ser.flush()
+        
         print(("tell SPI setup: 131 ",myb[0],myb[1]))
         time.sleep(.01) #pause to make sure other SPI writng is done
     
@@ -416,7 +415,7 @@ class Haasoscope():
             frame.append(255)
         frame.append(board)
         self.ser.write(frame)        
-        self.ser.flush()
+        
         time.sleep(.02)
         if db2: print("sendi2c frame:",unpack('%dB' % len(frame), frame))
  
@@ -497,38 +496,38 @@ class Haasoscope():
             print("usb2 connection not available")
         else:
             self.dousb = not self.dousb
-            frame=bytearray()
+            frame=[]
             frame.append(137)
             self.ser.write(frame)
-            self.ser.flush()
+            
             print(("dousb toggled to",self.dousb))
             if self.dousb: print(("rate theoretically",round(4000000./(self.num_bytes*num_board+len(max10adcchans)*self.nsamp),2),"Hz over USB2"))
             self.telltickstowait()
     
     def togglehighres(self):#toggle whether to do highres averaging during downsampling or not
-            frame=bytearray()
+            frame=[]
             frame.append(143)
             self.ser.write(frame)
-            self.ser.flush()
+            
             self.dohighres = not self.dohighres
             print(("143 do highres is",self.dohighres))
     
     def toggleuseexttrig(self):#toggle whether to use the external trigger input or not
-            frame=bytearray()
+            frame=[]
             frame.append(144)
             self.ser.write(frame)
-            self.ser.flush()
+            
             self.useexttrig = not self.useexttrig
             print(("useexttrig is",self.useexttrig))
     
     def toggletriggerchan(self,tp):
         #tell it to trigger or not trigger on a given channel
-        frame=bytearray()
+        frame=[]
         frame.append(130)
         firmchan=self.getfirmchan(tp)
         frame.append(firmchan)
         self.ser.write(frame)
-        self.ser.flush()
+        
         self.trigsactive[tp] = not self.trigsactive[tp]
         if len(plt.get_fignums())>0:
             origline,legline,channum = self.lined[tp]
@@ -538,13 +537,13 @@ class Haasoscope():
         if self.db: print(("Trigger toggled for channel",tp))
 
     def toggleautorearm(self):
-        frame=bytearray()
+        frame=[]
         #tell it to toggle the auto rearm of the tirgger after readout
         frame.append(139)
         # prime the trigger one last time
         frame.append(100)
         self.ser.write(frame)
-        self.ser.flush()
+        
         self.autorearm = not self.autorearm
         print(("Trigger auto rearm now",self.autorearm))
         if self.db: print((time.time()-self.oldtime,"priming trigger"))
@@ -552,13 +551,12 @@ class Haasoscope():
     def getIDs(self):
         debug3=True
         self.uniqueID=[]
-        frame=bytearray()
         for n in range(num_board):
             frame=[]
             frame.append(30+n)
             frame.append(142)
             self.ser.write(frame)
-            self.ser.flush()
+            
             num_other_bytes = 8
             rslt = self.ser.read(num_other_bytes)
             if len(rslt)==num_other_bytes:
@@ -594,12 +592,12 @@ class Haasoscope():
     
     def tellswitchgain(self,chan):
         #tell it to switch the gain of a channel
-        frame=bytearray()
+        frame=[]
         frame.append(134)
         firmchan=self.getfirmchan(chan)
         frame.append(firmchan)
         self.ser.write(frame)
-        self.ser.flush()
+        
 
         if len(plt.get_fignums())>0: origline,legline,channum = self.lined[chan]
         if self.gain[chan]==1:
@@ -634,12 +632,12 @@ class Haasoscope():
         self.dooversample[chan] = not self.dooversample[chan];
         print(("oversampling is now",self.dooversample[chan],"for channel",chan))
         if self.dooversample[chan] and self.downsample>0: self.telldownsample(0) # must be in max sampling mode for oversampling to make sense
-        frame=bytearray()
+        frame=[]
         frame.append(141)
         firmchan=self.getfirmchan(chan)
         frame.append(firmchan)
         self.ser.write(frame)
-        self.ser.flush()
+        
 
         self.drawtext()
         self.figure.canvas.draw()
@@ -661,10 +659,10 @@ class Haasoscope():
     
     def setbacktoserialreadout(self):
         if self.dousb:
-            frame=bytearray()
+            frame=[]
             frame.append(137)
             self.ser.write(frame)
-            self.ser.flush()
+            
             self.dousb=False
             print(("dousb set back to",self.dousb))
     
@@ -677,11 +675,11 @@ class Haasoscope():
         else:
             if max(self.dooversample)>0 and ds>0: print("can't change sampling rate while oversampling - must be fastest!"); return False
             if ds>self.maxdownsample: print(("downsample >",self.maxdownsample,"doesn't work well... I get bored running that slow!")); return False
-            frame=bytearray()
+            frame=[]
             frame.append(124)
             frame.append(ds)
             self.ser.write(frame)
-            self.ser.flush()
+            
             self.downsample=ds
             if self.db: print(("downsample is",self.downsample))        
             if self.dolockin:
@@ -1627,10 +1625,10 @@ class Haasoscope():
 
     def getotherdata(self,board):
         debug3=True
-        frame=bytearray()
+        frame=[]
         frame.append(132)
         self.ser.write(frame)
-        self.ser.flush()
+        
         num_other_bytes = 1
         rslt = self.ser.read(num_other_bytes)
         if len(rslt)==num_other_bytes:
@@ -1641,7 +1639,7 @@ class Haasoscope():
         frame=[]
         frame.append(133)
         self.ser.write(frame)
-        self.ser.flush()
+        
         num_other_bytes = 1
         rslt = self.ser.read(num_other_bytes)
         if len(rslt)==num_other_bytes:
@@ -1748,7 +1746,6 @@ class Haasoscope():
     
     usbsermap=[]
     def makeusbsermap(self): # figure out which board is connected to which USB 2 connection
-        frame=bytearray()
         self.usbsermap=np.zeros(num_board, dtype=int)
         if len(self.usbser)<num_board:
             print("Not a USB2 connection for each board!")
@@ -1761,7 +1758,7 @@ class Haasoscope():
                 frame.append(100)
                 frame.append(10+bn)
                 self.ser.write(frame)
-                self.ser.flush()
+                
                 for usb in np.arange(len(self.usbser)):
                     if not usb in foundusbs: # it's not already known that this usb connection is assigned to a board
                         rslt = self.usbser[usb].read(self.num_bytes) # try to get data from the board
@@ -1781,7 +1778,7 @@ class Haasoscope():
         frame=[]
         frame.append(10+board)
         self.ser.write(frame)
-        self.ser.flush()
+        
         if self.db: print((time.time()-self.oldtime,"asked for data from board",board))   
         if self.dolockin: self.getlockindata(board)
         if self.dousb:
@@ -1885,7 +1882,7 @@ class Haasoscope():
             frame=[]
             frame.append(chan)
             self.ser.write(frame)
-            self.ser.flush()
+            
             if self.db: print((time.time()-self.oldtime,"getting max10adc chan",chan,"for bn",bn))
             rslt = self.ser.read(self.nsamp*2) #read N bytes (2 per sample)
             if self.db: print((time.time()-self.oldtime,"getmax10adc got bytes:",len(rslt)))
@@ -1915,7 +1912,7 @@ class Haasoscope():
             frame=[]
             frame.append(100)
             self.ser.write(frame)
-            self.ser.flush()
+            
         self.max10adcchan=1
         for bn in np.arange(num_board):
             if self.db: print((time.time()-self.oldtime,"getting board",bn))
@@ -1955,7 +1952,7 @@ class Haasoscope():
             frame.append(33)
             frame.append(board)
             self.ser.write(frame)
-            self.ser.flush()
+            
             rslt = self.ser.read(1)
             if len(rslt)>0:# and i==1:
                 byte_array = unpack('%dB'%len(rslt),rslt)
@@ -1981,7 +1978,7 @@ class Haasoscope():
             frame.append(0)
             frame.append(20+(num_board-1))
             self.ser.write(frame)
-            self.ser.flush()
+            
             for b in range(num_board):
                 firmwareversion = self.getfirmwareversion(b)
                 if firmwareversion<self.minfirmwareversion: self.minfirmwareversion=firmwareversion
@@ -1994,40 +1991,24 @@ class Haasoscope():
                 self.yscale*=1.1 # if we used 10M / 1.1M / 11k input resistors
             self.min_y = -self.yscale/2. #-4.0 #0 ADC
             self.max_y = self.yscale/2. #4.0 #256 ADC
-            waitlittle=0.1
             self.tellrolltrig(self.rolltrigger)
-            time.sleep(waitlittle)
             self.tellsamplesmax10adc()
-            time.sleep(waitlittle)
             self.tellsamplessend()
-            time.sleep(waitlittle)
             self.tellbytesskip()
-            time.sleep(waitlittle)
             self.telldownsample(self.downsample)
-            time.sleep(waitlittle)
             self.togglehighres()
-            time.sleep(waitlittle)
             self.settriggertime(self.triggertimethresh)
-            time.sleep(waitlittle)
             self.tellserialdelaytimerwait()
-            time.sleep(waitlittle)
             self.tellSPIsetup(0) #0.9V CM but not connected
-            time.sleep(waitlittle)
             self.tellSPIsetup(11) #offset binary output
-            time.sleep(waitlittle)
             self.tellSPIsetup(24) #300 Ohm termination ChA
-            time.sleep(waitlittle)
             self.tellSPIsetup(25) #300 Ohm termination ChB
-            time.sleep(waitlittle)
             #self.tellSPIsetup(30) # multiplexed output
             self.tellSPIsetup(32) # non-multiplexed output (less noise)
-            time.sleep(waitlittle)
             self.setupi2c() # sets all ports to be outputs
-            time.sleep(waitlittle)
             self.toggledousb() # switch to USB2 connection for readout of events, if available
             if self.dousb:
                 if not self.makeusbsermap(): return False # figure out which usb connection has which board's data
-            time.sleep(waitlittle)
             self.getIDs() # get the unique ID of each board, for calibration etc.
             self.readcalib() # get the calibrated DAC values for each board; if it fails then use defaults
             self.domeasure=self.domaindrawing #by default we will calculate measurements if we are drawing
