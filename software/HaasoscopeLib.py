@@ -1778,7 +1778,10 @@ class Haasoscope():
     
     timedout = False
     def getdata(self,board):
-        self.ser.write(chr(10+board).encode())
+        frame=[]
+        frame.append(10+board)
+        self.ser.write(frame)
+        self.ser.flush()
         if self.db: print((time.time()-self.oldtime,"asked for data from board",board))   
         if self.dolockin: self.getlockindata(board)
         if self.dousb:
@@ -1879,7 +1882,10 @@ class Haasoscope():
         for chans in chansthisboard:
             chan=chans[1]
             #chan: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp
-            self.ser.write(chr(chan).encode())
+            frame=[]
+            frame.append(chan)
+            self.ser.write(frame)
+            self.ser.flush()
             if self.db: print((time.time()-self.oldtime,"getting max10adc chan",chan,"for bn",bn))
             rslt = self.ser.read(self.nsamp*2) #read N bytes (2 per sample)
             if self.db: print((time.time()-self.oldtime,"getmax10adc got bytes:",len(rslt)))
