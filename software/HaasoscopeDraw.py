@@ -22,7 +22,7 @@ d.construct()
 
 try:
 
-    savetofile=True # save scope data to file
+    savetofile=False # save scope data to file
     if savetofile: outf = open("Haasoscope_out_"+time.strftime("%Y%m%d-%H%M%S")+".csv","wt")
     
     if not d.setup_connections(): sys.exit()
