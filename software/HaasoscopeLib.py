@@ -497,7 +497,10 @@ class Haasoscope():
             print("usb2 connection not available")
         else:
             self.dousb = not self.dousb
-            self.ser.write(chr(137).encode())
+            frame=bytearray()
+            frame.append(137)
+            self.ser.write(frame)
+            self.ser.flush()
             print(("dousb toggled to",self.dousb))
             if self.dousb: print(("rate theoretically",round(4000000./(self.num_bytes*num_board+len(max10adcchans)*self.nsamp),2),"Hz over USB2"))
             self.telltickstowait()
