@@ -1912,7 +1912,10 @@ class Haasoscope():
     def getchannels(self):
         if not self.autorearm:
             if self.db: print((time.time()-self.oldtime,"priming trigger"))
-            self.ser.write(chr(100).encode())
+            frame=[]
+            frame.append(100)
+            self.ser.write(frame)
+            self.ser.flush()
         self.max10adcchan=1
         for bn in np.arange(num_board):
             if self.db: print((time.time()-self.oldtime,"getting board",bn))
@@ -1946,10 +1949,13 @@ class Haasoscope():
     havereadswitchdata=False
     def getswitchdata(self,board):
         #for i in range(2): #twice because the first time just reads it into the board's fpga
-            self.ser.write(chr(30+board).encode()) #make the next board active (serial_passthrough 0)
-            self.ser.write(chr(146).encode()) #request the IO expander data - takes about 2ms to send the command and read the i2c data
-            self.ser.write(chr(33).encode()); self.ser.write(chr(19).encode()) # from 2B
-            self.ser.write(chr(board).encode()) # for board number...
+            frame=[]
+            frame.append(30+board)
+            frame.append(146)
+            frame.append(33)
+            frame.append(board)
+            self.ser.write(frame)
+            self.ser.flush()
             rslt = self.ser.read(1)
             if len(rslt)>0:# and i==1:
                 byte_array = unpack('%dB'%len(rslt),rslt)
@@ -1971,8 +1977,11 @@ class Haasoscope():
     
     #initialization
     def init(self):
-            self.ser.write(chr(0).encode())#tell them their IDs... first one gets 0, next gets 1, ...
-            self.ser.write(chr(20+(num_board-1)).encode())#tell them which is the last board
+            frame=[]
+            frame.append(0)
+            frame.append(20+(num_board-1))
+            self.ser.write(frame)
+            self.ser.flush()
             for b in range(num_board):
                 firmwareversion = self.getfirmwareversion(b)
                 if firmwareversion<self.minfirmwareversion: self.minfirmwareversion=firmwareversion
