@@ -24,11 +24,11 @@ try:
 
     savetofile=False # save scope data to file
     if savetofile: outf = open("Haasoscope_out_"+time.strftime("%Y%m%d-%H%M%S")+".csv","wt")
-    
+
     if not d.setup_connections(): sys.exit()
     if not d.init(): sys.exit()
     d.on_launch()
-    
+
     #can change some things
     #d.selectedchannel=0
     #d.tellswitchgain(d.selectedchannel)
@@ -36,30 +36,30 @@ try:
     #d.toggletriggerchan(d.selectedchannel)
     #d.togglelogicanalyzer() # run the logic analyzer
     #d.sendi2c("21 13 f0") # set extra pins E24 B0,1,2,3 off and B4,5,6,7 on (works for v8 only)
-    
+
     nevents=0; oldnevents=0; tinterval=100.; oldtime=time.time()
     while 1:
         if d.paused: time.sleep(.1)
         else:
             if not d.getchannels(): break
-            
+
             #print d.xydata[0][0][12], d.xydata[0][1][12] # print the x and y data, respectively, for the 13th sample on fast adc channel 0
-            
+
             if savetofile:
                 outf.write(str(nevents)); outf.write(",") # start of each line is the event number
                 outf.write(str(time.time())); outf.write(",") # next column is the time in seconds of the current event
                 d.xydata[0][1].tofile(outf,",",format="%.3f") # save y data (1) from fast adc channel 0
                 outf.write("\n") # newline
-            
+
             #if len(HaasoscopeLib.max10adcchans)>0: print "slow", d.xydataslow[0][0][99], d.xydataslow[0][1][99] # print the x and y data, respectively, for the 100th sample on slow max10 adc channel 0
-            
+
             #if d.dolockin: print d.lockinamp, d.lockinphase # print the lockin info
-            
+
             #if d.fftdrawn: # print some fft info (the freq with the biggest amplitude)
             #    fftxdata = d.fftfreqplot.get_xdata(); fftydata = d.fftfreqplot.get_ydata()
             #    maxfftydata=np.max(fftydata); maxfftfrq=fftxdata[fftydata.argmax()]
             #    print "max amp=",maxfftydata, "at freq=",maxfftfrq, d.fftax.get_xlabel().replace('Freq ','')
-            
+
             if d.db: print((time.time()-d.oldtime,"done with evt",nevents))
             nevents+=1
             if nevents-oldnevents >= tinterval:
