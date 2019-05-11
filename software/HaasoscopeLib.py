@@ -326,11 +326,12 @@ class Haasoscope():
         self.ser.flush()
         print(("129 trigger time over/under thresh now",256*frame[1]+1*frame[2]-pow(2,12),"and usedownsamplefortriggertot is",usedownsamplefortriggertot))
     
-    def writefirmchan(self,chan):
-        theboard = num_board-1-chan/num_chan_per_board
+    def getfirmchan(self,chan):
+        theboard = num_board-1-int(chan/num_chan_per_board)
         chanonboard = chan%num_chan_per_board
-        self.ser.write(chr(theboard*num_chan_per_board+chanonboard).encode()) # the channels are numbered differently in the firmware
-    
+        firmchan=theboard*num_chan_per_board+chanonboard
+        return firmchan
+
     def setdaclevelforchan(self,chan,level):
         if level>4096*2-1: 
             print("level can't be bigger than 2**13-1=4096*2-1")
@@ -338,7 +339,7 @@ class Haasoscope():
         if level<0: 
             print("level can't be less than 0")
             level=0
-        theboard = int(num_board-1-chan/num_chan_per_board)
+        theboard = num_board-1-int(chan/num_chan_per_board)
         print(("theboard:",theboard," num_board:",num_board," chan:",chan," num_chan_per_board:",num_chan_per_board))
         chanonboard = chan%num_chan_per_board
         self.setdac(chanonboard,level,theboard)
@@ -516,8 +517,12 @@ class Haasoscope():
     
     def toggletriggerchan(self,tp):
         #tell it to trigger or not trigger on a given channel
-        self.ser.write(chr(130).encode())
-        self.writefirmchan(tp)
+        frame=bytearray()
+        frame.append(130)
+        firmchan=self.getfirmchan(tp)
+        frame.append(firmchan)
+        self.ser.write(frame)
+        self.ser.flush()
         self.trigsactive[tp] = not self.trigsactive[tp]
         if len(plt.get_fignums())>0:
             origline,legline,channum = self.lined[tp]
@@ -575,8 +580,13 @@ class Haasoscope():
     
     def tellswitchgain(self,chan):
         #tell it to switch the gain of a channel
-        self.ser.write(chr(134).encode())
-        self.writefirmchan(chan)
+        frame=bytearray()
+        frame.append(134)
+        firmchan=self.getfirmchan(chan)
+        frame.append(firmchan)
+        self.ser.write(frame)
+        self.ser.flush()
+
         if len(plt.get_fignums())>0: origline,legline,channum = self.lined[chan]
         if self.gain[chan]==1:
             self.gain[chan]=0 # x10 gain on!
@@ -610,8 +620,13 @@ class Haasoscope():
         self.dooversample[chan] = not self.dooversample[chan];
         print(("oversampling is now",self.dooversample[chan],"for channel",chan))
         if self.dooversample[chan] and self.downsample>0: self.telldownsample(0) # must be in max sampling mode for oversampling to make sense
-        self.ser.write(chr(141).encode())
-        self.writefirmchan(chan)
+        frame=bytearray()
+        frame.append(141)
+        firmchan=self.getfirmchan(chan)
+        frame.append(firmchan)
+        self.ser.write(frame)
+        self.ser.flush()
+
         self.drawtext()
         self.figure.canvas.draw()
     
@@ -860,7 +875,7 @@ class Haasoscope():
         
     def setacdc(self):
         chan=self.selectedchannel
-        theboard = num_board-1-chan/num_chan_per_board
+        theboard = num_board-1-int(chan/num_chan_per_board)
         chanonboard = chan%num_chan_per_board
         print(("toggling acdc for chan",chan,"which is chan",chanonboard,"on board",theboard))
         self.acdc[int(chan)] = not self.acdc[int(chan)]
@@ -1496,7 +1511,7 @@ class Haasoscope():
     fftdrawn=False
     def plot_fft(self,bn): # pass in the board number
         channumonboard = self.fftchan%num_chan_per_board # this is what channel (0--3) we want to draw fft from for the board
-        chanonboardnum = num_board - self.fftchan/num_chan_per_board - 1 # this is what board (0 -- (num_board-1)) we want to draw that fft channel from
+        chanonboardnum = num_board - int(self.fftchan/num_chan_per_board) - 1 # this is what board (0 -- (num_board-1)) we want to draw that fft channel from
         if bn==chanonboardnum and len(self.ydata)>channumonboard: # select the right board check that the channel data is really there
             twoforoversampling=1
             if self.dooversample[self.fftchan]==1: twoforoversampling=2
