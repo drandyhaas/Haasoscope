@@ -552,9 +552,13 @@ class Haasoscope():
     def getIDs(self):
         debug3=True
         self.uniqueID=[]
+        frame=bytearray()
         for n in range(num_board):
-            self.ser.write(chr(30+n).encode()) #make the next board active (serial_passthrough 0) 
-            self.ser.write(chr(142).encode()) #request the unique ID
+            frame=[]
+            frame.append(30+n)
+            frame.append(142)
+            self.ser.write(frame)
+            self.ser.flush()
             num_other_bytes = 8
             rslt = self.ser.read(num_other_bytes)
             if len(rslt)==num_other_bytes:
