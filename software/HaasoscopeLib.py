@@ -660,8 +660,11 @@ class Haasoscope():
                 self.oversamp(chan) # set all channels back to no oversampling
     
     def setbacktoserialreadout(self):
-        if self.dousb:    
-            self.ser.write(chr(137).encode())
+        if self.dousb:
+            frame=bytearray()
+            frame.append(137)
+            self.ser.write(frame)
+            self.ser.flush()
             self.dousb=False
             print(("dousb set back to",self.dousb))
     
@@ -1624,7 +1627,10 @@ class Haasoscope():
 
     def getotherdata(self,board):
         debug3=True
-        self.ser.write(chr(132).encode()) #delay counter
+        frame=bytearray()
+        frame.append(132)
+        self.ser.write(frame)
+        self.ser.flush()
         num_other_bytes = 1
         rslt = self.ser.read(num_other_bytes)
         if len(rslt)==num_other_bytes:
@@ -1632,7 +1638,10 @@ class Haasoscope():
             if debug3: print(("\n delay counter data",byte_array[0],"from board",board))
             #if debug3: print "other data",bin(byte_array[0])
         else: print(("getotherdata asked for",num_other_bytes,"delay counter bytes and got",len(rslt)))
-        self.ser.write(chr(133).encode()) #carry counter
+        frame=[]
+        frame.append(133)
+        self.ser.write(frame)
+        self.ser.flush()
         num_other_bytes = 1
         rslt = self.ser.read(num_other_bytes)
         if len(rslt)==num_other_bytes:
