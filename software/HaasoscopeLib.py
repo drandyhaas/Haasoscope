@@ -514,7 +514,10 @@ class Haasoscope():
             print(("143 do highres is",self.dohighres))
     
     def toggleuseexttrig(self):#toggle whether to use the external trigger input or not
-            self.ser.write(chr(144).encode())
+            frame=bytearray()
+            frame.append(144)
+            self.ser.write(frame)
+            self.ser.flush()
             self.useexttrig = not self.useexttrig
             print(("useexttrig is",self.useexttrig))
     
@@ -535,12 +538,16 @@ class Haasoscope():
         if self.db: print(("Trigger toggled for channel",tp))
 
     def toggleautorearm(self):
+        frame=bytearray()
         #tell it to toggle the auto rearm of the tirgger after readout
-        self.ser.write(chr(139).encode())
+        frame.append(139)
+        # prime the trigger one last time
+        frame.append(100)
+        self.ser.write(frame)
+        self.ser.flush()
         self.autorearm = not self.autorearm
         print(("Trigger auto rearm now",self.autorearm))
         if self.db: print((time.time()-self.oldtime,"priming trigger"))
-        self.ser.write(chr(100).encode()) # prime the trigger one last time
     
     def getIDs(self):
         debug3=True
