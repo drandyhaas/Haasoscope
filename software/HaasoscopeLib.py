@@ -277,28 +277,40 @@ class Haasoscope():
     
     def tellminidisplaychan(self,ch):
         #tell it the channel to show on the mini-display
-        self.ser.write(chr(126).encode())
-        self.ser.write(chr(ch).encode())
+        frame=bytearray()
+        frame.append(126)
+        frame.append(ch)
+        self.ser.write(frame)
+        self.ser.flush()
         print(("chanforscreen is",ch))
     
     def settriggerthresh(self,tp):
         #tell it the trigger threshold
-        self.ser.write(chr(127).encode())
         tp=255-tp # need to flip it due to op amp
-        self.ser.write(chr(tp).encode())
+        frame=bytearray()
+        frame.append(127)
+        frame.append(tp)
+        self.ser.write(frame)
+        self.ser.flush()
         print(("Trigger threshold is",tp))
         
     def settriggerthresh2(self,tp):
         #tell it the high trigger threshold (must be below this to trigger)
-        self.ser.write(chr(140).encode())
         tp=255-tp # need to flip it due to op amp
-        self.ser.write(chr(tp).encode())
+        frame=bytearray()
+        frame.append(140)
+        frame.append(tp)
+        self.ser.write(frame)
+        self.ser.flush()
         print(("Trigger high threshold is",tp))
     
     def settriggertype(self,tp):
         #tell it the trigger type: rising edge, falling edge, either, ...
-        self.ser.write(chr(128).encode())
-        self.ser.write(chr(tp).encode())
+        frame=bytearray()
+        frame.append(128)
+        frame.append(tp)
+        self.ser.write(frame)
+        self.ser.flush()
         if self.db: print(("Trigger type is",tp))
         
     def settriggertime(self,ttt):
