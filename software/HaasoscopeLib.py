@@ -268,8 +268,11 @@ class Haasoscope():
                 ds=8 # otherwise we timeout upon readout
                 if self.num_samples>10: self.settriggerpoint(self.num_samples-10) # set trigger way to the right, so we can capture full event - NOTE - screws up mini-screen!
                 self.otherlines[0].set_visible(False) # don't draw trigger time position line, to indicate it's not really set anymore
-        self.ser.write(chr(125).encode())
-        self.ser.write(chr(ds).encode())
+        frame=bytearray()
+        frame.append(125)
+        frame.append(ds)
+        self.ser.write(frame)
+        self.ser.flush()
         if self.db: print(("clockbitstowait is",ds))
     
     def tellminidisplaychan(self,ch):
