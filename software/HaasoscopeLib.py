@@ -1748,6 +1748,7 @@ class Haasoscope():
     
     usbsermap=[]
     def makeusbsermap(self): # figure out which board is connected to which USB 2 connection
+        frame=bytearray()
         self.usbsermap=np.zeros(num_board, dtype=int)
         if len(self.usbser)<num_board:
             print("Not a USB2 connection for each board!")
@@ -1756,8 +1757,11 @@ class Haasoscope():
             for usb in np.arange(num_board): self.usbser[usb].timeout=.5 # lower the timeout on the connections, temporarily
             foundusbs=[]
             for bn in np.arange(num_board):
-                self.ser.write(chr(100).encode()) # prime the trigger
-                self.ser.write(chr(10+bn).encode())
+                frame=[]
+                frame.append(100)
+                frame.append(10+bn)
+                self.ser.write(frame)
+                self.ser.flush()
                 for usb in np.arange(len(self.usbser)):
                     if not usb in foundusbs: # it's not already known that this usb connection is assigned to a board
                         rslt = self.usbser[usb].read(self.num_bytes) # try to get data from the board
