@@ -109,6 +109,7 @@ class Haasoscope():
         self.dousb=False #whether to use USB2 output
         self.sincresample=0 # amount of resampling to do (sinx/x)
         self.dogetotherdata=False # whether to read other calculated data like TDC
+        self.tdcdata=0 # TDC data
         self.domaindrawing=True # whether to update the main window data and redraw it
         self.selectedchannel=0 #what channel some actions apply to
         self.selectedmax10channel=0 #what max10 channel is selected
@@ -682,6 +683,8 @@ class Haasoscope():
         if len(max10adcchans)>0:
             text+="\n"
             text+="\nSlow chan: "+str(self.selectedmax10channel)
+        if self.dogetotherdata:
+            text+="\nTDC: "+str(self.tdcdata)
         return text
     
     firstdrawtext=True
@@ -1548,13 +1551,14 @@ class Haasoscope():
             self.lockinfig.canvas.flush_events()
 
     def getotherdata(self,board):
-        debug3=True
+        debug3=False
         self.ser.write(chr(132)) #delay counter
         num_other_bytes = 1
         rslt = self.ser.read(num_other_bytes)
         if len(rslt)==num_other_bytes:
             byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
             if debug3: print "\n delay counter data",byte_array[0],"from board",board
+            self.tdcdata=byte_array[0]
             #if debug3: print "other data",bin(byte_array[0])
         else: print "getotherdata asked for",num_other_bytes,"delay counter bytes and got",len(rslt)
         self.ser.write(chr(133)) #carry counter
