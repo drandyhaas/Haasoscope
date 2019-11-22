@@ -21598,7 +21598,7 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="GND62" library="supply1" deviceset="GND" device=""/>
 <part name="GND85" library="supply1" deviceset="GND" device=""/>
 <part name="+3V7" library="supply1" deviceset="+3V3" device=""/>
-<part name="IC3" library="SamacSys_Parts" deviceset="OPA4322AIPWR" device=""/>
+<part name="ICAMP1" library="SamacSys_Parts" deviceset="OPA4322AIPWR" device=""/>
 <part name="IC4" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
 <part name="X1" library="con-coax" library_urn="urn:adsk.eagle:library:133" deviceset="LTI-SASF54GT" device="" package3d_urn="urn:adsk.eagle:package:6232/1"/>
 <part name="IN1" library="Seeed-Connector" library_urn="urn:adsk.eagle:library:478" deviceset="DIP-BLACK-MALE-HEADER-VERT(2P-2.54)" device="" package3d_urn="urn:adsk.eagle:package:33132/1" value="2p-2.54"/>
@@ -21871,7 +21871,7 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
 <part name="U$5" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="VCCA" device=""/>
-<part name="IC5" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC3" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
 <part name="IOEXPAND_0X22" library="microchip" deviceset="MCP23017" device="SS"/>
 <part name="+3V10" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND18" library="supply1" deviceset="GND" device=""/>
@@ -22162,7 +22162,7 @@ adjusted in situ.</text>
 <instance part="GND62" gate="1" x="88.9" y="236.22" smashed="yes">
 <attribute name="VALUE" x="86.36" y="233.68" size="1.778" layer="96"/>
 </instance>
-<instance part="IC3" gate="G$1" x="132.08" y="60.96" smashed="yes">
+<instance part="ICAMP1" gate="G$1" x="132.08" y="60.96" smashed="yes">
 <attribute name="NAME" x="137.414" y="65.278" size="1.778" layer="95" align="center-left"/>
 <attribute name="VALUE" x="137.16" y="38.862" size="1.778" layer="96" align="center-left"/>
 </instance>
@@ -22779,7 +22779,7 @@ adjusted in situ.</text>
 <wire x1="88.9" y1="241.3" x2="88.9" y2="238.76" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="IC3" gate="G$1" pin="V-"/>
+<pinref part="ICAMP1" gate="G$1" pin="V-"/>
 <pinref part="GND40" gate="1" pin="GND"/>
 <wire x1="175.26" y1="53.34" x2="154.94" y2="53.34" width="0.1524" layer="91"/>
 </segment>
@@ -22989,7 +22989,7 @@ adjusted in situ.</text>
 <junction x="96.52" y="76.2"/>
 </segment>
 <segment>
-<pinref part="IC3" gate="G$1" pin="OUT_A"/>
+<pinref part="ICAMP1" gate="G$1" pin="OUT_A"/>
 <wire x1="132.08" y1="60.96" x2="116.84" y2="60.96" width="0.1524" layer="91"/>
 <label x="116.84" y="60.96" size="1.778" layer="95"/>
 </segment>
@@ -23010,7 +23010,7 @@ adjusted in situ.</text>
 <junction x="78.74" y="55.88"/>
 <junction x="68.58" y="55.88"/>
 <label x="78.74" y="55.88" size="1.778" layer="95"/>
-<pinref part="IC3" gate="G$1" pin="+IN_A"/>
+<pinref part="ICAMP1" gate="G$1" pin="+IN_A"/>
 </segment>
 </net>
 <net name="INAMINUS1" class="0">
@@ -23063,7 +23063,7 @@ adjusted in situ.</text>
 <junction x="119.38" y="226.06"/>
 </segment>
 <segment>
-<pinref part="IC3" gate="G$1" pin="-IN_A"/>
+<pinref part="ICAMP1" gate="G$1" pin="-IN_A"/>
 <wire x1="132.08" y1="58.42" x2="116.84" y2="58.42" width="0.1524" layer="91"/>
 <label x="116.84" y="58.42" size="1.778" layer="95"/>
 </segment>
@@ -23219,7 +23219,7 @@ adjusted in situ.</text>
 </segment>
 <segment>
 <pinref part="U$7" gate="G$1" pin="VCCA"/>
-<pinref part="IC3" gate="G$1" pin="V+"/>
+<pinref part="ICAMP1" gate="G$1" pin="V+"/>
 <wire x1="152.4" y1="53.34" x2="132.08" y2="53.34" width="0.1524" layer="91"/>
 </segment>
 <segment>
@@ -23315,7 +23315,7 @@ adjusted in situ.</text>
 <junction x="254" y="86.36"/>
 </segment>
 <segment>
-<pinref part="IC3" gate="G$1" pin="OUT_B"/>
+<pinref part="ICAMP1" gate="G$1" pin="OUT_B"/>
 <wire x1="132.08" y1="45.72" x2="116.84" y2="45.72" width="0.1524" layer="91"/>
 <label x="116.84" y="45.72" size="1.778" layer="95"/>
 </segment>
@@ -23370,7 +23370,7 @@ adjusted in situ.</text>
 <junction x="307.34" y="226.06"/>
 </segment>
 <segment>
-<pinref part="IC3" gate="G$1" pin="-IN_B"/>
+<pinref part="ICAMP1" gate="G$1" pin="-IN_B"/>
 <wire x1="132.08" y1="48.26" x2="116.84" y2="48.26" width="0.1524" layer="91"/>
 <label x="116.84" y="48.26" size="1.778" layer="95"/>
 </segment>
@@ -23538,7 +23538,7 @@ adjusted in situ.</text>
 <junction x="287.02" y="86.36"/>
 </segment>
 <segment>
-<pinref part="IC3" gate="G$1" pin="OUT_C"/>
+<pinref part="ICAMP1" gate="G$1" pin="OUT_C"/>
 <wire x1="175.26" y1="45.72" x2="190.5" y2="45.72" width="0.1524" layer="91"/>
 <label x="177.8" y="45.72" size="1.778" layer="95"/>
 </segment>
@@ -23593,7 +23593,7 @@ adjusted in situ.</text>
 <junction x="119.38" y="167.64"/>
 </segment>
 <segment>
-<pinref part="IC3" gate="G$1" pin="-IN_C"/>
+<pinref part="ICAMP1" gate="G$1" pin="-IN_C"/>
 <wire x1="175.26" y1="48.26" x2="190.5" y2="48.26" width="0.1524" layer="91"/>
 <label x="177.8" y="48.26" size="1.778" layer="95"/>
 </segment>
@@ -23761,7 +23761,7 @@ adjusted in situ.</text>
 <junction x="287.02" y="38.1"/>
 </segment>
 <segment>
-<pinref part="IC3" gate="G$1" pin="OUT_D"/>
+<pinref part="ICAMP1" gate="G$1" pin="OUT_D"/>
 <wire x1="175.26" y1="60.96" x2="190.5" y2="60.96" width="0.1524" layer="91"/>
 <label x="177.8" y="60.96" size="1.778" layer="95"/>
 </segment>
@@ -23816,7 +23816,7 @@ adjusted in situ.</text>
 <junction x="307.34" y="167.64"/>
 </segment>
 <segment>
-<pinref part="IC3" gate="G$1" pin="-IN_D"/>
+<pinref part="ICAMP1" gate="G$1" pin="-IN_D"/>
 <wire x1="175.26" y1="58.42" x2="190.5" y2="58.42" width="0.1524" layer="91"/>
 <label x="177.8" y="58.42" size="1.778" layer="95"/>
 </segment>
@@ -24026,7 +24026,7 @@ adjusted in situ.</text>
 <wire x1="231.14" y1="55.88" x2="220.98" y2="55.88" width="0.1524" layer="91"/>
 <junction x="220.98" y="55.88"/>
 <label x="220.98" y="55.88" size="1.778" layer="95"/>
-<pinref part="IC3" gate="G$1" pin="+IN_D"/>
+<pinref part="ICAMP1" gate="G$1" pin="+IN_D"/>
 <wire x1="220.98" y1="55.88" x2="175.26" y2="55.88" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -24044,7 +24044,7 @@ adjusted in situ.</text>
 <wire x1="208.28" y1="50.8" x2="198.12" y2="50.8" width="0.1524" layer="91"/>
 <junction x="198.12" y="50.8"/>
 <label x="198.12" y="50.8" size="1.778" layer="95"/>
-<pinref part="IC3" gate="G$1" pin="+IN_C"/>
+<pinref part="ICAMP1" gate="G$1" pin="+IN_C"/>
 <wire x1="175.26" y1="50.8" x2="198.12" y2="50.8" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -24062,7 +24062,7 @@ adjusted in situ.</text>
 <wire x1="101.6" y1="50.8" x2="91.44" y2="50.8" width="0.1524" layer="91"/>
 <junction x="91.44" y="50.8"/>
 <label x="91.44" y="50.8" size="1.778" layer="95"/>
-<pinref part="IC3" gate="G$1" pin="+IN_B"/>
+<pinref part="ICAMP1" gate="G$1" pin="+IN_B"/>
 <wire x1="132.08" y1="50.8" x2="101.6" y2="50.8" width="0.1524" layer="91"/>
 <junction x="101.6" y="50.8"/>
 </segment>
@@ -26976,7 +26976,7 @@ FPGA etc. doesn't get into ADCs.</text>
 <instance part="U$5" gate="G$1" x="33.02" y="190.5" smashed="yes">
 <attribute name="VALUE" x="33.02" y="193.294" size="1.778" layer="96" align="bottom-center"/>
 </instance>
-<instance part="IC5" gate="G$1" x="38.1" y="190.5" smashed="yes">
+<instance part="IC3" gate="G$1" x="38.1" y="190.5" smashed="yes">
 <attribute name="NAME" x="44.45" y="198.12" size="1.778" layer="95" align="center-left"/>
 <attribute name="VALUE" x="44.45" y="195.58" size="1.778" layer="96" align="center-left"/>
 </instance>
@@ -27094,7 +27094,7 @@ FPGA etc. doesn't get into ADCs.</text>
 <segment>
 <pinref part="GND17" gate="1" pin="GND"/>
 <wire x1="38.1" y1="187.96" x2="27.94" y2="187.96" width="0.1524" layer="91"/>
-<pinref part="IC5" gate="G$1" pin="GND"/>
+<pinref part="IC3" gate="G$1" pin="GND"/>
 <wire x1="27.94" y1="187.96" x2="25.4" y2="187.96" width="0.1524" layer="91"/>
 <wire x1="12.7" y1="187.96" x2="25.4" y2="187.96" width="0.1524" layer="91"/>
 <pinref part="CADD4" gate="G$1" pin="2"/>
@@ -27155,7 +27155,7 @@ FPGA etc. doesn't get into ADCs.</text>
 <segment>
 <wire x1="66.04" y1="190.5" x2="81.28" y2="190.5" width="0.1524" layer="91"/>
 <label x="68.58" y="190.5" size="1.778" layer="95"/>
-<pinref part="IC5" gate="G$1" pin="SCLK"/>
+<pinref part="IC3" gate="G$1" pin="SCLK"/>
 <wire x1="66.04" y1="190.5" x2="81.28" y2="190.5" width="0.1524" layer="91"/>
 <junction x="66.04" y="190.5"/>
 </segment>
@@ -27207,7 +27207,7 @@ FPGA etc. doesn't get into ADCs.</text>
 <segment>
 <pinref part="U$5" gate="G$1" pin="VCCA"/>
 <wire x1="38.1" y1="190.5" x2="33.02" y2="190.5" width="0.1524" layer="91"/>
-<pinref part="IC5" gate="G$1" pin="VDD"/>
+<pinref part="IC3" gate="G$1" pin="VDD"/>
 <pinref part="CADD4" gate="G$1" pin="1"/>
 <wire x1="12.7" y1="195.58" x2="27.94" y2="195.58" width="0.1524" layer="91"/>
 <wire x1="27.94" y1="195.58" x2="27.94" y2="190.5" width="0.1524" layer="91"/>
@@ -27309,7 +27309,7 @@ FPGA etc. doesn't get into ADCs.</text>
 <junction x="66.04" y="210.82"/>
 </segment>
 <segment>
-<pinref part="IC5" gate="G$1" pin="~CS"/>
+<pinref part="IC3" gate="G$1" pin="~CS"/>
 <wire x1="66.04" y1="185.42" x2="81.28" y2="185.42" width="0.1524" layer="91"/>
 <label x="68.58" y="185.42" size="1.778" layer="95"/>
 <junction x="66.04" y="185.42"/>
@@ -27326,7 +27326,7 @@ FPGA etc. doesn't get into ADCs.</text>
 <segment>
 <wire x1="33.02" y1="185.42" x2="38.1" y2="185.42" width="0.1524" layer="91"/>
 <label x="33.02" y="182.88" size="1.778" layer="95"/>
-<pinref part="IC5" gate="G$1" pin="AIN"/>
+<pinref part="IC3" gate="G$1" pin="AIN"/>
 </segment>
 </net>
 <net name="INA4" class="0">
@@ -27348,7 +27348,7 @@ FPGA etc. doesn't get into ADCs.</text>
 <segment>
 <wire x1="66.04" y1="187.96" x2="73.66" y2="187.96" width="0.1524" layer="91"/>
 <label x="68.58" y="187.96" size="1.778" layer="95"/>
-<pinref part="IC5" gate="G$1" pin="DOUT"/>
+<pinref part="IC3" gate="G$1" pin="DOUT"/>
 <junction x="66.04" y="187.96"/>
 </segment>
 </net>

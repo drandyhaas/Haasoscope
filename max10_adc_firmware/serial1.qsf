@@ -120,6 +120,23 @@ set_location_assignment PIN_131 -to usb_siwu
 set_location_assignment PIN_100 -to carryin -disable
 set_location_assignment PIN_101 -to carryout -disable
 set_location_assignment PIN_135 -to debug1
+set_location_assignment PIN_110 -to pin_110
+set_location_assignment PIN_111 -to pin_111
+set_location_assignment PIN_113 -to pin_113
+set_location_assignment PIN_114 -to pin_114
+set_location_assignment PIN_118 -to pin_118
+set_location_assignment PIN_119 -to pin_119
+set_location_assignment PIN_122 -to pin_122
+set_location_assignment PIN_121 -to ext_trig_in
+set_location_assignment PIN_91 -to digital_in4
+set_location_assignment PIN_100 -to digital_in5
+set_location_assignment PIN_101 -to digital_in6
+set_location_assignment PIN_124 -to digital_in7
+set_location_assignment PIN_130 -to digital_in8
+set_location_assignment PIN_105 -to pin_105
+set_location_assignment PIN_28 -to trig_in_towards_right
+set_location_assignment PIN_88 -to cs_2msps_adc
+set_location_assignment PIN_89 -to data_2msps_adc
 set_global_assignment -name BDF_FILE serial1.bdf
 set_global_assignment -name VERILOG_FILE ring_counter.v
 set_global_assignment -name VERILOG_FILE tdc2.v
@@ -140,22 +157,5 @@ set_global_assignment -name QIP_FILE uniqueid.qip
 set_global_assignment -name SIP_FILE uniqueid.sip
 set_global_assignment -name CDF_FILE Chain1.cdf
 set_global_assignment -name CDF_FILE Chain2.cdf
-set_location_assignment PIN_110 -to pin_110
-set_location_assignment PIN_111 -to pin_111
-set_location_assignment PIN_113 -to pin_113
-set_location_assignment PIN_114 -to pin_114
-set_location_assignment PIN_118 -to pin_118
-set_location_assignment PIN_119 -to pin_119
-set_location_assignment PIN_122 -to pin_122
-set_location_assignment PIN_121 -to ext_trig_in
-set_location_assignment PIN_88 -to digital_in1
-set_location_assignment PIN_89 -to digital_in2
-set_location_assignment PIN_90 -to digital_in3
-set_location_assignment PIN_91 -to digital_in4
-set_location_assignment PIN_100 -to digital_in5
-set_location_assignment PIN_101 -to digital_in6
-set_location_assignment PIN_124 -to digital_in7
-set_location_assignment PIN_130 -to digital_in8
-set_location_assignment PIN_105 -to pin_105
-set_location_assignment PIN_28 -to trig_in_towards_right
+set_location_assignment PIN_90 -to clk_32_out
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

@@ -4,20 +4,19 @@ editor if you plan to continue editing the block that represents it in
 the Block Editor! File corruption is VERY likely to occur.
 */
 /*
-Copyright (C) 1991-2015 Altera Corporation. All rights reserved.
-Your use of Altera Corporation's design tools, logic functions 
+Copyright (C) 2018  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
 and other software and tools, and its AMPP partner logic 
 functions, and any output files from any of the foregoing 
 (including device programming or simulation files), and any 
 associated documentation or information are expressly subject 
-to the terms and conditions of the Altera Program License 
-Subscription Agreement, the Altera Quartus II License Agreement,
-the Altera MegaCore Function License Agreement, or other 
-applicable license agreement, including, without limitation, 
-that your use is for the sole purpose of programming logic 
-devices manufactured by Altera and sold by Altera or its 
-authorized distributors.  Please refer to the applicable 
-agreement for further details.
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details.
 */
 (header "symbol" (version "1.2"))
 (symbol
@@ -84,7 +83,7 @@ agreement for further details.
 		(text "0.00" (rect 104 121 224 253)(font "Arial" ))
 		(text "50.00" (rect 136 121 293 253)(font "Arial" ))
 		(text "c2" (rect 54 135 116 281)(font "Arial" ))
-		(text "1/1" (rect 77 135 164 281)(font "Arial" ))
+		(text "4/5" (rect 77 135 165 281)(font "Arial" ))
 		(text "0.00" (rect 104 135 224 281)(font "Arial" ))
 		(text "50.00" (rect 136 135 293 281)(font "Arial" ))
 		(text "c3" (rect 54 149 116 309)(font "Arial" ))
@@ -92,8 +91,8 @@ agreement for further details.
 		(text "0.00" (rect 104 149 224 309)(font "Arial" ))
 		(text "50.00" (rect 136 149 293 309)(font "Arial" ))
 		(text "c4" (rect 54 163 117 337)(font "Arial" ))
-		(text "5/2" (rect 77 163 165 337)(font "Arial" ))
-		(text "180.00" (rect 99 163 224 337)(font "Arial" ))
+		(text "4/5" (rect 77 163 165 337)(font "Arial" ))
+		(text "0.00" (rect 104 163 224 337)(font "Arial" ))
 		(text "50.00" (rect 136 163 293 337)(font "Arial" ))
 		(line (pt 0 0)(pt 257 0))
 		(line (pt 257 0)(pt 257 209))

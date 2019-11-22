@@ -3,7 +3,7 @@
 <eagle version="9.5.2">
 <drawing>
 <settings>
-<setting alwaysvectorfont="yes"/>
+<setting alwaysvectorfont="no"/>
 <setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
@@ -6638,7 +6638,7 @@ design rules under a new name.
 <element name="S9" library="switch-ck" package="JS202011SCQN" value="JS202011SCQN" x="44.4" y="61" smashed="yes" rot="R90">
 <attribute name="NAME" x="45.4" y="58.75" size="0.8128" layer="25" ratio="18" rot="R180"/>
 </element>
-<element name="IC3" library="SamacSys_Parts" package="SOP65P640X120-16N" value="OPA4322AIPWR" x="63.6" y="-2.6" smashed="yes" rot="R90">
+<element name="ICAMP1" library="SamacSys_Parts" package="SOP65P640X120-16N" value="OPA4322AIPWR" x="63.6" y="-2.6" smashed="yes" rot="R90">
 <attribute name="DESCRIPTION" value="20MHz, Low Noise, 1.8V, RRIO, CMOS Operational Amplifier" x="63.6" y="-2.6" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="HEIGHT" value="1.2mm" x="63.6" y="-2.6" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="MANUFACTURER_NAME" value="Texas Instruments" x="63.6" y="-2.6" size="1.778" layer="27" rot="R90" display="off"/>
@@ -7078,7 +7078,7 @@ design rules under a new name.
 <attribute name="MPN" value="MF-CAP-0805-0.1uF" x="52.9" y="14.2" size="1.778" layer="28" rot="MR0" display="off"/>
 <attribute name="NAME" x="54.9" y="5.175" size="0.8128" layer="26" font="vector" rot="MR0"/>
 </element>
-<element name="IC5" library="SamacSys_Parts" package="SOT95P280X145-6N" value="MAX11115AUT+T" x="52.6" y="-5.8" smashed="yes" rot="MR0">
+<element name="IC3" library="SamacSys_Parts" package="SOT95P280X145-6N" value="MAX11115AUT+T" x="52.6" y="-5.8" smashed="yes" rot="MR0">
 <attribute name="DESCRIPTION" value="ADC" x="56.6" y="-10.8" size="1.778" layer="28" rot="MR0" display="off"/>
 <attribute name="HEIGHT" value="mm" x="56.6" y="-10.8" size="1.778" layer="28" rot="MR0" display="off"/>
 <attribute name="MANUFACTURER_NAME" value="Maxim Integrated" x="56.6" y="-10.8" size="1.778" layer="28" rot="MR0" display="off"/>
@@ -7264,7 +7264,7 @@ design rules under a new name.
 <contactref element="PIN_ANALOG_IOEXP" pad="9"/>
 <contactref element="S1" pad="6"/>
 <contactref element="S2" pad="6"/>
-<contactref element="IC3" pad="13"/>
+<contactref element="ICAMP1" pad="13"/>
 <contactref element="IC4" pad="2"/>
 <contactref element="CADD1" pad="2"/>
 <contactref element="X1" pad="4"/>
@@ -7324,7 +7324,7 @@ design rules under a new name.
 <contactref element="CADD2" pad="2"/>
 <contactref element="IC2" pad="2"/>
 <contactref element="CADD3" pad="2"/>
-<contactref element="IC5" pad="2"/>
+<contactref element="IC3" pad="2"/>
 <contactref element="CADD4" pad="2"/>
 <contactref element="IOEXPAND_0X22" pad="10"/>
 <contactref element="IOEXPAND_0X23" pad="10"/>
@@ -8308,7 +8308,7 @@ design rules under a new name.
 <contactref element="IC4" pad="6"/>
 <contactref element="IC1" pad="6"/>
 <contactref element="IC2" pad="6"/>
-<contactref element="IC5" pad="6"/>
+<contactref element="IC3" pad="6"/>
 <wire x1="38.125" y1="18.75" x2="38.125" y2="19.375" width="0.1524" layer="1"/>
 <wire x1="37.5" y1="18.125" x2="38.125" y2="18.75" width="0.1524" layer="1"/>
 <wire x1="37.5" y1="16.375" x2="37.5" y2="18.125" width="0.1524" layer="1"/>
@@ -8940,7 +8940,7 @@ design rules under a new name.
 </signal>
 <signal name="D2A">
 <contactref element="FPGA" pad="45"/>
-<contactref element="IC5" pad="5"/>
+<contactref element="IC3" pad="5"/>
 <wire x1="40.75" y1="25.5" x2="41.625" y2="25.5" width="0.1524" layer="1"/>
 <wire x1="42" y1="25.5" x2="40.75" y2="25.5" width="0.1524" layer="16"/>
 <wire x1="42.5" y1="26" x2="42" y2="25.5" width="0.1524" layer="16"/>
@@ -9332,7 +9332,7 @@ design rules under a new name.
 </signal>
 <signal name="INA1">
 <contactref element="GSW1" pad="4"/>
-<contactref element="IC3" pad="1"/>
+<contactref element="ICAMP1" pad="1"/>
 <contactref element="IC1" pad="3"/>
 <wire x1="68.5" y1="-8" x2="70.5" y2="-8" width="0.1524" layer="1"/>
 <wire x1="62.25" y1="-8" x2="68.5" y2="-8" width="0.1524" layer="15"/>
@@ -9404,7 +9404,7 @@ design rules under a new name.
 <contactref element="IC4" pad="4"/>
 <contactref element="IC1" pad="4"/>
 <contactref element="IC2" pad="4"/>
-<contactref element="IC5" pad="4"/>
+<contactref element="IC3" pad="4"/>
 <wire x1="37.75" y1="20.25" x2="37.75" y2="19.5" width="0.1524" layer="1"/>
 <wire x1="37.875" y1="20.375" x2="37.75" y2="20.25" width="0.1524" layer="1"/>
 <wire x1="37.875" y1="19.5" x2="37.875" y2="20.375" width="0.1524" layer="16"/>
@@ -9524,7 +9524,7 @@ design rules under a new name.
 <contactref element="RINS1" pad="2"/>
 <contactref element="RIN1" pad="2"/>
 <contactref element="CIN1" pad="2"/>
-<contactref element="IC3" pad="2"/>
+<contactref element="ICAMP1" pad="2"/>
 <wire x1="77.75" y1="-9.25" x2="77.75" y2="-7.25" width="0.1524" layer="1"/>
 <wire x1="78.5" y1="-10" x2="77.75" y2="-9.25" width="0.1524" layer="1"/>
 <wire x1="77.75" y1="-7.25" x2="77.65" y2="-7.2" width="0.1524" layer="1"/>
@@ -9569,7 +9569,7 @@ design rules under a new name.
 <contactref element="COB6" pad="2"/>
 <contactref element="ROFFSET1" pad="1"/>
 <contactref element="COA6" pad="2"/>
-<contactref element="IC3" pad="3"/>
+<contactref element="ICAMP1" pad="3"/>
 <wire x1="58.5" y1="-8" x2="56.375" y2="-8" width="0.1524" layer="1"/>
 <wire x1="56.375" y1="-8" x2="56.3" y2="-7.95" width="0.1524" layer="1"/>
 <wire x1="62.625" y1="-6.25" x2="62.625" y2="-5.538" width="0.1524" layer="1"/>
@@ -10294,7 +10294,7 @@ design rules under a new name.
 <contactref element="C5VOPAMP1" pad="1"/>
 <contactref element="DAC1" pad="1"/>
 <contactref element="COFFSET" pad="2"/>
-<contactref element="IC3" pad="4"/>
+<contactref element="ICAMP1" pad="4"/>
 <contactref element="IC4" pad="1"/>
 <contactref element="CADD1" pad="1"/>
 <contactref element="GSW3" pad="5"/>
@@ -10304,7 +10304,7 @@ design rules under a new name.
 <contactref element="CADD2" pad="1"/>
 <contactref element="IC2" pad="1"/>
 <contactref element="CADD3" pad="1"/>
-<contactref element="IC5" pad="1"/>
+<contactref element="IC3" pad="1"/>
 <contactref element="CADD4" pad="1"/>
 <wire x1="45.625" y1="1" x2="48.2" y2="1" width="0.1524" layer="1"/>
 <wire x1="45" y1="1.625" x2="45.25" y2="1.375" width="0.1524" layer="1"/>
@@ -10502,7 +10502,7 @@ design rules under a new name.
 </signal>
 <signal name="INA2">
 <contactref element="GSW3" pad="4"/>
-<contactref element="IC3" pad="7"/>
+<contactref element="ICAMP1" pad="7"/>
 <contactref element="IC2" pad="3"/>
 <wire x1="71.25" y1="-6.875" x2="70.5" y2="-6.875" width="0.1524" layer="16"/>
 <wire x1="71.5" y1="-6.625" x2="71.25" y2="-6.875" width="0.1524" layer="16"/>
@@ -10541,7 +10541,7 @@ design rules under a new name.
 <contactref element="RINS3" pad="2"/>
 <contactref element="RIN3" pad="2"/>
 <contactref element="CIN3" pad="2"/>
-<contactref element="IC3" pad="6"/>
+<contactref element="ICAMP1" pad="6"/>
 <wire x1="95.5" y1="-6.375" x2="95.5" y2="-8.75" width="0.1524" layer="16"/>
 <wire x1="95.5" y1="-8.75" x2="95.4" y2="-8.75" width="0.1524" layer="16"/>
 <wire x1="95.5" y1="-6.375" x2="95.4" y2="-6.35" width="0.1524" layer="16"/>
@@ -10715,8 +10715,8 @@ design rules under a new name.
 </signal>
 <signal name="INA3">
 <contactref element="GSW5" pad="4"/>
-<contactref element="IC3" pad="10"/>
-<contactref element="IC5" pad="3"/>
+<contactref element="ICAMP1" pad="10"/>
+<contactref element="IC3" pad="3"/>
 <wire x1="66.125" y1="1.875" x2="70.5" y2="1.875" width="0.1524" layer="1"/>
 <wire x1="65.25" y1="1" x2="65.875" y2="1.625" width="0.1524" layer="1"/>
 <wire x1="65.875" y1="1.625" x2="66.125" y2="1.875" width="0.1524" layer="1"/>
@@ -10744,7 +10744,7 @@ design rules under a new name.
 <contactref element="RINS5" pad="2"/>
 <contactref element="RIN5" pad="2"/>
 <contactref element="CIN5" pad="2"/>
-<contactref element="IC3" pad="11"/>
+<contactref element="ICAMP1" pad="11"/>
 <wire x1="95.5" y1="3.75" x2="95.5" y2="1.375" width="0.1524" layer="1"/>
 <wire x1="95.5" y1="1.375" x2="95.4" y2="1.35" width="0.1524" layer="1"/>
 <wire x1="95.5" y1="3.75" x2="95.4" y2="3.75" width="0.1524" layer="1"/>
@@ -10926,7 +10926,7 @@ design rules under a new name.
 </signal>
 <signal name="INA4">
 <contactref element="GSW6" pad="4"/>
-<contactref element="IC3" pad="16"/>
+<contactref element="ICAMP1" pad="16"/>
 <contactref element="IC4" pad="3"/>
 <wire x1="71.5" y1="3" x2="70.5" y2="3" width="0.1524" layer="16"/>
 <wire x1="54.875" y1="3" x2="60.625" y2="3" width="0.1524" layer="15"/>
@@ -10954,7 +10954,7 @@ design rules under a new name.
 <contactref element="RINS6" pad="2"/>
 <contactref element="RIN6" pad="2"/>
 <contactref element="CIN6" pad="2"/>
-<contactref element="IC3" pad="15"/>
+<contactref element="ICAMP1" pad="15"/>
 <wire x1="77.75" y1="4.25" x2="77.75" y2="2.25" width="0.1524" layer="16"/>
 <wire x1="78.5" y1="5" x2="77.75" y2="4.25" width="0.1524" layer="16"/>
 <wire x1="77.75" y1="2.25" x2="77.65" y2="2.2" width="0.1524" layer="16"/>
@@ -11197,7 +11197,7 @@ design rules under a new name.
 <contactref element="ROFFSET4" pad="1"/>
 <contactref element="COB3" pad="2"/>
 <contactref element="COA3" pad="2"/>
-<contactref element="IC3" pad="14"/>
+<contactref element="ICAMP1" pad="14"/>
 <wire x1="58.4" y1="3" x2="56.25" y2="3" width="0.1524" layer="1"/>
 <wire x1="56.25" y1="3" x2="56.2" y2="2.95" width="0.1524" layer="1"/>
 <wire x1="62.625" y1="1" x2="62.625" y2="0.338" width="0.1524" layer="1"/>
@@ -11213,7 +11213,7 @@ design rules under a new name.
 <contactref element="ROFFSET3" pad="1"/>
 <contactref element="COB2" pad="2"/>
 <contactref element="COA2" pad="2"/>
-<contactref element="IC3" pad="12"/>
+<contactref element="ICAMP1" pad="12"/>
 <wire x1="64" y1="2.375" x2="64" y2="0.375" width="0.1524" layer="1"/>
 <wire x1="64.5" y1="2.875" x2="64.375" y2="2.75" width="0.1524" layer="1"/>
 <wire x1="64.375" y1="2.75" x2="64" y2="2.375" width="0.1524" layer="1"/>
@@ -11229,7 +11229,7 @@ design rules under a new name.
 <contactref element="ROFFSET2" pad="1"/>
 <contactref element="COB1" pad="2"/>
 <contactref element="COA1" pad="2"/>
-<contactref element="IC3" pad="5"/>
+<contactref element="ICAMP1" pad="5"/>
 <wire x1="64" y1="-7.5" x2="64" y2="-5.625" width="0.1524" layer="1"/>
 <wire x1="64.5" y1="-8" x2="64.375" y2="-7.875" width="0.1524" layer="1"/>
 <wire x1="64.375" y1="-7.875" x2="64" y2="-7.5" width="0.1524" layer="1"/>

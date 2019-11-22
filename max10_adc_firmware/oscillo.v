@@ -1,7 +1,8 @@
 module oscillo(clk, startTrigger, clk_flash, data_flash1, data_flash2, data_flash3, data_flash4, pwr1, pwr2, shdn_out, spen_out, trig_in, trig_out, rden, rdaddress, 
 data_ready, wraddress_triggerpoint, imthelast, imthefirst,rollingtrigger,trigDebug,triggerpoint,downsample,
 trigthresh,trigchannels,triggertype,triggertot,format_sdin_out,div_sclk_out,outsel_cs_out,clk_spi,SPIsend,SPIsenddata,
-wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig, nsmp);
+wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig, nsmp,
+clk_2msps_adc,cs_2msps_adc,data_2msps_adc);
 input clk,clk_spi;
 input startTrigger;
 input [1:0] trig_in;
@@ -35,6 +36,38 @@ parameter maxhighres=5;
 reg [7+maxhighres:0] highres1, highres2, highres3, highres4;
 input ext_trig_in, use_ext_trig;
 input [ram_width-1:0] nsmp;
+
+input clk_2msps_adc;
+output reg cs_2msps_adc=1;
+input data_2msps_adc;
+reg[4:0] cscounter=0;
+localparam CSstart=0, CSread=1;
+reg CSstate=CSstart;
+reg[11:0] data_2msps_adc_buf;
+always @(posedge clk_2msps_adc) begin
+	cscounter=cscounter+1;
+	case (CSstate)
+	CSstart: begin
+		cs_2msps_adc<=1;
+		if (cscounter==1) begin
+			CSstate=CSread;
+		end
+		dout3=data_2msps_adc_buf[11:4];//hack!
+		dout4=data_2msps_adc_buf[7:0];//hack!
+		//dout4=32+32*data_2msps_adc_buf[11]+4*data_2msps_adc_buf[0]; //test
+	end
+	CSread: begin
+		cs_2msps_adc<=0;
+		if (cscounter>=4) begin
+			data_2msps_adc_buf[16-cscounter]=data_2msps_adc;//read in the bits from the 2msps adc - the first bit is the MSB
+			if (cscounter==16) begin
+				CSstate=CSstart;
+				cscounter=0;
+			end
+		end
+	end
+	endcase
+end
 
 reg [31:0] SPIcounter=0;//clock counter for SPI
 input [15:0] SPIsenddata;//the bits to send
@@ -273,14 +306,14 @@ always @(posedge clk_flash) begin
 			if (downsample>maxhighres) begin			
 				dout1=highres1>>maxhighres;
 				dout2=highres2>>maxhighres;
-				dout3=highres3>>maxhighres;
-				dout4=highres4>>maxhighres;
+				//dout3=highres3>>maxhighres;
+				//dout4=highres4>>maxhighres;
 			end
 			else begin
 				dout1=highres1>>downsample;
 				dout2=highres2>>downsample;
-				dout3=highres3>>downsample;
-				dout4=highres4>>downsample;
+				//dout3=highres3>>downsample;
+				//dout4=highres4>>downsample;
 			end
 			highres1=0;
 			highres2=0;
@@ -291,8 +324,8 @@ always @(posedge clk_flash) begin
 	else begin // not highres mode, just copy in the data
 		dout1=data_flash1_reg;
 		dout2=data_flash2_reg;
-		dout3=data_flash3_reg;
-		dout4=data_flash4_reg;
+		//dout3=data_flash3_reg;
+		//dout4=data_flash4_reg;
 	end
 	if (downsamplego) begin // increment the write address (store new data) every 1/2^downsample samples
 		downsamplecounter=1;
