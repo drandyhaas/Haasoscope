@@ -355,8 +355,8 @@ refer to the applicable agreement for further details.
 	(port
 		(pt 360 304)
 		(output)
-		(text "dout4[7..0]" (rect 0 0 42 12)(font "Arial" ))
-		(text "dout4[7..0]" (rect 297 299 339 311)(font "Arial" ))
+		(text "dout4[11..0]" (rect 0 0 44 12)(font "Arial" ))
+		(text "dout4[11..0]" (rect 295 299 339 311)(font "Arial" ))
 		(line (pt 360 304)(pt 344 304)(line_width 3))
 	)
 	(port

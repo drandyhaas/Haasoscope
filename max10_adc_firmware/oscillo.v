@@ -16,7 +16,8 @@ output reg div_sclk_out=0;//0=divide clock by 1, 1=divide clock by 2, unconnecte
 output reg outsel_cs_out=1;//0=CMOS (dual bus), 1=MUX CMOS (channel A data bus), unconnected=MUX CMOS (channel b data bus)
 input clk_flash, clk_flash2;
 input [7:0] data_flash1, data_flash2, data_flash3, data_flash4;
-output reg [7:0] dout1, dout2, dout3, dout4;
+output reg [7:0] dout1, dout2, dout3;
+output reg [11:0] dout4;
 parameter ram_width=10;
 output reg[ram_width-1:0] wraddress_triggerpoint;
 input wire [ram_width-1:0] rdaddress;
@@ -52,9 +53,10 @@ always @(posedge clk_2msps_adc) begin
 		if (cscounter==1) begin
 			CSstate=CSread;
 		end
-		dout3=data_2msps_adc_buf[11:4];//hack!
-		dout4=data_2msps_adc_buf[7:0];//hack!
+		//dout3=data_2msps_adc_buf[11:4];//hack!
+		//dout4=data_2msps_adc_buf[7:0];//hack!
 		//dout4=32+32*data_2msps_adc_buf[11]+4*data_2msps_adc_buf[0]; //test
+		dout4=data_2msps_adc_buf;
 	end
 	CSread: begin
 		cs_2msps_adc<=0;

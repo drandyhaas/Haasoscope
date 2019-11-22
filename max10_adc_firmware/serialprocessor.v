@@ -28,7 +28,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 	input wire [7:0] ram_output1;
 	input wire [7:0] ram_output2;
 	input wire [7:0] ram_output3;
-	input wire [7:0] ram_output4;
+	input wire [11:0] ram_output4;
 	input wire [7:0] digital_buffer1;
 	output reg serial_passthrough;
 	output reg [1:0] master_clock;
@@ -91,7 +91,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
   assign imthefirst = (myid==0);
   reg [7:0] extradata[10];//to store command extra data, like arguemnts (up to 10 bytes)
   reg [ram_width+2:0] SendCount=0;
-  reg [2:0] blockstosend=4; // will be 4 for normal, but 5 (or more) for sending logic analyzer stuff etc.
+  reg [5:0] blockstosend=4; // will be 4 for normal, but 5 (or more) for sending logic analyzer stuff etc.
   integer nsamp = 6;
   input [11:0] adcramdata;
   reg writebyte;//whether we're sending the first or second byte (since it's 12 bits from the Max10 ADC)
@@ -812,8 +812,8 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 			case(SendCount[ram_width+2:ram_width])
 			0: txData<=ram_output1;
 			1: txData<=ram_output2;
-			2: txData<=ram_output3;
-			3: txData<=ram_output4;
+			2: txData<=ram_output4[11:4]; // 12 bits from each 2msps adc
+			3: txData<=ram_output4[3:0];
 			4: txData<=digital_buffer1; // the digital logic analyzer buffer
 			endcase
 			if( (!txBusy) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles				
