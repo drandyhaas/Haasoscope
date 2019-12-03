@@ -1222,6 +1222,7 @@ class Haasoscope():
                 else:
                     xdatanew = (self.xdata-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
                     ydatanew=(127-theydata[l])*(self.yscale/256.) # got to flip it, since it's a negative feedback op amp
+                    if l==3: ydatanew= ( (theydata[l])*(self.yscale/4096.) + (theydata[l-1]-128)*(self.yscale/256.) ) * 3.3/1.5 # 12 bit 2.5 msps
                     if self.ydatarefchan>=0: ydatanew -= (127-theydata[self.ydatarefchan])*(self.yscale/256.) # subtract the board's reference channel ydata from this channel's ydata
                 if self.sincresample>0:
                     (ydatanew,xdatanew) = resample(ydatanew, len(xdatanew)*self.sincresample, t = xdatanew)
