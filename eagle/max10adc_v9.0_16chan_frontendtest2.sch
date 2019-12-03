@@ -14787,6 +14787,26 @@ COMPLIANT TO JEDEC STANDARDS MO-187BA</description>
 <text x="2.54" y="-2.54" size="0.889" layer="27" ratio="11" rot="R90">&gt;VALUE</text>
 <rectangle x1="-1.27" y1="-2.54" x2="1.27" y2="2.54" layer="39"/>
 </package>
+<package name="H6-2.54" urn="urn:adsk.eagle:footprint:33044/1" library_version="1">
+<wire x1="-1.27" y1="7.62" x2="1.27" y2="7.62" width="0.127" layer="21"/>
+<wire x1="1.27" y1="7.62" x2="1.27" y2="-7.62" width="0.127" layer="21"/>
+<wire x1="1.27" y1="-7.62" x2="-1.27" y2="-7.62" width="0.127" layer="21"/>
+<wire x1="-1.27" y1="-7.62" x2="-1.27" y2="7.62" width="0.127" layer="21"/>
+<wire x1="-1.27" y1="7.62" x2="1.27" y2="7.62" width="0" layer="39"/>
+<wire x1="1.27" y1="7.62" x2="1.27" y2="-7.62" width="0" layer="39"/>
+<wire x1="1.27" y1="-7.62" x2="-1.27" y2="-7.62" width="0" layer="39"/>
+<wire x1="-1.27" y1="-7.62" x2="-1.27" y2="7.62" width="0" layer="39"/>
+<pad name="1" x="0" y="6.35" drill="0.889" diameter="1.651" shape="square"/>
+<pad name="2" x="0" y="3.81" drill="0.889" diameter="1.651"/>
+<pad name="3" x="0" y="1.27" drill="0.889" diameter="1.651"/>
+<pad name="4" x="0" y="-1.27" drill="0.889" diameter="1.651"/>
+<pad name="5" x="0" y="-3.81" drill="0.889" diameter="1.651"/>
+<pad name="6" x="0" y="-6.35" drill="0.889" diameter="1.651"/>
+<text x="2.54" y="-1.905" size="0.889" layer="27" ratio="11" rot="R90">&gt;value</text>
+<text x="-1.905" y="-1.905" size="0.889" layer="25" ratio="11" rot="R90">&gt;name</text>
+<text x="0.635" y="-2.54" size="0.635" layer="33" ratio="10" rot="R90">&gt;name</text>
+<rectangle x1="-1.27" y1="-7.62" x2="1.27" y2="7.62" layer="39"/>
+</package>
 </packages>
 <packages3d>
 <package3d name="H10-2.54" urn="urn:adsk.eagle:package:33117/1" type="box" library_version="1">
@@ -14794,6 +14814,11 @@ COMPLIANT TO JEDEC STANDARDS MO-187BA</description>
 <package3d name="H2-2.54" urn="urn:adsk.eagle:package:33132/1" type="box" library_version="1">
 <packageinstances>
 <packageinstance name="H2-2.54"/>
+</packageinstances>
+</package3d>
+<package3d name="H6-2.54" urn="urn:adsk.eagle:package:33114/1" type="box" library_version="1">
+<packageinstances>
+<packageinstance name="H6-2.54"/>
 </packageinstances>
 </package3d>
 </packages3d>
@@ -14825,6 +14850,20 @@ COMPLIANT TO JEDEC STANDARDS MO-187BA</description>
 <text x="1.27" y="6.35" size="1.27" layer="96" ratio="10">&gt;value</text>
 <pin name="1" x="-7.62" y="2.54" length="middle" function="dotclk" swaplevel="1"/>
 <pin name="2" x="-7.62" y="-2.54" length="middle" swaplevel="1"/>
+</symbol>
+<symbol name="HEADER-6P" urn="urn:adsk.eagle:symbol:33043/1" library_version="1">
+<wire x1="-2.54" y1="7.62" x2="2.54" y2="7.62" width="0.254" layer="94"/>
+<wire x1="2.54" y1="7.62" x2="2.54" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="2.54" y1="-7.62" x2="-2.54" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="-2.54" y1="-7.62" x2="-2.54" y2="7.62" width="0.254" layer="94"/>
+<text x="-8.89" y="8.89" size="1.27" layer="95" ratio="10">&gt;name</text>
+<text x="-2.54" y="8.89" size="1.27" layer="96" ratio="10">&gt;value</text>
+<pin name="1" x="-7.62" y="6.35" visible="pad" length="middle" function="dotclk"/>
+<pin name="2" x="-7.62" y="3.81" visible="pad" length="middle"/>
+<pin name="3" x="-7.62" y="1.27" visible="pad" length="middle"/>
+<pin name="4" x="-7.62" y="-1.27" visible="pad" length="middle"/>
+<pin name="5" x="-7.62" y="-3.81" visible="pad" length="middle"/>
+<pin name="6" x="-7.62" y="-6.35" visible="pad" length="middle"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -14877,6 +14916,33 @@ COMPLIANT TO JEDEC STANDARDS MO-187BA</description>
 <technology name="">
 <attribute name="MPN" value="P125-1102A0BS116A1" constant="no"/>
 <attribute name="VALUE" value="2p-2.54" constant="no"/>
+</technology>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="DIP-BLACK-MALE-HEADER(6P-2.54)" urn="urn:adsk.eagle:component:33164/1" prefix="J" uservalue="yes" library_version="1">
+<description>320020078</description>
+<gates>
+<gate name="G$1" symbol="HEADER-6P" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="H6-2.54">
+<connects>
+<connect gate="G$1" pin="1" pad="1"/>
+<connect gate="G$1" pin="2" pad="2"/>
+<connect gate="G$1" pin="3" pad="3"/>
+<connect gate="G$1" pin="4" pad="4"/>
+<connect gate="G$1" pin="5" pad="5"/>
+<connect gate="G$1" pin="6" pad="6"/>
+</connects>
+<package3dinstances>
+<package3dinstance package3d_urn="urn:adsk.eagle:package:33114/1"/>
+</package3dinstances>
+<technologies>
+<technology name="">
+<attribute name="MPN" value="P125-1106A1BS116A1" constant="no"/>
+<attribute name="VALUE" value="6p-2.54" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -21385,12 +21451,12 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
 <part name="GND40" library="supply1" deviceset="GND" device=""/>
-<part name="RG1_1" library="resistor" deviceset="R-EU_" device="R0805" value="100k">
+<part name="RG1_1" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
 <attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="RG2_1" library="resistor" deviceset="R-EU_" device="R0805" value="1M">
+<part name="RG2_1" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
 <attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
@@ -21457,18 +21523,8 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <attribute name="MFN" value="MF-CAP-0603-0.01uF"/>
 </part>
 <part name="GND45" library="supply1" deviceset="GND" device=""/>
-<part name="CGAIN1_1" library="rcl@1" deviceset="C-US" device="C0603" value="33pF">
+<part name="CGAIN1_1" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
 <attribute name="MPN" value="06033A330JAT2A"/>
-</part>
-<part name="RG3_1" library="resistor" deviceset="R-EU_" device="R0805" value="100k">
-<attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
-<attribute name="OC_NEWARK" value="unknown"/>
-</part>
-<part name="RG4_1" library="resistor" deviceset="R-EU_" device="R0805" value="1M">
-<attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
-<attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="PIN_DISPLAY" library="Seeed-Connector" library_urn="urn:adsk.eagle:library:478" deviceset="DIP-YELLOW-FEMALE-HEADER-VERT(10P-2.54)" device="" package3d_urn="urn:adsk.eagle:package:33117/1" value="YELLOW-10P-2.54">
 <attribute name="MPN" value=""/>
@@ -21553,8 +21609,8 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="GND77" library="supply1" deviceset="GND" device=""/>
-<part name="CH1" library="SparkFun-Passives" deviceset="CAP_ADJ" device="SMD" value="3-10pF">
-<attribute name="MPN" value="TZY2Z100AC01"/>
+<part name="CH1" library="SparkFun-Passives" deviceset="CAP_ADJ" device="SMD" value="8-45pF">
+<attribute name="MPN" value="TZY2K450AC01"/>
 </part>
 <part name="CL1" library="SparkFun-Passives" deviceset="CAP_ADJ" device="SMD" value="8-45pF">
 <attribute name="MPN" value="TZY2K450AC01"/>
@@ -21610,12 +21666,12 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <attribute name="MPN" value="CRCW08051M10FKEA"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="RG1_3" library="resistor" deviceset="R-EU_" device="R0805" value="100k">
+<part name="RG1_3" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
 <attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="RG2_3" library="resistor" deviceset="R-EU_" device="R0805" value="1M">
+<part name="RG2_3" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
 <attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
@@ -21627,18 +21683,8 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-10" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-11" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-12" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_3" library="rcl@1" deviceset="C-US" device="C0603" value="33pF">
+<part name="CGAIN1_3" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
 <attribute name="MPN" value="06033A330JAT2A"/>
-</part>
-<part name="RG3_3" library="resistor" deviceset="R-EU_" device="R0805" value="100k">
-<attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
-<attribute name="OC_NEWARK" value="unknown"/>
-</part>
-<part name="RG4_3" library="resistor" deviceset="R-EU_" device="R0805" value="1M">
-<attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
-<attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="K3" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
 <attribute name="MPN" value="AQY210S"/>
@@ -21656,8 +21702,8 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <attribute name="MPN" value="CRCW080510M0FKEB"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="CH3" library="SparkFun-Passives" deviceset="CAP_ADJ" device="SMD" value="3-10pF">
-<attribute name="MPN" value="TZY2Z100AC01"/>
+<part name="CH3" library="SparkFun-Passives" deviceset="CAP_ADJ" device="SMD" value="8-45pF">
+<attribute name="MPN" value="TZY2K450AC01"/>
 </part>
 <part name="CL3" library="SparkFun-Passives" deviceset="CAP_ADJ" device="SMD" value="8-45pF">
 <attribute name="MPN" value="TZY2K450AC01"/>
@@ -21680,16 +21726,6 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <attribute name="MPN" value="CRCW08051M10FKEA"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="RG1_5" library="resistor" deviceset="R-EU_" device="R0805" value="100k">
-<attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
-<attribute name="OC_NEWARK" value="unknown"/>
-</part>
-<part name="RG2_5" library="resistor" deviceset="R-EU_" device="R0805" value="1M">
-<attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
-<attribute name="OC_NEWARK" value="unknown"/>
-</part>
 <part name="CAC5" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF">
 <attribute name="MFN" value="MF-CAP-0603-0.01uF"/>
 </part>
@@ -21697,15 +21733,15 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-18" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-19" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-20" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_5" library="rcl@1" deviceset="C-US" device="C0603" value="33pF">
+<part name="CGAIN1_5" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
 <attribute name="MPN" value="06033A330JAT2A"/>
 </part>
-<part name="RG3_5" library="resistor" deviceset="R-EU_" device="R0805" value="100k">
+<part name="RG3_5" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
 <attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="RG4_5" library="resistor" deviceset="R-EU_" device="R0805" value="1M">
+<part name="RG4_5" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
 <attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
@@ -21726,8 +21762,8 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <attribute name="MPN" value="CRCW080510M0FKEB"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="CH5" library="SparkFun-Passives" deviceset="CAP_ADJ" device="SMD" value="3-10pF">
-<attribute name="MPN" value="TZY2Z100AC01"/>
+<part name="CH5" library="SparkFun-Passives" deviceset="CAP_ADJ" device="SMD" value="8-45pF">
+<attribute name="MPN" value="TZY2K450AC01"/>
 </part>
 <part name="CL5" library="SparkFun-Passives" deviceset="CAP_ADJ" device="SMD" value="8-45pF">
 <attribute name="MPN" value="TZY2K450AC01"/>
@@ -21750,16 +21786,6 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <attribute name="MPN" value="CRCW08051M10FKEA"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="RG1_6" library="resistor" deviceset="R-EU_" device="R0805" value="100k">
-<attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
-<attribute name="OC_NEWARK" value="unknown"/>
-</part>
-<part name="RG2_6" library="resistor" deviceset="R-EU_" device="R0805" value="1M">
-<attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
-<attribute name="OC_NEWARK" value="unknown"/>
-</part>
 <part name="CAC6" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF">
 <attribute name="MFN" value="MF-CAP-0603-0.01uF"/>
 </part>
@@ -21767,15 +21793,15 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-22" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-23" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-24" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_6" library="rcl@1" deviceset="C-US" device="C0603" value="33pF">
+<part name="CGAIN1_6" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
 <attribute name="MPN" value="06033A330JAT2A"/>
 </part>
-<part name="RG3_6" library="resistor" deviceset="R-EU_" device="R0805" value="100k">
+<part name="RG3_6" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
 <attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="RG4_6" library="resistor" deviceset="R-EU_" device="R0805" value="1M">
+<part name="RG4_6" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
 <attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
@@ -21796,8 +21822,8 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <attribute name="MPN" value="CRCW080510M0FKEB"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
-<part name="CH6" library="SparkFun-Passives" deviceset="CAP_ADJ" device="SMD" value="3-10pF">
-<attribute name="MPN" value="TZY2Z100AC01"/>
+<part name="CH6" library="SparkFun-Passives" deviceset="CAP_ADJ" device="SMD" value="8-45pF">
+<attribute name="MPN" value="TZY2K450AC01"/>
 </part>
 <part name="CL6" library="SparkFun-Passives" deviceset="CAP_ADJ" device="SMD" value="8-45pF">
 <attribute name="MPN" value="TZY2K450AC01"/>
@@ -21898,6 +21924,7 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="PIN_DIGITAL_1" library="pinhead+" deviceset="PINHD-2X8" device="SMT" value="15-91-2160">
 <attribute name="MPN" value="15-91-2160"/>
 </part>
+<part name="BJ1" library="Seeed-Connector" library_urn="urn:adsk.eagle:library:478" deviceset="DIP-BLACK-MALE-HEADER(6P-2.54)" device="" package3d_urn="urn:adsk.eagle:package:33114/1" value="6p-2.54"/>
 </parts>
 <sheets>
 <sheet>
@@ -22048,20 +22075,6 @@ adjusted in situ.</text>
 <attribute name="MPN" x="58.42" y="91.44" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="NAME" x="60.96" y="96.52" size="1.778" layer="95" rot="MR180"/>
 <attribute name="VALUE" x="60.96" y="91.44" size="1.778" layer="96" rot="MR180"/>
-</instance>
-<instance part="RG3_1" gate="G$1" x="43.18" y="99.06" smashed="yes" rot="MR270">
-<attribute name="OC_NEWARK" x="43.18" y="99.06" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="MF" x="43.18" y="99.06" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="MPN" x="43.18" y="99.06" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="NAME" x="44.45" y="100.5586" size="1.778" layer="95"/>
-<attribute name="VALUE" x="44.45" y="95.758" size="1.778" layer="96"/>
-</instance>
-<instance part="RG4_1" gate="G$1" x="10.16" y="99.06" smashed="yes" rot="MR270">
-<attribute name="OC_NEWARK" x="10.16" y="99.06" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="MF" x="10.16" y="99.06" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="MPN" x="10.16" y="99.06" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="NAME" x="11.43" y="100.5586" size="1.778" layer="95"/>
-<attribute name="VALUE" x="11.43" y="95.758" size="1.778" layer="96"/>
 </instance>
 <instance part="K1" gate="G$1" x="45.72" y="241.3" smashed="yes">
 <attribute name="NAME" x="38.1" y="247.65" size="1.778" layer="95" font="vector"/>
@@ -22229,20 +22242,6 @@ adjusted in situ.</text>
 <attribute name="NAME" x="216.916" y="100.965" size="1.778" layer="95" rot="MR180"/>
 <attribute name="VALUE" x="216.916" y="105.791" size="1.778" layer="96" rot="MR180"/>
 </instance>
-<instance part="RG3_3" gate="G$1" x="200.66" y="109.22" smashed="yes" rot="MR270">
-<attribute name="OC_NEWARK" x="200.66" y="109.22" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="MF" x="200.66" y="109.22" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="MPN" x="200.66" y="109.22" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="NAME" x="199.1614" y="113.03" size="1.778" layer="95" rot="MR270"/>
-<attribute name="VALUE" x="203.962" y="113.03" size="1.778" layer="96" rot="MR270"/>
-</instance>
-<instance part="RG4_3" gate="G$1" x="167.64" y="109.22" smashed="yes" rot="MR270">
-<attribute name="OC_NEWARK" x="167.64" y="109.22" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="MF" x="167.64" y="109.22" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="MPN" x="167.64" y="109.22" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="NAME" x="166.1414" y="113.03" size="1.778" layer="95" rot="MR270"/>
-<attribute name="VALUE" x="170.942" y="113.03" size="1.778" layer="96" rot="MR270"/>
-</instance>
 <instance part="K3" gate="G$1" x="233.68" y="241.3" smashed="yes">
 <attribute name="NAME" x="226.06" y="247.65" size="1.778" layer="95" font="vector"/>
 <attribute name="VALUE" x="226.06" y="233.68" size="1.778" layer="96" font="vector"/>
@@ -22313,20 +22312,6 @@ adjusted in situ.</text>
 <attribute name="MPN" x="109.22" y="160.02" size="1.778" layer="96" rot="MR0" display="off"/>
 <attribute name="NAME" x="110.7186" y="156.21" size="1.778" layer="95" rot="MR90"/>
 <attribute name="VALUE" x="105.918" y="156.21" size="1.778" layer="96" rot="MR90"/>
-</instance>
-<instance part="RG1_5" gate="G$1" x="340.36" y="96.52" smashed="yes" rot="R270">
-<attribute name="OC_NEWARK" x="340.36" y="96.52" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MF" x="340.36" y="96.52" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MPN" x="340.36" y="96.52" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="NAME" x="341.8586" y="100.33" size="1.778" layer="95" rot="R270"/>
-<attribute name="VALUE" x="337.058" y="100.33" size="1.778" layer="96" rot="R270"/>
-</instance>
-<instance part="RG2_5" gate="G$1" x="373.38" y="96.52" smashed="yes" rot="R270">
-<attribute name="OC_NEWARK" x="373.38" y="96.52" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MF" x="373.38" y="96.52" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MPN" x="373.38" y="96.52" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="NAME" x="374.8786" y="100.33" size="1.778" layer="95" rot="R270"/>
-<attribute name="VALUE" x="370.078" y="100.33" size="1.778" layer="96" rot="R270"/>
 </instance>
 <instance part="GSW5" gate="P" x="281.94" y="109.22" smashed="yes" rot="MR0">
 <attribute name="NAME" x="282.575" y="108.585" size="1.778" layer="95" rot="MR0"/>
@@ -22441,20 +22426,6 @@ adjusted in situ.</text>
 <attribute name="MPN" x="297.18" y="160.02" size="1.778" layer="96" rot="MR0" display="off"/>
 <attribute name="NAME" x="298.6786" y="156.21" size="1.778" layer="95" rot="MR90"/>
 <attribute name="VALUE" x="293.878" y="156.21" size="1.778" layer="96" rot="MR90"/>
-</instance>
-<instance part="RG1_6" gate="G$1" x="340.36" y="48.26" smashed="yes" rot="R270">
-<attribute name="OC_NEWARK" x="340.36" y="48.26" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MF" x="340.36" y="48.26" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MPN" x="340.36" y="48.26" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="NAME" x="341.8586" y="52.07" size="1.778" layer="95" rot="R270"/>
-<attribute name="VALUE" x="337.058" y="52.07" size="1.778" layer="96" rot="R270"/>
-</instance>
-<instance part="RG2_6" gate="G$1" x="373.38" y="48.26" smashed="yes" rot="R270">
-<attribute name="OC_NEWARK" x="373.38" y="48.26" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MF" x="373.38" y="48.26" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MPN" x="373.38" y="48.26" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="NAME" x="374.8786" y="52.07" size="1.778" layer="95" rot="R270"/>
-<attribute name="VALUE" x="370.078" y="52.07" size="1.778" layer="96" rot="R270"/>
 </instance>
 <instance part="GSW6" gate="P" x="281.94" y="60.96" smashed="yes" rot="MR0">
 <attribute name="NAME" x="282.575" y="60.325" size="1.778" layer="95" rot="MR0"/>
@@ -22689,6 +22660,10 @@ adjusted in situ.</text>
 </instance>
 <instance part="GND48" gate="1" x="276.86" y="236.22" smashed="yes">
 <attribute name="VALUE" x="274.32" y="233.68" size="1.778" layer="96"/>
+</instance>
+<instance part="BJ1" gate="G$1" x="330.2" y="199.39" smashed="yes" rot="R180">
+<attribute name="NAME" x="331.47" y="203.2" size="1.27" layer="95" ratio="10" rot="R180"/>
+<attribute name="VALUE" x="332.74" y="190.5" size="1.27" layer="96" ratio="10" rot="R180"/>
 </instance>
 </instances>
 <busses>
@@ -22970,6 +22945,11 @@ adjusted in situ.</text>
 <wire x1="220.98" y1="45.72" x2="231.14" y2="45.72" width="0.1524" layer="91"/>
 <junction x="231.14" y="45.72"/>
 </segment>
+<segment>
+<wire x1="337.82" y1="193.04" x2="350.52" y2="193.04" width="0.1524" layer="91"/>
+<label x="340.36" y="193.04" size="1.778" layer="95"/>
+<pinref part="BJ1" gate="G$1" pin="1"/>
+</segment>
 </net>
 <net name="L21_SDA" class="0">
 <segment>
@@ -23086,6 +23066,12 @@ adjusted in situ.</text>
 <wire x1="17.78" y1="231.14" x2="17.78" y2="228.6" width="0.1524" layer="91"/>
 <wire x1="17.78" y1="228.6" x2="25.4" y2="228.6" width="0.1524" layer="91"/>
 <junction x="25.4" y="228.6"/>
+<label x="27.94" y="228.6" size="1.778" layer="95"/>
+</segment>
+<segment>
+<wire x1="337.82" y1="203.2" x2="350.52" y2="203.2" width="0.1524" layer="91"/>
+<label x="340.36" y="203.2" size="1.778" layer="95"/>
+<pinref part="BJ1" gate="G$1" pin="5"/>
 </segment>
 </net>
 <net name="E_GSW1" class="0">
@@ -23102,20 +23088,6 @@ adjusted in situ.</text>
 <label x="53.34" y="20.32" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$2" class="0">
-<segment>
-<pinref part="RG1_1" gate="G$1" pin="1"/>
-<pinref part="RG3_1" gate="G$1" pin="2"/>
-<wire x1="43.18" y1="91.44" x2="43.18" y2="93.98" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$3" class="0">
-<segment>
-<pinref part="RG2_1" gate="G$1" pin="1"/>
-<pinref part="RG4_1" gate="G$1" pin="2"/>
-<wire x1="10.16" y1="91.44" x2="10.16" y2="93.98" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="CGAIN1" class="0">
 <segment>
 <pinref part="GSW1" gate="G$1" pin="A"/>
@@ -23126,22 +23098,24 @@ adjusted in situ.</text>
 <junction x="73.66" y="106.68"/>
 <pinref part="CGAIN1_1" gate="G$1" pin="2"/>
 <wire x1="58.42" y1="96.52" x2="58.42" y2="106.68" width="0.1524" layer="91"/>
-<pinref part="RG3_1" gate="G$1" pin="1"/>
-<wire x1="43.18" y1="104.14" x2="43.18" y2="106.68" width="0.1524" layer="91"/>
 <wire x1="43.18" y1="106.68" x2="58.42" y2="106.68" width="0.1524" layer="91"/>
 <junction x="58.42" y="106.68"/>
+<pinref part="RG1_1" gate="G$1" pin="1"/>
+<wire x1="43.18" y1="106.68" x2="43.18" y2="91.44" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="CGAIN2" class="0">
 <segment>
 <pinref part="GSW1" gate="G$1" pin="B"/>
 <wire x1="76.2" y1="109.22" x2="25.4" y2="109.22" width="0.1524" layer="91"/>
-<pinref part="RG4_1" gate="G$1" pin="1"/>
-<wire x1="10.16" y1="104.14" x2="10.16" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="10.16" y1="104.14" x2="10.16" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="10.16" y1="106.68" x2="10.16" y2="109.22" width="0.1524" layer="91"/>
 <wire x1="10.16" y1="109.22" x2="25.4" y2="109.22" width="0.1524" layer="91"/>
 <pinref part="CH1" gate="G$1" pin="4"/>
 <wire x1="25.4" y1="96.52" x2="25.4" y2="109.22" width="0.1524" layer="91"/>
 <junction x="25.4" y="109.22"/>
+<pinref part="RG2_1" gate="G$1" pin="1"/>
+<wire x1="10.16" y1="91.44" x2="10.16" y2="104.14" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$11" class="0">
@@ -23236,6 +23210,11 @@ adjusted in situ.</text>
 <pinref part="GSW6" gate="P" pin="VCC"/>
 <pinref part="U$10" gate="G$1" pin="VCCA"/>
 <wire x1="281.94" y1="71.12" x2="281.94" y2="68.58" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<wire x1="337.82" y1="205.74" x2="350.52" y2="205.74" width="0.1524" layer="91"/>
+<label x="340.36" y="205.74" size="1.778" layer="95"/>
+<pinref part="BJ1" gate="G$1" pin="6"/>
 </segment>
 </net>
 <net name="NNG_1" class="0">
@@ -23375,7 +23354,7 @@ adjusted in situ.</text>
 <label x="116.84" y="48.26" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="INJ3" class="0">
+<net name="INJ2" class="0">
 <segment>
 <pinref part="K3" gate="G$1" pin="DS2"/>
 <pinref part="CAC3" gate="G$1" pin="2"/>
@@ -23393,6 +23372,12 @@ adjusted in situ.</text>
 <wire x1="205.74" y1="231.14" x2="205.74" y2="228.6" width="0.1524" layer="91"/>
 <wire x1="205.74" y1="228.6" x2="213.36" y2="228.6" width="0.1524" layer="91"/>
 <junction x="213.36" y="228.6"/>
+<label x="215.9" y="228.6" size="1.778" layer="95"/>
+</segment>
+<segment>
+<wire x1="337.82" y1="200.66" x2="350.52" y2="200.66" width="0.1524" layer="91"/>
+<label x="340.36" y="200.66" size="1.778" layer="95"/>
+<pinref part="BJ1" gate="G$1" pin="4"/>
 </segment>
 </net>
 <net name="E_GSW2" class="0">
@@ -23400,20 +23385,6 @@ adjusted in situ.</text>
 <pinref part="GSW3" gate="G$1" pin="!A!/B"/>
 <wire x1="233.68" y1="124.46" x2="223.52" y2="124.46" width="0.1524" layer="91"/>
 <label x="223.52" y="124.46" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="N$7" class="0">
-<segment>
-<pinref part="RG1_3" gate="G$1" pin="1"/>
-<pinref part="RG3_3" gate="G$1" pin="2"/>
-<wire x1="200.66" y1="101.6" x2="200.66" y2="104.14" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$8" class="0">
-<segment>
-<pinref part="RG2_3" gate="G$1" pin="1"/>
-<pinref part="RG4_3" gate="G$1" pin="2"/>
-<wire x1="167.64" y1="101.6" x2="167.64" y2="104.14" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="CGAIN5" class="0">
@@ -23426,22 +23397,25 @@ adjusted in situ.</text>
 <junction x="231.14" y="116.84"/>
 <pinref part="CGAIN1_3" gate="G$1" pin="2"/>
 <wire x1="215.9" y1="106.68" x2="215.9" y2="116.84" width="0.1524" layer="91"/>
-<pinref part="RG3_3" gate="G$1" pin="1"/>
 <wire x1="200.66" y1="114.3" x2="200.66" y2="116.84" width="0.1524" layer="91"/>
 <wire x1="200.66" y1="116.84" x2="215.9" y2="116.84" width="0.1524" layer="91"/>
 <junction x="215.9" y="116.84"/>
+<pinref part="RG1_3" gate="G$1" pin="1"/>
+<wire x1="200.66" y1="101.6" x2="200.66" y2="114.3" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="CGAIN6" class="0">
 <segment>
 <pinref part="GSW3" gate="G$1" pin="B"/>
 <wire x1="233.68" y1="119.38" x2="182.88" y2="119.38" width="0.1524" layer="91"/>
-<pinref part="RG4_3" gate="G$1" pin="1"/>
-<wire x1="167.64" y1="114.3" x2="167.64" y2="119.38" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="114.3" x2="167.64" y2="116.84" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="116.84" x2="167.64" y2="119.38" width="0.1524" layer="91"/>
 <wire x1="167.64" y1="119.38" x2="182.88" y2="119.38" width="0.1524" layer="91"/>
 <pinref part="CH3" gate="G$1" pin="4"/>
 <wire x1="182.88" y1="106.68" x2="182.88" y2="119.38" width="0.1524" layer="91"/>
 <junction x="182.88" y="119.38"/>
+<pinref part="RG2_3" gate="G$1" pin="1"/>
+<wire x1="167.64" y1="101.6" x2="167.64" y2="114.3" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="NSG_2" class="0">
@@ -23545,7 +23519,6 @@ adjusted in situ.</text>
 </net>
 <net name="INAMINUS3" class="0">
 <segment>
-<pinref part="RG1_5" gate="G$1" pin="2"/>
 <wire x1="309.88" y1="88.9" x2="325.12" y2="88.9" width="0.1524" layer="91"/>
 <wire x1="325.12" y1="88.9" x2="340.36" y2="88.9" width="0.1524" layer="91"/>
 <wire x1="340.36" y1="88.9" x2="340.36" y2="91.44" width="0.1524" layer="91"/>
@@ -23563,12 +23536,14 @@ adjusted in situ.</text>
 <label x="304.8" y="83.82" size="1.778" layer="95" rot="MR0"/>
 <wire x1="340.36" y1="88.9" x2="358.14" y2="88.9" width="0.1524" layer="91"/>
 <junction x="340.36" y="88.9"/>
-<pinref part="RG2_5" gate="G$1" pin="2"/>
 <wire x1="358.14" y1="88.9" x2="373.38" y2="88.9" width="0.1524" layer="91"/>
-<wire x1="373.38" y1="88.9" x2="373.38" y2="91.44" width="0.1524" layer="91"/>
 <pinref part="CH5" gate="G$1" pin="3"/>
 <wire x1="358.14" y1="99.06" x2="358.14" y2="88.9" width="0.1524" layer="91"/>
 <junction x="358.14" y="88.9"/>
+<pinref part="RG3_5" gate="G$1" pin="2"/>
+<wire x1="340.36" y1="104.14" x2="340.36" y2="88.9" width="0.1524" layer="91"/>
+<pinref part="RG4_5" gate="G$1" pin="2"/>
+<wire x1="373.38" y1="104.14" x2="373.38" y2="88.9" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <label x="172.72" y="167.64" size="1.778" layer="95" rot="MR180"/>
@@ -23598,7 +23573,7 @@ adjusted in situ.</text>
 <label x="177.8" y="48.26" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="INJ5" class="0">
+<net name="INJ3" class="0">
 <segment>
 <pinref part="K5" gate="G$1" pin="DS2"/>
 <pinref part="CAC5" gate="G$1" pin="2"/>
@@ -23616,6 +23591,12 @@ adjusted in situ.</text>
 <wire x1="17.78" y1="162.56" x2="17.78" y2="165.1" width="0.1524" layer="91"/>
 <wire x1="17.78" y1="165.1" x2="25.4" y2="165.1" width="0.1524" layer="91"/>
 <junction x="25.4" y="165.1"/>
+<label x="30.48" y="165.1" size="1.778" layer="95"/>
+</segment>
+<segment>
+<wire x1="337.82" y1="198.12" x2="350.52" y2="198.12" width="0.1524" layer="91"/>
+<label x="340.36" y="198.12" size="1.778" layer="95"/>
+<pinref part="BJ1" gate="G$1" pin="3"/>
 </segment>
 </net>
 <net name="E_GSW3" class="0">
@@ -23623,20 +23604,6 @@ adjusted in situ.</text>
 <pinref part="GSW5" gate="G$1" pin="!A!/B"/>
 <wire x1="307.34" y1="124.46" x2="317.5" y2="124.46" width="0.1524" layer="91"/>
 <label x="317.5" y="124.46" size="1.778" layer="95" rot="MR0"/>
-</segment>
-</net>
-<net name="N$20" class="0">
-<segment>
-<pinref part="RG1_5" gate="G$1" pin="1"/>
-<pinref part="RG3_5" gate="G$1" pin="2"/>
-<wire x1="340.36" y1="101.6" x2="340.36" y2="104.14" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$21" class="0">
-<segment>
-<pinref part="RG2_5" gate="G$1" pin="1"/>
-<pinref part="RG4_5" gate="G$1" pin="2"/>
-<wire x1="373.38" y1="101.6" x2="373.38" y2="104.14" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="CGAIN9" class="0">
@@ -23768,10 +23735,8 @@ adjusted in situ.</text>
 </net>
 <net name="INAMINUS4" class="0">
 <segment>
-<pinref part="RG1_6" gate="G$1" pin="2"/>
 <wire x1="309.88" y1="40.64" x2="325.12" y2="40.64" width="0.1524" layer="91"/>
 <wire x1="325.12" y1="40.64" x2="340.36" y2="40.64" width="0.1524" layer="91"/>
-<wire x1="340.36" y1="40.64" x2="340.36" y2="43.18" width="0.1524" layer="91"/>
 <pinref part="CL6" gate="G$1" pin="3"/>
 <wire x1="309.88" y1="50.8" x2="309.88" y2="40.64" width="0.1524" layer="91"/>
 <junction x="309.88" y="40.64"/>
@@ -23786,12 +23751,14 @@ adjusted in situ.</text>
 <label x="304.8" y="35.56" size="1.778" layer="95" rot="MR0"/>
 <wire x1="340.36" y1="40.64" x2="358.14" y2="40.64" width="0.1524" layer="91"/>
 <junction x="340.36" y="40.64"/>
-<pinref part="RG2_6" gate="G$1" pin="2"/>
 <wire x1="358.14" y1="40.64" x2="373.38" y2="40.64" width="0.1524" layer="91"/>
-<wire x1="373.38" y1="40.64" x2="373.38" y2="43.18" width="0.1524" layer="91"/>
 <pinref part="CH6" gate="G$1" pin="3"/>
 <wire x1="358.14" y1="50.8" x2="358.14" y2="40.64" width="0.1524" layer="91"/>
 <junction x="358.14" y="40.64"/>
+<pinref part="RG4_6" gate="G$1" pin="2"/>
+<wire x1="373.38" y1="55.88" x2="373.38" y2="40.64" width="0.1524" layer="91"/>
+<pinref part="RG3_6" gate="G$1" pin="2"/>
+<wire x1="340.36" y1="40.64" x2="340.36" y2="55.88" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <label x="360.68" y="167.64" size="1.778" layer="95" rot="MR180"/>
@@ -23821,7 +23788,7 @@ adjusted in situ.</text>
 <label x="177.8" y="58.42" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="INJ6" class="0">
+<net name="INJ4" class="0">
 <segment>
 <pinref part="K6" gate="G$1" pin="DS2"/>
 <pinref part="CAC6" gate="G$1" pin="2"/>
@@ -23839,6 +23806,12 @@ adjusted in situ.</text>
 <wire x1="205.74" y1="162.56" x2="205.74" y2="165.1" width="0.1524" layer="91"/>
 <wire x1="205.74" y1="165.1" x2="213.36" y2="165.1" width="0.1524" layer="91"/>
 <junction x="213.36" y="165.1"/>
+<label x="218.44" y="165.1" size="1.778" layer="95"/>
+</segment>
+<segment>
+<wire x1="337.82" y1="195.58" x2="350.52" y2="195.58" width="0.1524" layer="91"/>
+<label x="340.36" y="195.58" size="1.778" layer="95"/>
+<pinref part="BJ1" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="E_GSW4" class="0">
@@ -23846,20 +23819,6 @@ adjusted in situ.</text>
 <pinref part="GSW6" gate="G$1" pin="!A!/B"/>
 <wire x1="307.34" y1="76.2" x2="317.5" y2="76.2" width="0.1524" layer="91"/>
 <label x="317.5" y="76.2" size="1.778" layer="95" rot="MR0"/>
-</segment>
-</net>
-<net name="N$25" class="0">
-<segment>
-<pinref part="RG1_6" gate="G$1" pin="1"/>
-<pinref part="RG3_6" gate="G$1" pin="2"/>
-<wire x1="340.36" y1="53.34" x2="340.36" y2="55.88" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$26" class="0">
-<segment>
-<pinref part="RG2_6" gate="G$1" pin="1"/>
-<pinref part="RG4_6" gate="G$1" pin="2"/>
-<wire x1="373.38" y1="53.34" x2="373.38" y2="55.88" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="CGAIN11" class="0">
