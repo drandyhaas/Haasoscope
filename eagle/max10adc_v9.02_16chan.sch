@@ -21453,12 +21453,10 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="GND40" library="supply1" deviceset="GND" device=""/>
 <part name="RG1_1" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="RG2_1" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="GND46" library="supply1" deviceset="GND" device=""/>
@@ -21523,9 +21521,7 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <attribute name="MFN" value="MF-CAP-0603-0.01uF"/>
 </part>
 <part name="GND45" library="supply1" deviceset="GND" device=""/>
-<part name="CGAIN1_1" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
-<attribute name="MPN" value="06033A330JAT2A"/>
-</part>
+<part name="CGAIN1_1" library="rcl@1" deviceset="C-US" device="C0603" value="220pF"/>
 <part name="PIN_DISPLAY" library="Seeed-Connector" library_urn="urn:adsk.eagle:library:478" deviceset="DIP-YELLOW-FEMALE-HEADER-VERT(10P-2.54)" device="" package3d_urn="urn:adsk.eagle:package:33117/1" value="YELLOW-10P-2.54">
 <attribute name="MPN" value=""/>
 </part>
@@ -21668,12 +21664,10 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 </part>
 <part name="RG1_3" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="RG2_3" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="CAC3" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF">
@@ -21683,9 +21677,7 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-10" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-11" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-12" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_3" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
-<attribute name="MPN" value="06033A330JAT2A"/>
-</part>
+<part name="CGAIN1_3" library="rcl@1" deviceset="C-US" device="C0603" value="220pF"/>
 <part name="K3" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
 <attribute name="MPN" value="AQY210S"/>
 </part>
@@ -21733,17 +21725,13 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-18" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-19" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-20" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_5" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
-<attribute name="MPN" value="06033A330JAT2A"/>
-</part>
+<part name="CGAIN1_5" library="rcl@1" deviceset="C-US" device="C0603" value="220pF"/>
 <part name="RG3_5" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="RG4_5" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="K5" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
@@ -21793,17 +21781,13 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-22" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-23" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-24" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_6" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
-<attribute name="MPN" value="06033A330JAT2A"/>
-</part>
+<part name="CGAIN1_6" library="rcl@1" deviceset="C-US" device="C0603" value="220pF"/>
 <part name="RG3_6" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="RG4_6" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="K6" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
@@ -21991,12 +21975,10 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 </part>
 <part name="RG1_5" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="RG2_5" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="GND95" library="supply1" deviceset="GND" device=""/>
@@ -22008,9 +21990,7 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-34" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-35" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-36" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_9" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
-<attribute name="MPN" value="06033A330JAT2A"/>
-</part>
+<part name="CGAIN1_9" library="rcl@1" deviceset="C-US" device="C0603" value="220pF"/>
 <part name="K9" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
 <attribute name="MPN" value="AQY210S"/>
 </part>
@@ -22062,12 +22042,10 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 </part>
 <part name="RG1_6" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="RG2_6" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="CAC10" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF">
@@ -22077,9 +22055,7 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-38" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-39" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-40" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_10" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
-<attribute name="MPN" value="06033A330JAT2A"/>
-</part>
+<part name="CGAIN1_10" library="rcl@1" deviceset="C-US" device="C0603" value="220pF"/>
 <part name="K10" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
 <attribute name="MPN" value="AQY210S"/>
 </part>
@@ -22127,17 +22103,13 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-42" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-43" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-44" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_11" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
-<attribute name="MPN" value="06033A330JAT2A"/>
-</part>
+<part name="CGAIN1_11" library="rcl@1" deviceset="C-US" device="C0603" value="220pF"/>
 <part name="RG3_3" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="RG4_3" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="K11" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
@@ -22187,17 +22159,13 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-46" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-47" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-48" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_12" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
-<attribute name="MPN" value="06033A330JAT2A"/>
-</part>
+<part name="CGAIN1_12" library="rcl@1" deviceset="C-US" device="C0603" value="220pF"/>
 <part name="RG3_4" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="RG4_4" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="K12" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
@@ -22388,12 +22356,10 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 </part>
 <part name="RG1_7" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="RG2_7" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="GND119" library="supply1" deviceset="GND" device=""/>
@@ -22405,9 +22371,7 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-50" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-51" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-52" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_13" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
-<attribute name="MPN" value="06033A330JAT2A"/>
-</part>
+<part name="CGAIN1_13" library="rcl@1" deviceset="C-US" device="C0603" value="220pF"/>
 <part name="K13" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
 <attribute name="MPN" value="AQY210S"/>
 </part>
@@ -22459,12 +22423,10 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 </part>
 <part name="RG1_8" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="RG2_8" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="CAC14" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF">
@@ -22474,9 +22436,7 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-54" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-55" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-56" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_14" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
-<attribute name="MPN" value="06033A330JAT2A"/>
-</part>
+<part name="CGAIN1_14" library="rcl@1" deviceset="C-US" device="C0603" value="220pF"/>
 <part name="K14" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
 <attribute name="MPN" value="AQY210S"/>
 </part>
@@ -22524,17 +22484,13 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-58" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-59" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-60" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_15" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
-<attribute name="MPN" value="06033A330JAT2A"/>
-</part>
+<part name="CGAIN1_15" library="rcl@1" deviceset="C-US" device="C0603" value="220pF"/>
 <part name="RG3_7" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="RG4_7" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="K15" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
@@ -22584,17 +22540,13 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-62" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-63" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-64" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_16" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
-<attribute name="MPN" value="06033A330JAT2A"/>
-</part>
+<part name="CGAIN1_16" library="rcl@1" deviceset="C-US" device="C0603" value="220pF"/>
 <part name="RG3_8" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="RG4_8" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="K16" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
@@ -22677,12 +22629,10 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 </part>
 <part name="RG1_11" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="RG2_11" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="GND167" library="supply1" deviceset="GND" device=""/>
@@ -22694,9 +22644,7 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-82" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-83" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-84" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_21" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
-<attribute name="MPN" value="06033A330JAT2A"/>
-</part>
+<part name="CGAIN1_21" library="rcl@1" deviceset="C-US" device="C0603" value="220pF"/>
 <part name="K21" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
 <attribute name="MPN" value="AQY210S"/>
 </part>
@@ -22748,12 +22696,10 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 </part>
 <part name="RG1_12" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="RG2_12" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="CAC22" library="rcl@1" deviceset="C-US" device="C0603" value="0.01uF">
@@ -22763,9 +22709,7 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-86" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-87" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-88" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_22" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
-<attribute name="MPN" value="06033A330JAT2A"/>
-</part>
+<part name="CGAIN1_22" library="rcl@1" deviceset="C-US" device="C0603" value="220pF"/>
 <part name="K22" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
 <attribute name="MPN" value="AQY210S"/>
 </part>
@@ -22813,17 +22757,13 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-90" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-91" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-92" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_23" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
-<attribute name="MPN" value="06033A330JAT2A"/>
-</part>
+<part name="CGAIN1_23" library="rcl@1" deviceset="C-US" device="C0603" value="220pF"/>
 <part name="RG3_11" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="RG4_11" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="K23" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
@@ -22873,17 +22813,13 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="R50-94" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-95" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
 <part name="R50-96" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200R"/>
-<part name="CGAIN1_24" library="rcl@1" deviceset="C-US" device="C0603" value="220pF">
-<attribute name="MPN" value="06033A330JAT2A"/>
-</part>
+<part name="CGAIN1_24" library="rcl@1" deviceset="C-US" device="C0603" value="220pF"/>
 <part name="RG3_12" library="resistor" deviceset="R-EU_" device="R0805" value="47k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-100k"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="RG4_12" library="resistor" deviceset="R-EU_" device="R0805" value="470k">
 <attribute name="MF" value=""/>
-<attribute name="MPN" value="MF-RES-0805-1M"/>
 <attribute name="OC_NEWARK" value="unknown"/>
 </part>
 <part name="K24" library="relay" library_urn="urn:adsk.eagle:library:339" deviceset="AQY*" device="SOP" package3d_urn="urn:adsk.eagle:package:24376/1" technology="21">
@@ -23064,14 +23000,12 @@ input impedance</text>
 <instance part="RG1_1" gate="G$1" x="43.18" y="86.36" smashed="yes" rot="MR270">
 <attribute name="OC_NEWARK" x="43.18" y="86.36" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="MF" x="43.18" y="86.36" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="MPN" x="43.18" y="86.36" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="NAME" x="44.45" y="87.8586" size="1.778" layer="95"/>
 <attribute name="VALUE" x="44.45" y="83.058" size="1.778" layer="96"/>
 </instance>
 <instance part="RG2_1" gate="G$1" x="10.16" y="86.36" smashed="yes" rot="MR270">
 <attribute name="OC_NEWARK" x="10.16" y="86.36" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="MF" x="10.16" y="86.36" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="MPN" x="10.16" y="86.36" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="NAME" x="11.43" y="87.8586" size="1.778" layer="95"/>
 <attribute name="VALUE" x="11.43" y="83.058" size="1.778" layer="96"/>
 </instance>
@@ -23208,14 +23142,12 @@ input impedance</text>
 <instance part="RG1_3" gate="G$1" x="200.66" y="96.52" smashed="yes" rot="MR270">
 <attribute name="OC_NEWARK" x="200.66" y="96.52" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="MF" x="200.66" y="96.52" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="MPN" x="200.66" y="96.52" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="NAME" x="199.1614" y="100.33" size="1.778" layer="95" rot="MR270"/>
 <attribute name="VALUE" x="203.962" y="100.33" size="1.778" layer="96" rot="MR270"/>
 </instance>
 <instance part="RG2_3" gate="G$1" x="167.64" y="96.52" smashed="yes" rot="MR270">
 <attribute name="OC_NEWARK" x="167.64" y="96.52" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="MF" x="167.64" y="96.52" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="MPN" x="167.64" y="96.52" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="NAME" x="166.1414" y="100.33" size="1.778" layer="95" rot="MR270"/>
 <attribute name="VALUE" x="170.942" y="100.33" size="1.778" layer="96" rot="MR270"/>
 </instance>
@@ -23351,7 +23283,6 @@ input impedance</text>
 <instance part="RG3_5" gate="G$1" x="340.36" y="109.22" smashed="yes" rot="R270">
 <attribute name="OC_NEWARK" x="340.36" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="MF" x="340.36" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MPN" x="340.36" y="109.22" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="341.8586" y="113.03" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="337.058" y="113.03" size="1.778" layer="96" rot="R270"/>
 </instance>
@@ -23465,14 +23396,12 @@ input impedance</text>
 <instance part="RG3_6" gate="G$1" x="340.36" y="60.96" smashed="yes" rot="R270">
 <attribute name="OC_NEWARK" x="340.36" y="60.96" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="MF" x="340.36" y="60.96" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MPN" x="340.36" y="60.96" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="341.8586" y="64.77" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="337.058" y="64.77" size="1.778" layer="96" rot="R270"/>
 </instance>
 <instance part="RG4_6" gate="G$1" x="373.38" y="60.96" smashed="yes" rot="R270">
 <attribute name="OC_NEWARK" x="373.38" y="60.96" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="MF" x="373.38" y="60.96" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="MPN" x="373.38" y="60.96" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="374.8786" y="64.77" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="370.078" y="64.77" size="1.778" layer="96" rot="R270"/>
 </instance>
@@ -23641,14 +23570,12 @@ input impedance</text>
 <instance part="RG1_5" gate="G$1" x="515.62" y="86.36" smashed="yes" rot="MR270">
 <attribute name="OC_NEWARK" x="515.62" y="86.36" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="MF" x="515.62" y="86.36" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="MPN" x="515.62" y="86.36" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="NAME" x="516.89" y="87.8586" size="1.778" layer="95"/>
 <attribute name="VALUE" x="516.89" y="83.058" size="1.778" layer="96"/>
 </instance>
 <instance part="RG2_5" gate="G$1" x="482.6" y="86.36" smashed="yes" rot="MR270">
 <attribute name="OC_NEWARK" x="482.6" y="86.36" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="MF" x="482.6" y="86.36" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="MPN" x="482.6" y="86.36" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="NAME" x="483.87" y="87.8586" size="1.778" layer="95"/>
 <attribute name="VALUE" x="483.87" y="83.058" size="1.778" layer="96"/>
 </instance>
@@ -23780,14 +23707,12 @@ input impedance</text>
 <instance part="RG1_6" gate="G$1" x="673.1" y="96.52" smashed="yes" rot="MR270">
 <attribute name="OC_NEWARK" x="673.1" y="96.52" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="MF" x="673.1" y="96.52" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="MPN" x="673.1" y="96.52" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="NAME" x="671.6014" y="100.33" size="1.778" layer="95" rot="MR270"/>
 <attribute name="VALUE" x="676.402" y="100.33" size="1.778" layer="96" rot="MR270"/>
 </instance>
 <instance part="RG2_6" gate="G$1" x="640.08" y="96.52" smashed="yes" rot="MR270">
 <attribute name="OC_NEWARK" x="640.08" y="96.52" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="MF" x="640.08" y="96.52" size="1.778" layer="96" rot="MR180" display="off"/>
-<attribute name="MPN" x="640.08" y="96.52" size="1.778" layer="96" rot="MR180" display="off"/>
 <attribute name="NAME" x="638.5814" y="100.33" size="1.778" layer="95" rot="MR270"/>
 <attribute name="VALUE" x="643.382" y="100.33" size="1.778" layer="96" rot="MR270"/>
 </instance>
@@ -35077,32 +35002,9 @@ noise on the offsets</text>
 <approved hash="104,1,734.06,-439.42,GSW22P,VCC,VCCA,,,"/>
 <approved hash="104,1,756.92,-439.42,GSW23P,VCC,VCCA,,,"/>
 <approved hash="104,1,756.92,-487.68,GSW24P,VCC,VCCA,,,"/>
-<approved hash="113,2,203.638,130.071,FRAME1,,,,,"/>
-<approved hash="113,1,203.638,130.071,FRAME2,,,,,"/>
-<approved hash="113,3,203.638,130.071,FRAME3,,,,,"/>
-<approved hash="115,3,726.44,180.34,VCCA,,,,,"/>
-<approved hash="115,3,692.15,241.3,VCCA,,,,,"/>
-<approved hash="115,3,800.1,245.11,VCCA,,,,,"/>
-<approved hash="115,3,515.62,187.96,VCCA,,,,,"/>
-<approved hash="115,3,515.62,213.36,VCCA,,,,,"/>
-<approved hash="115,3,515.62,236.22,VCCA,,,,,"/>
-<approved hash="115,3,515.62,162.56,VCCA,,,,,"/>
-<approved hash="115,3,731.52,-124.46,VCCA,,,,,"/>
-<approved hash="115,3,668.02,-62.23,VCCA,,,,,"/>
-<approved hash="115,3,697.23,-63.5,VCCA,,,,,"/>
-<approved hash="115,3,805.18,-59.69,VCCA,,,,,"/>
-<approved hash="115,3,520.7,-116.84,VCCA,,,,,"/>
-<approved hash="115,3,520.7,-91.44,VCCA,,,,,"/>
-<approved hash="115,3,520.7,-68.58,VCCA,,,,,"/>
-<approved hash="115,3,520.7,-142.24,VCCA,,,,,"/>
-<approved hash="115,3,728.98,30.48,VCCA,,,,,"/>
-<approved hash="115,3,665.48,92.71,VCCA,,,,,"/>
-<approved hash="115,3,694.69,91.44,VCCA,,,,,"/>
-<approved hash="115,3,802.64,95.25,VCCA,,,,,"/>
-<approved hash="115,3,518.16,38.1,VCCA,,,,,"/>
-<approved hash="115,3,518.16,63.5,VCCA,,,,,"/>
-<approved hash="115,3,518.16,86.36,VCCA,,,,,"/>
-<approved hash="115,3,518.16,12.7,VCCA,,,,,"/>
+<approved hash="113,2,193.571,130.071,FRAME1,,,,,"/>
+<approved hash="113,1,193.571,130.071,FRAME2,,,,,"/>
+<approved hash="113,3,193.571,130.071,FRAME3,,,,,"/>
 <approved hash="115,3,815.34,-132.08,GND,,,,,"/>
 <approved hash="115,3,792.48,-137.16,GND,,,,,"/>
 <approved hash="115,3,685.8,-137.16,GND,,,,,"/>
@@ -35142,6 +35044,29 @@ noise on the offsets</text>
 <approved hash="115,3,513.08,210.82,GND,,,,,"/>
 <approved hash="115,3,513.08,233.68,GND,,,,,"/>
 <approved hash="115,3,513.08,160.02,GND,,,,,"/>
+<approved hash="115,3,726.44,180.34,VCCA,,,,,"/>
+<approved hash="115,3,692.15,241.3,VCCA,,,,,"/>
+<approved hash="115,3,800.1,245.11,VCCA,,,,,"/>
+<approved hash="115,3,515.62,187.96,VCCA,,,,,"/>
+<approved hash="115,3,515.62,213.36,VCCA,,,,,"/>
+<approved hash="115,3,515.62,236.22,VCCA,,,,,"/>
+<approved hash="115,3,515.62,162.56,VCCA,,,,,"/>
+<approved hash="115,3,731.52,-124.46,VCCA,,,,,"/>
+<approved hash="115,3,668.02,-62.23,VCCA,,,,,"/>
+<approved hash="115,3,697.23,-63.5,VCCA,,,,,"/>
+<approved hash="115,3,805.18,-59.69,VCCA,,,,,"/>
+<approved hash="115,3,520.7,-116.84,VCCA,,,,,"/>
+<approved hash="115,3,520.7,-91.44,VCCA,,,,,"/>
+<approved hash="115,3,520.7,-68.58,VCCA,,,,,"/>
+<approved hash="115,3,520.7,-142.24,VCCA,,,,,"/>
+<approved hash="115,3,728.98,30.48,VCCA,,,,,"/>
+<approved hash="115,3,665.48,92.71,VCCA,,,,,"/>
+<approved hash="115,3,694.69,91.44,VCCA,,,,,"/>
+<approved hash="115,3,802.64,95.25,VCCA,,,,,"/>
+<approved hash="115,3,518.16,38.1,VCCA,,,,,"/>
+<approved hash="115,3,518.16,63.5,VCCA,,,,,"/>
+<approved hash="115,3,518.16,86.36,VCCA,,,,,"/>
+<approved hash="115,3,518.16,12.7,VCCA,,,,,"/>
 </errors>
 </schematic>
 </drawing>

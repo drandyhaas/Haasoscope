@@ -6447,13 +6447,11 @@ This DRC check is for 4-Layer Standard Capability boards to be manufactured thro
 </element>
 <element name="RG1_1" library="resistor" package="R0805" value="47k" x="76.9" y="-4.1" smashed="yes">
 <attribute name="MF" value="" x="76.9" y="-4.1" size="1.778" layer="27" display="off"/>
-<attribute name="MPN" value="MF-RES-0805-100k" x="76.9" y="-4.1" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="75.065" y="-6.03" size="0.6096" layer="25" font="vector"/>
 <attribute name="OC_NEWARK" value="unknown" x="76.9" y="-4.1" size="1.778" layer="27" display="off"/>
 </element>
 <element name="RG2_1" library="resistor" package="R0805" value="470k" x="83.4" y="-4.2" smashed="yes">
 <attribute name="MF" value="" x="83.4" y="-4.2" size="1.778" layer="27" display="off"/>
-<attribute name="MPN" value="MF-RES-0805-1M" x="83.4" y="-4.2" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="81.665" y="-6.13" size="0.6096" layer="25" font="vector"/>
 <attribute name="OC_NEWARK" value="unknown" x="83.4" y="-4.2" size="1.778" layer="27" display="off"/>
 </element>
@@ -6719,13 +6717,11 @@ This DRC check is for 4-Layer Standard Capability boards to be manufactured thro
 </element>
 <element name="RG1_3" library="resistor" package="R0805" value="47k" x="76.8" y="-10.7" smashed="yes" rot="MR180">
 <attribute name="MF" value="" x="76.8" y="-10.7" size="1.778" layer="28" rot="MR180" display="off"/>
-<attribute name="MPN" value="MF-RES-0805-100k" x="76.8" y="-10.7" size="1.778" layer="28" rot="MR180" display="off"/>
 <attribute name="NAME" x="70.865" y="-10.47" size="0.6096" layer="26" font="vector" rot="MR180"/>
 <attribute name="OC_NEWARK" value="unknown" x="76.8" y="-10.7" size="1.778" layer="28" rot="MR180" display="off"/>
 </element>
 <element name="RG2_3" library="resistor" package="R0805" value="470k" x="83.2" y="-10.7" smashed="yes" rot="MR180">
 <attribute name="MF" value="" x="83.2" y="-10.7" size="1.778" layer="28" rot="MR180" display="off"/>
-<attribute name="MPN" value="MF-RES-0805-1M" x="83.2" y="-10.7" size="1.778" layer="28" rot="MR180" display="off"/>
 <attribute name="NAME" x="81.365" y="-8.67" size="0.6096" layer="26" font="vector" rot="MR180"/>
 <attribute name="OC_NEWARK" value="unknown" x="83.2" y="-10.7" size="1.778" layer="28" rot="MR180" display="off"/>
 </element>
@@ -6837,7 +6833,6 @@ This DRC check is for 4-Layer Standard Capability boards to be manufactured thro
 </element>
 <element name="RG3_5" library="resistor" package="R0805" value="47k" x="76.8" y="5.8" smashed="yes">
 <attribute name="MF" value="" x="76.8" y="5.8" size="1.778" layer="27" display="off"/>
-<attribute name="MPN" value="MF-RES-0805-100k" x="76.8" y="5.8" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="75.165" y="3.97" size="0.6096" layer="25" font="vector"/>
 <attribute name="OC_NEWARK" value="unknown" x="76.8" y="5.8" size="1.778" layer="27" display="off"/>
 </element>
@@ -6935,13 +6930,11 @@ This DRC check is for 4-Layer Standard Capability boards to be manufactured thro
 </element>
 <element name="RG3_6" library="resistor" package="R0805" value="47k" x="76.8" y="-0.1" smashed="yes" rot="MR180">
 <attribute name="MF" value="" x="76.8" y="-0.1" size="1.778" layer="28" rot="MR180" display="off"/>
-<attribute name="MPN" value="MF-RES-0805-100k" x="76.8" y="-0.1" size="1.778" layer="28" rot="MR180" display="off"/>
 <attribute name="NAME" x="75.165" y="-1.37" size="0.6096" layer="26" font="vector" rot="MR180"/>
 <attribute name="OC_NEWARK" value="unknown" x="76.8" y="-0.1" size="1.778" layer="28" rot="MR180" display="off"/>
 </element>
 <element name="RG4_6" library="resistor" package="R0805" value="470k" x="83.2" y="-0.1" smashed="yes" rot="MR180">
 <attribute name="MF" value="" x="83.2" y="-0.1" size="1.778" layer="28" rot="MR180" display="off"/>
-<attribute name="MPN" value="MF-RES-0805-1M" x="83.2" y="-0.1" size="1.778" layer="28" rot="MR180" display="off"/>
 <attribute name="NAME" x="81.565" y="-1.37" size="0.6096" layer="26" font="vector" rot="MR180"/>
 <attribute name="OC_NEWARK" value="unknown" x="83.2" y="-0.1" size="1.778" layer="28" rot="MR180" display="off"/>
 </element>
@@ -7243,13 +7236,11 @@ This DRC check is for 4-Layer Standard Capability boards to be manufactured thro
 </element>
 <element name="RG1_5" library="resistor" package="R0805" value="47k" x="76.9" y="15.9" smashed="yes">
 <attribute name="MF" value="" x="76.9" y="15.9" size="1.778" layer="27" display="off"/>
-<attribute name="MPN" value="MF-RES-0805-100k" x="76.9" y="15.9" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="75.065" y="13.97" size="0.6096" layer="25" font="vector"/>
 <attribute name="OC_NEWARK" value="unknown" x="76.9" y="15.9" size="1.778" layer="27" display="off"/>
 </element>
 <element name="RG2_5" library="resistor" package="R0805" value="470k" x="83.4" y="15.8" smashed="yes">
 <attribute name="MF" value="" x="83.4" y="15.8" size="1.778" layer="27" display="off"/>
-<attribute name="MPN" value="MF-RES-0805-1M" x="83.4" y="15.8" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="81.665" y="13.87" size="0.6096" layer="25" font="vector"/>
 <attribute name="OC_NEWARK" value="unknown" x="83.4" y="15.8" size="1.778" layer="27" display="off"/>
 </element>
@@ -7347,13 +7338,11 @@ This DRC check is for 4-Layer Standard Capability boards to be manufactured thro
 </element>
 <element name="RG1_6" library="resistor" package="R0805" value="47k" x="76.8" y="9.3" smashed="yes" rot="MR180">
 <attribute name="MF" value="" x="76.8" y="9.3" size="1.778" layer="28" rot="MR180" display="off"/>
-<attribute name="MPN" value="MF-RES-0805-100k" x="76.8" y="9.3" size="1.778" layer="28" rot="MR180" display="off"/>
 <attribute name="NAME" x="70.865" y="9.53" size="0.6096" layer="26" font="vector" rot="MR180"/>
 <attribute name="OC_NEWARK" value="unknown" x="76.8" y="9.3" size="1.778" layer="28" rot="MR180" display="off"/>
 </element>
 <element name="RG2_6" library="resistor" package="R0805" value="470k" x="83.2" y="9.3" smashed="yes" rot="MR180">
 <attribute name="MF" value="" x="83.2" y="9.3" size="1.778" layer="28" rot="MR180" display="off"/>
-<attribute name="MPN" value="MF-RES-0805-1M" x="83.2" y="9.3" size="1.778" layer="28" rot="MR180" display="off"/>
 <attribute name="NAME" x="81.365" y="11.33" size="0.6096" layer="26" font="vector" rot="MR180"/>
 <attribute name="OC_NEWARK" value="unknown" x="83.2" y="9.3" size="1.778" layer="28" rot="MR180" display="off"/>
 </element>
