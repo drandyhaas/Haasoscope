@@ -21107,7 +21107,7 @@ http://www.bobstarr.net</description>
 <pin name="OUT_C" x="43.18" y="-15.24" length="middle" rot="R180"/>
 <pin name="!SHDN_!C!/D" x="43.18" y="-17.78" length="middle" rot="R180"/>
 </symbol>
-<symbol name="MAX11115AUT+T">
+<symbol name="MAX11105AUT+T">
 <wire x1="5.08" y1="2.54" x2="22.86" y2="2.54" width="0.254" layer="94"/>
 <wire x1="22.86" y1="-7.62" x2="22.86" y2="2.54" width="0.254" layer="94"/>
 <wire x1="22.86" y1="-7.62" x2="5.08" y2="-7.62" width="0.254" layer="94"/>
@@ -21162,11 +21162,11 @@ Source: &lt;a href="http://www.ti.com/lit/ds/symlink/opa4322.pdf"&gt; Datasheet 
 </device>
 </devices>
 </deviceset>
-<deviceset name="MAX11115AUT+T" prefix="IC">
+<deviceset name="MAX11105AUT+T" prefix="IC">
 <description>&lt;b&gt;ADC&lt;/b&gt;&lt;p&gt;
-Source: &lt;a href="https://componentsearchengine.com/Datasheets/1/MAX11115AUT T.pdf"&gt; Datasheet &lt;/a&gt;</description>
+Source: &lt;a href="https://componentsearchengine.com/Datasheets/1/MAX11105AUT T.pdf"&gt; Datasheet &lt;/a&gt;</description>
 <gates>
-<gate name="G$1" symbol="MAX11115AUT+T" x="0" y="0"/>
+<gate name="G$1" symbol="MAX11105AUT+T" x="0" y="0"/>
 </gates>
 <devices>
 <device name="" package="SOT95P280X145-6N">
@@ -21183,9 +21183,9 @@ Source: &lt;a href="https://componentsearchengine.com/Datasheets/1/MAX11115AUT T
 <attribute name="DESCRIPTION" value="ADC" constant="no"/>
 <attribute name="HEIGHT" value="mm" constant="no"/>
 <attribute name="MANUFACTURER_NAME" value="Maxim Integrated" constant="no"/>
-<attribute name="MANUFACTURER_PART_NUMBER" value="MAX11115AUT+T" constant="no"/>
-<attribute name="MOUSER_PART_NUMBER" value="700-MAX11115AUT+T" constant="no"/>
-<attribute name="MOUSER_PRICE-STOCK" value="https://www.mouser.com/Search/Refine.aspx?Keyword=700-MAX11115AUT%2BT" constant="no"/>
+<attribute name="MANUFACTURER_PART_NUMBER" value="MAX11105AUT+T" constant="no"/>
+<attribute name="MOUSER_PART_NUMBER" value="700-MAX11105AUT+T" constant="no"/>
+<attribute name="MOUSER_PRICE-STOCK" value="https://www.mouser.com/Search/Refine.aspx?Keyword=700-MAX11105AUT%2BT" constant="no"/>
 </technology>
 </technologies>
 </device>
@@ -21651,7 +21651,7 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="GND85" library="supply1" deviceset="GND" device=""/>
 <part name="+3V7" library="supply1" deviceset="+3V3" device=""/>
 <part name="ICAMP1" library="SamacSys_Parts" deviceset="OPA4322AIPWR" device=""/>
-<part name="IC4" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC4" library="SamacSys_Parts" deviceset="MAX11105AUT+T" device=""/>
 <part name="X1" library="con-coax" library_urn="urn:adsk.eagle:library:133" deviceset="LTI-SASF54GT" device="" package3d_urn="urn:adsk.eagle:package:6232/1"/>
 <part name="IN1" library="Seeed-Connector" library_urn="urn:adsk.eagle:library:478" deviceset="DIP-BLACK-MALE-HEADER-VERT(2P-2.54)" device="" package3d_urn="urn:adsk.eagle:package:33132/1" value="2p-2.54"/>
 <part name="GSW3" library="74xx-little-us" deviceset="74*1G3157" device="DBVR">
@@ -21869,19 +21869,19 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
 <part name="U$3" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="VCCA" device=""/>
-<part name="IC1" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC1" library="SamacSys_Parts" deviceset="MAX11105AUT+T" device=""/>
 <part name="GND11" library="supply1" deviceset="GND" device=""/>
 <part name="CADD3" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
 <part name="U$4" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="VCCA" device=""/>
-<part name="IC2" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC2" library="SamacSys_Parts" deviceset="MAX11105AUT+T" device=""/>
 <part name="GND17" library="supply1" deviceset="GND" device=""/>
 <part name="CADD4" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
 <part name="U$5" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="VCCA" device=""/>
-<part name="IC3" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC3" library="SamacSys_Parts" deviceset="MAX11105AUT+T" device=""/>
 <part name="IOEXPAND_0X22" library="microchip" deviceset="MCP23017" device="SS"/>
 <part name="+3V10" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND18" library="supply1" deviceset="GND" device=""/>
@@ -21929,7 +21929,7 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <attribute name="MPN" value="MF-CAP-1206-10uF"/>
 </part>
 <part name="ICAMP3" library="SamacSys_Parts" deviceset="OPA4322AIPWR" device=""/>
-<part name="IC9" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC9" library="SamacSys_Parts" deviceset="MAX11105AUT+T" device=""/>
 <part name="ROFFSET10" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
 <part name="ROFFSET11" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
 <part name="ROFFSET12" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
@@ -21954,15 +21954,15 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="CADD10" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
-<part name="IC10" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC10" library="SamacSys_Parts" deviceset="MAX11105AUT+T" device=""/>
 <part name="CADD11" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
-<part name="IC11" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC11" library="SamacSys_Parts" deviceset="MAX11105AUT+T" device=""/>
 <part name="CADD12" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
-<part name="IC12" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC12" library="SamacSys_Parts" deviceset="MAX11105AUT+T" device=""/>
 <part name="GND93" library="supply1" deviceset="GND" device=""/>
 <part name="GSW9" library="74xx-little-us" deviceset="74*1G3157" device="DBVR">
 <attribute name="MPN" value="SN74LVC1G3157DBV"/>
@@ -22256,7 +22256,7 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <attribute name="MPN" value="MF-CAP-1206-10uF"/>
 </part>
 <part name="ICAMP4" library="SamacSys_Parts" deviceset="OPA4322AIPWR" device=""/>
-<part name="IC13" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC13" library="SamacSys_Parts" deviceset="MAX11105AUT+T" device=""/>
 <part name="ROFFSET14" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
 <part name="ROFFSET15" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
 <part name="ROFFSET16" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
@@ -22281,15 +22281,15 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="CADD14" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
-<part name="IC14" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC14" library="SamacSys_Parts" deviceset="MAX11105AUT+T" device=""/>
 <part name="CADD15" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
-<part name="IC15" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC15" library="SamacSys_Parts" deviceset="MAX11105AUT+T" device=""/>
 <part name="CADD16" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
-<part name="IC16" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC16" library="SamacSys_Parts" deviceset="MAX11105AUT+T" device=""/>
 <part name="C5VOPAMP6" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
@@ -22310,7 +22310,7 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <attribute name="MPN" value="MF-CAP-1206-10uF"/>
 </part>
 <part name="ICAMP6" library="SamacSys_Parts" deviceset="OPA4322AIPWR" device=""/>
-<part name="IC21" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC21" library="SamacSys_Parts" deviceset="MAX11105AUT+T" device=""/>
 <part name="ROFFSET22" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
 <part name="ROFFSET23" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
 <part name="ROFFSET24" library="resistor" library_urn="urn:adsk.eagle:library:348" deviceset="R-EU_" device="R0805" package3d_urn="urn:adsk.eagle:package:26059/1" value="200"/>
@@ -22335,15 +22335,15 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 <part name="CADD22" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
-<part name="IC22" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC22" library="SamacSys_Parts" deviceset="MAX11105AUT+T" device=""/>
 <part name="CADD23" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
-<part name="IC23" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC23" library="SamacSys_Parts" deviceset="MAX11105AUT+T" device=""/>
 <part name="CADD24" library="rcl" deviceset="C-EU" device="C0805K" value="0.1uF">
 <attribute name="MPN" value="MF-CAP-0805-0.1uF"/>
 </part>
-<part name="IC24" library="SamacSys_Parts" deviceset="MAX11115AUT+T" device=""/>
+<part name="IC24" library="SamacSys_Parts" deviceset="MAX11105AUT+T" device=""/>
 <part name="GND117" library="supply1" deviceset="GND" device=""/>
 <part name="GSW13" library="74xx-little-us" deviceset="74*1G3157" device="DBVR">
 <attribute name="MPN" value="SN74LVC1G3157DBV"/>
@@ -32652,7 +32652,7 @@ noise on the offsets</text>
 <instance part="GND54" gate="1" x="63.5" y="60.96" smashed="yes">
 <attribute name="VALUE" x="60.96" y="58.42" size="1.778" layer="96"/>
 </instance>
-<instance part="GOLD_ORB_SM1" gate="G$1" x="15.24" y="38.1" smashed="yes"/>
+<instance part="GOLD_ORB_SM1" gate="G$1" x="15.24" y="33.02" smashed="yes"/>
 <instance part="IC4" gate="G$1" x="38.1" y="165.1" smashed="yes">
 <attribute name="NAME" x="44.45" y="172.72" size="1.778" layer="95" align="center-left"/>
 <attribute name="VALUE" x="44.45" y="170.18" size="1.778" layer="96" align="center-left"/>
@@ -35005,6 +35005,29 @@ noise on the offsets</text>
 <approved hash="113,2,193.571,130.071,FRAME1,,,,,"/>
 <approved hash="113,1,193.571,130.071,FRAME2,,,,,"/>
 <approved hash="113,3,193.571,130.071,FRAME3,,,,,"/>
+<approved hash="115,3,726.44,180.34,VCCA,,,,,"/>
+<approved hash="115,3,692.15,241.3,VCCA,,,,,"/>
+<approved hash="115,3,800.1,245.11,VCCA,,,,,"/>
+<approved hash="115,3,515.62,187.96,VCCA,,,,,"/>
+<approved hash="115,3,515.62,213.36,VCCA,,,,,"/>
+<approved hash="115,3,515.62,236.22,VCCA,,,,,"/>
+<approved hash="115,3,515.62,162.56,VCCA,,,,,"/>
+<approved hash="115,3,731.52,-124.46,VCCA,,,,,"/>
+<approved hash="115,3,668.02,-62.23,VCCA,,,,,"/>
+<approved hash="115,3,697.23,-63.5,VCCA,,,,,"/>
+<approved hash="115,3,805.18,-59.69,VCCA,,,,,"/>
+<approved hash="115,3,520.7,-116.84,VCCA,,,,,"/>
+<approved hash="115,3,520.7,-91.44,VCCA,,,,,"/>
+<approved hash="115,3,520.7,-68.58,VCCA,,,,,"/>
+<approved hash="115,3,520.7,-142.24,VCCA,,,,,"/>
+<approved hash="115,3,728.98,30.48,VCCA,,,,,"/>
+<approved hash="115,3,665.48,92.71,VCCA,,,,,"/>
+<approved hash="115,3,694.69,91.44,VCCA,,,,,"/>
+<approved hash="115,3,802.64,95.25,VCCA,,,,,"/>
+<approved hash="115,3,518.16,38.1,VCCA,,,,,"/>
+<approved hash="115,3,518.16,63.5,VCCA,,,,,"/>
+<approved hash="115,3,518.16,86.36,VCCA,,,,,"/>
+<approved hash="115,3,518.16,12.7,VCCA,,,,,"/>
 <approved hash="115,3,815.34,-132.08,GND,,,,,"/>
 <approved hash="115,3,792.48,-137.16,GND,,,,,"/>
 <approved hash="115,3,685.8,-137.16,GND,,,,,"/>
@@ -35044,29 +35067,6 @@ noise on the offsets</text>
 <approved hash="115,3,513.08,210.82,GND,,,,,"/>
 <approved hash="115,3,513.08,233.68,GND,,,,,"/>
 <approved hash="115,3,513.08,160.02,GND,,,,,"/>
-<approved hash="115,3,726.44,180.34,VCCA,,,,,"/>
-<approved hash="115,3,692.15,241.3,VCCA,,,,,"/>
-<approved hash="115,3,800.1,245.11,VCCA,,,,,"/>
-<approved hash="115,3,515.62,187.96,VCCA,,,,,"/>
-<approved hash="115,3,515.62,213.36,VCCA,,,,,"/>
-<approved hash="115,3,515.62,236.22,VCCA,,,,,"/>
-<approved hash="115,3,515.62,162.56,VCCA,,,,,"/>
-<approved hash="115,3,731.52,-124.46,VCCA,,,,,"/>
-<approved hash="115,3,668.02,-62.23,VCCA,,,,,"/>
-<approved hash="115,3,697.23,-63.5,VCCA,,,,,"/>
-<approved hash="115,3,805.18,-59.69,VCCA,,,,,"/>
-<approved hash="115,3,520.7,-116.84,VCCA,,,,,"/>
-<approved hash="115,3,520.7,-91.44,VCCA,,,,,"/>
-<approved hash="115,3,520.7,-68.58,VCCA,,,,,"/>
-<approved hash="115,3,520.7,-142.24,VCCA,,,,,"/>
-<approved hash="115,3,728.98,30.48,VCCA,,,,,"/>
-<approved hash="115,3,665.48,92.71,VCCA,,,,,"/>
-<approved hash="115,3,694.69,91.44,VCCA,,,,,"/>
-<approved hash="115,3,802.64,95.25,VCCA,,,,,"/>
-<approved hash="115,3,518.16,38.1,VCCA,,,,,"/>
-<approved hash="115,3,518.16,63.5,VCCA,,,,,"/>
-<approved hash="115,3,518.16,86.36,VCCA,,,,,"/>
-<approved hash="115,3,518.16,12.7,VCCA,,,,,"/>
 </errors>
 </schematic>
 </drawing>
