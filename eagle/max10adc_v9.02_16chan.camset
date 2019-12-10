@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding='UTF-8'?>
+<CAMsetup>
+	<thisfile>C:\gitwork\Haasoscope\eagle\3dview stackup.camset</thisfile>
+	<morelayertypes>
+	</morelayertypes>
+	<usecolors>
+		<mixer>0.000</mixer>
+		<object type="Plated H. In">00BFBFBF</object>
+		<object type="Plated H. Out">0026120F</object>
+		<object type="Edge In">008C8C09</object>
+		<object type="Edge Out">00809854</object>
+		<object type="Volume">897D8C59</object>
+		<object type="Background">00898989</object>
+		<layer type="PasteMask">008080C0</layer>
+		<layer type="Silkscreen">00E3E3E3</layer>
+		<layer type="SolderMask">900B2B06</layer>
+		<layer type="Copper">00765223</layer>
+		<layer type="Core">00000000</layer>
+		<layer type="Prepreg">00000000</layer>
+		<layer type="BoardOutline">00000000</layer>
+	</usecolors>
+	<boardlayers>
+		<layer type="PasteMask" H="35" Er="0.000" color="0000EC23">
+			<filename>C:\gitwork\Haasoscope\eagle\max10adc_v9.02_16chan_2019-12-05\max10adc_v9.0_16chan_frontendtest2.gtp</filename>
+			<filedisp>max10adc_v9.0_16chan_frontendtest2.gtp</filedisp>
+		</layer>
+		<layer type="Silkscreen" H="35" Er="0.000" color="00635F84">
+			<filename>C:\gitwork\Haasoscope\eagle\max10adc_v9.02_16chan_2019-12-05\max10adc_v9.0_16chan_frontendtest2.gto</filename>
+			<filedisp>max10adc_v9.0_16chan_frontendtest2.gto</filedisp>
+		</layer>
+		<layer type="SolderMask" H="35" Er="0.000" color="002BC16C">
+			<filename>C:\gitwork\Haasoscope\eagle\max10adc_v9.02_16chan_2019-12-05\max10adc_v9.0_16chan_frontendtest2.gts</filename>
+			<filedisp>max10adc_v9.0_16chan_frontendtest2.gts</filedisp>
+		</layer>
+		<layer type="Copper" H="35" Negative="DefaultPositive" color="00B3CAAE">
+			<filename>C:\gitwork\Haasoscope\eagle\max10adc_v9.02_16chan_2019-12-05\max10adc_v9.0_16chan_frontendtest2.gtl</filename>
+			<filedisp>max10adc_v9.0_16chan_frontendtest2.gtl</filedisp>
+		</layer>
+		<layer type="Prepreg" H="1320" Er="4.800">
+		</layer>
+		<layer type="Copper" H="35" Negative="DefaultPositive" color="003CF899">
+			<filename>C:\gitwork\Haasoscope\eagle\max10adc_v9.02_16chan_2019-12-05\max10adc_v9.0_16chan_frontendtest2.GL3</filename>
+			<filedisp>max10adc_v9.0_16chan_frontendtest2.GL3</filedisp>
+		</layer>
+		<layer type="Copper" H="35" Negative="DefaultPositive" color="005991F1">
+			<filename>C:\gitwork\Haasoscope\eagle\max10adc_v9.02_16chan_2019-12-05\max10adc_v9.0_16chan_frontendtest2.gbl</filename>
+			<filedisp>max10adc_v9.0_16chan_frontendtest2.gbl</filedisp>
+		</layer>
+		<layer type="SolderMask" H="35" Er="0.000" color="006C05BB">
+			<filename>C:\gitwork\Haasoscope\eagle\max10adc_v9.02_16chan_2019-12-05\max10adc_v9.0_16chan_frontendtest2.gbs</filename>
+			<filedisp>max10adc_v9.0_16chan_frontendtest2.gbs</filedisp>
+		</layer>
+		<layer type="Silkscreen" H="35" Er="0.000" color="009BA5EB">
+			<filename>C:\gitwork\Haasoscope\eagle\max10adc_v9.02_16chan_2019-12-05\max10adc_v9.0_16chan_frontendtest2.gbo</filename>
+			<filedisp>max10adc_v9.0_16chan_frontendtest2.gbo</filedisp>
+		</layer>
+		<layer type="PasteMask" H="35" Er="0.000" color="002EFAA6">
+			<filename>C:\gitwork\Haasoscope\eagle\max10adc_v9.02_16chan_2019-12-05\max10adc_v9.0_16chan_frontendtest2.gbp</filename>
+			<filedisp>max10adc_v9.0_16chan_frontendtest2.gbp</filedisp>
+		</layer>
+		<layer type="BoardOutline" H="1635">
+			<filename>C:\gitwork\Haasoscope\eagle\max10adc_v9.02_16chan_2019-12-05\max10adc_v9.0_16chan_frontendtest2.gml</filename>
+			<filedisp>max10adc_v9.0_16chan_frontendtest2.gml</filedisp>
+		</layer>
+	</boardlayers>
+
+	<boarddrillplates>
+		<drillplate from="top" to="btm" plated="yes" filled="no" microvia="no">
+			<filename>C:\gitwork\Haasoscope\eagle\max10adc_v9.02_16chan_2019-12-05\max10adc_v9.0_16chan_frontendtest2.txt</filename>
+			<filedisp>max10adc_v9.0_16chan_frontendtest2.txt</filedisp>
+		</drillplate>
+	</boarddrillplates>
+
+	<GerberSetup Incremental='no' OmitTrailingZeros='no' Milimeters='no' Len1='2' Len2='3'/>
+	<NCDSetup Guess='yes' Incremental='no' OmitTrailingZeros='no' Units='DefaultInch' Len1='2' Len2='3' Autooffset='yes'/>
+	<IPC356Setup AutoUnits='1' AutoMagnitude='1' LongPinID='yes' CpyFromDrill='yes' Autooffset='yes' AutoBtmAcc='yes'/>
+	<BoardOutlineDrawing srctype='1' trackwidthMin='0.004' trackwidthSlopStart='0.01' trackwidthMetaTrsh='0.012'/>
+	<IdentifyOutline mode='2' removeoutside='yes' horizMargin='5' vertMargin='2.5' brushBlob='1' />
+	<PosSaveRestoreTab>
+		<entry idx='1' pos='-41.1256, -13.2513, -29.1484' rot='-0.468844, 0.256834, -0.406027, 0.741191'/>
+		<entry idx='2' pos='243.0308, 345.1474, -8.7014' rot='-0.472118, 0.113002, -0.203500, 0.850249'/>
+		<entry idx='3' pos='278.6378, 350.3644, -0.2550' rot='-0.500000, -0.500000, 0.500000, 0.500000'/>
+		<entry idx='4' pos='278.6378, 350.3644, -0.2550' rot='-0.500000, -0.500000, 0.500000, 0.500000'/>
+		<entry idx='5' pos='278.6378, 350.3644, -0.2550' rot='-0.500000, -0.500000, 0.500000, 0.500000'/>
+	</PosSaveRestoreTab>
+
+</CAMsetup>

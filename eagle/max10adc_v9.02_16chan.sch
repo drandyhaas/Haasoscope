@@ -21229,7 +21229,7 @@ Source: Lighthorse Technologies, inc. SASF54GT.pdf</description>
 </class>
 <class number="1" name="gnd" width="0.3048" drill="0">
 </class>
-<class number="2" name="three" width="0.1524" drill="0">
+<class number="2" name="three" width="0.3048" drill="0">
 </class>
 <class number="3" name="five" width="0.381" drill="0">
 </class>
@@ -33833,7 +33833,7 @@ noise on the offsets</text>
 <wire x1="106.68" y1="114.3" x2="104.14" y2="114.3" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$49" class="3">
+<net name="5VC5" class="3">
 <segment>
 <pinref part="L1" gate="G$1" pin="2"/>
 <wire x1="45.72" y1="114.3" x2="48.26" y2="114.3" width="0.1524" layer="91"/>
@@ -33852,7 +33852,7 @@ noise on the offsets</text>
 <junction x="63.5" y="114.3"/>
 </segment>
 </net>
-<net name="N$48" class="3">
+<net name="5VC3" class="3">
 <segment>
 <pinref part="L2" gate="G$1" pin="2"/>
 <pinref part="CP3" gate="G$1" pin="1"/>
@@ -34867,29 +34867,6 @@ noise on the offsets</text>
 <approved hash="113,2,193.571,130.071,FRAME1,,,,,"/>
 <approved hash="113,1,193.571,130.071,FRAME2,,,,,"/>
 <approved hash="113,3,193.571,130.071,FRAME3,,,,,"/>
-<approved hash="115,3,726.44,180.34,VCCA,,,,,"/>
-<approved hash="115,3,692.15,241.3,VCCA,,,,,"/>
-<approved hash="115,3,800.1,245.11,VCCA,,,,,"/>
-<approved hash="115,3,515.62,187.96,VCCA,,,,,"/>
-<approved hash="115,3,515.62,213.36,VCCA,,,,,"/>
-<approved hash="115,3,515.62,236.22,VCCA,,,,,"/>
-<approved hash="115,3,515.62,162.56,VCCA,,,,,"/>
-<approved hash="115,3,731.52,-124.46,VCCA,,,,,"/>
-<approved hash="115,3,668.02,-62.23,VCCA,,,,,"/>
-<approved hash="115,3,697.23,-63.5,VCCA,,,,,"/>
-<approved hash="115,3,805.18,-59.69,VCCA,,,,,"/>
-<approved hash="115,3,520.7,-116.84,VCCA,,,,,"/>
-<approved hash="115,3,520.7,-91.44,VCCA,,,,,"/>
-<approved hash="115,3,520.7,-68.58,VCCA,,,,,"/>
-<approved hash="115,3,520.7,-142.24,VCCA,,,,,"/>
-<approved hash="115,3,728.98,30.48,VCCA,,,,,"/>
-<approved hash="115,3,665.48,92.71,VCCA,,,,,"/>
-<approved hash="115,3,694.69,91.44,VCCA,,,,,"/>
-<approved hash="115,3,802.64,95.25,VCCA,,,,,"/>
-<approved hash="115,3,518.16,38.1,VCCA,,,,,"/>
-<approved hash="115,3,518.16,63.5,VCCA,,,,,"/>
-<approved hash="115,3,518.16,86.36,VCCA,,,,,"/>
-<approved hash="115,3,518.16,12.7,VCCA,,,,,"/>
 <approved hash="115,3,815.34,-132.08,GND,,,,,"/>
 <approved hash="115,3,792.48,-137.16,GND,,,,,"/>
 <approved hash="115,3,685.8,-137.16,GND,,,,,"/>
@@ -34929,6 +34906,29 @@ noise on the offsets</text>
 <approved hash="115,3,513.08,210.82,GND,,,,,"/>
 <approved hash="115,3,513.08,233.68,GND,,,,,"/>
 <approved hash="115,3,513.08,160.02,GND,,,,,"/>
+<approved hash="115,3,726.44,180.34,VCCA,,,,,"/>
+<approved hash="115,3,692.15,241.3,VCCA,,,,,"/>
+<approved hash="115,3,800.1,245.11,VCCA,,,,,"/>
+<approved hash="115,3,515.62,187.96,VCCA,,,,,"/>
+<approved hash="115,3,515.62,213.36,VCCA,,,,,"/>
+<approved hash="115,3,515.62,236.22,VCCA,,,,,"/>
+<approved hash="115,3,515.62,162.56,VCCA,,,,,"/>
+<approved hash="115,3,731.52,-124.46,VCCA,,,,,"/>
+<approved hash="115,3,668.02,-62.23,VCCA,,,,,"/>
+<approved hash="115,3,697.23,-63.5,VCCA,,,,,"/>
+<approved hash="115,3,805.18,-59.69,VCCA,,,,,"/>
+<approved hash="115,3,520.7,-116.84,VCCA,,,,,"/>
+<approved hash="115,3,520.7,-91.44,VCCA,,,,,"/>
+<approved hash="115,3,520.7,-68.58,VCCA,,,,,"/>
+<approved hash="115,3,520.7,-142.24,VCCA,,,,,"/>
+<approved hash="115,3,728.98,30.48,VCCA,,,,,"/>
+<approved hash="115,3,665.48,92.71,VCCA,,,,,"/>
+<approved hash="115,3,694.69,91.44,VCCA,,,,,"/>
+<approved hash="115,3,802.64,95.25,VCCA,,,,,"/>
+<approved hash="115,3,518.16,38.1,VCCA,,,,,"/>
+<approved hash="115,3,518.16,63.5,VCCA,,,,,"/>
+<approved hash="115,3,518.16,86.36,VCCA,,,,,"/>
+<approved hash="115,3,518.16,12.7,VCCA,,,,,"/>
 </errors>
 </schematic>
 </drawing>
