@@ -34,29 +34,36 @@ input [3:0] triggertype;
 input [ram_width:0] triggertot; // the top bit says whether to do check every sample or only according to downsample
 input highres;
 parameter maxhighres=5;
-reg [7+maxhighres:0] highres1, highres2, highres3, highres4;
+reg [7+maxhighres:0] highres1, highres2, highres3;
+reg [11+maxhighres:0] highres4;
 input ext_trig_in, use_ext_trig;
 input [ram_width-1:0] nsmp;
+
+reg [7:0] data_flash1_reg; always @(posedge clk_flash) data_flash1_reg <= data_flash1;
+reg [7:0] data_flash2_reg; always @(posedge clk_flash) data_flash2_reg <= data_flash2; // no multiplexing
+//reg [7:0] data_flash2_reg; always @(negedge clk_flash) data_flash2_reg <= data_flash1; // for multiplexing
+
+reg [7:0] data_flash3_reg; always @(posedge clk_flash2) data_flash3_reg <= data_flash3;
+reg [11:0] data_flash4_reg; //always @(posedge clk_flash2) data_flash4_reg <= data_flash4; // no multiplexing
+//reg [7:0] data_flash4_reg; always @(negedge clk_flash2) data_flash4_reg <= data_flash3; // for multiplexing
 
 input clk_2msps_adc;
 output reg cs_2msps_adc=1;
 input data_2msps_adc;
 reg[4:0] cscounter=0;
-localparam CSstart=0, CSread=1;
+localparam CSstart=1'b0, CSread=1'b1;
 reg CSstate=CSstart;
 reg[11:0] data_2msps_adc_buf;
 always @(posedge clk_2msps_adc) begin
-	cscounter=cscounter+1;
+	cscounter=cscounter+1'b1;
 	case (CSstate)
 	CSstart: begin
 		cs_2msps_adc<=1;
 		if (cscounter==1) begin
 			CSstate=CSread;
 		end
-		//dout3=data_2msps_adc_buf[11:4];//hack!
-		//dout4=data_2msps_adc_buf[7:0];//hack!
-		//dout4=32+32*data_2msps_adc_buf[11]+4*data_2msps_adc_buf[0]; //test
-		dout4=data_2msps_adc_buf;
+		//dout4=data_2msps_adc_buf;
+		data_flash4_reg=data_2msps_adc_buf;
 	end
 	CSread: begin
 		cs_2msps_adc<=0;
@@ -75,7 +82,7 @@ reg [31:0] SPIcounter=0;//clock counter for SPI
 input [15:0] SPIsenddata;//the bits to send
 input SPIsend;//start sending
 reg [3:0] SPIsendcounter;//which bit to send
-localparam SPI0=0, SPI1=1, SPI2=2, SPI3=3;
+localparam SPI0=4'd0, SPI1=4'd1, SPI2=4'd2, SPI3=4'd3;
 output reg[3:0] SPIstate=SPI0;
 always @(posedge clk_spi) begin
 if (!spen_out) begin // we're in SPI mode
@@ -135,14 +142,6 @@ output reg [ram_width-1:0] wraddress;
 output reg Acquiring;
 reg PreOrPostAcquiring;
 
-reg [7:0] data_flash1_reg; always @(posedge clk_flash) data_flash1_reg <= data_flash1;
-reg [7:0] data_flash2_reg; always @(posedge clk_flash) data_flash2_reg <= data_flash2; // no multiplexing
-//reg [7:0] data_flash2_reg; always @(negedge clk_flash) data_flash2_reg <= data_flash1; // for multiplexing
-
-reg [7:0] data_flash3_reg; always @(posedge clk_flash2) data_flash3_reg <= data_flash3;
-reg [7:0] data_flash4_reg; always @(posedge clk_flash2) data_flash4_reg <= data_flash4; // no multiplexing
-//reg [7:0] data_flash4_reg; always @(negedge clk_flash2) data_flash4_reg <= data_flash3; // for multiplexing
-
 always @(posedge clk_flash) begin
 	i=0;
 	while (i<4) begin
@@ -151,7 +150,7 @@ always @(posedge clk_flash) begin
 			if (i==0) Threshold1[i] <= (data_flash1_reg>=trigthresh && data_flash1_reg<=trigthresh2);
 			if (i==1) Threshold1[i] <= (data_flash2_reg>=trigthresh && data_flash2_reg<=trigthresh2);
 			if (i==2) Threshold1[i] <= (data_flash3_reg>=trigthresh && data_flash3_reg<=trigthresh2);
-			if (i==3) Threshold1[i] <= (data_flash4_reg>=trigthresh && data_flash4_reg<=trigthresh2);
+			if (i==3) Threshold1[i] <= (data_flash4_reg>=(trigthresh<<4) && data_flash4_reg<=(trigthresh2<<4)); // shift left by 4 bits to compare 12 bit adc value to trig thresholds
 			Threshold2[i] <= Threshold1[i]; // was above threshold?
 			
 			if (triggertype[0]) begin // if positive edge, trigger! (possibly after demanding a timeout)
@@ -237,8 +236,6 @@ always @(posedge clk_flash)
 if (imthelast) trig_out[1] = selftrig; // we trigger out to the right if we triggered ourselves
 else trig_out[1] = trig_in[1]||selftrig; // we trigger out to the right if we got a trig in towards the right, or we triggered ourselves
 
-
-
 reg startAcquisition;//ready to trigger?
 always @(posedge clk) begin
 	if(~startAcquisition) startAcquisition <= startTrigger; // an input to the module
@@ -308,14 +305,14 @@ always @(posedge clk_flash) begin
 			if (downsample>maxhighres) begin			
 				dout1=highres1>>maxhighres;
 				dout2=highres2>>maxhighres;
-				//dout3=highres3>>maxhighres;
-				//dout4=highres4>>maxhighres;
+				dout3=highres3>>maxhighres;
+				dout4=highres4>>maxhighres;
 			end
 			else begin
 				dout1=highres1>>downsample;
 				dout2=highres2>>downsample;
-				//dout3=highres3>>downsample;
-				//dout4=highres4>>downsample;
+				dout3=highres3>>downsample;
+				dout4=highres4>>downsample;
 			end
 			highres1=0;
 			highres2=0;
@@ -326,8 +323,8 @@ always @(posedge clk_flash) begin
 	else begin // not highres mode, just copy in the data
 		dout1=data_flash1_reg;
 		dout2=data_flash2_reg;
-		//dout3=data_flash3_reg;
-		//dout4=data_flash4_reg;
+		dout3=data_flash3_reg;
+		dout4=data_flash4_reg;
 	end
 	if (downsamplego) begin // increment the write address (store new data) every 1/2^downsample samples
 		downsamplecounter=1;
