@@ -73,7 +73,6 @@ class Haasoscope():
         self.sincresample=0 # amount of resampling to do (sinx/x)
         self.dogetotherdata=False # whether to read other calculated data like TDC
         self.tdcdata=0 # TDC data
-        self.domaindrawing=True # whether to update the main window data and redraw it
         self.selectedchannel=0 #what channel some actions apply to
         self.selectedmax10channel=0 #what max10 channel is selected
         self.autorearm=False #whether to automatically rearm the trigger after each event, or wait for a signal from software
@@ -110,7 +109,9 @@ class Haasoscope():
         self.dooversample=np.zeros(num_board*num_chan_per_board, dtype=int) # 1 is oversampling, 0 is no oversampling, 9 is over-oversampling
         self.rollingtrigger=True #rolling auto trigger at 5 Hz 
         self.dologicanalyzer=False #whether to send logic analyzer data
-        
+        self.fitline1=-1 # set to >-1 to draw a risetime fit
+        self.logicline1=-1 # to remember which is the first logic analyzer line
+        self.domeasure=True # whether to calculate measurements
         self.Vrms=np.zeros(num_board*num_chan_per_board, dtype=float) # the Vrms for each channel
         self.Vmean=np.zeros(num_board*num_chan_per_board, dtype=float) # the Vmean for each channel
         
@@ -271,7 +272,6 @@ class Haasoscope():
         chanonboard = chan%num_chan_per_board
         self.setdac(chanonboard,level,theboard)
         self.chanlevel[chan]=level
-        if not self.firstdrawtext: self.drawtext()
         if self.db: print "DAC level set for channel",chan,"to",level,"which is chan",chanonboard,"on board",theboard
     
     def tellSPIsetup(self,what):
@@ -446,7 +446,6 @@ class Haasoscope():
             origline,legline,channum = self.lined[tp]
             if self.trigsactive[tp]: self.leg.get_texts()[tp].set_color('#000000')
             else: self.leg.get_texts()[tp].set_color('#aFaFaF')
-            self.figure.canvas.draw()
         if self.db: print "Trigger toggled for channel",tp
 
     def toggleautorearm(self):
@@ -493,7 +492,6 @@ class Haasoscope():
                     self.leg.get_texts()[chan].set_text(self.chtext+str(chan)+" x10")
         self.selectedchannel=chan
         self.setdacvalue()
-        if len(plt.get_fignums())>0: self.figure.canvas.draw()
         print "Supergain switched for channel",chan,"to",self.supergain[chan]
     
     def tellswitchgain(self,chan):
@@ -521,7 +519,6 @@ class Haasoscope():
                     self.leg.get_texts()[chan].set_text(self.chtext+str(chan)+" x100")
         self.selectedchannel=chan # needed for setdacvalue
         self.setdacvalue()
-        if len(plt.get_fignums())>0: self.figure.canvas.draw()
         print "Gain switched for channel",chan,"to",self.gain[chan]
 
     def oversamp(self,chan):
@@ -535,8 +532,6 @@ class Haasoscope():
         if self.dooversample[chan] and self.downsample>0: self.telldownsample(0) # must be in max sampling mode for oversampling to make sense
         self.ser.write(chr(141))
         self.writefirmchan(chan)
-        self.drawtext()
-        self.figure.canvas.draw()
     
     def overoversamp(self):
     	if self.selectedchannel%4: print "over-oversampling only for channel 0 of a board!"
@@ -602,22 +597,10 @@ class Haasoscope():
             self.min_x = -xscale/1e6
             self.max_x = xscale/1e6
             self.xscaling=1.e6
-        ax.set_xlim(self.min_x, self.max_x)
-        ax.xaxis.set_major_locator(plt.MultipleLocator( (self.max_x*1000/1024-self.min_x*1000/1024)/8. ))
-        fig.canvas.draw()
     
     def setyaxis(self):
         self.ax.set_ylim(self.min_y, self.max_y)
         self.ax.set_ylabel("Volts") #("ADC value")
-        self.ax.yaxis.set_major_locator(plt.MultipleLocator(1.0))
-        self.ax.spines['top'].set_visible(False)
-        self.ax.spines['right'].set_visible(False)
-        self.ax.spines['left'].set_visible(False)
-        self.ax.spines['bottom'].set_visible(False)
-        plt.setp(self.ax.get_xticklines(),visible=False)
-        plt.setp(self.ax.get_yticklines(),visible=False)
-        #self.ax.set_autoscaley_on(True)
-        self.figure.canvas.draw()
     
     def chantext(self):
         text ="Channel: "+str(self.selectedchannel)
@@ -652,21 +635,6 @@ class Haasoscope():
             text+="\nTDC: "+str(self.tdcdata)
         return text
     
-    firstdrawtext=True
-    needtoredrawtext=False
-    def drawtext(self):
-        height = 0.25 # height up from bottom to start drawing text
-        xpos = 1.02 # how far over to the right to draw
-        if self.firstdrawtext:
-            self.texts.append(self.ax.text(xpos, height, self.chantext(),horizontalalignment='left', verticalalignment='top',transform=self.ax.transAxes))
-            self.firstdrawtext=False
-        else:
-            self.texts[0].remove()
-            self.texts[0]=(self.ax.text(xpos, height, self.chantext(),horizontalalignment='left', verticalalignment='top',transform=self.ax.transAxes))
-            #for txt in self.ax.texts: print txt # debugging
-        self.needtoredrawtext=True
-        plt.draw()
-    
     def togglechannel(self,theline,leaveoff=False):
         # on the pick event, find the orig line corresponding to the
         # legend proxy line, and toggle the visibility
@@ -699,38 +667,6 @@ class Haasoscope():
         else:
             if self.db: print "picked a max10 ADC channel"
             self.selectedmax10channel=channum - num_board*num_chan_per_board
-        self.drawtext()
-
-    def onpick(self,event):
-        if event.mouseevent.button==1: #left click
-            if self.keyControl: self.togglechannel(event.artist)
-            else:self.pickline(event.artist)
-            plt.draw()
-    
-    def onclick(self,event):
-        try:
-            if event.button==1: #left click                
-                pass
-            if event.button==2: #middle click
-                if self.keyShift:# if shift is held, turn off threshold2
-                    self.settriggerthresh2(0)
-                    self.otherlines[2].set_visible(False)
-                else:
-                    self.hline2 = event.ydata
-                    self.settriggerthresh2(int(  self.hline2/(self.yscale/256.) + 128  ))                
-                    self.otherlines[2].set_visible(True) # starts off being hidden, so now show it!
-                    self.otherlines[2].set_data( [self.min_x, self.max_x], [self.hline2, self.hline2] )
-            if event.button==3: #right click
-                self.settriggerpoint(int(  (event.xdata / (1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling)) +self.num_samples/2  )) # downsample
-                self.settriggerthresh(int(  event.ydata/(self.yscale/256.) + 128  ))
-                self.vline = event.xdata
-                self.otherlines[0].set_visible(True)
-                self.otherlines[0].set_data( [self.vline, self.vline], [self.min_y, self.max_y] ) # vertical line showing trigger time
-                self.hline = event.ydata
-                self.otherlines[1].set_data( [self.min_x, self.max_x], [self.hline, self.hline] ) # horizontal line showing trigger threshold
-            print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' % ('double' if event.dblclick else 'single', event.button, event.x, event.y, event.xdata, event.ydata))
-            return
-        except TypeError: pass
     
     def adjustvertical(self,up,amount=10):
         if self.keyShift: amount*=5
@@ -794,7 +730,6 @@ class Haasoscope():
                 if self.db: print "toggling bit",c,"for chan",realchan
         self.sendi2c("20 13 "+ ('%0*x' % (2,self.b20)),  theboard) #port B of IOexp 1, only for the selected board
         self.setdacvalue()
-        self.drawtext()
     
     def setdacvalues(self,sc):
         oldchan=self.selectedchannel
@@ -858,7 +793,6 @@ class Haasoscope():
             else:
                 print "calib was written using unknown firmware version"
             self.setdacvalues(sc) #and use the new levels right away
-            if not self.firstdrawtext: self.drawtext()
         except IOError:
             print "No calib file found for board",board,"at file",fname
             self.setdacvalues(sc) #will load in defaults      
@@ -874,22 +808,7 @@ class Haasoscope():
         if event.key.find("alt")>-1: self.keyAlt=False;return
         if event.key=="control": self.keyControl=False; return
         if event.key.find("ctrl")>-1: self.keyControl=False; return    
-        if event.key.find("control")>-1: self.keyControl=False; return    
-    
-    drawmarkers=False
-    def domarkers(self): # toggle drawing of markers, for fast ADC channels
-        self.drawmarkers = not self.drawmarkers
-        c=0
-        for line in self.lines:
-            c=c+1
-            if c>num_chan_per_board*num_board: break
-            if self.drawmarkers:
-                line.set_marker("o")
-                line.set_markeredgewidth(0.5)
-                line.set_markersize(2.5)
-            else:
-                line.set_marker(".")
-                line.set_markersize(0)
+        if event.key.find("control")>-1: self.keyControl=False; return
     
     #called when sampling is changed, to reset some things
     def prepareforsamplechange(self):
@@ -984,8 +903,6 @@ class Haasoscope():
                 if self.ydatarefchan<0: self.ydatarefchan=self.selectedchannel
                 else: self.ydatarefchan=-1
             elif event.key=="|": print "starting autocalibration";self.autocalibchannel=0;
-            elif event.key=="W": self.domaindrawing=not self.domaindrawing; self.domeasure=self.domaindrawing; print "domaindrawing now",self.domaindrawing; return
-            elif event.key=="M": self.domeasure=not self.domeasure; print "domeasure now",self.domeasure; self.drawtext(); return
             elif event.key=="m": self.domarkers(); return
             elif event.key=="Y": 
                 if self.selectedchannel+1>=len(self.dooversample): print "can't do XY plot on last channel"
@@ -1018,7 +935,6 @@ class Haasoscope():
             elif event.key=="tab":
                 for l in self.lines:
                     self.togglechannel(l)
-                self.figure.canvas.draw()
                 return;
             try:
                 print 'key=%s' % (event.key)
@@ -1052,102 +968,6 @@ class Haasoscope():
         except stream.StreamError:
             print "No UART data found for channel",self.selectedchannel
     
-    def on_launch(self):        
-        self.xydata=np.empty([num_chan_per_board*num_board,2,self.num_samples-1],dtype=float)
-        self.xydataslow=np.empty([len(max10adcchans),2,self.nsamp],dtype=float)
-        if self.domaindrawing: self.on_launch_draw()
-    
-    fitline1=-1 # set to >-1 to draw a risetime fit
-    logicline1=-1 # to remember which is the first logic analyzer line
-    def on_launch_draw(self):
-        plt.ion() #turn on interactive mode
-        self.nlines = num_chan_per_board*num_board+len(max10adcchans)
-        if self.db: print "nlines=",self.nlines
-        self.figure, self.ax = plt.subplots(1)
-        for l in np.arange(self.nlines):
-            maxchan=l-num_chan_per_board*num_board
-            c=(0,0,0)
-            if maxchan>=0: # these are the slow ADC channels
-                if num_board>1:
-                    board = int(num_board-1-max10adcchans[maxchan][0])
-                    if board%4==0: c=(1-0.1*maxchan,0,0)
-                    if board%4==1: c=(0,1-0.1*maxchan,0)
-                    if board%4==2: c=(0,0,1-0.1*maxchan)
-                    if board%4==3: c=(1-0.1*maxchan,0,1-0.1*maxchan)
-                else:
-                    c=(0.1*(maxchan+1),0.1*(maxchan+1),0.1*(maxchan+1))
-                line, = self.ax.plot([],[], '-', label=str(max10adcchans[maxchan]), color=c, linewidth=0.5, alpha=.5)
-            else: # these are the fast ADC channels
-                chan=l%4
-                if num_board>1:
-                    board=l/4
-                    if board%4==0: c=(1-0.2*chan,0,0)
-                    if board%4==1: c=(0,1-0.2*chan,0)
-                    if board%4==2: c=(0,0,1-0.2*chan)
-                    if board%4==3: c=(1-0.2*chan,0,1-0.2*chan)
-                else:
-                    if chan==0: c="red"
-                    if chan==1: c="green"
-                    if chan==2: c="blue"
-                    if chan==3: c="magenta"
-                line, = self.ax.plot([],[], '-', label=self.chtext+str(l), color=c, linewidth=1.0, alpha=.9)
-            self.lines.append(line)
-        #for the logic analyzer
-        for l in np.arange(8):
-            c=(0,0,0)
-            line, = self.ax.plot([],[], '-', label="_logic"+str(l)+"_", color=c, linewidth=1.7, alpha=.65) # the leading and trailing "_"'s mean don't show in the legend
-            line.set_visible(False)
-            self.lines.append(line)
-            if l==0: self.logicline1=len(self.lines)-1 # remember index where this first logic line is
-        #other data to draw
-        if self.fitline1>-1:
-            line, = self.ax.plot([],[], '-', label="fit data", color="purple", linewidth=0.5, alpha=.5)
-            self.lines.append(line)
-            self.fitline1=len(self.lines)-1 # remember index where this line is
-        #other stuff
-        if hasattr(self,'ax'): self.setxaxis(self.ax,self.figure)
-        self.setyaxis();
-        self.ax.grid(True)
-        self.vline=0
-        otherline , = self.ax.plot([self.vline, self.vline], [-2, 2], 'k--', lw=1)#,label='trigger time vert')
-        self.otherlines.append(otherline)
-        self.hline = 0
-        otherline , = self.ax.plot( [-2, 2], [self.hline, self.hline], 'k--', lw=1)#,label='trigger thresh horiz')
-        self.otherlines.append(otherline)
-        self.hline2 = 0
-        otherline , = self.ax.plot( [-2, 2], [self.hline2, self.hline2], 'k--', lw=1, color='blue')#, label='trigger2 thresh horiz')
-        otherline.set_visible(False)
-        self.otherlines.append(otherline)
-        if self.db: print "drew lines in launch",len(self.otherlines)
-        self.figure.canvas.mpl_connect('button_press_event', self.onclick)
-        self.figure.canvas.mpl_connect('key_press_event', self.onpress)
-        self.figure.canvas.mpl_connect('key_release_event', self.onrelease)
-        self.figure.canvas.mpl_connect('pick_event', self.onpick)
-        self.figure.canvas.mpl_connect('scroll_event', self.onscroll)
-        self.leg = self.ax.legend(loc='upper left', bbox_to_anchor=(1.02, 1),
-              ncol=1, borderaxespad=0, fancybox=False, shadow=False, fontsize=10)
-        self.leg.get_frame().set_alpha(0.4)
-        self.figure.subplots_adjust(right=0.76)
-        self.figure.subplots_adjust(left=.10)
-        self.figure.subplots_adjust(top=.95)
-        self.figure.subplots_adjust(bottom=.10)
-        self.figure.canvas.set_window_title('Haasoscope')        
-        self.lined = dict()
-        channum=0
-        for legline, origline in zip(self.leg.get_lines(), self.lines):
-            legline.set_picker(5)  # 5 pts tolerance
-            legline.set_linewidth(2.0)
-            origline.set_picker(5)
-            #save a reference to the plot line and legend line and channel number, accessible from either line or the channel number
-            self.lined[legline] = (origline,legline,channum)
-            self.lined[origline] = (origline,legline,channum)
-            self.lined[channum] = (origline,legline,channum)
-            channum+=1        
-        self.drawtext()
-        self.figure.canvas.mpl_connect('close_event', self.handle_main_close)
-        self.figure.canvas.draw()
-        #plt.show(block=False)
-    
     def on_running(self, theydata, board): #update data for main plot for a board
         if board<0: #hack to tell it the max10adc channel
             chantodraw=-board-1 #draw chan 0 first (when board=-1)
@@ -1156,9 +976,6 @@ class Haasoscope():
             #if self.db: print "ydata[0]=",theydata[0]
             xdatanew=(self.xsampdata-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
             ydatanew=theydata*(3.3/256)#full scale is 3.3V
-            if len(self.lines)>posi: # we may not be drawing, so check!
-                self.lines[posi].set_xdata(xdatanew)
-                self.lines[posi].set_ydata(ydatanew)
             self.xydataslow[chantodraw][0]=xdatanew
             self.xydataslow[chantodraw][1]=ydatanew
         else:
@@ -1170,8 +987,8 @@ class Haasoscope():
                     b=np.unpackbits(a)
                     bl=b[7-l::8] # every 8th bit, starting at 7-l
                     ydatanew = bl*.3 + (l+1)*3.2/8. # scale it and shift it
-                    self.lines[l+self.logicline1].set_xdata(xdatanew)
-                    self.lines[l+self.logicline1].set_ydata(ydatanew)
+                    self.xydatalogic[l][0]=xdatanew
+                    self.xydatalogic[l][1]=ydatanew
             for l in np.arange(num_chan_per_board): #this draws the 4 fast ADC data channels for each board
                 thechan=l+(num_board-board-1)*num_chan_per_board
                 #if self.db: print time.time()-self.oldtime,"drawing adc line",thechan
@@ -1213,9 +1030,6 @@ class Haasoscope():
                 else: # the full data is stored
                     self.xydata[l][0]=xdatanew # for printing out or other analysis
                     self.xydata[l][1]=ydatanew
-                if len(self.lines)>thechan and self.domaindrawing: # we may not be drawing, so check!
-                    self.lines[thechan].set_xdata(xdatanew)
-                    self.lines[thechan].set_ydata(ydatanew)
                 if self.domeasure:
                     self.Vmean[thechan] = np.mean(ydatanew)
                     self.Vrms[thechan] = np.sqrt(np.mean((ydatanew-self.Vmean[thechan])**2))
@@ -1382,25 +1196,6 @@ class Haasoscope():
                 self.ax2d.grid()
                 self.setxaxis(self.ax2d,self.fig2d)
     
-    def redraw(self):
-        if self.domaindrawing: # don't draw if we're going for speed!
-            if dofast:
-                self.ax.draw_artist(self.ax.patch)
-                if self.dogrid:
-                    [self.ax.draw_artist(gl) for gl in self.ax.xaxis.get_gridlines()]
-                    [self.ax.draw_artist(gl) for gl in self.ax.yaxis.get_gridlines()]
-                if self.needtoredrawtext: [self.ax.draw_artist(l) for l in self.texts]
-                self.needtoredrawtext=False
-                [self.ax.draw_artist(l) for l in self.lines]
-                [self.ax.draw_artist(l) for l in self.otherlines]
-                self.figure.canvas.update() #needs Qt4Agg backend
-            else:
-                self.ax.relim()
-                self.ax.autoscale_view()
-                self.figure.canvas.draw()
-        if len(plt.get_fignums())>0:
-            self.figure.canvas.flush_events()
-    
     def handle_main_close(self,evt):
         plt.close('all')
     def handle_xy_close(self,evt):
@@ -1461,11 +1256,7 @@ class Haasoscope():
                 self.fftfreqplot.set_ydata(abs(Y))
                 self.oldmaxfreq = frq[n/2-1]
                 self.oldmaxt = n*uspersample
-                self.fftax.relim()
-                self.fftax.autoscale_view()
-                self.fftfig.canvas.draw()
                 self.fftfig.canvas.set_window_title('FFT of channel '+str(self.fftchan))
-                self.fftfig.canvas.flush_events()
     
     lockindrawn=False
     def plot_lockin(self):
@@ -1508,13 +1299,7 @@ class Haasoscope():
             self.lockinphaseplot.set_xdata(t)
             self.lockinamplplot.set_ydata(self.lockiny1)
             self.lockinphaseplot.set_ydata(self.lockiny2)
-            self.lockinax[0].relim()
-            self.lockinax[1].relim()
-            self.lockinax[0].autoscale_view()
-            self.lockinax[1].autoscale_view()
-            self.lockinfig.canvas.draw()
             self.lockinfig.canvas.set_window_title('Lockin of channel '+str(2)+" wrt "+str(3))
-            self.lockinfig.canvas.flush_events()
 
     def getotherdata(self,board):
         debug3=False
@@ -1802,12 +1587,6 @@ class Haasoscope():
             if self.dolockin and self.dolockinplot: self.plot_lockin()
             self.on_running(self.ydata, bn) #update data in main window
             if self.db: print time.time()-self.oldtime,"done with board",bn
-        if self.domaindrawing and self.domeasure:
-            thetime=time.time()
-            elapsedtime=thetime-self.oldtime
-            if elapsedtime>1.0:
-                self.drawtext() #redraws the measurements
-                self.oldtime=thetime
         if self.minfirmwareversion>=15: #v9.0 and up
             thetime2=time.time()
             elapsedtime=thetime2-self.oldtime2
@@ -1881,7 +1660,8 @@ class Haasoscope():
                 if not self.makeusbsermap(): return False # figure out which usb connection has which board's data
             self.getIDs() # get the unique ID of each board, for calibration etc.
             self.readcalib() # get the calibrated DAC values for each board; if it fails then use defaults
-            self.domeasure=self.domaindrawing #by default we will calculate measurements if we are drawing
+            self.xydata=np.empty([num_chan_per_board*num_board,2,self.num_samples-1],dtype=float)
+            self.xydataslow=np.empty([len(max10adcchans),2,self.nsamp],dtype=float)
             return True
     
     #cleanup
@@ -1899,7 +1679,6 @@ class Haasoscope():
                 self.ser.close()
         except SerialException:
             print "failed to talk to board when cleaning up!"
-        plt.close()
         print "bye bye!"
     
     #For setting up serial and USB connections
