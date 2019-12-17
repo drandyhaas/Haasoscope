@@ -43,6 +43,12 @@ class MainWindow(TemplateBaseClass):
         self.ui.setupUi(self)
         self.ui.plotBtn.clicked.connect(self.dostartstop)
         self.ui.actionTest2.triggered.connect(self.actionTest2)
+        self.ui.verticalSlider.valueChanged.connect(self.triggerlevelchanged)
+        self.ui.horizontalSlider.valueChanged.connect(self.triggerposchanged)
+        self.ui.rollingButton.clicked.connect(self.rolling)
+        self.ui.singleButton.clicked.connect(self.single)
+        self.ui.timeslowButton.clicked.connect(self.timeslow)
+        self.ui.timefastButton.clicked.connect(self.timefast)
         self.ui.statusBar.showMessage("yes")
         self.ui.textBrowser.setText("stopped")
         self.timer = QtCore.QTimer()
@@ -106,8 +112,7 @@ class MainWindow(TemplateBaseClass):
         #other stuff
         d.setxaxis()
         d.setyaxis()
-        #self.ui.plot.setRange(QtCore.QRectF(0, -10, 5000, 20)) 
-        #self.ui.plot.setLabel('bottom', 'Index', units='B')
+        self.timechanged()
         self.ui.plot.showGrid(x=True, y=True)
         self.vline=0.0
         pen = pg.mkPen(color="k",width=1.0,style=QtCore.Qt.DashLine)
@@ -138,8 +143,6 @@ class MainWindow(TemplateBaseClass):
         plt.draw()        
         
     def onclick(self,event):
-            if event.button==1: #left click                
-                pass
             if event.button==2: #middle click
                 if self.keyShift:# if shift is held, turn off threshold2
                     self.settriggerthresh2(0)
@@ -149,28 +152,56 @@ class MainWindow(TemplateBaseClass):
                     self.settriggerthresh2(int(  self.hline2/(self.yscale/256.) + 128  ))                
                     self.otherlines[2].set_visible(True) # starts off being hidden, so now show it!
                     self.otherlines[2].set_data( [self.min_x, self.max_x], [self.hline2, self.hline2] )
-            if event.button==3: #right click
-                self.settriggerpoint(int(  (event.xdata / (1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling)) +self.num_samples/2  )) # downsample
-                self.settriggerthresh(int(  event.ydata/(self.yscale/256.) + 128  ))
-                self.vline = event.xdata
-                self.otherlines[0].set_visible(True)
-                self.otherlines[0].set_data( [self.vline, self.vline], [self.min_y, self.max_y] ) # vertical line showing trigger time
-                self.hline = event.ydata
-                self.otherlines[1].set_data( [self.min_x, self.max_x], [self.hline, self.hline] ) # horizontal line showing trigger threshold
-            print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' % ('double' if event.dblclick else 'single', event.button, event.x, event.y, event.xdata, event.ydata))
         """
         
     def dostartstop(self):        
-        if self.timer.isActive():
-            self.timer.stop()
-        else:
+        if d.paused:
             self.timer.start(0)
+            d.paused=False
+            self.ui.plotBtn.setChecked(True)            
+        else:
+            self.timer.stop()
+            d.paused=True
+            self.ui.plotBtn.setChecked(False)
         self.ui.textBrowser.setText("going on channel "+str(self.ui.spinBox.value()))
+        
+    def triggerlevelchanged(self,value):
+        d.settriggerthresh(value)
+        self.hline = (float(  value-128  )*d.yscale/256 )
+        self.otherlines[1].setData( [d.min_x, d.max_x], [self.hline, self.hline] ) # horizontal line showing trigger threshold
+    
+    def triggerposchanged(self,value):
+        if value>253 or value<3: return
+        d.settriggerpoint(int(value*d.num_samples/256.))
+        self.vline = float(  2*(value-128)/256. *d.xscale /d.xscaling)
+        self.otherlines[0].setData( [self.vline, self.vline], [d.min_y, d.max_y] ) # vertical line showing trigger time
+    
+    def rolling(self):
+         d.rolltrigger = not d.rolltrigger
+         d.tellrolltrig(d.rolltrigger)
+         self.ui.rollingButton.setChecked(d.rolltrigger)
+         if d.rolltrigger: self.ui.rollingButton.setText("Rolling/Auto")
+         else: self.ui.rollingButton.setText("Normal")
+         app.processEvents()
+        
+    def single(self):
+        d.getone = not d.getone
+        self.ui.singleButton.setChecked(d.getone)
+        
+    def timefast(self):
+        d.telldownsample(d.downsample-1)
+        self.timechanged()
+    
+    def timeslow(self):
+        d.telldownsample(d.downsample+1)
+        self.timechanged()
+    
+    def timechanged(self):
+        self.ui.plot.setRange(xRange=(d.min_x, d.max_x), yRange=(d.min_y, d.max_y)) 
+        self.ui.plot.setLabel('bottom', d.xlabel)
         
     def updateplot(self):
         self.mainloop()
-        #channel=self.ui.spinBox.value()
-        #self.curve.setData(d.xydata[channel][0],d.xydata[channel][1])
         
         for l in range(self.nlines):
             self.lines[l].setData(d.xydata[l][0],d.xydata[l][1])
@@ -220,7 +251,7 @@ class MainWindow(TemplateBaseClass):
                 if lastrate>40: self.tinterval=500.
                 else: self.tinterval=100.
                 self.oldnevents=self.nevents
-            if d.getone and not d.timedout: d.paused=True
+            if d.getone and not d.timedout: self.dostartstop()
                         
             #if elapsedtime>1.0:
             #   self.drawtext() #redraws the measurements

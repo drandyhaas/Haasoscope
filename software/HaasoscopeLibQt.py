@@ -57,7 +57,7 @@ class Haasoscope():
         self.ydata = []
         ysampdatat=np.zeros(self.nsamp*len(max10adcchans)); self.ysampdata=np.reshape(ysampdatat,(len(max10adcchans),self.nsamp))
         self.xsampdata=np.arange(self.nsamp)
-        self.paused=False
+        self.paused=True
         self.getone=False
         self.rolltrigger=True #roll the trigger
         self.average=False #will average every 2 samples
@@ -137,11 +137,10 @@ class Haasoscope():
     def settriggerpoint(self,tp):
         #tell it the trigger point
         self.ser.write(chr(121))
-        offset=5 #small offset due to drawing and delay
-        myb=bytearray.fromhex('{:04x}'.format(tp+offset))
+        myb=bytearray.fromhex('{:04x}'.format(tp))
         self.ser.write(chr(myb[0]))
         self.ser.write(chr(myb[1]))
-        print "Trigger point is",256*myb[0]+1*myb[1]-offset
+        #print "Trigger point is",256*myb[0]+1*myb[1]
 
     def tellsamplessend(self):
         #tell it the number of samples to send
@@ -227,7 +226,7 @@ class Haasoscope():
         self.ser.write(chr(127))
         tp=255-tp # need to flip it due to op amp
         self.ser.write(chr(tp))
-        print "Trigger threshold is",tp
+        #print "Trigger threshold is",tp
         
     def settriggerthresh2(self,tp):
         #tell it the high trigger threshold (must be below this to trigger)
@@ -579,22 +578,23 @@ class Haasoscope():
         return True # successful (parameter within OK range)
 
     def setxaxis(self):
-        xscale =  self.num_samples/2.0*(1000.0*pow(2,self.downsample)/self.clkrate)
-        if xscale<1e3: 
+        self.xscale =  self.num_samples/2.0*(1000.0*pow(2,self.downsample)/self.clkrate)
+        if self.xscale<1e3: 
             self.xlabel="Time (ns)"
-            self.min_x = -xscale
-            self.max_x = xscale
+            self.min_x = -self.xscale
+            self.max_x = self.xscale
             self.xscaling=1.e0
-        elif xscale<1e6: 
+        elif self.xscale<1e6: 
             self.xlabel="Time (us)"
-            self.min_x = -xscale/1e3
-            self.max_x = xscale/1e3
+            self.min_x = -self.xscale/1.e3
+            self.max_x = self.xscale/1.e3
             self.xscaling=1.e3
         else:
             self.xlabel="Time (ms)"
-            self.min_x = -xscale/1e6
-            self.max_x = xscale/1e6
+            self.min_x = -self.xscale/1.e6
+            self.max_x = self.xscale/1.e6
             self.xscaling=1.e6
+        print "xscaling",self.xscaling
     
     def setyaxis(self):
         #self.ax.set_ylim(self.min_y, self.max_y)
@@ -870,9 +870,6 @@ class Haasoscope():
                 else:
                     self.leveltemp=self.leveltemp+event.key
                     print "leveltemp",self.leveltemp; return
-            elif event.key=="r": self.rolltrigger=not self.rolltrigger; self.tellrolltrig(self.rolltrigger);return
-            elif event.key=="p": self.paused = not self.paused;print "paused",self.paused; return
-            elif event.key=="P": self.getone = not self.getone;print "get one",self.getone; return
             elif event.key=="a": self.average = not self.average;print "average",self.average; return
             elif event.key=="h": self.togglehighres(); return
             elif event.key=="e": self.toggleuseexttrig(); return
@@ -910,10 +907,6 @@ class Haasoscope():
                     else: print "oversampling settings must match between channels for XY plotting"
                 self.keyShift=False
             elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; self.keyShift=False; return;
-            elif event.key=="right": self.telldownsample(self.downsample+1); return
-            elif event.key=="left": self.telldownsample(self.downsample-1); return
-            elif event.key=="shift+right": self.telldownsample(self.downsample+5); return
-            elif event.key=="shift+left": self.telldownsample(self.downsample-5); return
             elif event.key=="up": self.adjustvertical(True); return
             elif event.key=="down": self.adjustvertical(False); return
             elif event.key=="shift+up": self.adjustvertical(True); return
