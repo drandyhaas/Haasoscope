@@ -594,7 +594,7 @@ class Haasoscope():
             self.min_x = -self.xscale/1.e6
             self.max_x = self.xscale/1.e6
             self.xscaling=1.e6
-        print "xscaling",self.xscaling
+        #print "xscaling",self.xscaling
     
     def setyaxis(self):
         #self.ax.set_ylim(self.min_y, self.max_y)
@@ -878,7 +878,6 @@ class Haasoscope():
             elif event.key=="O": self.oversamp(self.selectedchannel); self.prepareforsamplechange(); return
             elif event.key=="ctrl+o": self.overoversamp(); self.prepareforsamplechange(); return
             elif event.key==">": self.refsinchan=self.selectedchannel; self.oldchanphase=-1.; self.reffreq=0;
-            elif event.key=="t": self.fallingedge=not self.fallingedge;self.settriggertype(self.fallingedge);print "trigger falling edge toggled to",self.fallingedge; return
             elif event.key=="g": self.dogrid=not self.dogrid;print "dogrid toggled",self.dogrid; self.ax.grid(self.dogrid); return
             elif event.key=="ctrl+g": self.ax.xaxis.set_major_locator(plt.MultipleLocator( (self.max_x*1000/1024-self.min_x*1000/1024)/8./5. )); return
             elif event.key=="G": self.ax.yaxis.set_major_locator(plt.MultipleLocator(0.2)); return

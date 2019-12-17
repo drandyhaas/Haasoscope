@@ -49,6 +49,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.singleButton.clicked.connect(self.single)
         self.ui.timeslowButton.clicked.connect(self.timeslow)
         self.ui.timefastButton.clicked.connect(self.timefast)
+        self.ui.risingfallingButton.clicked.connect(self.risingfalling)
         self.ui.statusBar.showMessage("yes")
         self.ui.textBrowser.setText("stopped")
         self.timer = QtCore.QTimer()
@@ -200,12 +201,16 @@ class MainWindow(TemplateBaseClass):
         self.ui.plot.setRange(xRange=(d.min_x, d.max_x), yRange=(d.min_y, d.max_y)) 
         self.ui.plot.setLabel('bottom', d.xlabel)
         
-    def updateplot(self):
-        self.mainloop()
+    def risingfalling(self):
+        d.fallingedge=not d.fallingedge
+        d.settriggertype(d.fallingedge)
+        if d.fallingedge: self.ui.risingfallingButton.setText("Falling edge")
+        else: self.ui.risingfallingButton.setText("Rising edge")
         
+    def updateplot(self):
+        self.mainloop()        
         for l in range(self.nlines):
             self.lines[l].setData(d.xydata[l][0],d.xydata[l][1])
-        
         now = time.time()
         dt = now - self.lastTime
         self.lastTime = now
@@ -215,7 +220,6 @@ class MainWindow(TemplateBaseClass):
             s = np.clip(dt*3., 0, 1)
             self.fps = self.fps * (1-s) + (1.0/dt) * s
         self.ui.plot.setTitle('%0.2f fps' % self.fps)
-        
         app.processEvents()
     
     nevents=0; oldnevents=0; tinterval=100.; oldtime=time.time()
