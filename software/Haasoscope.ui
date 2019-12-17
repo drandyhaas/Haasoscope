@@ -6,64 +6,75 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>804</width>
-    <height>606</height>
+    <width>899</width>
+    <height>832</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="PlotWidget" name="plot">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>50</y>
-      <width>341</width>
-      <height>511</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QTextBrowser" name="textBrowser">
-    <property name="geometry">
-     <rect>
-      <x>510</x>
-      <y>350</y>
-      <width>271</width>
-      <height>181</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="plotBtn">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>20</y>
-      <width>640</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Plot!</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="spinBox">
-    <property name="geometry">
-     <rect>
-      <x>510</x>
-      <y>90</y>
-      <width>81</width>
-      <height>21</height>
-     </rect>
-    </property>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="PlotWidget" name="plot"/>
+    </item>
+    <item row="0" column="1">
+     <widget class="QFrame" name="frame">
+      <property name="minimumSize">
+       <size>
+        <width>200</width>
+        <height>300</height>
+       </size>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QSpinBox" name="spinBox">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>70</y>
+         <width>81</width>
+         <height>21</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="plotBtn">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>20</y>
+         <width>161</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Start/stop</string>
+       </property>
+      </widget>
+      <widget class="QTextBrowser" name="textBrowser">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>410</y>
+         <width>161</width>
+         <height>61</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>804</width>
+     <width>899</width>
      <height>21</height>
     </rect>
    </property>

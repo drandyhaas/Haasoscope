@@ -50,8 +50,6 @@ class Haasoscope():
         self.serport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
         self.usbport=[] # the names of the USB2 ports on your computer, connected to Haasoscope, leave blank to detect automatically!
         self.usbser=[]
-        self.lines = []
-        self.otherlines = []
         self.texts = []
         self.xdata=np.arange(self.num_samples)
         self.xdata2=np.arange(self.num_samples*2) # for oversampling
@@ -181,12 +179,12 @@ class Haasoscope():
         self.ser.write(chr(145))
         if self.dologicanalyzer: 
             self.ser.write(chr(5))
-            if len(self.lines)>=8+self.logicline1: # check that we're drawing
-                for l in np.arange(8): self.lines[l+self.logicline1].set_visible(True)
+            #if len(self.lines)>=8+self.logicline1: # check that we're drawing
+            #    for l in np.arange(8): self.lines[l+self.logicline1].set_visible(True)
         else:
             self.ser.write(chr(4))
-            if len(self.lines)>=8+self.logicline1: # check that we're drawing
-                for l in np.arange(8): self.lines[l+self.logicline1].set_visible(False)
+            #if len(self.lines)>=8+self.logicline1: # check that we're drawing
+            #    for l in np.arange(8): self.lines[l+self.logicline1].set_visible(False)
         print "dologicanalyzer is now",self.dologicanalyzer
     
     minfirmwareversion=255
@@ -213,7 +211,7 @@ class Haasoscope():
             if ds>8:
                 ds=8 # otherwise we timeout upon readout
                 if self.num_samples>10: self.settriggerpoint(self.num_samples-10) # set trigger way to the right, so we can capture full event - NOTE - screws up mini-screen!
-                self.otherlines[0].set_visible(False) # don't draw trigger time position line, to indicate it's not really set anymore
+                #self.otherlines[0].set_visible(False) # don't draw trigger time position line, to indicate it's not really set anymore
         self.ser.write(chr(125))
         self.ser.write(chr(ds))
         if self.db: print "clockbitstowait is",ds
@@ -577,30 +575,30 @@ class Haasoscope():
             else:
                 self.telllockinnumtoshift(0) # tells the FPGA to not send lockin info    
             self.telltickstowait()
-        if hasattr(self,'ax'): self.setxaxis(self.ax,self.figure)
+        self.setxaxis()
         return True # successful (parameter within OK range)
 
-    def setxaxis(self,ax,fig):
+    def setxaxis(self):
         xscale =  self.num_samples/2.0*(1000.0*pow(2,self.downsample)/self.clkrate)
         if xscale<1e3: 
-            ax.set_xlabel("Time (ns)")
+            self.xlabel="Time (ns)"
             self.min_x = -xscale
             self.max_x = xscale
             self.xscaling=1.e0
         elif xscale<1e6: 
-            ax.set_xlabel("Time (us)")
+            self.xlabel="Time (us)"
             self.min_x = -xscale/1e3
             self.max_x = xscale/1e3
             self.xscaling=1.e3
         else:
-            ax.set_xlabel("Time (ms)")
+            self.xlabel="Time (ms)"
             self.min_x = -xscale/1e6
             self.max_x = xscale/1e6
             self.xscaling=1.e6
     
     def setyaxis(self):
-        self.ax.set_ylim(self.min_y, self.max_y)
-        self.ax.set_ylabel("Volts") #("ADC value")
+        #self.ax.set_ylim(self.min_y, self.max_y)
+        self.ylabel="Volts" #("ADC value")
     
     def chantext(self):
         text ="Channel: "+str(self.selectedchannel)
