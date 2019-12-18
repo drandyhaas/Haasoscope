@@ -68,6 +68,9 @@ class MainWindow(TemplateBaseClass):
         self.ui.acdcCheck.stateChanged.connect(self.acdc)
         self.ui.gainCheck.stateChanged.connect(self.gain)
         self.ui.supergainCheck.stateChanged.connect(self.supergain)
+        self.ui.actionRead_from_file.triggered.connect(self.actionRead_from_file)
+        self.ui.actionStore_to_file.triggered.connect(self.actionStore_to_file)
+        self.ui.actionDo_autocalibration.triggered.connect(self.actionDo_autocalibration)
         
         self.ui.statusBar.showMessage("yes")
         self.ui.textBrowser.setText("stopped")
@@ -155,7 +158,17 @@ class MainWindow(TemplateBaseClass):
             d.chanlevel[d.selectedchannel] = self.ui.dacBox.value()
             d.rememberdacvalue()
             d.setdacvalue()
-         
+    
+    def actionRead_from_file(self):
+        d.readcalib()
+        
+    def actionStore_to_file(self):
+        d.storecalib()
+        
+    def actionDo_autocalibration(self):
+        print "starting autocalibration"
+        d.autocalibchannel=0
+        
     def exttrig(self):
          d.toggleuseexttrig()
          

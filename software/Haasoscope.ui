@@ -753,7 +753,16 @@
     </property>
     <addaction name="actionTest"/>
    </widget>
+   <widget class="QMenu" name="menuCalibration">
+    <property name="title">
+     <string>Calibration</string>
+    </property>
+    <addaction name="actionRead_from_file"/>
+    <addaction name="actionStore_to_file"/>
+    <addaction name="actionDo_autocalibration"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuCalibration"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="autoFillBackground">
@@ -763,6 +772,21 @@
   <action name="actionTest">
    <property name="text">
     <string>Test</string>
+   </property>
+  </action>
+  <action name="actionRead_from_file">
+   <property name="text">
+    <string>Read from file</string>
+   </property>
+  </action>
+  <action name="actionStore_to_file">
+   <property name="text">
+    <string>Store to file</string>
+   </property>
+  </action>
+  <action name="actionDo_autocalibration">
+   <property name="text">
+    <string>Do autocalibration</string>
    </property>
   </action>
  </widget>

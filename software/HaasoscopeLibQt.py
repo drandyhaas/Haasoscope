@@ -816,13 +816,9 @@ class Haasoscope():
             
             elif event.key=="D": self.decode(); return
             
-            elif event.key=="I": self.testi2c(); return
-            elif event.key=="c": self.readcalib(); return
-            elif event.key=="C": self.storecalib(); return
-            elif event.key=="|": print "starting autocalibration";self.autocalibchannel=0;
-            
             elif event.key=="S": self.keySPI=True;self.SPIval=0;print "now enter SPI code, then enter";return
             elif event.key=="i": self.keyi2c=True;self.i2ctemp="";print "now enter byte in hex for i2c, then enter:";return
+            elif event.key=="I": self.testi2c(); return
             
             elif event.key=="ctrl+r": 
                 if self.ydatarefchan<0: self.ydatarefchan=self.selectedchannel
