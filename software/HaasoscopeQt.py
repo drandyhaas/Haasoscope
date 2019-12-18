@@ -15,7 +15,7 @@ reload(HaasoscopeLibQt) # in case you changed it, and to always load some defaul
 #Some pre-options
 #HaasoscopeLibQt.num_board = 2 # Number of Haasoscope boards to read out (default is 1)
 #HaasoscopeLibQt.ram_width = 12 # width in bits of sample ram to use (e.g. 9==512 samples (default), 12(max)==4096 samples) (min is 2)
-#HaasoscopeLibQt.max10adcchans = [(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp # default is none, []
+#HaasoscopeLibQt.max10adcchans =  [(0,110),(0,118)] #[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp # default is none, []
 
 d = HaasoscopeLibQt.Haasoscope()
 d.construct()
@@ -41,130 +41,188 @@ class MainWindow(TemplateBaseClass):
         # Create the main window
         self.ui = WindowTemplate()
         self.ui.setupUi(self)
-        self.ui.plotBtn.clicked.connect(self.dostartstop)
-        self.ui.actionTest2.triggered.connect(self.actionTest2)
+        self.ui.runButton.clicked.connect(self.dostartstop)
+        self.ui.actionTest.triggered.connect(self.actionTest)
         self.ui.verticalSlider.valueChanged.connect(self.triggerlevelchanged)
         self.ui.horizontalSlider.valueChanged.connect(self.triggerposchanged)
         self.ui.rollingButton.clicked.connect(self.rolling)
         self.ui.singleButton.clicked.connect(self.single)
         self.ui.timeslowButton.clicked.connect(self.timeslow)
         self.ui.timefastButton.clicked.connect(self.timefast)
-        self.ui.risingfallingButton.clicked.connect(self.risingfalling)
+        self.ui.risingedgeCheck.stateChanged.connect(self.risingfalling)
+        self.ui.exttrigCheck.stateChanged.connect(self.exttrig)
+        self.ui.totBox.valueChanged.connect(self.tot)
+        self.ui.autorearmCheck.stateChanged.connect(self.autorearm)
+        self.ui.avgCheck.stateChanged.connect(self.avg)
+        self.ui.logicCheck.stateChanged.connect(self.logic)
+        self.ui.highresCheck.stateChanged.connect(self.highres)
+        self.ui.usb2Check.stateChanged.connect(self.usb2)
+        self.ui.gridCheck.stateChanged.connect(self.grid)
+        self.ui.markerCheck.stateChanged.connect(self.marker)
+        self.ui.resampBox.valueChanged.connect(self.resamp)
+        self.ui.upposButton.clicked.connect(self.uppos)
+        self.ui.downposButton.clicked.connect(self.downpos)
+        self.ui.chanBox.valueChanged.connect(self.selectchannel)
+        self.ui.dacBox.valueChanged.connect(self.setlevel)
+        self.ui.minidisplayCheck.stateChanged.connect(self.minidisplay)
+        self.ui.acdcCheck.stateChanged.connect(self.acdc)
+        self.ui.gainCheck.stateChanged.connect(self.gain)
+        self.ui.supergainCheck.stateChanged.connect(self.supergain)
+        
         self.ui.statusBar.showMessage("yes")
         self.ui.textBrowser.setText("stopped")
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.updateplot)
-        self.show()
+        
         self.db=True
         self.lastTime = time.time()
         self.fps = None
         self.lines = []
         self.otherlines = []
+        
         self.savetofile=False # save scope data to file
-        if self.savetofile: self.outf = open("Haasoscope_out_"+time.strftime("%Y%m%d-%H%M%S")+".csv","wt")
-            
-    def launch(self):        
-        self.ui.plot.setBackground('w')
-        self.nlines = HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board+len(HaasoscopeLibQt.max10adcchans)
-        if self.db: print "nlines=",self.nlines
-        for l in np.arange(self.nlines):
-            maxchan=l-HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board
-            c=(0,0,0)
-            if maxchan>=0: # these are the slow ADC channels
-                if HaasoscopeLibQt.num_board>1:
-                    board = int(HaasoscopeLibQt.num_board-1-HaasoscopeLibQt.max10adcchans[maxchan][0])
-                    if board%4==0: c=(1-0.1*maxchan,0,0)
-                    if board%4==1: c=(0,1-0.1*maxchan,0)
-                    if board%4==2: c=(0,0,1-0.1*maxchan)
-                    if board%4==3: c=(1-0.1*maxchan,0,1-0.1*maxchan)
-                else:
-                    c=(0.1*(maxchan+1),0.1*(maxchan+1),0.1*(maxchan+1))
-                pen = pg.mkPen(color=c) # add linewidth=0.5, alpha=.5
-                line = self.ui.plot.plot(pen=pen,name="slowadc_"+str(HaasoscopeLibQt.max10adcchans[maxchan]))
-            else: # these are the fast ADC channels
-                chan=l%4
-                if HaasoscopeLibQt.num_board>1:
-                    board=l/4
-                    if board%4==0: c=(1-0.2*chan,0,0)
-                    if board%4==1: c=(0,1-0.2*chan,0)
-                    if board%4==2: c=(0,0,1-0.2*chan)
-                    if board%4==3: c=(1-0.2*chan,0,1-0.2*chan)
-                else:
-                    if chan==0: c="r"
-                    if chan==1: c="g"
-                    if chan==2: c="b"
-                    if chan==3: c="m"
-                pen = pg.mkPen(color=c) # add linewidth=1.0, alpha=.9
-                line = self.ui.plot.plot(pen=pen,name=d.chtext+str(l))
-            self.lines.append(line)
-        #for the logic analyzer
-        for l in np.arange(8):
-            c=(0,0,0)
-            pen = pg.mkPen(color=c) # add linewidth=1.7, alpha=.65
-            line = self.ui.plot.plot(pen=None,name="logic_"+str(l)) # not drawn by default
-            self.lines.append(line)
-            if l==0: d.logicline1=len(self.lines)-1 # remember index where this first logic line is
-        #other data to draw
-        if d.fitline1>-1:
-            pen = pg.mkPen(color="purple") # add linewidth=0.5, alpha=.5
-            line = self.ui.plot.plot(pen=None,name="fitline1") # not drawn by default
-            self.lines.append(line)
-            d.fitline1=len(self.lines)-1 # remember index where this line is
-        #other stuff
-        d.setxaxis()
-        d.setyaxis()
-        self.timechanged()
-        self.ui.plot.showGrid(x=True, y=True)
-        self.vline=0.0
-        pen = pg.mkPen(color="k",width=1.0,style=QtCore.Qt.DashLine)
-        line = self.ui.plot.plot([self.vline, self.vline], [-2.0, 2.0], pen=pen,name="trigger time vert")
-        self.otherlines.append(line)
-        self.hline = 0.0
-        pen = pg.mkPen(color="k",width=1.0,style=QtCore.Qt.DashLine)
-        line = self.ui.plot.plot( [-2.0, 2.0], [self.hline, self.hline], pen=pen,name="trigger thresh horiz")
-        self.otherlines.append(line)
-        self.hline2 = 0.0
-        pen = pg.mkPen(color="b",width=1.0,style=QtCore.Qt.DashLine)
-        line = self.ui.plot.plot( [-2.0, 2.0], [self.hline2, self.hline2], pen=None,name="trigger thresh2 horiz") # not drawn by default
-        self.otherlines.append(line)
-        if self.db: print "drew",len(self.otherlines),"lines in launch"
+        if self.savetofile:
+            self.outf = open("Haasoscope_out_"+time.strftime("%Y%m%d-%H%M%S")+".csv","wt")
         
-        """
-    def drawtext(self):
-        height = 0.25 # height up from bottom to start drawing text
-        xpos = 1.02 # how far over to the right to draw
-        if self.firstdrawtext:
-            self.texts.append(self.ax.text(xpos, height, self.chantext(),horizontalalignment='left', verticalalignment='top',transform=self.ax.transAxes))
-            self.firstdrawtext=False
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.updateplot)
+        
+        self.selectchannel()
+        self.show()
+
+    def selectchannel(self):
+        d.selectedchannel=self.ui.chanBox.value()
+        self.ui.textBrowser.setText("going on channel "+str(d.selectedchannel))
+        self.ui.dacBox.setValue(d.chanlevel[d.selectedchannel])
+        if d.chanforscreen == d.selectedchannel:   self.ui.minidisplayCheck.setCheckState(QtCore.Qt.Checked)
+        else:   self.ui.minidisplayCheck.setCheckState(QtCore.Qt.Unchecked)
+        if d.acdc[d.selectedchannel]:   self.ui.acdcCheck.setCheckState(QtCore.Qt.Unchecked)
+        else:   self.ui.acdcCheck.setCheckState(QtCore.Qt.Checked)
+        if d.gain[d.selectedchannel]:   self.ui.gainCheck.setCheckState(QtCore.Qt.Unchecked)
+        else:   self.ui.gainCheck.setCheckState(QtCore.Qt.Checked)
+        if d.supergain[d.selectedchannel]:   self.ui.supergainCheck.setCheckState(QtCore.Qt.Unchecked)
+        else:   self.ui.supergainCheck.setCheckState(QtCore.Qt.Checked)
+        if d.havereadswitchdata: self.ui.supergainCheck.setEnabled(False)
+        chanonboard = d.selectedchannel%HaasoscopeLibQt.num_chan_per_board
+        theboard = HaasoscopeLibQt.num_board-1-d.selectedchannel/HaasoscopeLibQt.num_chan_per_board
+        if d.havereadswitchdata:
+            if d.testBit(d.switchpos[theboard],chanonboard):   self.ui.ohmCheck.setCheckState(QtCore.Qt.Unchecked)
+            else:   self.ui.ohmCheck.setCheckState(QtCore.Qt.Checked)
+    
+    def acdc(self):
+        if self.ui.acdcCheck.checkState() == QtCore.Qt.Checked: #ac coupled
+            if d.acdc[d.selectedchannel]:
+                d.setacdc()
+        if self.ui.acdcCheck.checkState() == QtCore.Qt.Unchecked: #dc coupled
+            if not d.acdc[d.selectedchannel]:
+                d.setacdc()
+    
+    def gain(self):
+        if self.ui.gainCheck.checkState() == QtCore.Qt.Checked: #x10
+            if d.gain[d.selectedchannel]:
+                d.tellswitchgain(d.selectedchannel)
+        if self.ui.gainCheck.checkState() == QtCore.Qt.Unchecked: #x1
+            if not d.gain[d.selectedchannel]:
+                d.tellswitchgain(d.selectedchannel)
+ 
+    def supergain(self):
+        if self.ui.supergainCheck.checkState() == QtCore.Qt.Checked: #x100
+            if d.supergain[d.selectedchannel]:
+                d.togglesupergainchan(d.selectedchannel)
+        if self.ui.supergainCheck.checkState() == QtCore.Qt.Unchecked: #x1
+            if not d.supergain[d.selectedchannel]:
+                d.togglesupergainchan(d.selectedchannel)
+                   
+    def minidisplay(self):
+        if self.ui.minidisplayCheck.checkState()==QtCore.Qt.Checked:
+            if d.chanforscreen != d.selectedchannel:
+                d.tellminidisplaychan(d.selectedchannel)
+    
+    def posamount(self):
+        amount=10
+        modifiers = app.keyboardModifiers()
+        if modifiers == QtCore.Qt.ShiftModifier:
+            amount*=5
+        elif modifiers == QtCore.Qt.ControlModifier:
+            amount/=10
+        return amount
+    def uppos(self):
+         d.adjustvertical(True,self.posamount())
+         self.ui.dacBox.setValue(d.chanlevel[d.selectedchannel])
+    def downpos(self):
+         d.adjustvertical(False,self.posamount())
+         self.ui.dacBox.setValue(d.chanlevel[d.selectedchannel])
+    def setlevel(self):
+        if d.chanlevel[d.selectedchannel] != self.ui.dacBox.value():
+            d.chanlevel[d.selectedchannel] = self.ui.dacBox.value()
+            d.rememberdacvalue()
+            d.setdacvalue()
+         
+    def exttrig(self):
+         d.toggleuseexttrig()
+         
+    def tot(self):
+        d.triggertimethresh = self.ui.totBox.value()
+        d.settriggertime(d.triggertimethresh)
+        
+    def autorearm(self):
+        d.toggleautorearm()
+        
+    def avg(self):
+        d.average = not d.average
+        print "average",d.average
+        
+    def logic(self):
+        d.togglelogicanalyzer()
+        if d.dologicanalyzer:
+             for l in np.arange(8):
+                c=(0,0,0)
+                pen = pg.mkPen(color=c) # add linewidth=1.7, alpha=.65
+                self.lines[d.logicline1+l].setPen(pen)
         else:
-            self.texts[0].remove()
-            self.texts[0]=(self.ax.text(xpos, height, self.chantext(),horizontalalignment='left', verticalalignment='top',transform=self.ax.transAxes))
-            #for txt in self.ax.texts: print txt # debugging
-        self.needtoredrawtext=True
-        plt.draw()        
+            for l in np.arange(8):
+                self.lines[d.logicline1+l].setPen(None)
         
-    def onclick(self,event):
-            if event.button==2: #middle click
-                if self.keyShift:# if shift is held, turn off threshold2
-                    self.settriggerthresh2(0)
-                    self.otherlines[2].set_visible(False)
-                else:
-                    self.hline2 = event.ydata
-                    self.settriggerthresh2(int(  self.hline2/(self.yscale/256.) + 128  ))                
-                    self.otherlines[2].set_visible(True) # starts off being hidden, so now show it!
-                    self.otherlines[2].set_data( [self.min_x, self.max_x], [self.hline2, self.hline2] )
-        """
+    def highres(self):
+        d.togglehighres()
         
+    def usb2(self):
+        d.toggledousb()
+        
+    def grid(self):
+        if self.ui.gridCheck.isChecked():
+            self.ui.plot.showGrid(x=True, y=True)
+        else:
+            self.ui.plot.showGrid(x=False, y=False)
+            
+    def marker(self):
+         if self.ui.markerCheck.isChecked():
+            for l in range(self.nlines):
+                self.lines[l].setSymbol("o")
+         else:
+            for l in range(self.nlines):
+                self.lines[l].setSymbol(None)
+                
+    def resamp(self):
+        d.sincresample = self.ui.resampBox.value()
+        if d.sincresample>0: d.xydata=np.empty([HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board,2,d.sincresample*(d.num_samples-1)],dtype=float)
+        else: d.xydata=np.empty([HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board,2,1*(d.num_samples-1)],dtype=float)
+        self.prepareforsamplechange();
+    
     def dostartstop(self):        
         if d.paused:
             self.timer.start(0)
             d.paused=False
-            self.ui.plotBtn.setChecked(True)            
+            self.ui.runButton.setChecked(True)            
         else:
             self.timer.stop()
             d.paused=True
-            self.ui.plotBtn.setChecked(False)
-        self.ui.textBrowser.setText("going on channel "+str(self.ui.spinBox.value()))
+            self.ui.runButton.setChecked(False)
+    
+    def prepareforsamplechange(self): #called when sampling is changed, to reset some things
+        d.recordedchannel=[]
+        #if d.doxyplot:
+          #  plt.close(self.figxy)
+        #if d.recorddata:
+          #  plt.close(self.fig2d)
         
     def triggerlevelchanged(self,value):
         d.settriggerthresh(value)
@@ -202,15 +260,123 @@ class MainWindow(TemplateBaseClass):
         self.ui.plot.setLabel('bottom', d.xlabel)
         
     def risingfalling(self):
-        d.fallingedge=not d.fallingedge
+        d.fallingedge=not self.ui.risingedgeCheck.checkState()
         d.settriggertype(d.fallingedge)
-        if d.fallingedge: self.ui.risingfallingButton.setText("Falling edge")
-        else: self.ui.risingfallingButton.setText("Rising edge")
+        
+    def actionTest(self):
+        print "Handling actionTest"
+        self.ui.statusBar.showMessage("no!")
+        #self.timer.stop()
+        self.updateplot()
+    
+    def launch(self):        
+        self.ui.plot.setBackground('w')
+        self.nlines = HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board+len(HaasoscopeLibQt.max10adcchans)
+        if self.db: print "nlines=",self.nlines
+        for l in np.arange(self.nlines):
+            maxchan=l-HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board
+            c=(0,0,0)
+            if maxchan>=0: # these are the slow ADC channels
+                if HaasoscopeLibQt.num_board>1:
+                    board = int(HaasoscopeLibQt.num_board-1-HaasoscopeLibQt.max10adcchans[maxchan][0])
+                    if board%4==0: c=(1-0.1*maxchan,0,0)
+                    if board%4==1: c=(0,1-0.1*maxchan,0)
+                    if board%4==2: c=(0,0,1-0.1*maxchan)
+                    if board%4==3: c=(1-0.1*maxchan,0,1-0.1*maxchan)
+                else:
+                    c=(0.1*(maxchan+1),0.1*(maxchan+1),0.1*(maxchan+1))
+                pen = pg.mkPen(color=c) # add linewidth=0.5, alpha=.5
+                line = self.ui.plot.plot(pen=pen,name="slowadc_"+str(HaasoscopeLibQt.max10adcchans[maxchan]))
+            else: # these are the fast ADC channels
+                chan=l%4
+                if HaasoscopeLibQt.num_board>1:
+                    board=l/4
+                    if board%4==0: c=(1-0.2*chan,0,0)
+                    if board%4==1: c=(0,1-0.2*chan,0)
+                    if board%4==2: c=(0,0,1-0.2*chan)
+                    if board%4==3: c=(1-0.2*chan,0,1-0.2*chan)
+                else:
+                    if chan==0: c="r"
+                    if chan==1: c="g"
+                    if chan==2: c="b"
+                    if chan==3: c="m"
+                pen = pg.mkPen(color=c) # add linewidth=1.0, alpha=.9
+                line = self.ui.plot.plot(pen=pen,name=d.chtext+str(l))
+            self.lines.append(line)
+        self.ui.chanBox.setMaximum(HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board-1)
+        self.ui.slowchanBox.setMaximum(len(HaasoscopeLibQt.max10adcchans)-1)
+        #for the logic analyzer
+        for l in np.arange(8):
+            line = self.ui.plot.plot(pen=None,name="logic_"+str(l)) # not drawn by default
+            self.lines.append(line)
+            if l==0: d.logicline1=len(self.lines)-1 # remember index where this first logic line is
+        #other data to draw
+        if d.fitline1>-1:
+            pen = pg.mkPen(color="purple") # add linewidth=0.5, alpha=.5
+            line = self.ui.plot.plot(pen=None,name="fitline1") # not drawn by default
+            self.lines.append(line)
+            d.fitline1=len(self.lines)-1 # remember index where this line is
+        #other stuff
+        d.setxaxis()
+        d.setyaxis()
+        self.timechanged()
+        self.ui.plot.showGrid(x=True, y=True)
+        self.vline=0.0
+        pen = pg.mkPen(color="k",width=1.0,style=QtCore.Qt.DashLine)
+        line = self.ui.plot.plot([self.vline, self.vline], [-2.0, 2.0], pen=pen,name="trigger time vert")
+        self.otherlines.append(line)
+        self.hline = 0.0
+        pen = pg.mkPen(color="k",width=1.0,style=QtCore.Qt.DashLine)
+        line = self.ui.plot.plot( [-2.0, 2.0], [self.hline, self.hline], pen=pen,name="trigger thresh horiz")
+        self.otherlines.append(line)
+        self.hline2 = 0.0
+        pen = pg.mkPen(color="b",width=1.0,style=QtCore.Qt.DashLine)
+        line = self.ui.plot.plot( [-2.0, 2.0], [self.hline2, self.hline2], pen=None,name="trigger thresh2 horiz") # not drawn by default
+        self.otherlines.append(line)
+                
+    """
+    def drawtext(self):
+        height = 0.25 # height up from bottom to start drawing text
+        xpos = 1.02 # how far over to the right to draw
+        if self.firstdrawtext:
+            self.texts.append(self.ax.text(xpos, height, self.chantext(),horizontalalignment='left', verticalalignment='top',transform=self.ax.transAxes))
+            self.firstdrawtext=False
+        else:
+            self.texts[0].remove()
+            self.texts[0]=(self.ax.text(xpos, height, self.chantext(),horizontalalignment='left', verticalalignment='top',transform=self.ax.transAxes))
+            #for txt in self.ax.texts: print txt # debugging
+        self.needtoredrawtext=True
+        plt.draw()        
+        
+    def onclick(self,event):
+            if event.button==2: #middle click
+                if self.keyShift:# if shift is held, turn off threshold2
+                    self.settriggerthresh2(0)
+                    self.otherlines[2].set_visible(False)
+                else:
+                    self.hline2 = event.ydata
+                    self.settriggerthresh2(int(  self.hline2/(self.yscale/256.) + 128  ))                
+                    self.otherlines[2].set_visible(True) # starts off being hidden, so now show it!
+                    self.otherlines[2].set_data( [self.min_x, self.max_x], [self.hline2, self.hline2] )
+    """        
+    
+    def closeEvent(self, event):
+        print "Handling closeEvent"
+        self.timer.stop()
+        d.cleanup()
+        if self.savetofile: self.outf.close()
         
     def updateplot(self):
         self.mainloop()        
         for l in range(self.nlines):
-            self.lines[l].setData(d.xydata[l][0],d.xydata[l][1])
+            maxchan=l-HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board
+            if maxchan>=0: # these are the slow ADC channels
+                self.lines[l].setData(d.xydataslow[maxchan][0],d.xydataslow[maxchan][1])
+            else:
+                self.lines[l].setData(d.xydata[l][0],d.xydata[l][1])
+        if d.dologicanalyzer:
+             for l in np.arange(8):
+                 self.lines[d.logicline1+l].setData(d.xydatalogic[l][0],d.xydatalogic[l][1])
         now = time.time()
         dt = now - self.lastTime
         self.lastTime = now
@@ -226,7 +392,9 @@ class MainWindow(TemplateBaseClass):
     def mainloop(self):
         if d.paused: time.sleep(.1)
         else:
-            if not d.getchannels(): return 0
+            status=d.getchannels()
+            if status==2:#we updated the switch data
+                self.selectchannel()
             
             #print d.xydata[0][0][12], d.xydata[0][1][12] # print the x and y data, respectively, for the 13th sample on fast adc channel 0
             
@@ -259,18 +427,6 @@ class MainWindow(TemplateBaseClass):
                         
             #if elapsedtime>1.0:
             #   self.drawtext() #redraws the measurements
-            
-    def closeEvent(self, event):
-        print "Handling closeEvent"
-        self.timer.stop()
-        d.cleanup()
-        if self.savetofile: self.outf.close()
-        
-    def actionTest2(self):
-        print "Handling actionTest2"
-        self.ui.statusBar.showMessage("no!")
-        #self.timer.stop()
-        self.updateplot()
 
 try:    
     win = MainWindow()

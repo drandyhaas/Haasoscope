@@ -32,16 +32,6 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <widget class="QSpinBox" name="spinBox">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>140</y>
-         <width>51</width>
-         <height>21</height>
-        </rect>
-       </property>
-      </widget>
       <widget class="QTextBrowser" name="textBrowser">
        <property name="geometry">
         <rect>
@@ -52,26 +42,13 @@
         </rect>
        </property>
       </widget>
-      <widget class="QLabel" name="label">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>120</y>
-         <width>47</width>
-         <height>13</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Channel</string>
-       </property>
-      </widget>
       <widget class="QFrame" name="frame_2">
        <property name="geometry">
         <rect>
          <x>170</x>
-         <y>10</y>
+         <y>0</y>
          <width>221</width>
-         <height>361</height>
+         <height>371</height>
         </rect>
        </property>
        <property name="frameShape">
@@ -201,7 +178,7 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>70</y>
+          <y>40</y>
           <width>71</width>
           <height>23</height>
          </rect>
@@ -216,31 +193,11 @@
          <bool>true</bool>
         </property>
        </widget>
-       <widget class="QLabel" name="label_5">
+       <widget class="QPushButton" name="runButton">
         <property name="geometry">
          <rect>
           <x>10</x>
           <y>10</y>
-          <width>81</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Trigger</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="plotBtn">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>40</y>
           <width>71</width>
           <height>23</height>
          </rect>
@@ -259,7 +216,7 @@
         <property name="geometry">
          <rect>
           <x>90</x>
-          <y>40</y>
+          <y>10</y>
           <width>71</width>
           <height>23</height>
          </rect>
@@ -297,17 +254,483 @@
          <string>Faster</string>
         </property>
        </widget>
-       <widget class="QPushButton" name="risingfallingButton">
+       <widget class="QGroupBox" name="channelgroupBox_3">
         <property name="geometry">
          <rect>
-          <x>90</x>
-          <y>110</y>
-          <width>71</width>
-          <height>23</height>
+          <x>10</x>
+          <y>130</y>
+          <width>101</width>
+          <height>131</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Trigger options</string>
+        </property>
+        <widget class="QCheckBox" name="risingedgeCheck">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>81</width>
+           <height>17</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Rising edge</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="exttrigCheck">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>40</y>
+           <width>70</width>
+           <height>17</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Ext trig</string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="autorearmCheck">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>60</y>
+           <width>81</width>
+           <height>17</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Auto rearm</string>
+         </property>
+        </widget>
+        <widget class="QSpinBox" name="totBox">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>100</y>
+           <width>51</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="maximum">
+          <number>9999</number>
+         </property>
+         <property name="value">
+          <number>1</number>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_6">
+         <property name="geometry">
+          <rect>
+           <x>70</x>
+           <y>110</y>
+           <width>31</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>ToT</string>
+         </property>
+        </widget>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="channelgroupBox">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>380</y>
+         <width>101</width>
+         <height>131</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Readout options</string>
+       </property>
+       <widget class="QCheckBox" name="avgCheck">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>70</width>
+          <height>17</height>
          </rect>
         </property>
         <property name="text">
-         <string>Falling edge</string>
+         <string>Average</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="highresCheck">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>40</y>
+          <width>70</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Highres</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="usb2Check">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>60</y>
+          <width>70</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>USB2</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="logicCheck">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>80</y>
+          <width>91</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Logic analyzer</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="channelgroupBox_2">
+       <property name="geometry">
+        <rect>
+         <x>290</x>
+         <y>380</y>
+         <width>101</width>
+         <height>131</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>View options</string>
+       </property>
+       <widget class="QCheckBox" name="gridCheck">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>70</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Grid</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="markerCheck">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>40</y>
+          <width>70</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Markers</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="resampBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>100</y>
+          <width>42</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_7">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>110</y>
+          <width>41</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Resamp</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="channelgroupBox_4">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>161</width>
+         <height>371</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Fast ADC channel options</string>
+       </property>
+       <widget class="QCheckBox" name="decodeCheck">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>340</y>
+          <width>91</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Serial decode</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="chanBox">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>20</y>
+          <width>51</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="maximum">
+         <number>255</number>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="allchanCheck">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>20</y>
+          <width>41</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>All</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>47</width>
+          <height>13</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Channel</string>
+        </property>
+       </widget>
+       <widget class="QToolButton" name="upposButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>80</y>
+          <width>31</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="arrowType">
+         <enum>Qt::UpArrow</enum>
+        </property>
+       </widget>
+       <widget class="QToolButton" name="downposButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>110</y>
+          <width>31</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="arrowType">
+         <enum>Qt::DownArrow</enum>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_5">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>60</y>
+          <width>47</width>
+          <height>13</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Position</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="dacBox">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>100</y>
+          <width>71</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="maximum">
+         <number>4096</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_8">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>80</y>
+          <width>101</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Position DAC value</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="minidisplayCheck">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>320</y>
+          <width>121</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Show on mini-screen</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="acdcCheck">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>200</y>
+          <width>121</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>AC coupled</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="supergainCheck">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>180</y>
+          <width>121</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Supergain x100</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="ohmCheck">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>220</y>
+          <width>121</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>50 Ohm</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="gainCheck">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>160</y>
+          <width>121</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Gain x10</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="channelgroupBox_5">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>380</y>
+         <width>161</width>
+         <height>131</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Slow ADC channel options</string>
+       </property>
+       <widget class="QSpinBox" name="slowchanBox">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>20</y>
+          <width>51</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="maximum">
+         <number>255</number>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="allslowchanCheck">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>20</y>
+          <width>41</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>All</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_9">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>47</width>
+          <height>13</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Channel</string>
         </property>
        </widget>
       </widget>
@@ -328,7 +751,7 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionTest2"/>
+    <addaction name="actionTest"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -337,7 +760,7 @@
     <bool>false</bool>
    </property>
   </widget>
-  <action name="actionTest2">
+  <action name="actionTest">
    <property name="text">
     <string>Test</string>
    </property>

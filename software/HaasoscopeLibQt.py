@@ -219,6 +219,7 @@ class Haasoscope():
         #tell it the channel to show on the mini-display
         self.ser.write(chr(126))
         self.ser.write(chr(ch))
+        self.chanforscreen=ch
         print "chanforscreen is",ch
     
     def settriggerthresh(self,tp):
@@ -468,25 +469,10 @@ class Haasoscope():
             else: print "getID asked for",num_other_bytes,"bytes and got",len(rslt),"from board",n
     
     def togglesupergainchan(self,chan):
-        if len(plt.get_fignums())>0: origline,legline,channum = self.lined[chan]
         if self.supergain[chan]==1:
             self.supergain[chan]=0 #x100 super gain on!
-            if len(plt.get_fignums())>0:
-                if self.gain[chan]==1:
-                    origline.set_label(self.chtext+str(chan)+" x100")
-                    self.leg.get_texts()[chan].set_text(self.chtext+str(chan)+" x100")
-                else:
-                    origline.set_label(self.chtext+str(chan)+" x1000")
-                    self.leg.get_texts()[chan].set_text(self.chtext+str(chan)+" x1000")
         else:
             self.supergain[chan]=1 #normal gain
-            if len(plt.get_fignums())>0:
-                if self.gain[chan]==1:
-                    origline.set_label(self.chtext+str(chan))
-                    self.leg.get_texts()[chan].set_text(self.chtext+str(chan))
-                else:
-                    origline.set_label(self.chtext+str(chan)+" x10")
-                    self.leg.get_texts()[chan].set_text(self.chtext+str(chan)+" x10")
         self.selectedchannel=chan
         self.setdacvalue()
         print "Supergain switched for channel",chan,"to",self.supergain[chan]
@@ -495,25 +481,10 @@ class Haasoscope():
         #tell it to switch the gain of a channel
         self.ser.write(chr(134))
         self.writefirmchan(chan)
-        if len(plt.get_fignums())>0: origline,legline,channum = self.lined[chan]
         if self.gain[chan]==1:
             self.gain[chan]=0 # x10 gain on!
-            if len(plt.get_fignums())>0:
-                if self.supergain[chan]==1:
-                    origline.set_label(self.chtext+str(chan)+" x10")
-                    self.leg.get_texts()[chan].set_text(self.chtext+str(chan)+" x10")
-                else:
-                    origline.set_label(self.chtext+str(chan)+" x1000")
-                    self.leg.get_texts()[chan].set_text(self.chtext+str(chan)+" x1000")
         else:
             self.gain[chan]=1 #low gain
-            if len(plt.get_fignums())>0:
-                if self.supergain[chan]==1:
-                    origline.set_label(self.chtext+str(chan))
-                    self.leg.get_texts()[chan].set_text(self.chtext+str(chan))
-                else:
-                    origline.set_label(self.chtext+str(chan)+" x100")
-                    self.leg.get_texts()[chan].set_text(self.chtext+str(chan)+" x100")
         self.selectedchannel=chan # needed for setdacvalue
         self.setdacvalue()
         print "Gain switched for channel",chan,"to",self.gain[chan]
@@ -666,9 +637,7 @@ class Haasoscope():
             if self.db: print "picked a max10 ADC channel"
             self.selectedmax10channel=channum - num_board*num_chan_per_board
     
-    def adjustvertical(self,up,amount=10):
-        if self.keyShift: amount*=5
-        if self.keyControl: amount/=10
+    def adjustvertical(self,up,amount=10):        
         #print "amount is",amount
         if self.gain[self.selectedchannel]: amount*=10 #low gain
         if self.supergain[self.selectedchannel]==0 and self.acdc[self.selectedchannel]: amount=max(1,amount/10) #super gain
@@ -808,14 +777,6 @@ class Haasoscope():
         if event.key.find("ctrl")>-1: self.keyControl=False; return    
         if event.key.find("control")>-1: self.keyControl=False; return
     
-    #called when sampling is changed, to reset some things
-    def prepareforsamplechange(self):
-        self.recordedchannel=[]
-        if self.doxyplot:
-            plt.close(self.figxy)
-        if self.recorddata:
-            plt.close(self.fig2d)
-    
     #will grab the next keys as input
     keyResample=False
     keysettriggertime=False
@@ -827,23 +788,7 @@ class Haasoscope():
     keyControl=False    
     
     def onpress(self,event): # a key was pressed
-            if self.keyResample:
-                try:
-                    self.sincresample=int(event.key)
-                    print "resample now",self.sincresample
-                    if self.sincresample>0: self.xydata=np.empty([num_chan_per_board*num_board,2,self.sincresample*(self.num_samples-1)],dtype=float)
-                    else: self.xydata=np.empty([num_chan_per_board*num_board,2,1*(self.num_samples-1)],dtype=float)
-                    self.prepareforsamplechange();
-                    self.keyResample=False; return
-                except ValueError: pass
-            elif self.keysettriggertime:
-                if event.key=="enter":                    
-                    self.settriggertime(self.triggertimethresh)
-                    self.keysettriggertime=False; return
-                else:
-                    self.triggertimethresh=10*self.triggertimethresh+int(event.key)
-                    print "triggertimethresh",self.triggertimethresh; return            
-            elif self.keySPI:
+            if self.keySPI:
                 if event.key=="enter":                    
                     self.tellSPIsetup(self.SPIval)
                     self.keySPI=False; return
@@ -856,48 +801,34 @@ class Haasoscope():
                     self.keyi2c=False; return
                 else:
                     self.i2ctemp=self.i2ctemp+event.key
-                    print "i2ctemp",self.i2ctemp; return
-            elif self.keyLevel:
-                if event.key=="enter":
-                    self.keyLevel=False
-                    s=self.leveltemp.split(",")
-                    #print "Got",int(s[0]),int(s[1])
-                    self.selectedchannel=int(s[0])
-                    self.chanlevel[self.selectedchannel] = int(s[1])
-                    self.rememberdacvalue()
-                    self.setdacvalue()
-                    return
-                else:
-                    self.leveltemp=self.leveltemp+event.key
-                    print "leveltemp",self.leveltemp; return
-            elif event.key=="a": self.average = not self.average;print "average",self.average; return
-            elif event.key=="h": self.togglehighres(); return
-            elif event.key=="e": self.toggleuseexttrig(); return
-            elif event.key=="A": self.toggleautorearm(); return
-            elif event.key=="U": self.toggledousb(); return
+                    print "i2ctemp",self.i2ctemp; return            
+            
             elif event.key=="O": self.oversamp(self.selectedchannel); self.prepareforsamplechange(); return
-            elif event.key=="ctrl+o": self.overoversamp(); self.prepareforsamplechange(); return
-            elif event.key==">": self.refsinchan=self.selectedchannel; self.oldchanphase=-1.; self.reffreq=0;
-            elif event.key=="g": self.dogrid=not self.dogrid;print "dogrid toggled",self.dogrid; self.ax.grid(self.dogrid); return
-            elif event.key=="ctrl+g": self.ax.xaxis.set_major_locator(plt.MultipleLocator( (self.max_x*1000/1024-self.min_x*1000/1024)/8./5. )); return
-            elif event.key=="G": self.ax.yaxis.set_major_locator(plt.MultipleLocator(0.2)); return
-            elif event.key=="x": self.tellswitchgain(self.selectedchannel)
+            elif event.key=="ctrl+o": self.overoversamp(); self.prepareforsamplechange(); return        
+                
             elif event.key=="ctrl+x": 
                 for chan in range(num_chan_per_board*num_board): self.tellswitchgain(chan)
-            elif event.key=="X": self.togglesupergainchan(self.selectedchannel)
             elif event.key=="ctrl+X": 
                 for chan in range(num_chan_per_board*num_board): self.selectedchannel=chan; self.togglesupergainchan(chan)
-            elif event.key=="F": self.fftchan=self.selectedchannel; self.dofft=True; self.keyShift=False; return
-            elif event.key=="/": self.setacdc();return
+            elif event.key=="tab":
+                for l in self.lines:
+                    self.togglechannel(l)
+            
+            elif event.key=="D": self.decode(); return
+            
             elif event.key=="I": self.testi2c(); return
             elif event.key=="c": self.readcalib(); return
             elif event.key=="C": self.storecalib(); return
-            elif event.key=="D": self.decode(); return
+            elif event.key=="|": print "starting autocalibration";self.autocalibchannel=0;
+            
+            elif event.key=="S": self.keySPI=True;self.SPIval=0;print "now enter SPI code, then enter";return
+            elif event.key=="i": self.keyi2c=True;self.i2ctemp="";print "now enter byte in hex for i2c, then enter:";return
+            
             elif event.key=="ctrl+r": 
                 if self.ydatarefchan<0: self.ydatarefchan=self.selectedchannel
                 else: self.ydatarefchan=-1
-            elif event.key=="|": print "starting autocalibration";self.autocalibchannel=0;
-            elif event.key=="m": self.domarkers(); return
+            elif event.key==">": self.refsinchan=self.selectedchannel; self.oldchanphase=-1.; self.reffreq=0;
+            
             elif event.key=="Y": 
                 if self.selectedchannel+1>=len(self.dooversample): print "can't do XY plot on last channel"
                 else:
@@ -906,30 +837,8 @@ class Haasoscope():
                     else: print "oversampling settings must match between channels for XY plotting"
                 self.keyShift=False
             elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; self.keyShift=False; return;
-            elif event.key=="up": self.adjustvertical(True); return
-            elif event.key=="down": self.adjustvertical(False); return
-            elif event.key=="shift+up": self.adjustvertical(True); return
-            elif event.key=="shift+down": self.adjustvertical(False); return
-            elif event.key=="ctrl+up": self.adjustvertical(True); return
-            elif event.key=="ctrl+down": self.adjustvertical(False); return
-            elif event.key=="?": self.togglelogicanalyzer(); return 
-            elif event.key=="d": self.tellminidisplaychan(self.selectedchannel);return
-            elif event.key=="R": self.keyResample=True;print "now enter amount to sinc resample (0-9)";return
-            elif event.key=="T": self.keysettriggertime=True;self.triggertimethresh=0;print "now enter time over/under thresh, then enter";return
-            elif event.key=="S": self.keySPI=True;self.SPIval=0;print "now enter SPI code, then enter";return
-            elif event.key=="i": self.keyi2c=True;self.i2ctemp="";print "now enter byte in hex for i2c, then enter:";return
-            elif event.key=="L": self.keyLevel=True;self.leveltemp="";print "now enter [channel to set level for, level] then enter:";return
-            elif event.key=="shift": self.keyShift=True;return
-            elif event.key=="alt": self.keyAlt=True;return
-            elif event.key=="control": self.keyControl=True;return
-            elif event.key=="tab":
-                for l in self.lines:
-                    self.togglechannel(l)
-                return;
-            try:
-                print 'key=%s' % (event.key)
-                print 'x=%d, y=%d, xdata=%f, ydata=%f' % (event.x, event.y, event.xdata, event.ydata)
-            except TypeError: pass
+            elif event.key=="F": self.fftchan=self.selectedchannel; self.dofft=True; self.keyShift=False; return
+            return;
     
     def decode(self):
         if not enable_ripyl:
@@ -1560,6 +1469,7 @@ class Haasoscope():
     oldtime=time.time()
     oldtime2=time.time()
     def getchannels(self):
+        status=0
         if not self.autorearm:
             if self.db: print time.time()-self.oldtime,"priming trigger"
             self.ser.write(chr(100))
@@ -1576,6 +1486,7 @@ class Haasoscope():
             if self.dolockin and self.dolockinplot: self.plot_lockin()
             self.on_running(self.ydata, bn) #update data in main window
             if self.db: print time.time()-self.oldtime,"done with board",bn
+        status=1
         if self.minfirmwareversion>=15: #v9.0 and up
             thetime2=time.time()
             elapsedtime=thetime2-self.oldtime2
@@ -1584,7 +1495,8 @@ class Haasoscope():
                 for b in range(num_board): self.getswitchdata(b) #gets the dpdt switch positions
                 self.havereadswitchdata=True
                 self.oldtime2=thetime2
-        return True
+                status=2
+        return status
 
     #get the positions of the dpdt switches from IO expander 2B, and then take action (v9.0 and up!)
     havereadswitchdata=False
@@ -1651,6 +1563,7 @@ class Haasoscope():
             self.readcalib() # get the calibrated DAC values for each board; if it fails then use defaults
             self.xydata=np.empty([num_chan_per_board*num_board,2,self.num_samples-1],dtype=float)
             self.xydataslow=np.empty([len(max10adcchans),2,self.nsamp],dtype=float)
+            self.xydatalogic=np.empty([8,2,self.num_samples],dtype=float)
             return True
     
     #cleanup
