@@ -681,6 +681,38 @@
          <string>Gain x10</string>
         </property>
        </widget>
+       <widget class="QCheckBox" name="chanonCheck">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>260</y>
+          <width>121</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Displayed</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="trigchanonCheck">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>280</y>
+          <width>121</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Triggering on</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
       </widget>
       <widget class="QGroupBox" name="channelgroupBox_5">
        <property name="geometry">
@@ -702,6 +734,9 @@
           <width>51</width>
           <height>21</height>
          </rect>
+        </property>
+        <property name="minimum">
+         <number>-1</number>
         </property>
         <property name="maximum">
          <number>255</number>

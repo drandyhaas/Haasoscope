@@ -71,6 +71,8 @@ class MainWindow(TemplateBaseClass):
         self.ui.actionRead_from_file.triggered.connect(self.actionRead_from_file)
         self.ui.actionStore_to_file.triggered.connect(self.actionStore_to_file)
         self.ui.actionDo_autocalibration.triggered.connect(self.actionDo_autocalibration)
+        self.ui.chanonCheck.stateChanged.connect(self.chanon)
+        self.ui.trigchanonCheck.stateChanged.connect(self.trigchanon)
         
         self.ui.statusBar.showMessage("yes")
         self.ui.textBrowser.setText("stopped")
@@ -109,6 +111,27 @@ class MainWindow(TemplateBaseClass):
         if d.havereadswitchdata:
             if d.testBit(d.switchpos[theboard],chanonboard):   self.ui.ohmCheck.setCheckState(QtCore.Qt.Unchecked)
             else:   self.ui.ohmCheck.setCheckState(QtCore.Qt.Checked)
+        if d.dousb:   self.ui.usb2Check.setCheckState(QtCore.Qt.Checked)
+        else:   self.ui.usb2Check.setCheckState(QtCore.Qt.Unchecked)
+        if len(self.lines)>0:
+            if self.lines[d.selectedchannel].isVisible():   self.ui.chanonCheck.setCheckState(QtCore.Qt.Checked)
+            else:   self.ui.chanonCheck.setCheckState(QtCore.Qt.Unchecked)
+        if d.trigsactive[d.selectedchannel]:   self.ui.trigchanonCheck.setCheckState(QtCore.Qt.Checked)
+        else:   self.ui.trigchanonCheck.setCheckState(QtCore.Qt.Unchecked)
+    
+    def chanon(self):
+        if self.ui.chanonCheck.checkState() == QtCore.Qt.Checked:
+            self.lines[self.ui.chanBox.value()].setVisible(True)
+            self.ui.trigchanonCheck.setCheckState(QtCore.Qt.Checked)
+        else:
+            self.lines[self.ui.chanBox.value()].setVisible(False)
+            self.ui.trigchanonCheck.setCheckState(QtCore.Qt.Unchecked)
+        
+    def trigchanon(self):
+        if self.ui.trigchanonCheck.checkState() == QtCore.Qt.Checked:
+            if not d.trigsactive[d.selectedchannel]: d.toggletriggerchan(d.selectedchannel)
+        else:
+             if d.trigsactive[d.selectedchannel]: d.toggletriggerchan(d.selectedchannel)
     
     def acdc(self):
         if self.ui.acdcCheck.checkState() == QtCore.Qt.Checked: #ac coupled
@@ -198,7 +221,12 @@ class MainWindow(TemplateBaseClass):
         d.togglehighres()
         
     def usb2(self):
-        d.toggledousb()
+        if self.ui.usb2Check.checkState() == QtCore.Qt.Checked:
+            if not d.dousb:
+                d.toggledousb()
+        else:
+            if d.dousb:
+                d.toggledousb()
         
     def grid(self):
         if self.ui.gridCheck.isChecked():
@@ -270,7 +298,9 @@ class MainWindow(TemplateBaseClass):
     
     def timechanged(self):
         self.ui.plot.setRange(xRange=(d.min_x, d.max_x), yRange=(d.min_y, d.max_y)) 
+        self.ui.plot.setMouseEnabled(x=False,y=False)
         self.ui.plot.setLabel('bottom', d.xlabel)
+        self.ui.plot.setLabel('left', d.ylabel)
         
     def risingfalling(self):
         d.fallingedge=not self.ui.risingedgeCheck.checkState()
@@ -281,6 +311,17 @@ class MainWindow(TemplateBaseClass):
         self.ui.statusBar.showMessage("no!")
         #self.timer.stop()
         self.updateplot()
+    
+    def fastadclineclick(self, curve):
+        for l in range(self.nlines):
+            if curve is self.lines[l].curve:
+                maxchan=l-HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board
+                if maxchan>=0: # these are the slow ADC channels
+                    self.ui.slowchanBox.setValue(maxchan)
+                    print "selected slow curve", maxchan
+                else:
+                    self.ui.chanBox.setValue(l)
+                    print "selected curve", l
     
     def launch(self):        
         self.ui.plot.setBackground('w')
@@ -315,6 +356,8 @@ class MainWindow(TemplateBaseClass):
                     if chan==3: c="m"
                 pen = pg.mkPen(color=c) # add linewidth=1.0, alpha=.9
                 line = self.ui.plot.plot(pen=pen,name=d.chtext+str(l))
+            line.curve.setClickable(True)
+            line.curve.sigClicked.connect(self.fastadclineclick)
             self.lines.append(line)
         self.ui.chanBox.setMaximum(HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board-1)
         self.ui.slowchanBox.setMaximum(len(HaasoscopeLibQt.max10adcchans)-1)

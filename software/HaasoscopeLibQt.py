@@ -440,10 +440,6 @@ class Haasoscope():
         self.ser.write(chr(130))
         self.writefirmchan(tp)
         self.trigsactive[tp] = not self.trigsactive[tp]
-        if len(plt.get_fignums())>0:
-            origline,legline,channum = self.lined[tp]
-            if self.trigsactive[tp]: self.leg.get_texts()[tp].set_color('#000000')
-            else: self.leg.get_texts()[tp].set_color('#aFaFaF')
         if self.db: print "Trigger toggled for channel",tp
 
     def toggleautorearm(self):
