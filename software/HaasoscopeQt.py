@@ -182,6 +182,20 @@ class MainWindow(TemplateBaseClass):
             d.rememberdacvalue()
             d.setdacvalue()
     
+    def wheelEvent(self, event): #QWheelEvent
+        if event.delta()>0: self.uppos()
+        else: self.downpos()
+    
+    def keyPressEvent(self, event):
+        if event.key()==QtCore.Qt.Key_Up:
+            self.uppos()
+        if event.key()==QtCore.Qt.Key_Down:
+            self.downpos()
+        if event.key()==QtCore.Qt.Key_Left:
+            self.timefast()
+        if event.key()==QtCore.Qt.Key_Right:
+            self.timeslow()
+            
     def actionRead_from_file(self):
         d.readcalib()
         
@@ -289,11 +303,19 @@ class MainWindow(TemplateBaseClass):
         self.ui.singleButton.setChecked(d.getone)
         
     def timefast(self):
-        d.telldownsample(d.downsample-1)
+        amount=1
+        modifiers = app.keyboardModifiers()
+        if modifiers == QtCore.Qt.ShiftModifier:
+            amount*=5
+        d.telldownsample(d.downsample-amount)
         self.timechanged()
     
     def timeslow(self):
-        d.telldownsample(d.downsample+1)
+        amount=1
+        modifiers = app.keyboardModifiers()
+        if modifiers == QtCore.Qt.ShiftModifier:
+            amount*=5
+        d.telldownsample(d.downsample+amount)
         self.timechanged()
     
     def timechanged(self):
@@ -318,10 +340,15 @@ class MainWindow(TemplateBaseClass):
                 maxchan=l-HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board
                 if maxchan>=0: # these are the slow ADC channels
                     self.ui.slowchanBox.setValue(maxchan)
-                    print "selected slow curve", maxchan
+                    #print "selected slow curve", maxchan
                 else:
                     self.ui.chanBox.setValue(l)
-                    print "selected curve", l
+                    #print "selected curve", l
+                    modifiers = app.keyboardModifiers()
+                    if modifiers == QtCore.Qt.ShiftModifier:
+                        self.ui.trigchanonCheck.toggle()
+                    elif modifiers == QtCore.Qt.ControlModifier:
+                        self.ui.chanonCheck.toggle()
     
     def launch(self):        
         self.ui.plot.setBackground('w')

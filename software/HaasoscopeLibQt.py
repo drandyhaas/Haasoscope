@@ -760,19 +760,6 @@ class Haasoscope():
             print "No calib file found for board",board,"at file",fname
             self.setdacvalues(sc) #will load in defaults      
     
-    def onscroll(self,event):
-         #print event
-         if event.button=='up': self.adjustvertical(True)
-         else: self.adjustvertical(False)
-        
-    def onrelease(self,event): # a key was released
-        #print event.key, "released"
-        if event.key.find("shift")>-1: self.keyShift=False;return
-        if event.key.find("alt")>-1: self.keyAlt=False;return
-        if event.key=="control": self.keyControl=False; return
-        if event.key.find("ctrl")>-1: self.keyControl=False; return    
-        if event.key.find("control")>-1: self.keyControl=False; return
-    
     #will grab the next keys as input
     keyResample=False
     keysettriggertime=False
