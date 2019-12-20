@@ -736,60 +736,7 @@ class Haasoscope():
             self.setdacvalues(sc) #and use the new levels right away
         except IOError:
             print "No calib file found for board",board,"at file",fname
-            self.setdacvalues(sc) #will load in defaults      
-    
-    #will grab the next keys as input
-    keyResample=False
-    keysettriggertime=False
-    keySPI=False
-    keyi2c=False
-    keyLevel=False
-    keyShift=False
-    keyAlt=False
-    keyControl=False    
-    
-    def onpress(self,event): # a key was pressed
-            if self.keySPI:
-                if event.key=="enter":                    
-                    self.tellSPIsetup(self.SPIval)
-                    self.keySPI=False; return
-                else:
-                    self.SPIval=10*self.SPIval+int(event.key)
-                    print "SPIval",self.SPIval; return            
-            elif self.keyi2c:
-                if event.key=="enter":                    
-                    self.sendi2c(self.i2ctemp)
-                    self.keyi2c=False; return
-                else:
-                    self.i2ctemp=self.i2ctemp+event.key
-                    print "i2ctemp",self.i2ctemp; return
-                
-            elif event.key=="ctrl+x": 
-                for chan in range(num_chan_per_board*num_board): self.tellswitchgain(chan)
-            elif event.key=="ctrl+X": 
-                for chan in range(num_chan_per_board*num_board): self.selectedchannel=chan; self.togglesupergainchan(chan)
-            
-            elif event.key=="D": self.decode(); return
-            
-            elif event.key=="S": self.keySPI=True;self.SPIval=0;print "now enter SPI code, then enter";return
-            elif event.key=="i": self.keyi2c=True;self.i2ctemp="";print "now enter byte in hex for i2c, then enter:";return
-            elif event.key=="I": self.testi2c(); return
-            
-            elif event.key=="ctrl+r": 
-                if self.ydatarefchan<0: self.ydatarefchan=self.selectedchannel
-                else: self.ydatarefchan=-1
-            elif event.key==">": self.refsinchan=self.selectedchannel; self.oldchanphase=-1.; self.reffreq=0;
-            
-            elif event.key=="Y": 
-                if self.selectedchannel+1>=len(self.dooversample): print "can't do XY plot on last channel"
-                else:
-                    if self.dooversample[self.selectedchannel]==self.dooversample[self.selectedchannel+1]:
-                        self.doxyplot=True; self.xychan=self.selectedchannel; print "doxyplot now",self.doxyplot,"for channel",self.xychan; return;
-                    else: print "oversampling settings must match between channels for XY plotting"
-                self.keyShift=False
-            elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; self.keyShift=False; return;
-            elif event.key=="F": self.fftchan=self.selectedchannel; self.dofft=True; self.keyShift=False; return
-            return;
+            self.setdacvalues(sc) #will load in defaults
     
     def decode(self):
         if not enable_ripyl:

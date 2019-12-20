@@ -44,6 +44,8 @@ class MainWindow(TemplateBaseClass):
         self.ui.runButton.clicked.connect(self.dostartstop)
         self.ui.actionTest.triggered.connect(self.actionTest)
         self.ui.verticalSlider.valueChanged.connect(self.triggerlevelchanged)
+        self.ui.verticalSlider2.valueChanged.connect(self.triggerlevel2changed)
+        self.ui.thresh2Check.clicked.connect(self.thresh2)
         self.ui.horizontalSlider.valueChanged.connect(self.triggerposchanged)
         self.ui.rollingButton.clicked.connect(self.rolling)
         self.ui.singleButton.clicked.connect(self.single)
@@ -314,12 +316,31 @@ class MainWindow(TemplateBaseClass):
         
     def triggerlevelchanged(self,value):
         d.settriggerthresh(value)
-        self.hline = (float(  value-128  )*d.yscale/256 )
+        self.hline = (float(  value-128  )*d.yscale/256.)
         self.otherlines[1].setData( [d.min_x, d.max_x], [self.hline, self.hline] ) # horizontal line showing trigger threshold
+    
+    def triggerlevel2changed(self,value):
+        d.settriggerthresh2(value)                
+        self.hline2 =(float(  value-128  )*d.yscale/256.)
+        self.otherlines[2].setVisible(True) # starts off being hidden, so now show it!
+        self.otherlines[2].setData( [d.min_x, d.max_x], [self.hline2, self.hline2] )
+        
+    def thresh2(self):
+        if self.ui.thresh2Check.checkState() == QtCore.Qt.Checked:
+            self.ui.verticalSlider2.setEnabled(True)
+            self.otherlines[2].setVisible(True)
+        else:
+            self.ui.verticalSlider2.setValue(0)
+            self.ui.verticalSlider2.setEnabled(False)
+            self.otherlines[2].setVisible(False)
     
     def triggerposchanged(self,value):
         if value>253 or value<3: return
-        d.settriggerpoint(int(value*d.num_samples/256.))
+        offset=5.0 # trig to readout delay
+        scal = d.num_samples/256.
+        point = value*scal + offset/pow(2,d.downsample)
+        if d.downsample<0: point = 128*scal + (point-128*scal)*pow(2,d.downsample)
+        d.settriggerpoint(int(point))
         self.vline = float(  2*(value-128)/256. *d.xscale /d.xscaling)
         self.otherlines[0].setData( [self.vline, self.vline], [d.min_y, d.max_y] ) # vertical line showing trigger time
     
@@ -381,6 +402,30 @@ class MainWindow(TemplateBaseClass):
                     elif modifiers == QtCore.Qt.ControlModifier:
                         self.ui.chanonCheck.toggle()
     
+    """ TODO:
+            elif event.key=="ctrl+x": 
+                for chan in range(num_chan_per_board*num_board): self.tellswitchgain(chan)
+            elif event.key=="ctrl+X": 
+                for chan in range(num_chan_per_board*num_board): self.selectedchannel=chan; self.togglesupergainchan(chan)
+            
+            elif event.key=="D": self.decode(); return
+            
+            elif event.key=="ctrl+r": 
+                if self.ydatarefchan<0: self.ydatarefchan=self.selectedchannel
+                else: self.ydatarefchan=-1
+            elif event.key==">": self.refsinchan=self.selectedchannel; self.oldchanphase=-1.; self.reffreq=0;
+            
+            elif event.key=="Y": 
+                if self.selectedchannel+1>=len(self.dooversample): print "can't do XY plot on last channel"
+                else:
+                    if self.dooversample[self.selectedchannel]==self.dooversample[self.selectedchannel+1]:
+                        self.doxyplot=True; self.xychan=self.selectedchannel; print "doxyplot now",self.doxyplot,"for channel",self.xychan; return;
+                    else: print "oversampling settings must match between channels for XY plotting"
+                self.keyShift=False
+            elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; self.keyShift=False; return;
+            elif event.key=="F": self.fftchan=self.selectedchannel; self.dofft=True; self.keyShift=False; return
+    """
+    
     def launch(self):        
         self.ui.plot.setBackground('w')
         self.nlines = HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board+len(HaasoscopeLibQt.max10adcchans)
@@ -427,7 +472,8 @@ class MainWindow(TemplateBaseClass):
         #other data to draw
         if d.fitline1>-1:
             pen = pg.mkPen(color="purple") # add linewidth=0.5, alpha=.5
-            line = self.ui.plot.plot(pen=None,name="fitline1") # not drawn by default
+            line = self.ui.plot.plot(pen=pen,name="fitline1") # not drawn by default
+            line.setVisible(False)
             self.lines.append(line)
             d.fitline1=len(self.lines)-1 # remember index where this line is
         #other stuff
@@ -445,21 +491,9 @@ class MainWindow(TemplateBaseClass):
         self.otherlines.append(line)
         self.hline2 = 0.0
         pen = pg.mkPen(color="b",width=1.0,style=QtCore.Qt.DashLine)
-        line = self.ui.plot.plot( [-2.0, 2.0], [self.hline2, self.hline2], pen=None,name="trigger thresh2 horiz") # not drawn by default
+        line = self.ui.plot.plot( [-2.0, 2.0], [self.hline2, self.hline2], pen=pen,name="trigger thresh2 horiz") # not drawn by default
+        line.setVisible(False)
         self.otherlines.append(line)
-                
-    """
-            TODO:
-            if event.button==2: #middle click
-                if self.keyShift:# if shift is held, turn off threshold2
-                    self.settriggerthresh2(0)
-                    self.otherlines[2].set_visible(False)
-                else:
-                    self.hline2 = event.ydata
-                    self.settriggerthresh2(int(  self.hline2/(self.yscale/256.) + 128  ))                
-                    self.otherlines[2].set_visible(True) # starts off being hidden, so now show it!
-                    self.otherlines[2].set_data( [self.min_x, self.max_x], [self.hline2, self.hline2] )
-    """        
     
     def closeEvent(self, event):
         print "Handling closeEvent"
