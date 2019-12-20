@@ -76,9 +76,6 @@ class MainWindow(TemplateBaseClass):
         self.ui.oversampCheck.clicked.connect(self.oversamp)
         self.ui.overoversampCheck.clicked.connect(self.overoversamp)
         
-        self.ui.statusBar.showMessage("yes")
-        self.ui.textBrowser.setText("stopped")
-        
         self.db=True
         self.lastTime = time.time()
         self.fps = None
@@ -91,13 +88,15 @@ class MainWindow(TemplateBaseClass):
         
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.updateplot)
+        self.timer2 = QtCore.QTimer()
+        self.timer2.timeout.connect(self.drawtext)
         
         self.selectchannel()
         self.show()
 
     def selectchannel(self):
         d.selectedchannel=self.ui.chanBox.value()
-        self.ui.textBrowser.setText("going on channel "+str(d.selectedchannel))
+        self.ui.statusBar.showMessage("yes")
         self.ui.dacBox.setValue(d.chanlevel[d.selectedchannel])
         
         if d.chanforscreen == d.selectedchannel:   self.ui.minidisplayCheck.setCheckState(QtCore.Qt.Checked)
@@ -297,10 +296,12 @@ class MainWindow(TemplateBaseClass):
     def dostartstop(self):        
         if d.paused:
             self.timer.start(0)
+            self.timer2.start(1000)
             d.paused=False
             self.ui.runButton.setChecked(True)            
         else:
             self.timer.stop()
+            self.timer2.stop()
             d.paused=True
             self.ui.runButton.setChecked(False)
     
@@ -363,8 +364,6 @@ class MainWindow(TemplateBaseClass):
     def actionTest(self):
         print "Handling actionTest"
         self.ui.statusBar.showMessage("no!")
-        #self.timer.stop()
-        self.updateplot()
     
     def fastadclineclick(self, curve):
         for l in range(self.nlines):
@@ -450,20 +449,7 @@ class MainWindow(TemplateBaseClass):
         self.otherlines.append(line)
                 
     """
-    def drawtext(self):
-        height = 0.25 # height up from bottom to start drawing text
-        xpos = 1.02 # how far over to the right to draw
-        if self.firstdrawtext:
-            self.texts.append(self.ax.text(xpos, height, self.chantext(),horizontalalignment='left', verticalalignment='top',transform=self.ax.transAxes))
-            self.firstdrawtext=False
-        else:
-            self.texts[0].remove()
-            self.texts[0]=(self.ax.text(xpos, height, self.chantext(),horizontalalignment='left', verticalalignment='top',transform=self.ax.transAxes))
-            #for txt in self.ax.texts: print txt # debugging
-        self.needtoredrawtext=True
-        plt.draw()        
-        
-    def onclick(self,event):
+            TODO:
             if event.button==2: #middle click
                 if self.keyShift:# if shift is held, turn off threshold2
                     self.settriggerthresh2(0)
@@ -478,6 +464,7 @@ class MainWindow(TemplateBaseClass):
     def closeEvent(self, event):
         print "Handling closeEvent"
         self.timer.stop()
+        self.timer2.stop()
         d.cleanup()
         if self.savetofile: self.outf.close()
         
@@ -503,7 +490,10 @@ class MainWindow(TemplateBaseClass):
         self.ui.plot.setTitle('%0.2f fps' % self.fps)
         app.processEvents()
     
-    nevents=0; oldnevents=0; tinterval=100.; oldtime=time.time()
+    nevents=0
+    oldnevents=0
+    tinterval=100.
+    oldtime=time.time()
     def mainloop(self):
         if d.paused: time.sleep(.1)
         else:
@@ -531,17 +521,18 @@ class MainWindow(TemplateBaseClass):
             if d.db: print time.time()-d.self.oldtime,"done with evt",self.nevents
             self.nevents += 1
             if self.nevents-self.oldnevents >= self.tinterval:
-                elapsedtime=time.time()-self.oldtime
+                now=time.time()
+                elapsedtime=now-self.oldtime
+                self.oldtime=now
                 lastrate = round(self.tinterval/elapsedtime,2)
                 print self.nevents,"events,",lastrate,"Hz"
-                self.oldtime=time.time()
                 if lastrate>40: self.tinterval=500.
                 else: self.tinterval=100.
                 self.oldnevents=self.nevents
             if d.getone and not d.timedout: self.dostartstop()
-                        
-            #if elapsedtime>1.0:
-            #   self.drawtext() #redraws the measurements
+
+    def drawtext(self):
+        self.ui.textBrowser.setText(d.chantext())
 
 try:    
     win = MainWindow()

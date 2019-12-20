@@ -584,32 +584,11 @@ class Haasoscope():
     def chantext(self):
         text ="Channel: "+str(self.selectedchannel)
         if self.ydatarefchan>=0: text += " - ref "+str(int(self.ydatarefchan))
-        text +="\nLevel="+str(int(self.chanlevel[self.selectedchannel]))
-        if self.acdc[self.selectedchannel]:
-            text +="\nDC coupled"
-        else:
-            text +="\nAC coupled"
-        chanonboard = self.selectedchannel%num_chan_per_board
-        theboard = num_board-1-self.selectedchannel/num_chan_per_board
-        if self.havereadswitchdata:
-            if self.testBit(self.switchpos[theboard],chanonboard):
-                text += ", 1M"
-            else:
-                text += ", 50"
-        text +="\nTriggering="+str(self.trigsactive[self.selectedchannel])
         if self.domeasure:
             if abs(self.Vmean[self.selectedchannel])>.9: text +="\nMean={0:1.3g} V".format(self.Vmean[self.selectedchannel])
             else: text +="\nMean={0:1.3g} mV".format(1000.*self.Vmean[self.selectedchannel])
             if abs(self.Vrms[self.selectedchannel])>.9: text +="\nRMS={0:1.3g} V".format(self.Vrms[self.selectedchannel])
             else: text +="\nRMS={0:1.3g} mV".format(1000.*self.Vrms[self.selectedchannel])        
-        if chanonboard<2:
-            if self.dooversample[self.selectedchannel]==1: text+= "\nOversampled x2"
-            if self.dooversample[self.selectedchannel]==9: text+= "\nOversampled x4"
-        else:
-            if self.selectedchannel>1 and self.dooversample[self.selectedchannel-2]: text+= "\nOff (oversamp)"
-        if len(max10adcchans)>0:
-            text+="\n"
-            text+="\nSlow chan: "+str(self.selectedmax10channel)
         if self.dogetotherdata:
             text+="\nTDC: "+str(self.tdcdata)
         return text
