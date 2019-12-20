@@ -488,20 +488,34 @@ class Haasoscope():
     def oversamp(self,chan):
         #tell it to toggle oversampling for this channel
         chanonboard = chan%num_chan_per_board
-        if chanonboard>1: return
-        if chanonboard==1 and self.dooversample[chan] and self.dooversample[chan-1]==9: print "first disable over-oversampling on channel",chan-1; return
-        self.togglechannel(chan+2,True)
+        if chanonboard>1: 
+            print "oversampling only allowed on channels 0 and 1 of a board"
+            return -1
+        if chanonboard==1 and self.dooversample[chan] and self.dooversample[chan-1]==9:
+            print "first disable over-oversampling on channel",chan-1
+            return -2
         self.dooversample[chan] = not self.dooversample[chan];
         print "oversampling is now",self.dooversample[chan],"for channel",chan
         if self.dooversample[chan] and self.downsample>0: self.telldownsample(0) # must be in max sampling mode for oversampling to make sense
         self.ser.write(chr(141))
         self.writefirmchan(chan)
+        return 1
     
     def overoversamp(self):
-    	if self.selectedchannel%4: print "over-oversampling only for channel 0 of a board!"
-        elif self.dooversample[self.selectedchannel]==0 or self.dooversample[self.selectedchannel+1]==0: print "for over-oversampling, first do oversampling on channels 0 and 1 of the board"
-        elif self.dooversample[self.selectedchannel]==1: self.dooversample[self.selectedchannel]=9; self.togglechannel(self.selectedchannel+1,True); print "over-oversampling"
-        elif self.dooversample[self.selectedchannel]==9: self.dooversample[self.selectedchannel]=1; print "no more over-oversampling"
+    	if self.selectedchannel%4: 
+    	    print "over-oversampling only for channel 0 of a board!"
+    	    return -1
+        elif self.dooversample[self.selectedchannel]==0 or self.dooversample[self.selectedchannel+1]==0:
+            print "for over-oversampling, first do oversampling on channels 0 and 1 of the board"
+            return -2
+        elif self.dooversample[self.selectedchannel]==1:
+            self.dooversample[self.selectedchannel]=9
+            print "over-oversampling"
+            return 0
+        elif self.dooversample[self.selectedchannel]==9:
+            self.dooversample[self.selectedchannel]=1
+            print "no more over-oversampling"
+            return 0
 
     def resetchans(self):
         for chan in np.arange(num_board*num_chan_per_board):
@@ -599,21 +613,6 @@ class Haasoscope():
         if self.dogetotherdata:
             text+="\nTDC: "+str(self.tdcdata)
         return text
-    
-    def togglechannel(self,theline,leaveoff=False):
-        # on the pick event, find the orig line corresponding to the
-        # legend proxy line, and toggle the visibility
-        origline,legline,channum = self.lined[theline]
-        if leaveoff and not origline.get_visible(): return
-        print "toggle",theline,"for channum",channum                
-        vis = not origline.get_visible()
-        origline.set_visible(vis)
-        if channum < num_board*num_chan_per_board: # it's an ADC channel (not a max10adc channel or other thing)
-            # If the channel was not actively triggering, and we now turned it on, or vice versa, toggle the trigger activity for this channel
-            if self.trigsactive[channum] != vis: self.toggletriggerchan(channum)
-        # Change the alpha on the line in the legend so we can see what lines have been toggled
-        if vis: legline.set_alpha(1.0); legline.set_linewidth(2.0)
-        else: legline.set_alpha(0.2); legline.set_linewidth(1.0)
     
     def pickline(self,theline):
         # on the pick event, find the orig line corresponding to the
@@ -784,18 +783,12 @@ class Haasoscope():
                     self.keyi2c=False; return
                 else:
                     self.i2ctemp=self.i2ctemp+event.key
-                    print "i2ctemp",self.i2ctemp; return            
-            
-            elif event.key=="O": self.oversamp(self.selectedchannel); self.prepareforsamplechange(); return
-            elif event.key=="ctrl+o": self.overoversamp(); self.prepareforsamplechange(); return        
+                    print "i2ctemp",self.i2ctemp; return
                 
             elif event.key=="ctrl+x": 
                 for chan in range(num_chan_per_board*num_board): self.tellswitchgain(chan)
             elif event.key=="ctrl+X": 
                 for chan in range(num_chan_per_board*num_board): self.selectedchannel=chan; self.togglesupergainchan(chan)
-            elif event.key=="tab":
-                for l in self.lines:
-                    self.togglechannel(l)
             
             elif event.key=="D": self.decode(); return
             

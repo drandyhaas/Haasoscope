@@ -73,6 +73,8 @@ class MainWindow(TemplateBaseClass):
         self.ui.actionDo_autocalibration.triggered.connect(self.actionDo_autocalibration)
         self.ui.chanonCheck.stateChanged.connect(self.chanon)
         self.ui.trigchanonCheck.stateChanged.connect(self.trigchanon)
+        self.ui.oversampCheck.clicked.connect(self.oversamp)
+        self.ui.overoversampCheck.clicked.connect(self.overoversamp)
         
         self.ui.statusBar.showMessage("yes")
         self.ui.textBrowser.setText("stopped")
@@ -97,6 +99,7 @@ class MainWindow(TemplateBaseClass):
         d.selectedchannel=self.ui.chanBox.value()
         self.ui.textBrowser.setText("going on channel "+str(d.selectedchannel))
         self.ui.dacBox.setValue(d.chanlevel[d.selectedchannel])
+        
         if d.chanforscreen == d.selectedchannel:   self.ui.minidisplayCheck.setCheckState(QtCore.Qt.Checked)
         else:   self.ui.minidisplayCheck.setCheckState(QtCore.Qt.Unchecked)
         if d.acdc[d.selectedchannel]:   self.ui.acdcCheck.setCheckState(QtCore.Qt.Unchecked)
@@ -106,25 +109,54 @@ class MainWindow(TemplateBaseClass):
         if d.supergain[d.selectedchannel]:   self.ui.supergainCheck.setCheckState(QtCore.Qt.Unchecked)
         else:   self.ui.supergainCheck.setCheckState(QtCore.Qt.Checked)
         if d.havereadswitchdata: self.ui.supergainCheck.setEnabled(False)
+        
         chanonboard = d.selectedchannel%HaasoscopeLibQt.num_chan_per_board
         theboard = HaasoscopeLibQt.num_board-1-d.selectedchannel/HaasoscopeLibQt.num_chan_per_board
         if d.havereadswitchdata:
             if d.testBit(d.switchpos[theboard],chanonboard):   self.ui.ohmCheck.setCheckState(QtCore.Qt.Unchecked)
             else:   self.ui.ohmCheck.setCheckState(QtCore.Qt.Checked)
+            
         if d.dousb:   self.ui.usb2Check.setCheckState(QtCore.Qt.Checked)
         else:   self.ui.usb2Check.setCheckState(QtCore.Qt.Unchecked)
+        
         if len(self.lines)>0:
             if self.lines[d.selectedchannel].isVisible():   self.ui.chanonCheck.setCheckState(QtCore.Qt.Checked)
             else:   self.ui.chanonCheck.setCheckState(QtCore.Qt.Unchecked)
         if d.trigsactive[d.selectedchannel]:   self.ui.trigchanonCheck.setCheckState(QtCore.Qt.Checked)
         else:   self.ui.trigchanonCheck.setCheckState(QtCore.Qt.Unchecked)
+        
+        if d.dooversample[d.selectedchannel]>0:   self.ui.oversampCheck.setCheckState(QtCore.Qt.Checked)
+        else:   self.ui.oversampCheck.setCheckState(QtCore.Qt.Unchecked)
+        if d.selectedchannel%HaasoscopeLibQt.num_chan_per_board>1:   self.ui.oversampCheck.setEnabled(False)
+        else:  self.ui.oversampCheck.setEnabled(True)
+        
+        if d.dooversample[d.selectedchannel]>=9:   self.ui.overoversampCheck.setCheckState(QtCore.Qt.Checked)
+        else:   self.ui.overoversampCheck.setCheckState(QtCore.Qt.Unchecked)
+        if d.selectedchannel%HaasoscopeLibQt.num_chan_per_board>0:  self.ui.overoversampCheck.setEnabled(False)
+        else:   self.ui.overoversampCheck.setEnabled(True)
+    
+    def oversamp(self):
+        if d.oversamp(d.selectedchannel)>=0:
+            self.prepareforsamplechange()
+            self.timechanged()
+            #turn off chan+2
+            self.lines[d.selectedchannel+2].setVisible(False)
+            if d.trigsactive[d.selectedchannel+2]: d.toggletriggerchan(d.selectedchannel+2)
+    
+    def overoversamp(self):
+        if d.overoversamp()>=0:
+            self.prepareforsamplechange()
+            self.timechanged()
+            #turn off chan+1
+            self.lines[d.selectedchannel+1].setVisible(False)
+            if d.trigsactive[d.selectedchannel+1]: d.toggletriggerchan(d.selectedchannel+2)
     
     def chanon(self):
         if self.ui.chanonCheck.checkState() == QtCore.Qt.Checked:
-            self.lines[self.ui.chanBox.value()].setVisible(True)
+            self.lines[d.selectedchannel].setVisible(True)
             self.ui.trigchanonCheck.setCheckState(QtCore.Qt.Checked)
         else:
-            self.lines[self.ui.chanBox.value()].setVisible(False)
+            self.lines[d.selectedchannel].setVisible(False)
             self.ui.trigchanonCheck.setCheckState(QtCore.Qt.Unchecked)
         
     def trigchanon(self):
