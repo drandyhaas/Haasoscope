@@ -216,8 +216,12 @@ class MainWindow(TemplateBaseClass):
             d.setdacvalue()
     
     def wheelEvent(self, event): #QWheelEvent
-        if event.delta()>0: self.uppos()
-        else: self.downpos()
+        if hasattr(event,"delta"):
+            if event.delta()>0: self.uppos()
+            else: self.downpos()
+        elif hasattr(event,"angleDelta"):
+            if event.angleDelta()>0: self.uppos()
+            else: self.downpos()
     
     def keyPressEvent(self, event):
         if event.key()==QtCore.Qt.Key_Up:
