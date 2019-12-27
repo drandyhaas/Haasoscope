@@ -42,7 +42,7 @@ class MainWindow(TemplateBaseClass):
         self.ui = WindowTemplate()
         self.ui.setupUi(self)
         self.ui.runButton.clicked.connect(self.dostartstop)
-        self.ui.actionTest.triggered.connect(self.actionTest)
+        self.ui.actionRecord.triggered.connect(self.record)
         self.ui.verticalSlider.valueChanged.connect(self.triggerlevelchanged)
         self.ui.verticalSlider2.valueChanged.connect(self.triggerlevel2changed)
         self.ui.thresh2Check.clicked.connect(self.thresh2)
@@ -77,28 +77,22 @@ class MainWindow(TemplateBaseClass):
         self.ui.trigchanonCheck.stateChanged.connect(self.trigchanon)
         self.ui.oversampCheck.clicked.connect(self.oversamp)
         self.ui.overoversampCheck.clicked.connect(self.overoversamp)
-        
         self.db=True
         self.lastTime = time.time()
         self.fps = None
         self.lines = []
         self.otherlines = []
-        
         self.savetofile=False # save scope data to file
-        if self.savetofile:
-            self.outf = open("Haasoscope_out_"+time.strftime("%Y%m%d-%H%M%S")+".csv","wt")
-        
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.updateplot)
         self.timer2 = QtCore.QTimer()
         self.timer2.timeout.connect(self.drawtext)
-        
         self.selectchannel()
+        self.ui.statusBar.showMessage("Hello!")
         self.show()
 
     def selectchannel(self):
         d.selectedchannel=self.ui.chanBox.value()
-        self.ui.statusBar.showMessage("yes")
         self.ui.dacBox.setValue(d.chanlevel[d.selectedchannel])
         
         if d.chanforscreen == d.selectedchannel:   self.ui.minidisplayCheck.setCheckState(QtCore.Qt.Checked)
@@ -386,9 +380,17 @@ class MainWindow(TemplateBaseClass):
         d.fallingedge=not self.ui.risingedgeCheck.checkState()
         d.settriggertype(d.fallingedge)
         
-    def actionTest(self):
-        print "Handling actionTest"
-        self.ui.statusBar.showMessage("no!")
+    def record(self):
+        self.savetofile = not self.savetofile
+        if self.savetofile:
+            fname="Haasoscope_out_"+time.strftime("%Y%m%d-%H%M%S")+".csv"
+            self.outf = open(fname,"wt")
+            self.ui.statusBar.showMessage("now recording to file"+fname)
+            self.ui.actionRecord.setText("Stop recording")
+        else:
+            self.outf.close()
+            self.ui.statusBar.showMessage("stopped recording to file")
+            self.ui.actionRecord.setText("Record to file")
     
     def fastadclineclick(self, curve):
         for l in range(self.nlines):
@@ -542,10 +544,14 @@ class MainWindow(TemplateBaseClass):
             #print d.xydata[0][0][12], d.xydata[0][1][12] # print the x and y data, respectively, for the 13th sample on fast adc channel 0
             
             if self.savetofile:
-                self.outf.write(str(self.nevents)); self.outf.write(",") # start of each line is the event number
-                self.outf.write(str(time.time())); self.outf.write(",") # next column is the time in seconds of the current event
-                d.xydata[0][1].tofile(self.outf,",",format="%.3f") # save y data (1) from fast adc channel 0
-                self.outf.write("\n") # newline
+                time_s=str(time.time())
+                for c in range(HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board):
+                    if self.lines[c].isVisible(): # only save the data for visible channels
+                        self.outf.write(str(self.nevents)); self.outf.write(",") # start of each line is the event number
+                        self.outf.write(time_s); self.outf.write(",") # next column is the time in seconds of the current event
+                        self.outf.write(str(c)); self.outf.write(",") # next column is the channel number
+                        d.xydata[c][1].tofile(self.outf,",",format="%.3f") # save y data (1) from fast adc channel c
+                        self.outf.write("\n") # newline
             
             #if len(HaasoscopeLibQt.max10adcchans)>0: print "slow", d.xydataslow[0][0][99], d.xydataslow[0][1][99] # print the x and y data, respectively, for the 100th sample on slow max10 adc channel 0
             

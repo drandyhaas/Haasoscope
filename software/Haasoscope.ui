@@ -900,7 +900,7 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionTest"/>
+    <addaction name="actionRecord"/>
    </widget>
    <widget class="QMenu" name="menuCalibration">
     <property name="title">
@@ -918,9 +918,9 @@
     <bool>false</bool>
    </property>
   </widget>
-  <action name="actionTest">
+  <action name="actionRecord">
    <property name="text">
-    <string>Test</string>
+    <string>Record to file</string>
    </property>
   </action>
   <action name="actionRead_from_file">
