@@ -77,7 +77,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.trigchanonCheck.stateChanged.connect(self.trigchanon)
         self.ui.oversampCheck.clicked.connect(self.oversamp)
         self.ui.overoversampCheck.clicked.connect(self.overoversamp)
-        self.db=True
+        self.db=False
         self.lastTime = time.time()
         self.fps = None
         self.lines = []
@@ -375,6 +375,8 @@ class MainWindow(TemplateBaseClass):
         self.ui.plot.setMouseEnabled(x=False,y=False)
         self.ui.plot.setLabel('bottom', d.xlabel)
         self.ui.plot.setLabel('left', d.ylabel)
+        self.triggerposchanged(self.ui.horizontalSlider.value())
+        self.ui.timebaseBox.setText("downsample "+str(d.downsample))
         
     def risingfalling(self):
         d.fallingedge=not self.ui.risingedgeCheck.checkState()
@@ -482,11 +484,7 @@ class MainWindow(TemplateBaseClass):
             line.setVisible(False)
             self.lines.append(line)
             d.fitline1=len(self.lines)-1 # remember index where this line is
-        #other stuff
-        d.setxaxis()
-        d.setyaxis()
-        self.timechanged()
-        self.ui.plot.showGrid(x=True, y=True)
+        #trigger lines
         self.vline=0.0
         pen = pg.mkPen(color="k",width=1.0,style=QtCore.Qt.DashLine)
         line = self.ui.plot.plot([self.vline, self.vline], [-2.0, 2.0], pen=pen,name="trigger time vert")
@@ -500,6 +498,11 @@ class MainWindow(TemplateBaseClass):
         line = self.ui.plot.plot( [-2.0, 2.0], [self.hline2, self.hline2], pen=pen,name="trigger thresh2 horiz") # not drawn by default
         line.setVisible(False)
         self.otherlines.append(line)
+        #other stuff
+        d.setxaxis()
+        d.setyaxis()
+        self.timechanged()
+        self.ui.plot.showGrid(x=True, y=True)
     
     def closeEvent(self, event):
         print "Handling closeEvent"
@@ -530,6 +533,20 @@ class MainWindow(TemplateBaseClass):
         self.ui.plot.setTitle('%0.2f fps' % self.fps)
         app.processEvents()
     
+    def dosavetofile(self):
+        time_s=str(time.time())
+        for c in range(HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board):
+            if self.lines[c].isVisible(): # only save the data for visible channels
+                self.outf.write(str(self.nevents)); self.outf.write(",") # start of each line is the event number
+                self.outf.write(time_s); self.outf.write(",") # next column is the time in seconds of the current event
+                self.outf.write(str(c)); self.outf.write(",") # next column is the channel number
+                print self.vline, 2.*d.xscale/d.num_samples, d.num_samples
+                self.outf.write(str(self.vline)); self.outf.write(",") # next column is the trigger time
+                self.outf.write(str( 2.*d.xscale/d.num_samples ) ); self.outf.write(",") # next column is the time between samples, in ns
+                self.outf.write(str(d.num_samples)); self.outf.write(",") # next column is the number of samples
+                d.xydata[c][1].tofile(self.outf,",",format="%.3f") # save y data (1) from fast adc channel c
+                self.outf.write("\n") # newline
+    
     nevents=0
     oldnevents=0
     tinterval=100.
@@ -543,15 +560,7 @@ class MainWindow(TemplateBaseClass):
             
             #print d.xydata[0][0][12], d.xydata[0][1][12] # print the x and y data, respectively, for the 13th sample on fast adc channel 0
             
-            if self.savetofile:
-                time_s=str(time.time())
-                for c in range(HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board):
-                    if self.lines[c].isVisible(): # only save the data for visible channels
-                        self.outf.write(str(self.nevents)); self.outf.write(",") # start of each line is the event number
-                        self.outf.write(time_s); self.outf.write(",") # next column is the time in seconds of the current event
-                        self.outf.write(str(c)); self.outf.write(",") # next column is the channel number
-                        d.xydata[c][1].tofile(self.outf,",",format="%.3f") # save y data (1) from fast adc channel c
-                        self.outf.write("\n") # newline
+            if self.savetofile: self.dosavetofile()
             
             #if len(HaasoscopeLibQt.max10adcchans)>0: print "slow", d.xydataslow[0][0][99], d.xydataslow[0][1][99] # print the x and y data, respectively, for the 100th sample on slow max10 adc channel 0
             
@@ -584,6 +593,7 @@ try:
     if not d.setup_connections(): sys.exit()
     if not d.init(): sys.exit()
     win.launch()
+    win.triggerposchanged(128) # center the trigger
     win.dostartstop()
 except SerialException:
     print "serial com failed!"
