@@ -540,7 +540,7 @@ class MainWindow(TemplateBaseClass):
                 self.outf.write(str(self.nevents)); self.outf.write(",") # start of each line is the event number
                 self.outf.write(time_s); self.outf.write(",") # next column is the time in seconds of the current event
                 self.outf.write(str(c)); self.outf.write(",") # next column is the channel number
-                self.outf.write(str(self.vline)); self.outf.write(",") # next column is the trigger time
+                self.outf.write(str(self.vline*d.xscaling)); self.outf.write(",") # next column is the trigger time
                 self.outf.write(str( 2.*d.xscale/d.num_samples ) ); self.outf.write(",") # next column is the time between samples, in ns
                 self.outf.write(str(d.num_samples)); self.outf.write(",") # next column is the number of samples
                 d.xydata[c][1].tofile(self.outf,",",format="%.3f") # save y data (1) from fast adc channel c
