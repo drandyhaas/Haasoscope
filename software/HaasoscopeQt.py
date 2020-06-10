@@ -10,7 +10,7 @@ import pyqtgraph as pg
 from serial import SerialException
 
 import HaasoscopeLibQt
-reload(HaasoscopeLibQt) # in case you changed it, and to always load some defaults
+## not in p3??? reload(HaasoscopeLibQt) # in case you changed it, and to always load some defaults
 
 #Some pre-options
 #HaasoscopeLibQt.num_board = 2 # Number of Haasoscope boards to read out (default is 1)
@@ -106,7 +106,7 @@ class MainWindow(TemplateBaseClass):
         if d.havereadswitchdata: self.ui.supergainCheck.setEnabled(False)
         
         chanonboard = d.selectedchannel%HaasoscopeLibQt.num_chan_per_board
-        theboard = HaasoscopeLibQt.num_board-1-d.selectedchannel/HaasoscopeLibQt.num_chan_per_board
+        theboard = int(HaasoscopeLibQt.num_board-1-d.selectedchannel/HaasoscopeLibQt.num_chan_per_board)
         if d.havereadswitchdata:
             if d.testBit(d.switchpos[theboard],chanonboard):   self.ui.ohmCheck.setCheckState(QtCore.Qt.Unchecked)
             else:   self.ui.ohmCheck.setCheckState(QtCore.Qt.Checked)
@@ -234,7 +234,7 @@ class MainWindow(TemplateBaseClass):
         d.storecalib()
         
     def actionDo_autocalibration(self):
-        print "starting autocalibration"
+        print("starting autocalibration")
         d.autocalibchannel=0
         
     def exttrig(self):
@@ -249,7 +249,7 @@ class MainWindow(TemplateBaseClass):
         
     def avg(self):
         d.average = not d.average
-        print "average",d.average
+        print("average",d.average)
         
     def logic(self):
         d.togglelogicanalyzer()
@@ -437,7 +437,7 @@ class MainWindow(TemplateBaseClass):
     def launch(self):        
         self.ui.plot.setBackground('w')
         self.nlines = HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board+len(HaasoscopeLibQt.max10adcchans)
-        if self.db: print "nlines=",self.nlines
+        if self.db: print("nlines=",self.nlines)
         for l in np.arange(self.nlines):
             maxchan=l-HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board
             c=(0,0,0)
@@ -505,7 +505,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.plot.showGrid(x=True, y=True)
     
     def closeEvent(self, event):
-        print "Handling closeEvent"
+        print("Handling closeEvent")
         self.timer.stop()
         self.timer2.stop()
         d.cleanup()
@@ -570,14 +570,14 @@ class MainWindow(TemplateBaseClass):
             #    maxfftydata=np.max(fftydata); maxfftfrq=fftxdata[fftydata.argmax()]
             #    print "max amp=",maxfftydata, "at freq=",maxfftfrq, d.fftax.get_xlabel().replace('Freq ','')
             
-            if d.db: print time.time()-d.self.oldtime,"done with evt",self.nevents
+            if d.db: print(time.time()-d.self.oldtime,"done with evt",self.nevents)
             self.nevents += 1
             if self.nevents-self.oldnevents >= self.tinterval:
                 now=time.time()
                 elapsedtime=now-self.oldtime
                 self.oldtime=now
                 lastrate = round(self.tinterval/elapsedtime,2)
-                print self.nevents,"events,",lastrate,"Hz"
+                print(self.nevents,"events,",lastrate,"Hz")
                 if lastrate>40: self.tinterval=500.
                 else: self.tinterval=100.
                 self.oldnevents=self.nevents
@@ -595,7 +595,7 @@ try:
     win.triggerposchanged(128) # center the trigger
     win.dostartstop()
 except SerialException:
-    print "serial com failed!"
+    print("serial com failed!")
 
 #can change some things after initialization
 #d.selectedchannel=0
@@ -608,4 +608,4 @@ except SerialException:
 if standalone:
     sys.exit(app.exec_())
 else:
-    print "Done, but Qt window still active"
+    print("Done, but Qt window still active")
