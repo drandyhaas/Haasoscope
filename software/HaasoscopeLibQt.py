@@ -255,7 +255,7 @@ class Haasoscope():
         print("trigger time over/under thresh now",256*myb[0]+1*myb[1]-pow(2,12),"and usedownsamplefortriggertot is",usedownsamplefortriggertot)
     
     def writefirmchan(self,chan):
-        theboard = num_board-1-chan/num_chan_per_board
+        theboard = int(num_board-1-chan/num_chan_per_board)
         chanonboard = chan%num_chan_per_board
         self.ser.write(bytearray([theboard*num_chan_per_board+chanonboard])) # the channels are numbered differently in the firmware
     
@@ -341,7 +341,7 @@ class Haasoscope():
         for b in np.arange(4-len(myb)): 
             self.ser.write(bytearray([255])) # pad with extra bytes since the command expects a total of 5 bytes (numtosend, addr, and 3 more bytes)
             if db2: print("255")
-        self.ser.write(bytearray([board])) #200 (default) will address message to all boards, otherwise only the given board ID will listen
+        self.ser.write(bytearray([int(board)])) #200 (default) will address message to all boards, otherwise only the given board ID will listen
         if db2: print(board,"\n")
         if self.db or db2: print("Tell i2c:","bytestosend:",datacounttosend," and address/data:",whattosend,"for board",board)
         time.sleep(.02)
@@ -665,7 +665,7 @@ class Haasoscope():
         print("toggling acdc for chan",chan,"which is chan",chanonboard,"on board",theboard)
         self.acdc[int(chan)] = not self.acdc[int(chan)]
         self.b20= int('00',16)  # shdn (set first char to 0 to turn on) / ac coupling (set second char to f for DC, 0 for AC)
-        for c in range(0,4):
+        for c in range(0,3):
             realchan = (num_board-1-theboard)*num_chan_per_board+c
             if self.acdc[int(realchan)]: 
                 self.b20 = self.toggleBit(self.b20,int(c)) # 1 is dc, 0 is ac
@@ -815,15 +815,15 @@ class Haasoscope():
                         self.xydata[l][0]=xdatanew[self.sincresample+self.num_samples*self.sincresample/2:3*self.num_samples*self.sincresample/2:1] # for printing out or other analysis
                         self.xydata[l][1]=ydatanew[self.sincresample+self.num_samples*self.sincresample/2:3*self.num_samples*self.sincresample/2:1]
                     else:
-                        self.xydata[l][0]=xdatanew[1+self.num_samples/2:3*self.num_samples/2:1] # for printing out or other analysis
-                        self.xydata[l][1]=ydatanew[1+self.num_samples/2:3*self.num_samples/2:1]
+                        self.xydata[l][0]=xdatanew[int(1+self.num_samples/2):int(3*self.num_samples/2):1] # for printing out or other analysis
+                        self.xydata[l][1]=ydatanew[int(1+self.num_samples/2):int(3*self.num_samples/2):1]
                 elif self.dooversample[thechan]==9: # account for over-oversampling, take the middle-most section
                      if self.sincresample>0:
                          self.xydata[l][0]=xdatanew[self.sincresample+3*self.num_samples*self.sincresample/2:5*self.num_samples*self.sincresample/2:1] # for printing out or other analysis
                          self.xydata[l][1]=ydatanew[self.sincresample+3*self.num_samples*self.sincresample/2:5*self.num_samples*self.sincresample/2:1]
                      else:
-                        self.xydata[l][0]=xdatanew[1+3*self.num_samples/2:5*self.num_samples/2:1] # for printing out or other analysis
-                        self.xydata[l][1]=ydatanew[1+3*self.num_samples/2:5*self.num_samples/2:1]
+                        self.xydata[l][0]=xdatanew[int(1+3*self.num_samples/2):int(5*self.num_samples/2):1] # for printing out or other analysis
+                        self.xydata[l][1]=ydatanew[int(1+3*self.num_samples/2):int(5*self.num_samples/2):1]
                 else: # the full data is stored
                     self.xydata[l][0]=xdatanew # for printing out or other analysis
                     self.xydata[l][1]=ydatanew
@@ -1328,14 +1328,14 @@ class Haasoscope():
             tempc1=meanrms*(tempc1-mean_c1)/rms_c1 + meanmean
             tempc2=meanrms*(tempc2-mean_c2)/rms_c2 + meanmean
             #print mean_c1, mean_c2, rms_c1, rms_c2
-        ns=2*self.num_samples
+        ns=int(2*self.num_samples)
         mergedsamps=np.empty(ns*2)
         mergedsamps[0:ns*2:2]=tempc1 # a little tricky which is 0 and which is 1 (i.e. which is sampled first!)
         mergedsamps[1:ns*2:2]=tempc2
-        self.ydata[c1]=mergedsamps[0:ns/2]
-        self.ydata[c2]=mergedsamps[ns/2:ns]
-        self.ydata[c1+2]=mergedsamps[ns:3*ns/2]
-        self.ydata[c2+2]=mergedsamps[3*ns/2:ns*2]
+        self.ydata[c1]=mergedsamps[0:int(ns/2)]
+        self.ydata[c2]=mergedsamps[int(ns/2):ns]
+        self.ydata[c1+2]=mergedsamps[ns:int(3*ns/2)]
+        self.ydata[c2+2]=mergedsamps[int(3*ns/2):(ns*2)]
     
     def getmax10adc(self,bn):
         chansthisboard = [(x,y) for (x,y) in max10adcchans if x==bn]

@@ -295,7 +295,7 @@ class MainWindow(TemplateBaseClass):
     
     def dostartstop(self):        
         if d.paused:
-            self.timer.start(0)
+            self.timer.start(20)
             self.timer2.start(1000)
             d.paused=False
             self.ui.runButton.setChecked(True)            
