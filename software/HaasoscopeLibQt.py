@@ -266,7 +266,7 @@ class Haasoscope():
         if level<0: 
             print("level can't be less than 0")
             level=0
-        theboard = num_board-1-chan/num_chan_per_board
+        theboard = int(num_board-1-chan/num_chan_per_board)
         chanonboard = chan%num_chan_per_board
         self.setdac(chanonboard,level,theboard)
         self.chanlevel[chan]=level
@@ -377,7 +377,7 @@ class Haasoscope():
         d="8" #internal ref, gain=1 (0-2V)
         if val>4095:
             d="9" #internal ref, gain=2 (0-4V)
-            val/=2
+            val=int(val/2)
         self.sendi2c("60 "+c+d+('%0*x' % (3,int(val))),  int(board)) #DAC, can go from 000 to 0fff in last 12 bits, and only send to the selected board
         
         # example:
@@ -660,7 +660,7 @@ class Haasoscope():
         
     def setacdc(self):
         chan=self.selectedchannel
-        theboard = num_board-1-chan/num_chan_per_board
+        theboard = int(num_board-1-chan/num_chan_per_board)
         chanonboard = chan%num_chan_per_board
         print("toggling acdc for chan",chan,"which is chan",chanonboard,"on board",theboard)
         self.acdc[int(chan)] = not self.acdc[int(chan)]
@@ -812,15 +812,15 @@ class Haasoscope():
                     ydatanew = ydatanew[1:len(ydatanew)]
                 if self.dooversample[thechan]==1: # account for oversampling, take the middle-most section
                     if self.sincresample>0:
-                        self.xydata[l][0]=xdatanew[self.sincresample+self.num_samples*self.sincresample/2:3*self.num_samples*self.sincresample/2:1] # for printing out or other analysis
-                        self.xydata[l][1]=ydatanew[self.sincresample+self.num_samples*self.sincresample/2:3*self.num_samples*self.sincresample/2:1]
+                        self.xydata[l][0]=xdatanew[self.sincresample+int(self.num_samples*self.sincresample/2):int(3*self.num_samples*self.sincresample/2):1] # for printing out or other analysis
+                        self.xydata[l][1]=ydatanew[self.sincresample+int(self.num_samples*self.sincresample/2):int(3*self.num_samples*self.sincresample/2):1]
                     else:
                         self.xydata[l][0]=xdatanew[int(1+self.num_samples/2):int(3*self.num_samples/2):1] # for printing out or other analysis
                         self.xydata[l][1]=ydatanew[int(1+self.num_samples/2):int(3*self.num_samples/2):1]
                 elif self.dooversample[thechan]==9: # account for over-oversampling, take the middle-most section
                      if self.sincresample>0:
-                         self.xydata[l][0]=xdatanew[self.sincresample+3*self.num_samples*self.sincresample/2:5*self.num_samples*self.sincresample/2:1] # for printing out or other analysis
-                         self.xydata[l][1]=ydatanew[self.sincresample+3*self.num_samples*self.sincresample/2:5*self.num_samples*self.sincresample/2:1]
+                         self.xydata[l][0]=xdatanew[self.sincresample+int(3*self.num_samples*self.sincresample/2):int(5*self.num_samples*self.sincresample/2):1] # for printing out or other analysis
+                         self.xydata[l][1]=ydatanew[self.sincresample+int(3*self.num_samples*self.sincresample/2):int(5*self.num_samples*self.sincresample/2):1]
                      else:
                         self.xydata[l][0]=xdatanew[int(1+3*self.num_samples/2):int(5*self.num_samples/2):1] # for printing out or other analysis
                         self.xydata[l][1]=ydatanew[int(1+3*self.num_samples/2):int(5*self.num_samples/2):1]
@@ -1011,7 +1011,7 @@ class Haasoscope():
     fftdrawn=False
     def plot_fft(self,bn): # pass in the board number
         channumonboard = self.fftchan%num_chan_per_board # this is what channel (0--3) we want to draw fft from for the board
-        chanonboardnum = num_board - self.fftchan/num_chan_per_board - 1 # this is what board (0 -- (num_board-1)) we want to draw that fft channel from
+        chanonboardnum = num_board - int(self.fftchan/num_chan_per_board) - 1 # this is what board (0 -- (num_board-1)) we want to draw that fft channel from
         if bn==chanonboardnum and len(self.ydata)>channumonboard: # select the right board check that the channel data is really there
             twoforoversampling=1
             if self.dooversample[self.fftchan]==1: twoforoversampling=2
@@ -1265,7 +1265,7 @@ class Haasoscope():
             if self.dooversample[num_chan_per_board*(num_board-board-1)]==9: self.overoversample(0,1)
             if self.average:
                 for c in np.arange(num_chan_per_board):
-                    for i in np.arange(self.num_samples/2):
+                    for i in np.arange(int(self.num_samples/2)):
                         val=(self.ydata[c][2*i]+self.ydata[c][2*i+1])/2
                         self.ydata[c][2*i]=val; self.ydata[c][2*i+1]=val;            
         else:
@@ -1274,7 +1274,7 @@ class Haasoscope():
             if len(rslt)>0 and self.rollingtrigger: print(byte_array[0:10])
         if self.dologicanalyzer:
             #get extra logic analyzer data, if needed
-            logicbytes=self.num_bytes/4
+            logicbytes=int(self.num_bytes/4)
             if self.dousb:
                 #try:
                 rslt = self.usbser[self.usbsermap[board]].read(logicbytes)
