@@ -553,7 +553,10 @@ class MainWindow(TemplateBaseClass):
     def mainloop(self):
         if d.paused: time.sleep(.1)
         else:
-            status=d.getchannels()
+            try:
+                status=d.getchannels()
+            except SerialException:
+                sys.exit(1)
             if status==2:#we updated the switch data
                 self.selectchannel()
             
