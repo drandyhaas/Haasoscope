@@ -22,7 +22,7 @@ d.construct()
 
 #Some other options
 #d.serport="COM7" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
-#d.serialdelaytimerwait=0 #50 #100 #150 #300 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
+d.serialdelaytimerwait=300 #50 #100 #150 #300 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
 #d.dolockin=True # whether to calculate the lockin info on the FPGA and read it out (off by default)
 #d.db=True #turn on debugging
 
