@@ -454,12 +454,13 @@ class MainWindow(TemplateBaseClass):
                 line = self.ui.plot.plot(pen=pen,name="slowadc_"+str(HaasoscopeLibQt.max10adcchans[maxchan]))
             else: # these are the fast ADC channels
                 chan=l%4
-                if HaasoscopeLibQt.num_board>1:
-                    board=l/4
-                    if board%4==0: c=(1-0.2*chan,0,0)
-                    if board%4==1: c=(0,1-0.2*chan,0)
-                    if board%4==2: c=(0,0,1-0.2*chan)
-                    if board%4==3: c=(1-0.2*chan,0,1-0.2*chan)
+                board=int(l/4)
+                if self.db: print("chan =",chan,"and board =",board)
+                if HaasoscopeLibQt.num_board>1:                    
+                    if board%4==0: c=(255-0.2*255*chan,0,0)
+                    if board%4==1: c=(0,255-0.2*255*chan,0)
+                    if board%4==2: c=(0,0,255-0.2*255*chan)
+                    if board%4==3: c=(255-0.2*255*chan,0,255-0.2*255*chan)
                 else:
                     if chan==0: c="r"
                     if chan==1: c="g"
@@ -612,3 +613,4 @@ if standalone:
     sys.exit(app.exec_())
 else:
     print("Done, but Qt window still active")
+

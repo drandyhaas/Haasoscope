@@ -255,7 +255,7 @@ class Haasoscope():
         print("trigger time over/under thresh now",256*myb[0]+1*myb[1]-pow(2,12),"and usedownsamplefortriggertot is",usedownsamplefortriggertot)
     
     def writefirmchan(self,chan):
-        theboard = int(num_board-1-chan/num_chan_per_board)
+        theboard = num_board-1-int(chan/num_chan_per_board)
         chanonboard = chan%num_chan_per_board
         self.ser.write(bytearray([theboard*num_chan_per_board+chanonboard])) # the channels are numbered differently in the firmware
     
@@ -266,7 +266,7 @@ class Haasoscope():
         if level<0: 
             print("level can't be less than 0")
             level=0
-        theboard = int(num_board-1-chan/num_chan_per_board)
+        theboard = num_board-1-int(chan/num_chan_per_board)
         chanonboard = chan%num_chan_per_board
         self.setdac(chanonboard,level,theboard)
         self.chanlevel[chan]=level
@@ -660,7 +660,7 @@ class Haasoscope():
         
     def setacdc(self):
         chan=self.selectedchannel
-        theboard = int(num_board-1-chan/num_chan_per_board)
+        theboard = num_board-1-int(chan/num_chan_per_board)
         chanonboard = chan%num_chan_per_board
         print("toggling acdc for chan",chan,"which is chan",chanonboard,"on board",theboard)
         self.acdc[int(chan)] = not self.acdc[int(chan)]
@@ -812,21 +812,21 @@ class Haasoscope():
                     ydatanew = ydatanew[1:len(ydatanew)]
                 if self.dooversample[thechan]==1: # account for oversampling, take the middle-most section
                     if self.sincresample>0:
-                        self.xydata[l][0]=xdatanew[self.sincresample+int(self.num_samples*self.sincresample/2):int(3*self.num_samples*self.sincresample/2):1] # for printing out or other analysis
-                        self.xydata[l][1]=ydatanew[self.sincresample+int(self.num_samples*self.sincresample/2):int(3*self.num_samples*self.sincresample/2):1]
+                        self.xydata[thechan][0]=xdatanew[self.sincresample+int(self.num_samples*self.sincresample/2):int(3*self.num_samples*self.sincresample/2):1] # for printing out or other analysis
+                        self.xydata[thechan][1]=ydatanew[self.sincresample+int(self.num_samples*self.sincresample/2):int(3*self.num_samples*self.sincresample/2):1]
                     else:
-                        self.xydata[l][0]=xdatanew[int(1+self.num_samples/2):int(3*self.num_samples/2):1] # for printing out or other analysis
-                        self.xydata[l][1]=ydatanew[int(1+self.num_samples/2):int(3*self.num_samples/2):1]
+                        self.xydata[thechan][0]=xdatanew[int(1+self.num_samples/2):int(3*self.num_samples/2):1] # for printing out or other analysis
+                        self.xydata[thechan][1]=ydatanew[int(1+self.num_samples/2):int(3*self.num_samples/2):1]
                 elif self.dooversample[thechan]==9: # account for over-oversampling, take the middle-most section
                      if self.sincresample>0:
-                         self.xydata[l][0]=xdatanew[self.sincresample+int(3*self.num_samples*self.sincresample/2):int(5*self.num_samples*self.sincresample/2):1] # for printing out or other analysis
-                         self.xydata[l][1]=ydatanew[self.sincresample+int(3*self.num_samples*self.sincresample/2):int(5*self.num_samples*self.sincresample/2):1]
+                         self.xydata[thechan][0]=xdatanew[self.sincresample+int(3*self.num_samples*self.sincresample/2):int(5*self.num_samples*self.sincresample/2):1] # for printing out or other analysis
+                         self.xydata[thechan][1]=ydatanew[self.sincresample+int(3*self.num_samples*self.sincresample/2):int(5*self.num_samples*self.sincresample/2):1]
                      else:
-                        self.xydata[l][0]=xdatanew[int(1+3*self.num_samples/2):int(5*self.num_samples/2):1] # for printing out or other analysis
-                        self.xydata[l][1]=ydatanew[int(1+3*self.num_samples/2):int(5*self.num_samples/2):1]
+                        self.xydata[thechan][0]=xdatanew[int(1+3*self.num_samples/2):int(5*self.num_samples/2):1] # for printing out or other analysis
+                        self.xydata[thechan][1]=ydatanew[int(1+3*self.num_samples/2):int(5*self.num_samples/2):1]
                 else: # the full data is stored
-                    self.xydata[l][0]=xdatanew # for printing out or other analysis
-                    self.xydata[l][1]=ydatanew
+                    self.xydata[thechan][0]=xdatanew # for printing out or other analysis
+                    self.xydata[thechan][1]=ydatanew
                 if self.domeasure:
                     self.Vmean[thechan] = np.mean(ydatanew)
                     self.Vrms[thechan] = np.sqrt(np.mean((ydatanew-self.Vmean[thechan])**2))
