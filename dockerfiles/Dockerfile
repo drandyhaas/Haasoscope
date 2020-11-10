@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     libqt5x11extras5 \
     libusb-1.0-0 \
     usbutils \
+    x11-apps \
     udev && \
     rm -rf /var/lib/apt/lists/*
 
