@@ -4,13 +4,23 @@ pyqtgraph widget with UI template created with Qt Designer
 """
 
 import numpy as np
-import os, sys, time
+import os, sys, time, getopt
 from pyqtgraph.Qt import QtCore, QtGui
 import pyqtgraph as pg
 from serial import SerialException
 
 import HaasoscopeLibQt
 ## not in p3??? reload(HaasoscopeLibQt) # in case you changed it, and to always load some defaults
+
+serialdelaytimerwait=0
+print ('Number of arguments:', len(sys.argv), 'arguments.')
+print ('Argument List:', str(sys.argv))
+for a in sys.argv:
+    if a[0]=="-":
+        print(a)
+        if a[1]=="s":
+            serialdelaytimerwait=int(a[2:])
+            print("serialdelaytimerwait set to",serialdelaytimerwait)
 
 #Some pre-options
 #HaasoscopeLibQt.num_board = 2 # Number of Haasoscope boards to read out (default is 1)
@@ -22,7 +32,7 @@ d.construct()
 
 #Some other options
 #d.serport="COM7" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
-d.serialdelaytimerwait=300 #50 #100 #150 #300 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
+d.serialdelaytimerwait=serialdelaytimerwait #50 #100 #150 #300 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
 #d.dolockin=True # whether to calculate the lockin info on the FPGA and read it out (off by default)
 #d.db=True #turn on debugging
 
