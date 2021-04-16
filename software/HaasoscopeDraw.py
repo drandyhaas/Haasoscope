@@ -1,4 +1,3 @@
-#for python3
 import HaasoscopeLib
 reload(HaasoscopeLib) # in case you changed it, and to always load some defaults
 import time, sys
