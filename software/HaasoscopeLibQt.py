@@ -1496,7 +1496,7 @@ class Haasoscope():
             if self.serport=="":
                 if '1A86:7523' in address or '1a86:7523' in address: self.serport = port_no
             if autofindusbports:
-                if "Haasoscope" in description: self.usbport.append(port_no)
+                if "Haasoscope" in description or "0403:6014" in address: self.usbport.append(port_no)
         if self.serport!="":
             try:
                 self.ser = Serial(self.serport,self.brate,timeout=self.sertimeout,stopbits=2)

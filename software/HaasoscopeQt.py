@@ -10,7 +10,7 @@ import pyqtgraph as pg
 from serial import SerialException
 
 import HaasoscopeLibQt
-## not in p3??? reload(HaasoscopeLibQt) # in case you changed it, and to always load some defaults
+reload(HaasoscopeLibQt) # in case you changed it, and to always load some defaults
 
 serialdelaytimerwait=100
 ram_width=9
