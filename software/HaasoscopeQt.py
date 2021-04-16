@@ -4,17 +4,35 @@ pyqtgraph widget with UI template created with Qt Designer
 """
 
 import numpy as np
-import os, sys, time
+import os, sys, time, getopt
 from pyqtgraph.Qt import QtCore, QtGui
 import pyqtgraph as pg
 from serial import SerialException
 
 import HaasoscopeLibQt
-reload(HaasoscopeLibQt) # in case you changed it, and to always load some defaults
+## not in p3??? reload(HaasoscopeLibQt) # in case you changed it, and to always load some defaults
+
+serialdelaytimerwait=100
+ram_width=9
+num_board=1
+print ('Number of arguments:', len(sys.argv), 'arguments.')
+print ('Argument List:', str(sys.argv))
+for a in sys.argv:
+    if a[0]=="-":
+        print(a)
+        if a[1]=="s":
+            serialdelaytimerwait=int(a[2:])
+            print("serialdelaytimerwait set to",serialdelaytimerwait)
+        if a[1]=="r":
+            ram_width=int(a[2:])
+            print("ram_width set to",ram_width)
+        if a[1]=="b":
+            num_board=int(a[2:])
+            print("num_board set to",num_board)
 
 #Some pre-options
-#HaasoscopeLibQt.num_board = 2 # Number of Haasoscope boards to read out (default is 1)
-#HaasoscopeLibQt.ram_width = 12 # width in bits of sample ram to use (e.g. 9==512 samples (default), 12(max)==4096 samples) (min is 2)
+HaasoscopeLibQt.num_board = num_board # Number of Haasoscope boards to read out (default is 1)
+HaasoscopeLibQt.ram_width = ram_width # width in bits of sample ram to use (e.g. 9==512 samples (default), 12(max)==4096 samples) (min is 2)
 #HaasoscopeLibQt.max10adcchans =  [(0,110),(0,118)] #[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp # default is none, []
 
 d = HaasoscopeLibQt.Haasoscope()
@@ -22,7 +40,7 @@ d.construct()
 
 #Some other options
 #d.serport="COM7" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
-#d.serialdelaytimerwait=0 #50 #100 #150 #300 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
+d.serialdelaytimerwait=serialdelaytimerwait #50 #100 #150 #300 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
 #d.dolockin=True # whether to calculate the lockin info on the FPGA and read it out (off by default)
 #d.db=True #turn on debugging
 
@@ -106,7 +124,7 @@ class MainWindow(TemplateBaseClass):
         if d.havereadswitchdata: self.ui.supergainCheck.setEnabled(False)
         
         chanonboard = d.selectedchannel%HaasoscopeLibQt.num_chan_per_board
-        theboard = HaasoscopeLibQt.num_board-1-d.selectedchannel/HaasoscopeLibQt.num_chan_per_board
+        theboard = int(HaasoscopeLibQt.num_board-1-d.selectedchannel/HaasoscopeLibQt.num_chan_per_board)
         if d.havereadswitchdata:
             if d.testBit(d.switchpos[theboard],chanonboard):   self.ui.ohmCheck.setCheckState(QtCore.Qt.Unchecked)
             else:   self.ui.ohmCheck.setCheckState(QtCore.Qt.Checked)
@@ -234,7 +252,7 @@ class MainWindow(TemplateBaseClass):
         d.storecalib()
         
     def actionDo_autocalibration(self):
-        print "starting autocalibration"
+        print("starting autocalibration")
         d.autocalibchannel=0
         
     def exttrig(self):
@@ -249,7 +267,7 @@ class MainWindow(TemplateBaseClass):
         
     def avg(self):
         d.average = not d.average
-        print "average",d.average
+        print("average",d.average)
         
     def logic(self):
         d.togglelogicanalyzer()
@@ -295,7 +313,7 @@ class MainWindow(TemplateBaseClass):
     
     def dostartstop(self):        
         if d.paused:
-            self.timer.start(0)
+            self.timer.start(20)
             self.timer2.start(1000)
             d.paused=False
             self.ui.runButton.setChecked(True)            
@@ -437,7 +455,7 @@ class MainWindow(TemplateBaseClass):
     def launch(self):        
         self.ui.plot.setBackground('w')
         self.nlines = HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board+len(HaasoscopeLibQt.max10adcchans)
-        if self.db: print "nlines=",self.nlines
+        if self.db: print("nlines=",self.nlines)
         for l in np.arange(self.nlines):
             maxchan=l-HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board
             c=(0,0,0)
@@ -454,12 +472,13 @@ class MainWindow(TemplateBaseClass):
                 line = self.ui.plot.plot(pen=pen,name="slowadc_"+str(HaasoscopeLibQt.max10adcchans[maxchan]))
             else: # these are the fast ADC channels
                 chan=l%4
-                if HaasoscopeLibQt.num_board>1:
-                    board=l/4
-                    if board%4==0: c=(1-0.2*chan,0,0)
-                    if board%4==1: c=(0,1-0.2*chan,0)
-                    if board%4==2: c=(0,0,1-0.2*chan)
-                    if board%4==3: c=(1-0.2*chan,0,1-0.2*chan)
+                board=int(l/4)
+                if self.db: print("chan =",chan,"and board =",board)
+                if HaasoscopeLibQt.num_board>1:                    
+                    if board%4==0: c=(255-0.2*255*chan,0,0)
+                    if board%4==1: c=(0,255-0.2*255*chan,0)
+                    if board%4==2: c=(0,0,255-0.2*255*chan)
+                    if board%4==3: c=(255-0.2*255*chan,0,255-0.2*255*chan)
                 else:
                     if chan==0: c="r"
                     if chan==1: c="g"
@@ -505,7 +524,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.plot.showGrid(x=True, y=True)
     
     def closeEvent(self, event):
-        print "Handling closeEvent"
+        print("Handling closeEvent")
         self.timer.stop()
         self.timer2.stop()
         d.cleanup()
@@ -553,7 +572,10 @@ class MainWindow(TemplateBaseClass):
     def mainloop(self):
         if d.paused: time.sleep(.1)
         else:
-            status=d.getchannels()
+            try:
+                status=d.getchannels()
+            except SerialException:
+                sys.exit(1)
             if status==2:#we updated the switch data
                 self.selectchannel()
             
@@ -570,14 +592,14 @@ class MainWindow(TemplateBaseClass):
             #    maxfftydata=np.max(fftydata); maxfftfrq=fftxdata[fftydata.argmax()]
             #    print "max amp=",maxfftydata, "at freq=",maxfftfrq, d.fftax.get_xlabel().replace('Freq ','')
             
-            if d.db: print time.time()-d.self.oldtime,"done with evt",self.nevents
+            if d.db: print(time.time()-d.self.oldtime,"done with evt",self.nevents)
             self.nevents += 1
             if self.nevents-self.oldnevents >= self.tinterval:
                 now=time.time()
                 elapsedtime=now-self.oldtime
                 self.oldtime=now
                 lastrate = round(self.tinterval/elapsedtime,2)
-                print self.nevents,"events,",lastrate,"Hz"
+                print(self.nevents,"events,",lastrate,"Hz")
                 if lastrate>40: self.tinterval=500.
                 else: self.tinterval=100.
                 self.oldnevents=self.nevents
@@ -595,7 +617,7 @@ try:
     win.triggerposchanged(128) # center the trigger
     win.dostartstop()
 except SerialException:
-    print "serial com failed!"
+    print("serial com failed!")
 
 #can change some things after initialization
 #d.selectedchannel=0
@@ -608,4 +630,5 @@ except SerialException:
 if standalone:
     sys.exit(app.exec_())
 else:
-    print "Done, but Qt window still active"
+    print("Done, but Qt window still active")
+
