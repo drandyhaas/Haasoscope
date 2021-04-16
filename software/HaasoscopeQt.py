@@ -12,8 +12,9 @@ from serial import SerialException
 import HaasoscopeLibQt
 ## not in p3??? reload(HaasoscopeLibQt) # in case you changed it, and to always load some defaults
 
-serialdelaytimerwait=0
+serialdelaytimerwait=100
 ram_width=9
+num_board=1
 print ('Number of arguments:', len(sys.argv), 'arguments.')
 print ('Argument List:', str(sys.argv))
 for a in sys.argv:
@@ -25,9 +26,12 @@ for a in sys.argv:
         if a[1]=="r":
             ram_width=int(a[2:])
             print("ram_width set to",ram_width)
+        if a[1]=="b":
+            num_board=int(a[2:])
+            print("num_board set to",num_board)
 
 #Some pre-options
-#HaasoscopeLibQt.num_board = 2 # Number of Haasoscope boards to read out (default is 1)
+HaasoscopeLibQt.num_board = num_board # Number of Haasoscope boards to read out (default is 1)
 HaasoscopeLibQt.ram_width = ram_width # width in bits of sample ram to use (e.g. 9==512 samples (default), 12(max)==4096 samples) (min is 2)
 #HaasoscopeLibQt.max10adcchans =  [(0,110),(0,118)] #[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp # default is none, []
 
