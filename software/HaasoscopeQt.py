@@ -4,14 +4,12 @@ pyqtgraph widget with UI template created with Qt Designer
 """
 
 import numpy as np
-import os, sys, time, getopt
-from pyqtgraph.Qt import QtCore, QtGui
-import pyqtgraph as pg
+import sys, time
 from serial import SerialException
+import pyqtgraph as pg
+from pyqtgraph.Qt import QtCore, QtGui, loadUiType
 
 import HaasoscopeLibQt
-print ("python v",sys.version_info[0])
-if sys.version_info[0]<3: reload(HaasoscopeLibQt) # in case you changed it, and to always load some defaults
 
 serialdelaytimerwait=100
 ram_width=9
@@ -51,7 +49,7 @@ if standalone:
     app = QtGui.QApplication(sys.argv)
 
 # Define main window class from template
-WindowTemplate, TemplateBaseClass = pg.Qt.loadUiType("Haasoscope.ui")
+WindowTemplate, TemplateBaseClass = loadUiType("Haasoscope.ui")
 
 class MainWindow(TemplateBaseClass):  
     def __init__(self):
@@ -112,7 +110,7 @@ class MainWindow(TemplateBaseClass):
 
     def selectchannel(self):
         d.selectedchannel=self.ui.chanBox.value()
-        self.ui.dacBox.setValue(d.chanlevel[d.selectedchannel])
+        self.ui.dacBox.setValue(d.chanlevel[d.selectedchannel].astype(int))
         
         if d.chanforscreen == d.selectedchannel:   self.ui.minidisplayCheck.setCheckState(QtCore.Qt.Checked)
         else:   self.ui.minidisplayCheck.setCheckState(QtCore.Qt.Unchecked)
@@ -218,10 +216,10 @@ class MainWindow(TemplateBaseClass):
         return amount
     def uppos(self):
          d.adjustvertical(True,self.posamount())
-         self.ui.dacBox.setValue(d.chanlevel[d.selectedchannel])
+         self.ui.dacBox.setValue(d.chanlevel[d.selectedchannel].astype(int))
     def downpos(self):
          d.adjustvertical(False,self.posamount())
-         self.ui.dacBox.setValue(d.chanlevel[d.selectedchannel])
+         self.ui.dacBox.setValue(d.chanlevel[d.selectedchannel].astype(int))
     def setlevel(self):
         if d.chanlevel[d.selectedchannel] != self.ui.dacBox.value():
             d.chanlevel[d.selectedchannel] = self.ui.dacBox.value()
