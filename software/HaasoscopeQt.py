@@ -308,7 +308,7 @@ class MainWindow(TemplateBaseClass):
         d.sincresample = self.ui.resampBox.value()
         if d.sincresample>0: d.xydata=np.empty([HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board,2,d.sincresample*(d.num_samples-1)],dtype=float)
         else: d.xydata=np.empty([HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board,2,1*(d.num_samples-1)],dtype=float)
-        self.prepareforsamplechange();
+        self.prepareforsamplechange()
     
     def dostartstop(self):        
         if d.paused:
@@ -592,7 +592,7 @@ class MainWindow(TemplateBaseClass):
             #    maxfftydata=np.max(fftydata); maxfftfrq=fftxdata[fftydata.argmax()]
             #    print "max amp=",maxfftydata, "at freq=",maxfftfrq, d.fftax.get_xlabel().replace('Freq ','')
             
-            if d.db: print(time.time()-d.self.oldtime,"done with evt",self.nevents)
+            if d.db: print(time.time()-d.oldtime,"done with evt",self.nevents)
             self.nevents += 1
             if self.nevents-self.oldnevents >= self.tinterval:
                 now=time.time()
