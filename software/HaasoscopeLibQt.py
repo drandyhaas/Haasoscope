@@ -1505,8 +1505,11 @@ class Haasoscope():
             print("connected serial to",self.serport,", timeout",self.sertimeout,"seconds")
         else: self.ser=""
         for p in self.usbport:
-            self.usbser.append(Serial(p,timeout=self.sertimeout))
-            print("connected USBserial to",p,", timeout",self.sertimeout,"seconds")
+            try:
+                self.usbser.append(Serial(p,8*4000000,timeout=self.sertimeout))
+            except SerialException:
+                print("Could not open",p,"!"); return False
+            print("connected USBserial to",p,", 32Mb/s, timeout",self.sertimeout,"seconds")
         if self.serport=="": print("No serial COM port opened!"); return False
         return True
     
