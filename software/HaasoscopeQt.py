@@ -312,7 +312,7 @@ class MainWindow(TemplateBaseClass):
     
     def dostartstop(self):        
         if d.paused:
-            self.timer.start(20)
+            self.timer.start(0)
             self.timer2.start(1000)
             d.paused=False
             self.ui.runButton.setChecked(True)            
@@ -530,7 +530,8 @@ class MainWindow(TemplateBaseClass):
         if self.savetofile: self.outf.close()
         
     def updateplot(self):
-        self.mainloop()        
+        self.mainloop()
+        if not self.ui.drawingCheck.checkState() == QtCore.Qt.Checked: return
         for l in range(self.nlines):
             maxchan=l-HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board
             if maxchan>=0: # these are the slow ADC channels
