@@ -94,6 +94,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.trigchanonCheck.stateChanged.connect(self.trigchanon)
         self.ui.oversampCheck.clicked.connect(self.oversamp)
         self.ui.overoversampCheck.clicked.connect(self.overoversamp)
+        self.ui.decodeCheck.clicked.connect(self.decode)
         self.db=False
         self.lastTime = time.time()
         self.fps = None
@@ -396,6 +397,10 @@ class MainWindow(TemplateBaseClass):
     def risingfalling(self):
         d.fallingedge=not self.ui.risingedgeCheck.checkState()
         d.settriggertype(d.fallingedge)
+
+    def decode(self):
+        if self.ui.decodeCheck.checkState() == QtCore.Qt.Checked:
+            d.decode()
         
     def record(self):
         self.savetofile = not self.savetofile
@@ -430,9 +435,7 @@ class MainWindow(TemplateBaseClass):
                 for chan in range(num_chan_per_board*num_board): self.tellswitchgain(chan)
             elif event.key=="ctrl+X": 
                 for chan in range(num_chan_per_board*num_board): self.selectedchannel=chan; self.togglesupergainchan(chan)
-            
-            elif event.key=="D": self.decode(); return
-            
+                        
             elif event.key=="ctrl+r": 
                 if self.ydatarefchan<0: self.ydatarefchan=self.selectedchannel
                 else: self.ydatarefchan=-1
