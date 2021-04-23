@@ -1905,8 +1905,8 @@ class Haasoscope():
             self.tellserialdelaytimerwait()
             self.tellSPIsetup(0) #0.9V CM but not connected
             self.tellSPIsetup(11) #offset binary output
-            self.tellSPIsetup(24) #300 Ohm termination ChA
-            self.tellSPIsetup(25) #300 Ohm termination ChB
+            self.tellSPIsetup(22) #20:50 #22:150 #24:300 Ohm termination ChA
+            self.tellSPIsetup(23) #21:50 #23:150 #25:300 Ohm termination ChB
             #self.tellSPIsetup(30) # multiplexed output
             self.tellSPIsetup(32) # non-multiplexed output (less noise)
             self.setupi2c() # sets all ports to be outputs
