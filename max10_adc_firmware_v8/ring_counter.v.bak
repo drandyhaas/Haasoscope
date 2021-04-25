@@ -1,0 +1,41 @@
+
+// counter with unstable count enable signal based on ring oscillator.
+
+module ring_counter (clk,out);
+parameter DELAY = 100;
+input clk;
+output reg [DELAY-1:0] out;
+
+wire [DELAY-1:0] delay_line /* synthesis keep */;
+reg start;
+
+// carry chain
+genvar i;
+generate
+for (i=1; i<DELAY; i=i+1)
+	begin : del
+		assign delay_line [i] = delay_line[i-1];
+	end
+endgenerate
+assign delay_line[0] = start;
+
+initial begin
+	start=0;
+end
+
+// sync it over to the input clock
+always @(posedge clk) begin
+	out <= delay_line;
+end
+
+integer counter=0;
+always @(posedge clk) begin
+	counter = counter+1;
+	if (counter==200000000) begin // every 2 seconds
+		counter=0;
+		start=1;
+	end
+	if (start) start=0;
+end
+
+endmodule

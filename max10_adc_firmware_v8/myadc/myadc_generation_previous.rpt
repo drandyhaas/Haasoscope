@@ -1,0 +1,29 @@
+Info: Starting: Create block symbol file (.bsf)
+Info: qsys-generate C:\Users\ahaas\Dropbox\documents\FPGA\QuartusII\serial_vga_pong_max10_adc_tdc\myadc.qsys --block-symbol-file --output-directory=C:\Users\ahaas\Dropbox\documents\FPGA\QuartusII\serial_vga_pong_max10_adc_tdc\myadc --family="MAX 10" --part=10M08SAE144C8GES
+Progress: Loading serial_vga_pong_max10_adc_tdc/myadc.qsys
+Progress: Reading input file
+Progress: Adding modular_adc_0 [altera_modular_adc 15.0]
+Progress: Parameterizing module modular_adc_0
+Progress: Building connections
+Progress: Parameterizing connections
+Progress: Validating
+Progress: Done reading input file
+Info: ip-generate succeeded.
+Info: Finished: Create block symbol file (.bsf)
+Info: 
+Info: Starting: Create HDL design files for synthesis
+Info: qsys-generate C:\Users\ahaas\Dropbox\documents\FPGA\QuartusII\serial_vga_pong_max10_adc_tdc\myadc.qsys --synthesis=VERILOG --output-directory=C:\Users\ahaas\Dropbox\documents\FPGA\QuartusII\serial_vga_pong_max10_adc_tdc\myadc\synthesis --family="MAX 10" --part=10M08SAE144C8GES
+Progress: Loading serial_vga_pong_max10_adc_tdc/myadc.qsys
+Progress: Reading input file
+Progress: Adding modular_adc_0 [altera_modular_adc 15.0]
+Progress: Parameterizing module modular_adc_0
+Progress: Building connections
+Progress: Parameterizing connections
+Progress: Validating
+Progress: Done reading input file
+Info: myadc: Generating myadc "myadc" for QUARTUS_SYNTH
+Info: modular_adc_0: "myadc" instantiated altera_modular_adc "modular_adc_0"
+Info: control_internal: "modular_adc_0" instantiated altera_modular_adc_control "control_internal"
+Info: myadc: Done "myadc" with 3 modules, 9 files
+Info: ip-generate succeeded.
+Info: Finished: Create HDL design files for synthesis

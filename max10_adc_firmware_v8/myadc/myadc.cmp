@@ -1,0 +1,19 @@
+	component myadc is
+		port (
+			adc_pll_clock_clk      : in  std_logic                     := 'X';             -- clk
+			adc_pll_locked_export  : in  std_logic                     := 'X';             -- export
+			clock_clk              : in  std_logic                     := 'X';             -- clk
+			command_valid          : in  std_logic                     := 'X';             -- valid
+			command_channel        : in  std_logic_vector(4 downto 0)  := (others => 'X'); -- channel
+			command_startofpacket  : in  std_logic                     := 'X';             -- startofpacket
+			command_endofpacket    : in  std_logic                     := 'X';             -- endofpacket
+			command_ready          : out std_logic;                                        -- ready
+			reset_sink_reset_n     : in  std_logic                     := 'X';             -- reset_n
+			response_valid         : out std_logic;                                        -- valid
+			response_channel       : out std_logic_vector(4 downto 0);                     -- channel
+			response_data          : out std_logic_vector(11 downto 0);                    -- data
+			response_startofpacket : out std_logic;                                        -- startofpacket
+			response_endofpacket   : out std_logic                                         -- endofpacket
+		);
+	end component myadc;
+
