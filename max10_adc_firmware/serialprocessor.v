@@ -15,7 +15,8 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
    output reg[7:0] txData;
    output reg[7:0] readdata;//first byte we got
    output reg spare1,spare2,spare3;
-	reg led1,led2,led3,led4,led5,led6,led7,led8;
+	reg led1,led2,led3,led4;
+	reg io1,io2,io3,io4;
   	output reg get_ext_data;
 	input ext_data_ready;
 	parameter ram_width=12;//9 is 512 samples
@@ -144,10 +145,10 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 	 spare2<=0;
 	 spare3<=0;
 	 led4<=1; //on
-	 led5<=0; //off
-	 led6<=0; //off
-	 led7<=0; //off
-	 led8<=0; //off
+	 io1<=0; //off
+	 io2<=0; //off
+	 io3<=0; //off
+	 io4<=0; //off
   end
   
   //set the LEDs to indicate my ID
@@ -181,7 +182,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 		led1<=0;		led2<=0;		led3<=0;//all off
 	end
   end
-  reg oldled1,oldled2,oldled3,oldled4,oldled5,oldled6,oldled7,oldled8;
+  reg oldled1,oldled2,oldled3,oldled4,oldio1,oldio2,oldio3,oldio4;
   
 //	reg [7:0] PWMoffset0 = 58; //22.7% *256;
 //	reg [7:0] PWMoffset1 = 58; //22.7% *256;
@@ -223,15 +224,15 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 			 readdata = rxData;
           state = SOLVING;
         end
-		  if (oldled1!=led1 || oldled2!=led2 || oldled3!=led3 || oldled4!=led4 || oldled5!=led5 || oldled6!=led6 || oldled7!=led7 || oldled8!=led8) begin
+		  if (oldled1!=led1 || oldled2!=led2 || oldled3!=led3 || oldled4!=led4 || oldio1!=io1 || oldio2!=io2 || oldio3!=io3 || oldio4!=io4) begin
 			 oldled1=led1; oldled2=led2; oldled3=led3; oldled4=led4;
-			 oldled5=led5; oldled6=led6; oldled7=led7; oldled8=led8;
+			 oldio1=io1; oldio2=io2; oldio3=io3; oldio4=io4;
 			 //now send to i2c
 			 i2c_datacounttosend=2;//how many bytes of info to send (not counting address)
 			 i2c_addr=8'h21; // the second mcp io expander
 			 i2cdata[0]=8'h12; // port a
 			 i2cdata[1][0]=led1; i2cdata[1][1]=led2; i2cdata[1][2]=led3; i2cdata[1][3]=led4; // set the low 4 bits to be correct for the leds
-			 i2cdata[1][4]=led5; i2cdata[1][5]=led6; i2cdata[1][6]=led7; i2cdata[1][7]=led8; // set the high 4 bits to be correct for the leds
+			 i2cdata[1][4]=io1; i2cdata[1][5]=io2; i2cdata[1][6]=io3; i2cdata[1][7]=io4; // set the high 4 bits to be correct for the ios
 			 i2cdata[2]=0; // not used for mcp io expanders
 			 if (i2cstate==READ) begin // if it's busy, we'll do nothing, oh well
 			   i2cdoread = 0;
@@ -308,7 +309,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 			
 			else if (101==readdata) begin
 				//tell them all to roll the trigger
-				led5=1;
+				io1=1;
 				rollingtrigger=1;
 				comdata=readdata;
 				newcomdata=1; //pass it on
@@ -316,7 +317,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 			end
 			else if (102==readdata) begin
 				//tell them all to not roll the trigger
-				led5=0;
+				io1=0;
 				rollingtrigger=0;
 				comdata=readdata;
 				newcomdata=1; //pass it on
@@ -670,7 +671,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				end
 				else begin
 					ioCountToSend = 1;
-					data[0]=5; // this is the firmware version
+					data[0]=16; // this is the firmware version
 					state=WRITE1;
 				end
 			end
