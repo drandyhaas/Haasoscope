@@ -144,6 +144,9 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 	 spare1<=0;
 	 spare2<=0;
 	 spare3<=0;
+	 led1<=1; //on
+	 led2<=1; //on
+	 led3<=1; //on
 	 led4<=1; //on
 	 io1<=0; //off
 	 io2<=0; //off
@@ -156,30 +159,27 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 	thecounter<=thecounter+1;
 	usb_txe_not_busy <= ~usb_txe_busy;
 	debug1 <= usb_txe_not_busy;
-   if ( imthelast & thecounter[26]==1'b1 ) begin //flash every few seconds
-		led1<=0;		led2<=0;		led3<=0;//all off
+   if (thecounter[26]==1'b1 ) begin //flash every few seconds
+		if (imthelast) begin
+			led1<=0;		led2<=0;		led3<=0;//all off
+		end
+		else if (myid==0) begin
+			led1<=0;		led2<=0;
+		end
+		else begin
+			led1<=0;
+		end
 	end
-	//else if (txStart) begin
-	//else if (trigDebug) begin		
-		//led1<=0;		led2<=0;		led3<=0;//all off
-	//end
-	else if (myid==0) begin	   
-		led1<=1;		led2<=1;		led3<=1;//all on
-	end
-	else if (myid==1) begin	   
-		led1<=0;		led2<=1;		led3<=1;//binary 1
-	end
-	else if (myid==2) begin	   
-		led1<=1;		led2<=0;		led3<=1;//binary 2
-	end
-	else if (myid==3) begin	   
-		led1<=0;		led2<=0;		led3<=1;//binary 3
-	end
-	else if (myid==4) begin	   
-		led1<=1;		led2<=1;		led3<=0;//binary 4
-	end
-	else begin		
-		led1<=0;		led2<=0;		led3<=0;//all off
+	else begin
+		if (imthelast) begin
+			led1<=1;		led2<=1;		led3<=1;//all on
+		end
+		else if (myid==0) begin
+			led1<=1;		led2<=1;
+		end
+		else begin
+			led1<=1;
+		end
 	end
   end
   reg oldled1,oldled2,oldled3,oldled4,oldio1,oldio2,oldio3,oldio4;
