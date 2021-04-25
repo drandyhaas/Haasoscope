@@ -48,9 +48,28 @@ standalone = app is None
 if standalone:
     app = QtGui.QApplication(sys.argv)
 
+# Define fft window class from template
+FFTWindowTemplate, FFTTemplateBaseClass = loadUiType("HaasoscopeFFT.ui")
+class FFTWindow(FFTTemplateBaseClass):
+    def __init__(self):
+        FFTTemplateBaseClass.__init__(self)
+
+        # Create the main window
+        self.ui = FFTWindowTemplate()
+        self.ui.setupUi(self)
+        self.ui.plot.setLabel('bottom', 'Freq (MHz)')
+        self.ui.plot.setLabel('left', '|Y(freq)|')
+        self.ui.plot.setRange(xRange=(0.0, 65.0))
+        self.ui.plot.setBackground('w')
+        c = (10, 10, 10)
+        self.fftpen = pg.mkPen(color=c)  # add linewidth=0.5, alpha=.5
+        self.fftline = self.ui.plot.plot(pen=self.fftpen, name="fft_plot")
+        self.ui.plot.showGrid(x=True, y=True)
+        self.fftlastTime = time.time() - 10
+        self.fftyrange = 1
+
 # Define main window class from template
 WindowTemplate, TemplateBaseClass = loadUiType("Haasoscope.ui")
-
 class MainWindow(TemplateBaseClass):
     def __init__(self):
         TemplateBaseClass.__init__(self)
@@ -95,6 +114,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.oversampCheck.clicked.connect(self.oversamp)
         self.ui.overoversampCheck.clicked.connect(self.overoversamp)
         self.ui.decodeCheck.clicked.connect(self.decode)
+        self.ui.fftCheck.clicked.connect(self.fft)
         self.db=False
         self.lastTime = time.time()
         self.fps = None
@@ -107,6 +127,7 @@ class MainWindow(TemplateBaseClass):
         self.timer2.timeout.connect(self.drawtext)
         self.selectchannel()
         self.ui.statusBar.showMessage("Hello!")
+        self.ui.plot.setBackground('w')
         self.show()
 
     def selectchannel(self):
@@ -401,7 +422,18 @@ class MainWindow(TemplateBaseClass):
     def decode(self):
         if self.ui.decodeCheck.checkState() == QtCore.Qt.Checked:
             d.decode()
-        
+
+    def fft(self):
+        if self.ui.fftCheck.checkState() == QtCore.Qt.Checked:
+            d.fftchan = d.selectedchannel
+            self.fftui = FFTWindow()
+            self.fftui.setWindowTitle('HaasoscopeQt FFT of channel ' + str(d.fftchan))
+            self.fftui.show()
+            d.dofft = True
+        else:
+            self.fftui.close()
+            d.dofft = False
+
     def record(self):
         self.savetofile = not self.savetofile
         if self.savetofile:
@@ -430,12 +462,7 @@ class MainWindow(TemplateBaseClass):
                     elif modifiers == QtCore.Qt.ControlModifier:
                         self.ui.chanonCheck.toggle()
     
-    """ TODO:
-            elif event.key=="ctrl+x": 
-                for chan in range(num_chan_per_board*num_board): self.tellswitchgain(chan)
-            elif event.key=="ctrl+X": 
-                for chan in range(num_chan_per_board*num_board): self.selectedchannel=chan; self.togglesupergainchan(chan)
-                        
+    """ TODO:       
             elif event.key=="ctrl+r": 
                 if self.ydatarefchan<0: self.ydatarefchan=self.selectedchannel
                 else: self.ydatarefchan=-1
@@ -449,11 +476,9 @@ class MainWindow(TemplateBaseClass):
                     else: print "oversampling settings must match between channels for XY plotting"
                 self.keyShift=False
             elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; self.keyShift=False; return;
-            elif event.key=="F": self.fftchan=self.selectedchannel; self.dofft=True; self.keyShift=False; return
     """
     
     def launch(self):        
-        self.ui.plot.setBackground('w')
         self.nlines = HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board+len(HaasoscopeLibQt.max10adcchans)
         if self.db: print("nlines=",self.nlines)
         for li in np.arange(self.nlines):
@@ -462,10 +487,10 @@ class MainWindow(TemplateBaseClass):
             if maxchan>=0: # these are the slow ADC channels
                 if HaasoscopeLibQt.num_board>1:
                     board = int(HaasoscopeLibQt.num_board-1-HaasoscopeLibQt.max10adcchans[maxchan][0])
-                    if board%4==0: c=(1-0.1*maxchan,0,0)
-                    if board%4==1: c=(0,1-0.1*maxchan,0)
-                    if board%4==2: c=(0,0,1-0.1*maxchan)
-                    if board%4==3: c=(1-0.1*maxchan,0,1-0.1*maxchan)
+                    if board % 4 == 0: c = (255 - 0.2 * 255 * maxchan, 0, 0)
+                    if board % 4 == 1: c = (0, 255 - 0.2 * 255 * maxchan, 0)
+                    if board % 4 == 2: c = (0, 0, 255 - 0.2 * 255 * maxchan)
+                    if board % 4 == 3: c = (255 - 0.2 * 255 * maxchan, 0, 255 - 0.2 * 255 * maxchan)
                 else:
                     c=(0.1*(maxchan+1),0.1*(maxchan+1),0.1*(maxchan+1))
                 pen = pg.mkPen(color=c) # add linewidth=0.5, alpha=.5
@@ -524,11 +549,13 @@ class MainWindow(TemplateBaseClass):
         self.ui.plot.showGrid(x=True, y=True)
     
     def closeEvent(self, event):
-        print("Handling closeEvent", event)
+        print("Handling closeEvent")
         self.timer.stop()
         self.timer2.stop()
         d.cleanup()
         if self.savetofile: self.outf.close()
+        if hasattr(self,"fftui"):
+            self.fftui.close()
         
     def updateplot(self):
         self.mainloop()
@@ -542,6 +569,19 @@ class MainWindow(TemplateBaseClass):
         if d.dologicanalyzer:
             for li in np.arange(8):
                 self.lines[d.logicline1+li].setData(d.xydatalogic[li][0],d.xydatalogic[li][1])
+        if d.dofft:
+            self.fftui.fftline.setData(d.fftfreqplot_xdata,d.fftfreqplot_ydata)
+            self.fftui.ui.plot.setLabel('bottom', d.fftax_xlabel)
+            self.fftui.ui.plot.setRange(xRange=(0.0, d.fftax_xlim))
+            now = time.time()
+            dt = now - self.fftui.fftlastTime
+            if dt>3.0 or self.fftyrange<d.fftfreqplot_ydatamax*1.1:
+                self.fftui.fftlastTime = now
+                self.fftui.ui.plot.setRange(yRange=(0.0, d.fftfreqplot_ydatamax*1.1))
+                self.fftyrange = d.fftfreqplot_ydatamax * 1.1
+            if not self.fftui.isVisible(): # closed the fft window
+                d.dofft = False
+                self.ui.fftCheck.setCheckState(QtCore.Qt.Unchecked)
         now = time.time()
         dt = now - self.lastTime
         self.lastTime = now

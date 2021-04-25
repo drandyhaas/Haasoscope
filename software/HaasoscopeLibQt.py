@@ -504,8 +504,8 @@ class Haasoscope():
     
     def overoversamp(self):
         if self.selectedchannel%4: 
-    	    print("over-oversampling only for channel 0 of a board!")
-    	    return -1
+            print("over-oversampling only for channel 0 of a board!")
+            return -1
         elif self.dooversample[self.selectedchannel]==0 or self.dooversample[self.selectedchannel+1]==0:
             print("for over-oversampling, first do oversampling on channels 0 and 1 of the board")
             return -2
@@ -837,21 +837,21 @@ class Haasoscope():
                         self.Vmean[thechan]/=gain
                         self.Vrms[thechan]/=gain                    
                     if self.fitline1>-1 and thechan==0: # optional risetime fit for channel 0
-    	                def fit_rise(x,a,bottom,b,top): # a function for fitting to find risetime
-    	                    val=bottom+(x-a)*(top-bottom)/(b-a)
-    	                    inbottom=(x<=a)
-    	                    val[inbottom]=bottom
-    	                    intop=(x>=b)
-    	                    val[intop]=top
-    	                    return val
-    	                try:
-    	                    x2=xdatanew[(xdatanew>-.1) & (xdatanew<.1)] # only fit in range -.1 to .1 (us)
-    	                    y2=ydatanew[(xdatanew>-.1) & (xdatanew<.1)]
-    	                    popt, pcov = scipy.optimize.curve_fit(fit_rise,x2,y2,bounds=([-.1,-4,-0.05,0],[0.05,0,.1,4])) #and note these bounds - top must be>0 and bottom<0 !
-    	                    self.lines[self.fitline1].set_xdata(x2)
-    	                    self.lines[self.fitline1].set_ydata( fit_rise(x2, *popt) )
-    	                    print("risetime = ",1000*0.8*(popt[2]-popt[0]),"ns") # from 10-90% is 0.8 on the line - don't forget to correct for x2 or x4 oversampling!
-    	                except:
+                        def fit_rise(x,a,bottom,b,top): # a function for fitting to find risetime
+                            val=bottom+(x-a)*(top-bottom)/(b-a)
+                            inbottom=(x<=a)
+                            val[inbottom]=bottom
+                            intop=(x>=b)
+                            val[intop]=top
+                            return val
+                        try:
+                            x2=xdatanew[(xdatanew>-.1) & (xdatanew<.1)] # only fit in range -.1 to .1 (us)
+                            y2=ydatanew[(xdatanew>-.1) & (xdatanew<.1)]
+                            popt, pcov = scipy.optimize.curve_fit(fit_rise,x2,y2,bounds=([-.1,-4,-0.05,0],[0.05,0,.1,4])) #and note these bounds - top must be>0 and bottom<0 !
+                            self.lines[self.fitline1].set_xdata(x2)
+                            self.lines[self.fitline1].set_ydata( fit_rise(x2, *popt) )
+                            print("risetime = ",1000*0.8*(popt[2]-popt[0]),"ns") # from 10-90% is 0.8 on the line - don't forget to correct for x2 or x4 oversampling!
+                        except:
                             print("fit exception!")
                 if self.doxyplot and (thechan==self.xychan or thechan==(self.xychan+1)): self.drawxyplot(xdatanew,ydatanew,thechan)# the xy plot
                 if self.recorddata and thechan==self.recorddatachan: self.dopersistplot(xdatanew,ydatanew)# the persist shaded plot
@@ -1003,12 +1003,10 @@ class Haasoscope():
         self.recorddata=False
     def handle_fft_close(self,evt):
         self.dofft=False
-        self.fftdrawn=False
     def handle_lockin_close(self,evt):
         self.dolockinplot=False
         self.lockindrawn=False
     
-    fftdrawn=False
     def plot_fft(self,bn): # pass in the board number
         channumonboard = self.fftchan%num_chan_per_board # this is what channel (0--3) we want to draw fft from for the board
         chanonboardnum = num_board - int(self.fftchan/num_chan_per_board) - 1 # this is what board (0 -- (num_board-1)) we want to draw that fft channel from
@@ -1021,40 +1019,24 @@ class Haasoscope():
             k = np.arange(n)
             uspersample=(1.0/self.clkrate)*pow(2,max(self.downsample,0))/twoforoversampling # us per sample = 10 ns * 2^downsample, #downsample isn't less than 0 for xscaling
             #t = np.arange(0,1,1.0/n) * (n*uspersample) # time vector in us
-            frq = (k/uspersample)[list(range(n/2))]/n # one side frequency range up to Nyquist
-            Y = np.fft.fft(y)[list(range(n/2))]/n # fft computing and normalization
+            frq = (k/uspersample)[list(range(int(n/2)))]/n # one side frequency range up to Nyquist
+            Y = np.fft.fft(y)[list(range(int(n/2)))]/n # fft computing and normalization
             Y[0]=0 # to suppress DC
-            if not self.fftdrawn: # just the first time, do some setup
-                self.fftdrawn=True
-                self.fftfig, self.fftax = plt.subplots(1,1)
-                self.fftfig.canvas.set_window_title('FFT of channel '+str(self.fftchan))
-                self.fftfig.canvas.mpl_connect('close_event', self.handle_fft_close)
-                self.fftfreqplot, = self.fftax.plot(frq,abs(Y)) # plotting the spectrum
-                self.fftax.set_xlabel('Freq (MHz)')
-                self.fftax.set_ylabel('|Y(freq)|')
-                self.fftax.set_xlim(0,frq[n/2-1])
-                self.oldmaxt = 0 # n*uspersample
-                self.oldmaxfreq = 0 # frq[n/2-1]
-                self.fftfig.tight_layout()
-                self.fftax.grid(True)
-            if self.fftdrawn: # redrawing
-                if np.max(frq)<.001:
-                    self.fftfreqplot.set_xdata(frq*1000000.0)
-                    self.fftax.set_xlabel('Freq (Hz)')
-                    if frq[n/2-1] != self.oldmaxfreq: self.fftax.set_xlim(0,1000000.0*frq[n/2-1])
-                elif np.max(frq)<1.0:
-                    self.fftfreqplot.set_xdata(frq*1000.0)
-                    self.fftax.set_xlabel('Freq (kHz)')
-                    if frq[n/2-1] != self.oldmaxfreq: self.fftax.set_xlim(0,1000.0*frq[n/2-1])
-                else:
-                    self.fftfreqplot.set_xdata(frq)
-                    self.fftax.set_xlabel('Freq (MHz)')
-                    if frq[n/2-1] != self.oldmaxfreq: self.fftax.set_xlim(0,frq[n/2-1])
-                self.fftfreqplot.set_ydata(abs(Y))
-                self.oldmaxfreq = frq[n/2-1]
-                self.oldmaxt = n*uspersample
-                self.fftfig.canvas.set_window_title('FFT of channel '+str(self.fftchan))
-    
+            if np.max(frq)<.001:
+                self.fftfreqplot_xdata = frq*1000000.0
+                self.fftax_xlabel = 'Freq (Hz)'
+                self.fftax_xlim = 1000000.0*frq[int(n/2)-1]
+            elif np.max(frq)<1.0:
+                self.fftfreqplot_xdata = frq*1000.0
+                self.fftax_xlabel = 'Freq (kHz)'
+                self.fftax_xlim = 1000.0*frq[int(n/2)-1]
+            else:
+                self.fftfreqplot_xdata = frq
+                self.fftax_xlabel = 'Freq (MHz)'
+                self.fftax_xlim = frq[int(n/2)-1]
+            self.fftfreqplot_ydata = abs(Y)
+            self.fftfreqplot_ydatamax = np.max(abs(Y))
+
     lockindrawn=False
     def plot_lockin(self):
         trange=100
@@ -1249,7 +1231,7 @@ class Haasoscope():
             #try:
             rslt = self.usbser[self.usbsermap[board]].read(self.num_bytes)
             #usbser.flushInput() #just in case
-	    #except serial.SerialException: pass
+        #except serial.SerialException: pass
         else:
             rslt = self.ser.read(int(self.num_bytes))
             #ser.flushInput() #just in case
@@ -1279,7 +1261,7 @@ class Haasoscope():
                 #try:
                 rslt = self.usbser[self.usbsermap[board]].read(logicbytes)
                 #usbser.flushInput() #just in case
-	        #except serial.SerialException: pass
+            #except serial.SerialException: pass
             else:
                 rslt = self.ser.read(logicbytes)
                 #ser.flushInput() #just in case
