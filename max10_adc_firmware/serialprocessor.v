@@ -330,8 +330,10 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 						state=WAITING;
 					end
 					else begin
-						//pass it on, and set serial to "passthrough mode"
-						serial_passthrough=1;
+						if (myid<extradata[0]) begin
+							//pass it on, and set serial to "passthrough mode"
+							serial_passthrough=1;
+						end
 						state=READ;
 					end
 				end
@@ -358,10 +360,12 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 						serial_passthrough=0;
 					end
 					else begin
-						//pass it on, and set serial to "passthrough mode"
-						serial_passthrough=1;
-						state=READ;
+						if (myid<extradata[0]) begin
+							//pass it on, and set serial to "passthrough mode"
+							serial_passthrough=1;
+						end
 					end
+					state=READ;
 				end
 			end
 			
@@ -738,7 +742,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				end
 				else begin
 					ioCountToSend = 1;
-					data[0]=17; // this is the firmware version
+					data[0]=18; // this is the firmware version
 					state=WRITE1;
 				end
 			end
@@ -755,6 +759,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 		end
 		
 		WAITING: begin
+			newcomdata<=0; //set this back, to just send out data once
 			timeoutcounter=timeoutcounter+1;
 			if (ext_data_ready) begin // can read out
 				SendCount= 0;
