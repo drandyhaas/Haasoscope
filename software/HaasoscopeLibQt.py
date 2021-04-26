@@ -191,10 +191,14 @@ class Haasoscope():
     def getfirmwareversion(self, board):
         #get the firmware version of a board
         oldtime=time.time()
-        if self.minfirmwareversion >= 17:
-            self.ser.write(bytearray([30 + board]))  # make the next board active (serial_passthrough 0)
+        if board<10:
+            self.ser.write(bytearray([30 + board])) #can't do bytearray([53, board]) because it might be firmware<17 # make the next board active (serial_passthrough 0)
         else:
-            self.ser.write(bytearray([53, board]))  # make the next board active (serial_passthrough 0)
+            if self.minfirmwareversion>=17: # first 10 boards were firmware >=17
+                self.ser.write(bytearray([53, board]))
+            else:
+                print("boards with firmware <17 detected, but you're trying to do a board with id 10!")
+                return 0
         self.ser.write(bytearray([147])) #request the firmware version byte
         self.ser.timeout=0.1; rslt = self.ser.read(1); self.ser.timeout=self.sertimeout # reduce the serial timeout temporarily, since the old firmware versions will return nothing for command 147
         byte_array = unpack('%dB'%len(rslt),rslt)
@@ -459,10 +463,10 @@ class Haasoscope():
         debug3=True
         self.uniqueID=[]
         for board in range(num_board):
-            if self.minfirmwareversion >= 17:
-                self.ser.write(bytearray([30 + board]))  # make the next board active (serial_passthrough 0)
-            else:
+            if self.minfirmwareversion>=17:
                 self.ser.write(bytearray([53, board]))  # make the next board active (serial_passthrough 0)
+            else:
+                self.ser.write(bytearray([30 + board]))  # make the next board active (serial_passthrough 0)
             self.ser.write(bytearray([142])) #request the unique ID
             num_other_bytes = 8
             rslt = self.ser.read(num_other_bytes)
@@ -1233,7 +1237,7 @@ class Haasoscope():
     timedout = False
     def getdata(self,board):
         if not self.dousb or not self.dousbparallel:
-            if self.minfirmwareversion >= 17:
+            if self.minfirmwareversion>=17:
                 self.ser.write(bytearray([51,board]))
             else:
                 self.ser.write(bytearray([10 + board]))
@@ -1369,7 +1373,7 @@ class Haasoscope():
         self.max10adcchan=1
         if self.dousb and self.dousbparallel:
             for board in np.arange(num_board):
-                if self.minfirmwareversion >= 17:
+                if self.minfirmwareversion>=17:
                     self.ser.write(bytearray([51,board]))
                 else:
                     self.ser.write(bytearray([10 + board]))
@@ -1402,9 +1406,9 @@ class Haasoscope():
     havereadswitchdata=False
     def getswitchdata(self,board):
         if self.minfirmwareversion>=17:
-            self.ser.write(bytearray([30+board])) #make the next board active (serial_passthrough 0)
-        else:
             self.ser.write(bytearray([53,board]))  # make the next board active (serial_passthrough 0)
+        else:
+            self.ser.write(bytearray([30+board])) #make the next board active (serial_passthrough 0)
         self.ser.write(bytearray([146])) #request the IO expander data - takes about 2ms to send the command and read the i2c data
         self.ser.write(bytearray([33])) # from 2B
         self.ser.write(bytearray([19])) # from 2B
