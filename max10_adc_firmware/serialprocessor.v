@@ -103,6 +103,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
   reg [7:0] chanforscreen=0;
   reg autorearm=0;
   integer thecounter=0, timeoutcounter=0, serialdelaytimer=0,serialdelaytimerwait=0;
+  reg addonetoextradata=0;
   
   reg [7:0] usb2counter;
   output reg do_usb=0;
@@ -220,6 +221,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 		  i2cgo=0;
 		  usb_wr<=1;
         ioCount = 0;
+		  addonetoextradata=0;
         if (rxReady) begin
 			 readdata = rxData;
           state = SOLVING;
@@ -245,7 +247,8 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 			newcomdata=0;
 			if (rxReady) begin
 				extradata[bytesread] = rxData;
-				comdata=rxData;
+				if (addonetoextradata) comdata=rxData+1;//for propogating the board ID
+				else comdata=rxData;
 				newcomdata=1; //pass it on
 				bytesread = bytesread+1;
 				if (bytesread>=byteswanted) state=SOLVING;
@@ -298,6 +301,70 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				end
 				state=READ;
 			end
+			
+			else if (readdata==50) begin
+				byteswanted=1;//wait for next byte which is the ID to take (replacing 0-9)
+				comdata=readdata;	
+				newcomdata=1; //pass it on
+				addonetoextradata=1;// give the next one an ID one larger
+				if (bytesread<byteswanted) state=READMORE;
+				else begin
+					myid=extradata[0];//remember my ID
+					if (extradata[0]==0) begin
+						master_clock=2'b00; //remain my own master
+					end
+					else master_clock=2'b01; //now a slave!
+					state=READ;
+				end
+			end
+			else if (readdata==51) begin
+				byteswanted=1;//wait for next byte which is the board to read out (replacing 10-19)
+				comdata=readdata;	
+				newcomdata=1; //pass it on
+				if (bytesread<byteswanted) state=READMORE;
+				else begin
+					if (myid==extradata[0]) begin
+						//read me out
+						serial_passthrough=0;
+						timeoutcounter=0;//start the clock
+						state=WAITING;
+					end
+					else begin
+						//pass it on, and set serial to "passthrough mode"
+						serial_passthrough=1;
+						state=READ;
+					end
+				end
+			end
+			else if (readdata==52) begin
+				byteswanted=1;//wait for next byte which is the board id that's the last one (replacing 20-29)
+				comdata=readdata;	
+				newcomdata=1; //pass it on
+				if (bytesread<byteswanted) state=READMORE;
+				else begin
+					if (myid==extradata[0]) imthelast=1; // I'm the last one
+					else imthelast=0;
+					state=READ;
+				end
+			end
+			else if (readdata==53) begin
+				byteswanted=1;//wait for next byte which is the board to not set to serial passthrough, but all others go into serial passthough (replacing 30-39)
+				comdata=readdata;	
+				newcomdata=1; //pass it on
+				if (bytesread<byteswanted) state=READMORE;
+				else begin
+					if (myid==extradata[0]) begin
+						//make me active
+						serial_passthrough=0;
+					end
+					else begin
+						//pass it on, and set serial to "passthrough mode"
+						serial_passthrough=1;
+						state=READ;
+					end
+				end
+			end
+			
 			
 			else if (100==readdata) begin
 				//tell them all to prime the trigger
@@ -671,7 +738,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				end
 				else begin
 					ioCountToSend = 1;
-					data[0]=16; // this is the firmware version
+					data[0]=17; // this is the firmware version
 					state=WRITE1;
 				end
 			end

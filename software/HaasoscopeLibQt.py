@@ -191,7 +191,10 @@ class Haasoscope():
     def getfirmwareversion(self, board):
         #get the firmware version of a board
         oldtime=time.time()
-        self.ser.write(bytearray([30+board])) #make the next board active (serial_passthrough 0)
+        if self.minfirmwareversion >= 17:
+            self.ser.write(bytearray([30 + board]))  # make the next board active (serial_passthrough 0)
+        else:
+            self.ser.write(bytearray([53, board]))  # make the next board active (serial_passthrough 0)
         self.ser.write(bytearray([147])) #request the firmware version byte
         self.ser.timeout=0.1; rslt = self.ser.read(1); self.ser.timeout=self.sertimeout # reduce the serial timeout temporarily, since the old firmware versions will return nothing for command 147
         byte_array = unpack('%dB'%len(rslt),rslt)
@@ -455,16 +458,19 @@ class Haasoscope():
     def getIDs(self):
         debug3=True
         self.uniqueID=[]
-        for n in range(num_board):
-            self.ser.write(bytearray([30+n])) #make the next board active (serial_passthrough 0) 
+        for board in range(num_board):
+            if self.minfirmwareversion >= 17:
+                self.ser.write(bytearray([30 + board]))  # make the next board active (serial_passthrough 0)
+            else:
+                self.ser.write(bytearray([53, board]))  # make the next board active (serial_passthrough 0)
             self.ser.write(bytearray([142])) #request the unique ID
             num_other_bytes = 8
             rslt = self.ser.read(num_other_bytes)
             if len(rslt)==num_other_bytes:
                 byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
                 self.uniqueID.append( ''.join(format(x, '02x') for x in byte_array) )
-                if debug3: print("got uniqueID",self.uniqueID[n],"for board",n,", len is now",len(self.uniqueID))
-            else: print("getID asked for",num_other_bytes,"bytes and got",len(rslt),"from board",n)
+                if debug3: print("got uniqueID",self.uniqueID[board],"for board",board,", len is now",len(self.uniqueID))
+            else: print("getID asked for",num_other_bytes,"bytes and got",len(rslt),"from board",board)
     
     def togglesupergainchan(self,chan):
         if self.supergain[chan]==1:
@@ -496,7 +502,7 @@ class Haasoscope():
         if chanonboard==1 and self.dooversample[chan] and self.dooversample[chan-1]==9:
             print("first disable over-oversampling on channel",chan-1)
             return -2
-        self.dooversample[chan] = not self.dooversample[chan];
+        self.dooversample[chan] = not self.dooversample[chan]
         print("oversampling is now",self.dooversample[chan],"for channel",chan)
         if self.dooversample[chan] and self.downsample>0: self.telldownsample(0) # must be in max sampling mode for oversampling to make sense
         self.ser.write(bytearray([141]))
@@ -616,7 +622,7 @@ class Haasoscope():
     def adjustvertical(self,up,amount=10):        
         #print "amount is",amount
         if self.gain[self.selectedchannel]: amount*=10 #low gain
-        if self.supergain[self.selectedchannel]==0 and self.acdc[self.selectedchannel]: amount=max(1,amount/10) #super gain
+        if self.supergain[self.selectedchannel]==0 and self.acdc[self.selectedchannel]: amount=max(1,int(amount/10)) #super gain
         #print "now amount is",amount
         if up:
              self.chanlevel[self.selectedchannel] = self.chanlevel[self.selectedchannel] - amount
@@ -951,7 +957,7 @@ class Haasoscope():
         if thechan==self.xychan: self.xydataforxaxis=ydatanew #the first channel will define the info on the x-axis
         if thechan==(self.xychan+1):
             if not self.drawnxy: # got to make the plot window the first time
-                self.figxy, self.axxy = plt.subplots(1,1)
+                #self.figxy, self.axxy = plt.subplots(1,1)
                 self.figxy.canvas.mpl_connect('close_event', self.handle_xy_close)
                 self.drawnxy=True
                 self.figxy.set_size_inches(6, 6, forward=True)
@@ -980,7 +986,7 @@ class Haasoscope():
         if self.recordindex>=self.recordedchannellength: self.recordindex=0;
         if len(self.recordedchannel)==self.recordedchannellength:
             if not self.drawn2d: # got to make the plot window the first time
-                self.fig2d, self.ax2d = plt.subplots(1,1)
+                #self.fig2d, self.ax2d = plt.subplots(1,1)
                 self.fig2d.canvas.mpl_connect('close_event', self.handle_persist_close)
                 self.drawn2d=True
             if self.recordindex==0:
@@ -993,9 +999,7 @@ class Haasoscope():
                 self.ax2d.set_ylabel('Volts')
                 self.ax2d.grid()
                 self.setxaxis(self.ax2d,self.fig2d)
-    
-    def handle_main_close(self,evt):
-        plt.close('all')
+
     def handle_xy_close(self,evt):
         self.drawnxy=False
         self.doxyplot=False
@@ -1048,7 +1052,7 @@ class Haasoscope():
             if self.debuglockin: self.lockiny1o=np.zeros(trange) # offline float calculation
             if self.debuglockin: self.lockiny2o=np.zeros(trange) # offline float calculation
             self.lockindrawn=True
-            self.lockinfig, self.lockinax = plt.subplots(2,1)
+            #self.lockinfig, self.lockinax = plt.subplots(2,1)
             self.lockinfig.canvas.set_window_title('Lockin of channel '+str(2)+" wrt "+str(3))
             self.lockinfig.canvas.mpl_connect('close_event', self.handle_lockin_close)
 
@@ -1208,7 +1212,10 @@ class Haasoscope():
             foundusbs=[]
             for bn in np.arange(num_board):
                 self.ser.write(bytearray([100])) # prime the trigger
-                self.ser.write(bytearray([10+bn]))
+                if self.minfirmwareversion>=17:
+                    self.ser.write(bytearray([51,bn]))
+                else:
+                    self.ser.write(bytearray([10+bn]))
                 for usb in np.arange(len(self.usbser)):
                     if not usb in foundusbs: # it's not already known that this usb connection is assigned to a board
                         rslt = self.usbser[usb].read(self.num_bytes) # try to get data from the board
@@ -1226,7 +1233,10 @@ class Haasoscope():
     timedout = False
     def getdata(self,board):
         if not self.dousb or not self.dousbparallel:
-            self.ser.write(bytearray([10+board]))
+            if self.minfirmwareversion >= 17:
+                self.ser.write(bytearray([51,board]))
+            else:
+                self.ser.write(bytearray([10 + board]))
             if self.db: print(time.time()-self.oldtime,"asked for data from board",board)
             if self.dolockin: self.getlockindata(board)
         if self.dousb:
@@ -1251,7 +1261,7 @@ class Haasoscope():
                 for c in np.arange(num_chan_per_board):
                     for i in np.arange(int(self.num_samples/2)):
                         val=(self.ydata[c][2*i]+self.ydata[c][2*i+1])/2
-                        self.ydata[c][2*i]=val; self.ydata[c][2*i+1]=val;            
+                        self.ydata[c][2*i]=val; self.ydata[c][2*i+1]=val
         else:
             self.timedout = True
             if not self.db and self.rollingtrigger: print("getdata asked for",self.num_bytes,"bytes and got",len(rslt),"from board",board)
@@ -1359,7 +1369,10 @@ class Haasoscope():
         self.max10adcchan=1
         if self.dousb and self.dousbparallel:
             for board in np.arange(num_board):
-                self.ser.write(bytearray([10+board]))
+                if self.minfirmwareversion >= 17:
+                    self.ser.write(bytearray([51,board]))
+                else:
+                    self.ser.write(bytearray([10 + board]))
                 if self.db: print(time.time()-self.oldtime,"asked for data from board",board)
         for bn in np.arange(num_board):
             if self.db: print(time.time()-self.oldtime,"getting board",bn)
@@ -1388,35 +1401,41 @@ class Haasoscope():
     #get the positions of the dpdt switches from IO expander 2B, and then take action (v9.0 and up!)
     havereadswitchdata=False
     def getswitchdata(self,board):
-        #for i in range(2): #twice because the first time just reads it into the board's fpga
+        if self.minfirmwareversion>=17:
             self.ser.write(bytearray([30+board])) #make the next board active (serial_passthrough 0)
-            self.ser.write(bytearray([146])) #request the IO expander data - takes about 2ms to send the command and read the i2c data
-            self.ser.write(bytearray([33])) # from 2B
-            self.ser.write(bytearray([19])) # from 2B
-            self.ser.write(bytearray([board])) # for board number...
-            rslt = self.ser.read(1)
-            if len(rslt)>0:# and i==1:
-                byte_array = unpack('%dB'%len(rslt),rslt)
-                #print "i2c data from board",board,"IO 2B",byte_array[0]
-                newswitchpos=byte_array[0]
-                if newswitchpos!=self.switchpos[board] or not self.havereadswitchdata:
-                    for b in range(8):
-                        if self.testBit(newswitchpos,b) != self.testBit(self.switchpos[board],b) or not self.havereadswitchdata:
-                            #print "switch",b,"is now",self.testBit(newswitchpos,b)
-                            #switch 0-3 is 50/1M Ohm termination on channels 0-3, on is 1M, off is 50
-                            #switch 4-7 is super/normal gain on channels 0-3, on is super, off is normal
-                            if b>=4:
-                                thechan=b-4+(num_board-board-1)*num_chan_per_board
-                                if self.supergain[thechan] and self.testBit(newswitchpos,b)>0:
-                                    self.togglesupergainchan(thechan)
-                                if not self.supergain[thechan] and not self.testBit(newswitchpos,b)>0:
-                                    self.togglesupergainchan(thechan)
-                    self.switchpos[board] = newswitchpos
+        else:
+            self.ser.write(bytearray([53,board]))  # make the next board active (serial_passthrough 0)
+        self.ser.write(bytearray([146])) #request the IO expander data - takes about 2ms to send the command and read the i2c data
+        self.ser.write(bytearray([33])) # from 2B
+        self.ser.write(bytearray([19])) # from 2B
+        self.ser.write(bytearray([board])) # for board number...
+        rslt = self.ser.read(1)
+        if len(rslt)>0:# and i==1:
+            byte_array = unpack('%dB'%len(rslt),rslt)
+            #print "i2c data from board",board,"IO 2B",byte_array[0]
+            newswitchpos=byte_array[0]
+            if newswitchpos!=self.switchpos[board] or not self.havereadswitchdata:
+                for b in range(8):
+                    if self.testBit(newswitchpos,b) != self.testBit(self.switchpos[board],b) or not self.havereadswitchdata:
+                        #print "switch",b,"is now",self.testBit(newswitchpos,b)
+                        #switch 0-3 is 50/1M Ohm termination on channels 0-3, on is 1M, off is 50
+                        #switch 4-7 is super/normal gain on channels 0-3, on is super, off is normal
+                        if b>=4:
+                            thechan=b-4+(num_board-board-1)*num_chan_per_board
+                            if self.supergain[thechan] and self.testBit(newswitchpos,b)>0:
+                                self.togglesupergainchan(thechan)
+                            if not self.supergain[thechan] and not self.testBit(newswitchpos,b)>0:
+                                self.togglesupergainchan(thechan)
+                self.switchpos[board] = newswitchpos
     
     #initialization
     def init(self):
-            self.ser.write(bytearray([0]))#tell them their IDs... first one gets 0, next gets 1, ...
-            self.ser.write(bytearray([20+(num_board-1)]))#tell them which is the last board
+            if self.minfirmwareversion>=17:
+                self.ser.write(bytearray([50, 0]))  # tell them their IDs... first one gets 0, next gets 1, ...
+                self.ser.write(bytearray([52, (num_board - 1)]))  # tell them which is the last board
+            else:
+                self.ser.write(bytearray([0]))  # tell them their IDs... first one gets 0, next gets 1, ...
+                self.ser.write(bytearray([20 + (num_board - 1)]))  # tell them which is the last board
             for b in range(num_board):
                 firmwareversion = self.getfirmwareversion(b)
                 if firmwareversion<self.minfirmwareversion: self.minfirmwareversion=firmwareversion
