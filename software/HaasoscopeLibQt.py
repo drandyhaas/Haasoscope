@@ -68,6 +68,7 @@ class Haasoscope():
         self.downsample=2 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
         self.dofft=False #drawing the FFT plot
         self.dousb=False #whether to use USB2 output
+        self.dousbparallel=True #whether to tell all board to read out over USB2 in parallel (experimental)
         self.sincresample=0 # amount of resampling to do (sinx/x)
         self.dogetotherdata=False # whether to read other calculated data like TDC
         self.tdcdata=0 # TDC data
@@ -1224,9 +1225,10 @@ class Haasoscope():
     
     timedout = False
     def getdata(self,board):
-        self.ser.write(bytearray([10+board]))
-        if self.db: print(time.time()-self.oldtime,"asked for data from board",board)   
-        if self.dolockin: self.getlockindata(board)
+        if not self.dousb or not self.dousbparallel:
+            self.ser.write(bytearray([10+board]))
+            if self.db: print(time.time()-self.oldtime,"asked for data from board",board)
+            if self.dolockin: self.getlockindata(board)
         if self.dousb:
             #try:
             rslt = self.usbser[self.usbsermap[board]].read(self.num_bytes)
@@ -1355,6 +1357,10 @@ class Haasoscope():
             if self.db: print(time.time()-self.oldtime,"priming trigger")
             self.ser.write(bytearray([100]))
         self.max10adcchan=1
+        if self.dousb and self.dousbparallel:
+            for board in np.arange(num_board):
+                self.ser.write(bytearray([10+board]))
+                if self.db: print(time.time()-self.oldtime,"asked for data from board",board)
         for bn in np.arange(num_board):
             if self.db: print(time.time()-self.oldtime,"getting board",bn)
             self.getdata(bn) #this sets all boards before this board into serial passthrough mode, so this and following calls for data will go to this board and then travel back over serial
