@@ -1434,7 +1434,7 @@ class Haasoscope():
     
     #initialization
     def init(self):
-            if self.minfirmwareversion>=17:
+            if num_board>10: # you'd better have firmware >=17 for this!
                 self.ser.write(bytearray([50, 0]))  # tell them their IDs... first one gets 0, next gets 1, ...
                 self.ser.write(bytearray([52, (num_board - 1)]))  # tell them which is the last board
             else:
