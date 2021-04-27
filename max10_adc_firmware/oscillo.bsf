@@ -222,16 +222,9 @@ refer to the applicable agreement for further details.
 	(port
 		(pt 0 480)
 		(input)
-		(text "master" (rect 0 0 28 12)(font "Arial" ))
-		(text "master" (rect 21 475 49 487)(font "Arial" ))
-		(line (pt 0 480)(pt 16 480)(line_width 1))
-	)
-	(port
-		(pt 0 496)
-		(input)
 		(text "spareright" (rect 0 0 38 12)(font "Arial" ))
-		(text "spareright" (rect 21 491 59 503)(font "Arial" ))
-		(line (pt 0 496)(pt 16 496)(line_width 1))
+		(text "spareright" (rect 21 475 59 487)(font "Arial" ))
+		(line (pt 0 480)(pt 16 480)(line_width 1))
 	)
 	(port
 		(pt 360 32)
@@ -372,6 +365,34 @@ refer to the applicable agreement for further details.
 		(text "spareleft" (rect 0 0 34 12)(font "Arial" ))
 		(text "spareleft" (rect 305 331 339 343)(font "Arial" ))
 		(line (pt 360 336)(pt 344 336)(line_width 1))
+	)
+	(port
+		(pt 360 352)
+		(output)
+		(text "extraout11" (rect 0 0 38 12)(font "Arial" ))
+		(text "extraout11" (rect 301 347 339 359)(font "Arial" ))
+		(line (pt 360 352)(pt 344 352)(line_width 1))
+	)
+	(port
+		(pt 360 368)
+		(output)
+		(text "extraout12" (rect 0 0 40 12)(font "Arial" ))
+		(text "extraout12" (rect 299 363 339 375)(font "Arial" ))
+		(line (pt 360 368)(pt 344 368)(line_width 1))
+	)
+	(port
+		(pt 360 384)
+		(output)
+		(text "extraout13" (rect 0 0 40 12)(font "Arial" ))
+		(text "extraout13" (rect 299 379 339 391)(font "Arial" ))
+		(line (pt 360 384)(pt 344 384)(line_width 1))
+	)
+	(port
+		(pt 360 400)
+		(output)
+		(text "extraout14" (rect 0 0 41 12)(font "Arial" ))
+		(text "extraout14" (rect 298 395 339 407)(font "Arial" ))
+		(line (pt 360 400)(pt 344 400)(line_width 1))
 	)
 	(parameter
 		"ram_width"

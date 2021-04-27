@@ -1,7 +1,8 @@
 module oscillo(clk, startTrigger, clk_flash, data_flash1, data_flash2, data_flash3, data_flash4, pwr1, pwr2, shdn_out, spen_out, trig_in, trig_out, rden, rdaddress, 
 data_ready, wraddress_triggerpoint, imthelast, imthefirst,rollingtrigger,trigDebug,triggerpoint,downsample,
 trigthresh,trigchannels,triggertype,triggertot,format_sdin_out,div_sclk_out,outsel_cs_out,clk_spi,SPIsend,SPIsenddata,
-wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig, nsmp, trigout, master, spareleft, spareright);
+wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig, nsmp, trigout, spareleft, spareright,
+extraout11, extraout12, extraout13, extraout14);
 input clk,clk_spi;
 input startTrigger;
 input [1:0] trig_in;
@@ -37,9 +38,12 @@ input ext_trig_in, use_ext_trig;
 input [ram_width-1:0] nsmp;
 
 output reg [3:0] trigout;
-input wire master;
 output wire spareleft;
 input wire spareright;
+output reg extraout11;
+output reg extraout12;
+output reg extraout13;
+output reg extraout14;
 
 reg [31:0] SPIcounter=0;//clock counter for SPI
 input [15:0] SPIsenddata;//the bits to send
@@ -209,21 +213,69 @@ if (imthelast) trig_out[1] = selftrig; // we trigger out to the right if we trig
 else trig_out[1] = trig_in[1]||selftrig; // we trigger out to the right if we got a trig in towards the right, or we triggered ourselves
 
 reg[7:0] Tcounter[3:0]; // counters for the output trigger bits (to hold them high for a while after a trigger)
-reg[1:0] Pulsecounter;
+reg[3:0] Tcounter_test=4'b0001; // bit 0 is on when calibrating
+reg[7:0] Tcounter_test_countdown; // use for sending 50 test triggers
+reg[1:0] Pulsecounter=0;
+reg[7:0] Trecovery[3:0];
+reg testingtriggerreading=1;
 always @(posedge clk_flash) begin
-	i=0;
-	while (i<4) begin
-		if (selftrigtemp[i]) Tcounter[i]<=2; // will count down from 2 (16 ns) (max is 255)
-		else begin
-			if (Tcounter[i]) Tcounter[i]<=Tcounter[i]-1;
+	if (imthefirst & testingtriggerreading) begin // can test how well triggers (from other boards) are synced in, on the master
+		//trigout[0] <= (ext_trig_in && Pulsecounter==0);
+		//trigout[1] <= (ext_trig_in && Pulsecounter==1);
+		//trigout[2] <= (ext_trig_in && Pulsecounter==2);
+		//trigout[3] <= (ext_trig_in && Pulsecounter==3);
+		if (ext_trig_in && Pulsecounter==0) Trecovery[0]<=Trecovery[0]+1;
+		if (ext_trig_in && Pulsecounter==1) Trecovery[1]<=Trecovery[1]+1;
+		if (ext_trig_in && Pulsecounter==2) Trecovery[2]<=Trecovery[2]+1;
+		if (ext_trig_in && Pulsecounter==3) Trecovery[3]<=Trecovery[3]+1;
+		trigout[0] <= Trecovery[0]==4;
+		trigout[1] <= Trecovery[1]==4;
+		trigout[2] <= Trecovery[2]==4;
+		trigout[3] <= Trecovery[3]==4;
+		if (~spareright) begin
+			Trecovery[0]=0; Trecovery[1]=0; Trecovery[2]=0; Trecovery[3]=0;
 		end
-		if (Tcounter[i]) trigout[i]<=1'b1;
-		else trigout[i]<=1'b0;
-		i=i+1;
+	end	
+	else begin
+		i=0; while (i<4) begin
+			if (selftrigtemp[i]) Tcounter[i]<=10; // will count down from 10 (80 ns) (max is 255)
+			else if (Tcounter[i]) Tcounter[i]<=Tcounter[i]-1;
+			i=i+1;
+		end
+		if (spareright) begin
+			trigout[0]<=(Tcounter_test_countdown!=0 && Tcounter_test[Pulsecounter]!=0); // for calibration (clock skew) we fire trigger 0
+			if (Tcounter_test_countdown) Tcounter_test_countdown <= Tcounter_test_countdown-1;
+		end
+		else begin
+			trigout[0]<=(Tcounter[Pulsecounter]!=0);
+			Tcounter_test_countdown <= 17;
+		end
 	end
-	Pulsecounter<=Pulsecounter+1; // for making a pulse every 4 clock ticks, in case we're the master	
+	Pulsecounter<=Pulsecounter+1; // for iterating through the trigger bins
 end
-assign spareleft = (~master) ? (Pulsecounter==0) : spareright; // master is actually 0 when master board 0
+reg[1:0] Pulsecounter2=0;
+reg[7:0] Trecovery2[3:0];
+always @(negedge clk_flash) begin // do the same on the nedative edge, to see which edge syncs the triggers in better
+	if (imthefirst & testingtriggerreading) begin
+			//extraout11 <= (ext_trig_in && Pulsecounter2==0);
+			//extraout12 <= (ext_trig_in && Pulsecounter2==1);
+			//extraout13 <= (ext_trig_in && Pulsecounter2==2);
+			//extraout14 <= (ext_trig_in && Pulsecounter2==3);
+			if (ext_trig_in && Pulsecounter2==0) Trecovery2[0]<=Trecovery2[0]+1;
+			if (ext_trig_in && Pulsecounter2==1) Trecovery2[1]<=Trecovery2[1]+1;
+			if (ext_trig_in && Pulsecounter2==2) Trecovery2[2]<=Trecovery2[2]+1;
+			if (ext_trig_in && Pulsecounter2==3) Trecovery2[3]<=Trecovery2[3]+1;
+			extraout11 <= Trecovery2[0]==4;
+			extraout12 <= Trecovery2[1]==4;
+			extraout13 <= Trecovery2[2]==4;
+			extraout14 <= Trecovery2[3]==4;
+			if (~spareright) begin
+				Trecovery2[0]=0; Trecovery2[1]=0; Trecovery2[2]=0; Trecovery2[3]=0;
+			end
+	end	
+	Pulsecounter2<=Pulsecounter2+1;
+end
+assign spareleft = spareright; // pass the calibration signal along to the left
 
 reg startAcquisition;//ready to trigger?
 always @(posedge clk) begin

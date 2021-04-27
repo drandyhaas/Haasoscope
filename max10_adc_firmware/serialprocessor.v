@@ -182,6 +182,12 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 			led1<=1;
 		end
 	end
+	if (thecounter[24]==1'b1 ) begin //pulse faster
+		io3 <= 0;
+	end
+	else begin
+		io3 <= 1;
+	end
   end
   reg oldled1,oldled2,oldled3,oldled4,oldio1,oldio2,oldio3,oldio4;
   
