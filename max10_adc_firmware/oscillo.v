@@ -1,7 +1,7 @@
 module oscillo(clk, startTrigger, clk_flash, data_flash1, data_flash2, data_flash3, data_flash4, pwr1, pwr2, shdn_out, spen_out, trig_in, trig_out, rden, rdaddress, 
 data_ready, wraddress_triggerpoint, imthelast, imthefirst,rollingtrigger,trigDebug,triggerpoint,downsample,
 trigthresh,trigchannels,triggertype,triggertot,format_sdin_out,div_sclk_out,outsel_cs_out,clk_spi,SPIsend,SPIsenddata,
-wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig, nsmp, trigout);
+wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig, nsmp, trigout, master, spareleft, spareright);
 input clk,clk_spi;
 input startTrigger;
 input [1:0] trig_in;
@@ -35,7 +35,11 @@ parameter maxhighres=5;
 reg [7+maxhighres:0] highres1, highres2, highres3, highres4;
 input ext_trig_in, use_ext_trig;
 input [ram_width-1:0] nsmp;
+
 output reg [3:0] trigout;
+input wire master;
+output wire spareleft;
+input wire spareright;
 
 reg [31:0] SPIcounter=0;//clock counter for SPI
 input [15:0] SPIsenddata;//the bits to send
@@ -204,11 +208,12 @@ always @(posedge clk_flash)
 if (imthelast) trig_out[1] = selftrig; // we trigger out to the right if we triggered ourselves
 else trig_out[1] = trig_in[1]||selftrig; // we trigger out to the right if we got a trig in towards the right, or we triggered ourselves
 
-reg[31:0] Tcounter[3:0]; // counters for the output trigger bits (to hold them high for a while after a trigger)
+reg[7:0] Tcounter[3:0]; // counters for the output trigger bits (to hold them high for a while after a trigger)
+reg[1:0] Pulsecounter;
 always @(posedge clk_flash) begin
 	i=0;
 	while (i<4) begin
-		if (selftrigtemp[i]) Tcounter[i]<=10; // will count down from 10 (80 ns)
+		if (selftrigtemp[i]) Tcounter[i]<=2; // will count down from 2 (16 ns) (max is 255)
 		else begin
 			if (Tcounter[i]) Tcounter[i]<=Tcounter[i]-1;
 		end
@@ -216,7 +221,9 @@ always @(posedge clk_flash) begin
 		else trigout[i]<=1'b0;
 		i=i+1;
 	end
+	Pulsecounter<=Pulsecounter+1; // for making a pulse every 4 clock ticks, in case we're the master	
 end
+assign spareleft = (~master) ? (Pulsecounter==0) : spareright; // master is actually 0 when master board 0
 
 reg startAcquisition;//ready to trigger?
 always @(posedge clk) begin

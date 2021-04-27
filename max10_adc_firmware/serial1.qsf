@@ -117,9 +117,7 @@ set_location_assignment PIN_132 -to usb_wr
 set_location_assignment PIN_127 -to usb_txe_busy
 set_location_assignment PIN_134 -to usb_clk60
 set_location_assignment PIN_131 -to usb_siwu
-set_location_assignment PIN_100 -to carryin -disable
-set_location_assignment PIN_101 -to carryout -disable
-set_location_assignment PIN_135 -to debug1
+set_location_assignment PIN_13 -to debug1
 set_global_assignment -name BDF_FILE serial1.bdf
 set_global_assignment -name VERILOG_FILE ring_counter.v
 set_global_assignment -name VERILOG_FILE tdc2.v
@@ -161,4 +159,7 @@ set_location_assignment PIN_6 -to trigout0_6
 set_location_assignment PIN_7 -to trigout1_7
 set_location_assignment PIN_8 -to trigout2_8
 set_location_assignment PIN_10 -to trigout3_10
+set_location_assignment PIN_14 -to debug2
+set_location_assignment PIN_102 -to spareleft
+set_location_assignment PIN_99 -to spareright
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

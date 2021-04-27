@@ -159,7 +159,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
   always @(posedge clk) begin
 	thecounter<=thecounter+1;
 	usb_txe_not_busy <= ~usb_txe_busy;
-	debug1 <= usb_txe_not_busy;
+	//debug1 <= usb_txe_not_busy;
    if (thecounter[26]==1'b1 ) begin //flash every few seconds
 		if (imthelast) begin
 			led1<=0;		led2<=0;		led3<=0;//all off
@@ -939,11 +939,11 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				usb2counter<=0;
 				state=WRITE_USB_EXT2;
 			end
-			debug2<=1;
+			//debug2<=1;
 			rden = 1;
 		end
 		WRITE_USB_EXT2: begin
-			debug2<=0;
+			//debug2<=0;
 			usb2counter<=usb2counter+1;
 			//rotate through the outputs
 			case(SendCount[ram_width+2:ram_width])
