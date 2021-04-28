@@ -394,6 +394,13 @@ refer to the applicable agreement for further details.
 		(text "extraout14" (rect 298 395 339 407)(font "Arial" ))
 		(line (pt 360 400)(pt 344 400)(line_width 1))
 	)
+	(port
+		(pt 360 416)
+		(output)
+		(text "delaycounter[7..0]" (rect 0 0 70 12)(font "Arial" ))
+		(text "delaycounter[7..0]" (rect 269 411 339 423)(font "Arial" ))
+		(line (pt 360 416)(pt 344 416)(line_width 3))
+	)
 	(parameter
 		"ram_width"
 		"10"

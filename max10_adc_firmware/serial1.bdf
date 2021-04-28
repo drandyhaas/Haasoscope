@@ -902,6 +902,7 @@ refer to the applicable agreement for further details.
 		(line (pt 82 8)(pt 78 12))
 		(line (pt 78 12)(pt 82 8))
 	)
+	(annotation_block (location)(rect 928 104 984 128))
 )
 (pin
 	(output)
@@ -918,6 +919,7 @@ refer to the applicable agreement for further details.
 		(line (pt 82 8)(pt 78 12))
 		(line (pt 78 12)(pt 82 8))
 	)
+	(annotation_block (location)(rect 928 120 984 144))
 )
 (pin
 	(bidir)
@@ -3710,6 +3712,13 @@ refer to the applicable agreement for further details.
 		(text "extraout14" (rect 296 395 339 407)(font "Arial" ))
 		(line (pt 360 400)(pt 344 400))
 	)
+	(port
+		(pt 360 416)
+		(output)
+		(text "delaycounter[7..0]" (rect 0 0 89 12)(font "Arial" ))
+		(text "delaycounter[7..0]" (rect 264 411 339 423)(font "Arial" ))
+		(line (pt 360 416)(pt 344 416)(line_width 3))
+	)
 	(parameter
 		"ram_width"
 		"12"
@@ -5015,6 +5024,11 @@ refer to the applicable agreement for further details.
 (connector
 	(pt 392 144)
 	(pt 384 144)
+)
+(connector
+	(pt 752 128)
+	(pt 392 616)
+	(bus)
 )
 (junction (pt 56 328))
 (junction (pt 56 392))

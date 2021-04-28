@@ -2,7 +2,7 @@ module oscillo(clk, startTrigger, clk_flash, data_flash1, data_flash2, data_flas
 data_ready, wraddress_triggerpoint, imthelast, imthefirst,rollingtrigger,trigDebug,triggerpoint,downsample,
 trigthresh,trigchannels,triggertype,triggertot,format_sdin_out,div_sclk_out,outsel_cs_out,clk_spi,SPIsend,SPIsenddata,
 wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig, nsmp, trigout, spareleft, spareright,
-extraout11, extraout12, extraout13, extraout14);
+extraout11, extraout12, extraout13, extraout14,delaycounter);
 input clk,clk_spi;
 input startTrigger;
 input [1:0] trig_in;
@@ -217,6 +217,7 @@ reg[3:0] Tcounter_test=4'b0001; // bit 0 is on when calibrating
 reg[7:0] Tcounter_test_countdown; // use for sending 50 test triggers
 reg[1:0] Pulsecounter=0;
 reg[7:0] Trecovery[3:0];
+output reg[7:0] delaycounter;
 reg testingtriggerreading=1;
 always @(posedge clk_flash) begin
 	if (imthefirst & testingtriggerreading) begin // can test how well triggers (from other boards) are synced in, on the master
@@ -224,19 +225,19 @@ always @(posedge clk_flash) begin
 		//trigout[1] <= (ext_trig_in && Pulsecounter==1);
 		//trigout[2] <= (ext_trig_in && Pulsecounter==2);
 		//trigout[3] <= (ext_trig_in && Pulsecounter==3);
-		if (ext_trig_in && Pulsecounter==0) Trecovery[0]<=Trecovery[0]+1;
-		if (ext_trig_in && Pulsecounter==1) Trecovery[1]<=Trecovery[1]+1;
-		if (ext_trig_in && Pulsecounter==2) Trecovery[2]<=Trecovery[2]+1;
-		if (ext_trig_in && Pulsecounter==3) Trecovery[3]<=Trecovery[3]+1;
-		trigout[0] <= Trecovery[0]==4;
-		trigout[1] <= Trecovery[1]==4;
-		trigout[2] <= Trecovery[2]==4;
-		trigout[3] <= Trecovery[3]==4;
+		if (trig_in[0] && Pulsecounter==0) Trecovery[0]<=Trecovery[0]+1;
+		if (trig_in[0] && Pulsecounter==1) Trecovery[1]<=Trecovery[1]+1;
+		if (trig_in[0] && Pulsecounter==2) Trecovery[2]<=Trecovery[2]+1;
+		if (trig_in[0] && Pulsecounter==3) Trecovery[3]<=Trecovery[3]+1;
+		delaycounter[0] <= (Trecovery[0]/2==27 && Trecovery[1]==0 && Trecovery[2]==0 && Trecovery[3]==0);
+		delaycounter[1] <= (Trecovery[1]/2==27 && Trecovery[0]==0 && Trecovery[2]==0 && Trecovery[3]==0);
+		delaycounter[2] <= (Trecovery[2]/2==27 && Trecovery[0]==0 && Trecovery[1]==0 && Trecovery[3]==0);
+		delaycounter[3] <= (Trecovery[3]/2==27 && Trecovery[0]==0 && Trecovery[1]==0 && Trecovery[2]==0);
 		if (~spareright) begin
 			Trecovery[0]=0; Trecovery[1]=0; Trecovery[2]=0; Trecovery[3]=0;
 		end
 	end	
-	else begin
+	//else begin
 		i=0; while (i<4) begin
 			if (selftrigtemp[i]) Tcounter[i]<=10; // will count down from 10 (80 ns) (max is 255)
 			else if (Tcounter[i]) Tcounter[i]<=Tcounter[i]-1;
@@ -248,9 +249,9 @@ always @(posedge clk_flash) begin
 		end
 		else begin
 			trigout[0]<=(Tcounter[Pulsecounter]!=0);
-			Tcounter_test_countdown <= 17;
+			Tcounter_test_countdown <= 219; // should give 54 or 55 pulses (depending on when spareright fires)
 		end
-	end
+	//end
 	Pulsecounter<=Pulsecounter+1; // for iterating through the trigger bins
 end
 reg[1:0] Pulsecounter2=0;
@@ -261,14 +262,14 @@ always @(negedge clk_flash) begin // do the same on the nedative edge, to see wh
 			//extraout12 <= (ext_trig_in && Pulsecounter2==1);
 			//extraout13 <= (ext_trig_in && Pulsecounter2==2);
 			//extraout14 <= (ext_trig_in && Pulsecounter2==3);
-			if (ext_trig_in && Pulsecounter2==0) Trecovery2[0]<=Trecovery2[0]+1;
-			if (ext_trig_in && Pulsecounter2==1) Trecovery2[1]<=Trecovery2[1]+1;
-			if (ext_trig_in && Pulsecounter2==2) Trecovery2[2]<=Trecovery2[2]+1;
-			if (ext_trig_in && Pulsecounter2==3) Trecovery2[3]<=Trecovery2[3]+1;
-			extraout11 <= Trecovery2[0]==4;
-			extraout12 <= Trecovery2[1]==4;
-			extraout13 <= Trecovery2[2]==4;
-			extraout14 <= Trecovery2[3]==4;
+			if (trig_in[0] && Pulsecounter2==0) Trecovery2[0]<=Trecovery2[0]+1;
+			if (trig_in[0] && Pulsecounter2==1) Trecovery2[1]<=Trecovery2[1]+1;
+			if (trig_in[0] && Pulsecounter2==2) Trecovery2[2]<=Trecovery2[2]+1;
+			if (trig_in[0] && Pulsecounter2==3) Trecovery2[3]<=Trecovery2[3]+1;
+			delaycounter[4] <= (Trecovery2[0]/2==27 && Trecovery2[1]==0 && Trecovery2[2]==0 && Trecovery2[3]==0);
+			delaycounter[5] <= (Trecovery2[1]/2==27 && Trecovery2[0]==0 && Trecovery2[2]==0 && Trecovery2[3]==0);
+			delaycounter[6] <= (Trecovery2[2]/2==27 && Trecovery2[0]==0 && Trecovery2[1]==0 && Trecovery2[3]==0);
+			delaycounter[7] <= (Trecovery2[3]/2==27 && Trecovery2[0]==0 && Trecovery2[1]==0 && Trecovery2[2]==0);
 			if (~spareright) begin
 				Trecovery2[0]=0; Trecovery2[1]=0; Trecovery2[2]=0; Trecovery2[3]=0;
 			end
