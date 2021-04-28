@@ -1374,17 +1374,17 @@ class Haasoscope():
         if self.dousb and self.dousbparallel:
             for board in np.arange(num_board):
                 if self.minfirmwareversion>=17:
-                    self.ser.write(bytearray([51,board]))
+                    self.ser.write(bytearray([51,255])) # 255 gets data from ALL boards
                 else:
-                    self.ser.write(bytearray([10 + board]))
-                if self.db: print(time.time()-self.oldtime,"asked for data from board",board)
+                    print("You need firmware >17 for USBparallel reading!")
+                if self.db: print(time.time()-self.oldtime,"asked for data from all boards")
         for bn in np.arange(num_board):
             if self.db: print(time.time()-self.oldtime,"getting board",bn)
             self.getdata(bn) #this sets all boards before this board into serial passthrough mode, so this and following calls for data will go to this board and then travel back over serial
             self.getmax10adc(bn) # get data from 1 MHz Max10 ADC channels
             if self.dogetotherdata: self.getotherdata(bn) # get other data, like TDC info, or other bytes
             if self.dofft: self.plot_fft(bn) #do the FFT plot
-            if self.dolockin and self.debuglockin: 
+            if self.dolockin and self.debuglockin:
                 if sendincrement==0: self.lockinanalyzedata(bn)
                 else: print("you need to set sendincrement = 0 first before debugging lockin info"); return False
             if self.dolockin and self.dolockinplot: self.plot_lockin()

@@ -329,7 +329,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				newcomdata=1; //pass it on
 				if (bytesread<byteswanted) state=READMORE;
 				else begin
-					if (myid==extradata[0]) begin
+					if (myid==extradata[0] || extradata[0]==255) begin // if 255 all boards read out with one command
 						//read me out
 						serial_passthrough=0;
 						timeoutcounter=0;//start the clock
