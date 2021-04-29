@@ -6,7 +6,7 @@ adcdata,adcready,getadcdata,getadcadr,adcvalid,adcreset,adcramdata,writesamp,wri
 triggerpoint,downsample, screendata,screenwren,screenaddr,screenreset,trigthresh,trigchannels,triggertype,triggertot,
 SPIsend,SPIsenddata,delaycounter,carrycounter,usb_siwu,SPIstate,offset,gainsw,do_usb,
 i2c_ena,i2c_addr,i2c_rw,i2c_datawr,i2c_datard,i2c_busy,i2c_ackerror,   usb_clk60,usb_dataio,usb_txe_busy,usb_wr,
-rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_buffer1, nsmp);
+rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_buffer1, nsmp, outputclk);
    input clk;
 	input[7:0] rxData;
    input rxReady;
@@ -68,6 +68,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 	input [63:0] chip_id;
 	output reg highres=0;
 	output reg use_ext_trig=0;
+	output reg outputclk=1;
 	
 	output reg i2c_ena;
 	output reg [6:0] i2c_addr;
@@ -288,8 +289,14 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				end
 			end
 			else if (readdata > 19 && readdata < 30) begin // got character "20-29"
-				if (myid==(readdata-20)) imthelast=1; // I'm the last one
-				else imthelast=0;
+				if (myid==(readdata-20)) begin
+					imthelast=1; // I'm the last one
+					outputclk=0;
+				end
+				else begin
+					imthelast=0;
+					outputclk=1;
+				end
 				comdata=readdata;
 				newcomdata=1; //pass it on
 				state=READ;
@@ -350,8 +357,14 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				newcomdata=1; //pass it on
 				if (bytesread<byteswanted) state=READMORE;
 				else begin
-					if (myid==extradata[0]) imthelast=1; // I'm the last one
-					else imthelast=0;
+					if (myid==extradata[0]) begin
+						imthelast=1; // I'm the last one
+						outputclk=0;
+					end
+					else begin
+						imthelast=0;
+						outputclk=1;
+					end
 					state=READ;
 				end
 			end
@@ -375,6 +388,12 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				end
 			end
 			
+			else if (54==readdata) begin
+				if (imthelast) outputclk = ~outputclk; //tell the last one to toggle outputting the clock on the left
+				comdata=readdata;
+				newcomdata=1; //pass it on
+				state=READ;
+			end			
 			
 			else if (100==readdata) begin
 				//tell them all to prime the trigger

@@ -108,6 +108,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.supergainCheck.stateChanged.connect(self.supergain)
         self.ui.actionRead_from_file.triggered.connect(self.actionRead_from_file)
         self.ui.actionStore_to_file.triggered.connect(self.actionStore_to_file)
+        self.ui.actionOutput_clk_left.triggered.connect(self.actionOutput_clk_left)
         self.ui.actionDo_autocalibration.triggered.connect(self.actionDo_autocalibration)
         self.ui.chanonCheck.stateChanged.connect(self.chanon)
         self.ui.trigchanonCheck.stateChanged.connect(self.trigchanon)
@@ -275,7 +276,10 @@ class MainWindow(TemplateBaseClass):
     def actionDo_autocalibration(self):
         print("starting autocalibration")
         d.autocalibchannel=0
-        
+
+    def actionOutput_clk_left(self):
+        d.toggle_clk_last()
+
     def exttrig(self):
         d.toggleuseexttrig()
          
@@ -597,12 +601,12 @@ class MainWindow(TemplateBaseClass):
         time_s=str(time.time())
         for c in range(HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board):
             if self.lines[c].isVisible(): # only save the data for visible channels
-                self.outf.write(str(self.nevents)); self.outf.write(",") # start of each line is the event number
-                self.outf.write(time_s); self.outf.write(",") # next column is the time in seconds of the current event
-                self.outf.write(str(c)); self.outf.write(",") # next column is the channel number
-                self.outf.write(str(self.vline*d.xscaling)); self.outf.write(",") # next column is the trigger time
-                self.outf.write(str( 2.*d.xscale/d.num_samples ) ); self.outf.write(",") # next column is the time between samples, in ns
-                self.outf.write(str(d.num_samples)); self.outf.write(",") # next column is the number of samples
+                self.outf.write(str(self.nevents)+",") # start of each line is the event number
+                self.outf.write(time_s+",") # next column is the time in seconds of the current event
+                self.outf.write(str(c)) # next column is the channel number
+                self.outf.write(str(self.vline*d.xscaling)+",") # next column is the trigger time
+                self.outf.write(str(2.*d.xscale/d.num_samples)+",") # next column is the time between samples, in ns
+                self.outf.write(str(d.num_samples)+",") # next column is the number of samples
                 d.xydata[c][1].tofile(self.outf,",",format="%.3f") # save y data (1) from fast adc channel c
                 self.outf.write("\n") # newline
     

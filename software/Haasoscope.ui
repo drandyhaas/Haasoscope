@@ -1249,8 +1249,15 @@
     <addaction name="actionStore_to_file"/>
     <addaction name="actionDo_autocalibration"/>
    </widget>
+   <widget class="QMenu" name="menuOther">
+    <property name="title">
+     <string>Other</string>
+    </property>
+    <addaction name="actionOutput_clk_left"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuCalibration"/>
+   <addaction name="menuOther"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="autoFillBackground">
@@ -1275,6 +1282,14 @@
   <action name="actionDo_autocalibration">
    <property name="text">
     <string>Do autocalibration</string>
+   </property>
+  </action>
+  <action name="actionOutput_clk_left">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Output clk left</string>
    </property>
   </action>
  </widget>

@@ -458,7 +458,11 @@ class Haasoscope():
         print("Trigger auto rearm now",self.autorearm)
         if self.db: print(time.time()-self.oldtime,"priming trigger")
         self.ser.write(bytearray([100])) # prime the trigger one last time
-    
+
+    def toggle_clk_last(self):
+        self.ser.write(bytearray([54]))
+        print("Toggled clock output from the last board")
+
     def getIDs(self):
         debug3=True
         self.uniqueID=[]
