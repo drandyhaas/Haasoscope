@@ -219,6 +219,7 @@ reg[1:0] Pulsecounter=0;
 reg[7:0] Trecovery[3:0];
 output reg[7:0] delaycounter;
 reg testingtriggerreading=1;
+integer sparerightcounter;
 always @(posedge clk_flash) begin
 	if (imthefirst & testingtriggerreading) begin // can test how well triggers (from other boards) are synced in, on the master
 		//trigout[0] <= (ext_trig_in && Pulsecounter==0);
@@ -244,19 +245,26 @@ always @(posedge clk_flash) begin
 			i=i+1;
 		end
 		if (spareright) begin
-			trigout[0]<=(Tcounter_test_countdown!=0 && Tcounter_test[Pulsecounter]!=0); // for calibration (clock skew) we fire trigger 0
-			if (Tcounter_test_countdown) Tcounter_test_countdown <= Tcounter_test_countdown-1;
+			if (sparerightcounter<205) begin
+				sparerightcounter<=sparerightcounter+1; // delays for 205 ticks, to wait for trigger board to be ready for counting (it was waiting for all normal triggers from all boards to cease)
+				trigout[0]<=0;//no pulses yet
+			end
+			else begin
+				trigout[0]<=(Tcounter_test_countdown!=0 && Tcounter_test[Pulsecounter]!=0); // for calibration (clock skew) we fire trigger 0
+				if (Tcounter_test_countdown) Tcounter_test_countdown <= Tcounter_test_countdown-1;
+			end
 		end
 		else begin
 			trigout[0]<=(Tcounter[Pulsecounter]!=0);
 			Tcounter_test_countdown <= 219; // should give 54 or 55 pulses (depending on when spareright fires)
+			sparerightcounter<=0;
 		end
 	//end
 	Pulsecounter<=Pulsecounter+1; // for iterating through the trigger bins
 end
 reg[1:0] Pulsecounter2=0;
 reg[7:0] Trecovery2[3:0];
-always @(negedge clk_flash) begin // do the same on the nedative edge, to see which edge syncs the triggers in better
+always @(negedge clk_flash) begin // do the same on the negative edge, to see which edge syncs the triggers in better
 	if (imthefirst & testingtriggerreading) begin
 			//extraout11 <= (ext_trig_in && Pulsecounter2==0);
 			//extraout12 <= (ext_trig_in && Pulsecounter2==1);
