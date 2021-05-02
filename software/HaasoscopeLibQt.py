@@ -463,6 +463,10 @@ class Haasoscope():
         self.ser.write(bytearray([54]))
         print("Toggled clock output from the last board")
 
+    def increment_clk_phase(self):
+        self.ser.write(bytearray([55]))
+        print("Incremented clock phase")
+
     def getIDs(self):
         debug3=True
         self.uniqueID=[]

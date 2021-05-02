@@ -20,9 +20,9 @@ refer to the applicable agreement for further details.
 */
 (header "symbol" (version "1.1"))
 (symbol
-	(rect 16 16 376 896)
+	(rect 16 16 376 960)
 	(text "processor" (rect 5 0 45 12)(font "Arial" ))
-	(text "inst" (rect 8 864 20 876)(font "Arial" ))
+	(text "inst" (rect 8 928 20 940)(font "Arial" ))
 	(port
 		(pt 0 32)
 		(input)
@@ -562,13 +562,41 @@ refer to the applicable agreement for further details.
 		(text "outputclk" (rect 305 843 339 855)(font "Arial" ))
 		(line (pt 360 848)(pt 344 848)(line_width 1))
 	)
+	(port
+		(pt 360 864)
+		(output)
+		(text "phasecounterselect[2..0]" (rect 0 0 95 12)(font "Arial" ))
+		(text "phasecounterselect[2..0]" (rect 244 859 339 871)(font "Arial" ))
+		(line (pt 360 864)(pt 344 864)(line_width 3))
+	)
+	(port
+		(pt 360 880)
+		(output)
+		(text "phaseupdown" (rect 0 0 53 12)(font "Arial" ))
+		(text "phaseupdown" (rect 286 875 339 887)(font "Arial" ))
+		(line (pt 360 880)(pt 344 880)(line_width 1))
+	)
+	(port
+		(pt 360 896)
+		(output)
+		(text "phasestep" (rect 0 0 40 12)(font "Arial" ))
+		(text "phasestep" (rect 299 891 339 903)(font "Arial" ))
+		(line (pt 360 896)(pt 344 896)(line_width 1))
+	)
+	(port
+		(pt 360 912)
+		(output)
+		(text "scanclk" (rect 0 0 29 12)(font "Arial" ))
+		(text "scanclk" (rect 310 907 339 919)(font "Arial" ))
+		(line (pt 360 912)(pt 344 912)(line_width 1))
+	)
 	(parameter
 		"ram_width"
 		"12"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(drawing
-		(rectangle (rect 16 16 344 864)(line_width 1))
+		(rectangle (rect 16 16 344 928)(line_width 1))
 	)
 	(annotation_block (parameter)(rect 376 -64 476 16))
 )

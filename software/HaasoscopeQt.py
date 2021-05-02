@@ -266,6 +266,8 @@ class MainWindow(TemplateBaseClass):
             self.timefast()
         if event.key()==QtCore.Qt.Key_Right:
             self.timeslow()
+        if event.key()==QtCore.Qt.Key_I:
+            d.increment_clk_phase()
             
     def actionRead_from_file(self):
         d.readcalib()

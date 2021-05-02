@@ -6,7 +6,9 @@ adcdata,adcready,getadcdata,getadcadr,adcvalid,adcreset,adcramdata,writesamp,wri
 triggerpoint,downsample, screendata,screenwren,screenaddr,screenreset,trigthresh,trigchannels,triggertype,triggertot,
 SPIsend,SPIsenddata,delaycounter,carrycounter,usb_siwu,SPIstate,offset,gainsw,do_usb,
 i2c_ena,i2c_addr,i2c_rw,i2c_datawr,i2c_datard,i2c_busy,i2c_ackerror,   usb_clk60,usb_dataio,usb_txe_busy,usb_wr,
-rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_buffer1, nsmp, outputclk);
+rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_buffer1, nsmp, outputclk,
+phasecounterselect,phaseupdown,phasestep,scanclk
+);
    input clk;
 	input[7:0] rxData;
    input rxReady;
@@ -85,7 +87,8 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
   localparam READ=0, SOLVING=1, WAITING=2, WRITE_EXT1=3, WRITE_EXT2=4, WAIT_ADC1=5, WAIT_ADC2=6, WRITE_BYTE1=7, WRITE_BYTE2=8, READMORE=9, 
 	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15, //WRITEUSB1=16,WRITEUSB2=17, 
 	LOCKIN1=18,LOCKIN2=19,LOCKIN3=20,LOCKINWRITE1=21,LOCKINWRITE2=22,
-	WRITE_USB_EXT1=33, WRITE_USB_EXT2=34, WRITE_USB_EXT3=35, WRITE_USB_EXT4=36, WRITE_USB_EXT5=37;
+	WRITE_USB_EXT1=33, WRITE_USB_EXT2=34, WRITE_USB_EXT3=35, WRITE_USB_EXT4=36, WRITE_USB_EXT5=37,
+	PLLCLOCK=40;
   integer state,i2cstate;
 
   reg [7:0] myid;
@@ -128,6 +131,14 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
   reg [15:0] lockinnumtoshift = 0;
   integer chan2mean, chan3mean;
   reg calcmeans;
+  
+  //for clock phase
+  integer pllclock_counter=0;
+  integer scanclk_cycles=0;
+  output reg[2:0] phasecounterselect; // Dynamic phase shift counter Select. 000:all 001:M 010:C0 011:C1 100:C2 101:C3 110:C4. Registered in the rising edge of scanclk.
+  output reg phaseupdown=1; // Dynamic phase shift direction; 1:UP, 0:DOWN. Registered in the PLL on the rising edge of scanclk.
+  output reg phasestep=0;
+  output reg scanclk=0;
   
   initial begin
     state<=READ;
@@ -393,7 +404,16 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				comdata=readdata;
 				newcomdata=1; //pass it on
 				state=READ;
-			end			
+			end
+			else if (55==readdata) begin //adjust clock phases
+				phasecounterselect=3'b000; // all clocks - see https://www.intel.com/content/dam/www/programmable/us/en/pdfs/literature/hb/cyc3/cyc3_ciii51006.pdf table 5-10
+				//phaseupdown=1'b1; // up
+				scanclk=1'b0; // start low
+				phasestep=1'b1; // assert!
+				pllclock_counter=0;
+				scanclk_cycles=0;
+				state=PLLCLOCK;
+			end
 			
 			else if (100==readdata) begin
 				//tell them all to prime the trigger
@@ -780,6 +800,17 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 			//wait for SPIstate from oscillo to be nearly done
 			if (SPIstate==3) begin 
 				state=READ;
+			end
+		end
+		
+		PLLCLOCK: begin // to step the clock phase, you have to toggle scanclk a few times
+			pllclock_counter=pllclock_counter+1;
+			if (pllclock_counter[4]) begin
+				scanclk = ~scanclk;
+				pllclock_counter=0;
+				scanclk_cycles=scanclk_cycles+1;
+				if (scanclk_cycles>5) phasestep=1'b0; // deassert!
+				if (scanclk_cycles>7) state=READ;
 			end
 		end
 		
