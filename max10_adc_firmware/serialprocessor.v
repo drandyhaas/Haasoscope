@@ -354,10 +354,10 @@ phasecounterselect,phaseupdown,phasestep,scanclk
 						state=WAITING;
 					end
 					else begin
-						if (myid<extradata[0]) begin
+						//if (myid<extradata[0]) begin
 							//pass it on, and set serial to "passthrough mode"
 							serial_passthrough=1;
-						end
+						//end
 						state=READ;
 					end
 				end
@@ -390,10 +390,10 @@ phasecounterselect,phaseupdown,phasestep,scanclk
 						serial_passthrough=0;
 					end
 					else begin
-						if (myid<extradata[0]) begin
+						//if (myid<extradata[0]) begin
 							//pass it on, and set serial to "passthrough mode"
 							serial_passthrough=1;
-						end
+						//end
 					end
 					state=READ;
 				end
@@ -405,14 +405,21 @@ phasecounterselect,phaseupdown,phasestep,scanclk
 				newcomdata=1; //pass it on
 				state=READ;
 			end
-			else if (55==readdata) begin //adjust clock phases
-				phasecounterselect=3'b000; // all clocks - see https://www.intel.com/content/dam/www/programmable/us/en/pdfs/literature/hb/cyc3/cyc3_ciii51006.pdf table 5-10
-				//phaseupdown=1'b1; // up
-				scanclk=1'b0; // start low
-				phasestep=1'b1; // assert!
-				pllclock_counter=0;
-				scanclk_cycles=0;
-				state=PLLCLOCK;
+			else if (55==readdata) begin //adjust clock phases, if I'm the active one
+				if (serial_passthrough) begin
+					comdata=readdata;
+					newcomdata=1; //pass it on
+					state=READ;
+				end
+				else begin
+					phasecounterselect=3'b000; // all clocks - see https://www.intel.com/content/dam/www/programmable/us/en/pdfs/literature/hb/cyc3/cyc3_ciii51006.pdf table 5-10
+					//phaseupdown=1'b1; // up
+					scanclk=1'b0; // start low
+					phasestep=1'b1; // assert!
+					pllclock_counter=0;
+					scanclk_cycles=0;
+					state=PLLCLOCK;
+				end
 			end
 			
 			else if (100==readdata) begin
