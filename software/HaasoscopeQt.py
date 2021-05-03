@@ -611,6 +611,8 @@ class MainWindow(TemplateBaseClass):
                 self.outf.write(str(d.num_samples)+",") # next column is the number of samples
                 d.xydata[c][1].tofile(self.outf,",",format="%.3f") # save y data (1) from fast adc channel c
                 self.outf.write("\n") # newline
+        # should also write out the 8 digital bits per board (if logic analyzer on)
+        # stored in d.xydatalogicraw[board]
     
     nevents=0
     oldnevents=0

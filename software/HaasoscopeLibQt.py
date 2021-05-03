@@ -804,13 +804,16 @@ class Haasoscope():
             if self.dologicanalyzer and self.logicline1>=0 and hasattr(self,"ydatalogic"): #this draws logic analyzer info
                 xlogicshift=12.0/pow(2,max(self.downsample,0)) # shift the logic analyzer data to the right by this number of samples (to account for the ADC delay) #downsample isn't less than 0 for xscaling
                 xdatanew = (self.xdata+xlogicshift-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
-                for l in np.arange(8):
-                    a=np.array(self.ydatalogic,dtype=np.uint8)
-                    b=np.unpackbits(a)
-                    bl=b[7-l::8] # every 8th bit, starting at 7-l
-                    ydatanew = bl*.3 + (l+1)*3.2/8. # scale it and shift it
-                    self.xydatalogic[l][0]=xdatanew
-                    self.xydatalogic[l][1]=ydatanew
+                a=np.array(self.ydatalogic,dtype=np.uint8)
+                b=np.unpackbits(a)
+                theboard = num_board - 1 - int(self.selectedchannel / num_chan_per_board)
+                self.xydatalogicraw[theboard] = a
+                if board==theboard:
+                    for l in np.arange(8):
+                        bl=b[7-l::8] # every 8th bit, starting at 7-l
+                        ydatanew = bl*.3 + (l+1)*3.2/8. # scale it and shift it
+                        self.xydatalogic[l][0]=xdatanew
+                        self.xydatalogic[l][1]=ydatanew
             for l in np.arange(num_chan_per_board): #this draws the 4 fast ADC data channels for each board
                 thechan=l+(num_board-board-1)*num_chan_per_board
                 #if self.db: print time.time()-self.oldtime,"drawing adc line",thechan
@@ -1488,6 +1491,7 @@ class Haasoscope():
             self.xydata=np.empty([int(num_chan_per_board*num_board),2,int(self.num_samples-1)],dtype=float)
             self.xydataslow=np.empty([len(max10adcchans),2,int(self.nsamp)],dtype=float)
             self.xydatalogic=np.empty([8,2,int(self.num_samples)],dtype=float)
+            self.xydatalogicraw=np.empty([num_board,int(self.num_samples)],dtype=np.uint8) # the raw 8 digital input bits from each board for each sample - the x time values are in self.xydatalogic[0][0]
             return True
     
     #cleanup
