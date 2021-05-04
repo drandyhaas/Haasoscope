@@ -7,9 +7,10 @@ import numpy as np
 import sys, time
 from serial import SerialException
 import pyqtgraph as pg
-from pyqtgraph.Qt import QtCore, QtGui, loadUiType
+from pyqtgraph.Qt import QtCore, QtWidgets, QtGui, loadUiType
 
 import HaasoscopeLibQt
+import HaasoscopeTrigLibQt
 
 serialdelaytimerwait=100
 ram_width=9
@@ -42,6 +43,11 @@ d.construct()
 d.serialdelaytimerwait=serialdelaytimerwait #50 #100 #150 #300 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
 #d.dolockin=True # whether to calculate the lockin info on the FPGA and read it out (off by default)
 #d.db=True #turn on debugging
+
+#for talking with the trigger board
+t = HaasoscopeTrigLibQt.HaasoscopeTrig()
+t.construct("COM21")
+t.get_firmware_version()
 
 app = QtGui.QApplication.instance()
 standalone = app is None
@@ -266,21 +272,27 @@ class MainWindow(TemplateBaseClass):
             self.timefast()
         if event.key()==QtCore.Qt.Key_Right:
             self.timeslow()
+        modifiers = QtWidgets.QApplication.keyboardModifiers()
         if event.key()==QtCore.Qt.Key_I:
-            d.increment_clk_phase()
-            
+            if modifiers == QtCore.Qt.ShiftModifier:
+                theboard = num_board - 1 - int(d.selectedchannel / HaasoscopeLibQt.num_chan_per_board)
+                d.increment_clk_phase(theboard)
+            else:
+                t.increment_trig_board_clock_phase()
+
     def actionRead_from_file(self):
         d.readcalib()
         
     def actionStore_to_file(self):
         d.storecalib()
-        
+
     def actionDo_autocalibration(self):
         print("starting autocalibration")
         d.autocalibchannel=0
 
     def actionOutput_clk_left(self):
         d.toggle_clk_last()
+        t.setclock(True)
 
     def exttrig(self):
         d.toggleuseexttrig()
@@ -558,6 +570,7 @@ class MainWindow(TemplateBaseClass):
         print("Handling closeEvent")
         self.timer.stop()
         self.timer2.stop()
+        t.cleanup()
         d.cleanup()
         if self.savetofile: self.outf.close()
         if hasattr(self,"fftui"):
@@ -654,8 +667,14 @@ class MainWindow(TemplateBaseClass):
                 self.oldnevents=self.nevents
             if d.getone and not d.timedout: self.dostartstop()
 
-    def drawtext(self):
+    def drawtext(self): # happens once per second
         self.ui.textBrowser.setText(d.chantext())
+        if t.extclock:
+            delaycounters = t.get_delaycounters()
+            #print("delaycounter 0:", bin(t.delaycounters[0]))
+            if not delaycounters[0]:
+                t.get_histos(0)
+                for i in range(10): d.increment_clk_phase(0) # increment clk of that board by 10 * 100ps
 
 try:    
     win = MainWindow()

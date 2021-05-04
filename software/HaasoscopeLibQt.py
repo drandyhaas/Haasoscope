@@ -463,14 +463,13 @@ class Haasoscope():
         self.ser.write(bytearray([54]))
         print("Toggled clock output from the last board")
 
-    def increment_clk_phase(self):
+    def increment_clk_phase(self, board):
         if self.minfirmwareversion<17:
             print("incrementing clock phase requires firmware >=17")
             return
-        theboard = num_board-1-int(self.selectedchannel/num_chan_per_board)
-        self.ser.write(bytearray([53,theboard]))
+        self.ser.write(bytearray([53,board]))
         self.ser.write(bytearray([55]))
-        print("Incremented clock phase on board",theboard)
+        print("Incremented clock phase on board",board)
 
     def getIDs(self):
         debug3=True

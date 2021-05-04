@@ -1,0 +1,61 @@
+from serial import Serial
+from struct import unpack
+
+print("Loading HaasoscopeTrigLibQt.py")
+
+class HaasoscopeTrig:
+
+    def construct(self,port):
+        self.ser=Serial(port,115200,timeout=1.0)
+        self.extclock=0
+
+    def setclock(self, wantactiveclock): # True for wanting sync with external clock
+        self.extclock = 0
+        self.ser.write(bytearray([8]))  # active clock info
+        res = self.ser.read(1)
+        if len(res)==0: return
+        b = unpack('%dB' % len(res), res)
+        print("trig board using external active clock", bin(b[0]))
+        self.extclock = b[0]
+        if wantactiveclock and not self.extclock:
+            self.ser.write(bytearray([4]))  # toggle use other clk input
+        if not wantactiveclock and self.extclock:
+            self.ser.write(bytearray([4]))  # toggle use other clk input
+        self.ser.write(bytearray([8]))  # active clock info
+        res = self.ser.read(1)
+        b = unpack('%dB' % len(res), res)
+        print("trig board using external active clock", bin(b[0]))
+        self.extclock = b[0]
+
+    def get_firmware_version(self):
+        self.ser.write(bytearray([0])) # firmware version
+        res = self.ser.read(1)
+        if len(res)==0: return
+        b = unpack('%dB' % len(res), res)
+        self.firmwarev=b[0]
+        print("trig board firmware v",self.firmwarev)
+
+    def increment_trig_board_clock_phase(self):
+        self.ser.write(bytearray([5])) #increment phase
+        print("incremented phase of trig board")
+
+    def get_delaycounters(self):
+        self.ser.write(bytearray([11]))  # delaycounter trigger info
+        res = self.ser.read(16)
+        self.delaycounters = unpack('%dB' % len(res), res)
+        #print("all delaycounters:",self.delaycounters)
+        return self.delaycounters
+
+    def get_histos(self,h):
+        self.ser.write(bytearray([2,h])) # get histos from channel h
+        self.ser.write(bytearray([10])) # get histos
+        res = self.ser.read(32)
+        b = unpack('%dB' % len(res), res)
+        myint=[]
+        for i in range(8):
+            myint.append( b[4*i+0]+256*b[4*i+1]+256*256*b[4*i+2]+0*256*256*256*b[4*i+3] )
+        print(myint[0],myint[1],myint[2],myint[3],":",myint[4],myint[5],myint[6],myint[7])
+
+    def cleanup(self):
+        self.setclock(False)
+        self.ser.close()
