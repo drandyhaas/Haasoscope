@@ -212,77 +212,38 @@ always @(posedge clk_flash)
 if (imthelast) trig_out[1] = selftrig; // we trigger out to the right if we triggered ourselves
 else trig_out[1] = trig_in[1]||selftrig; // we trigger out to the right if we got a trig in towards the right, or we triggered ourselves
 
-reg[7:0] Tcounter[3:0]; // counters for the output trigger bits (to hold them high for a while after a trigger)
-reg[3:0] Tcounter_test=4'b0001; // bit 0 is on when calibrating
+reg Ttrig[4]; // whether to fire each of the 4 trigger bits
+reg[7:0] Tcounter[4]; // counters for the output trigger bits (to hold them high for a while after a trigger)
 reg[7:0] Tcounter_test_countdown; // use for sending 50 test triggers
-reg[1:0] Pulsecounter=0;
-reg[7:0] Trecovery[3:0];
 output reg[7:0] delaycounter;
-reg testingtriggerreading=1;
 integer sparerightcounter;
 always @(posedge clk_flash) begin
-	if (imthefirst & testingtriggerreading) begin // can test how well triggers (from other boards) are synced in, on the master
-		//trigout[0] <= (ext_trig_in && Pulsecounter==0);
-		//trigout[1] <= (ext_trig_in && Pulsecounter==1);
-		//trigout[2] <= (ext_trig_in && Pulsecounter==2);
-		//trigout[3] <= (ext_trig_in && Pulsecounter==3);
-		if (trig_in[0] && Pulsecounter==0) Trecovery[0]<=Trecovery[0]+1;
-		if (trig_in[0] && Pulsecounter==1) Trecovery[1]<=Trecovery[1]+1;
-		if (trig_in[0] && Pulsecounter==2) Trecovery[2]<=Trecovery[2]+1;
-		if (trig_in[0] && Pulsecounter==3) Trecovery[3]<=Trecovery[3]+1;
-		delaycounter[0] <= (Trecovery[0]/2==27 && Trecovery[1]==0 && Trecovery[2]==0 && Trecovery[3]==0);
-		delaycounter[1] <= (Trecovery[1]/2==27 && Trecovery[0]==0 && Trecovery[2]==0 && Trecovery[3]==0);
-		delaycounter[2] <= (Trecovery[2]/2==27 && Trecovery[0]==0 && Trecovery[1]==0 && Trecovery[3]==0);
-		delaycounter[3] <= (Trecovery[3]/2==27 && Trecovery[0]==0 && Trecovery[1]==0 && Trecovery[2]==0);
-		if (~spareright) begin
-			Trecovery[0]=0; Trecovery[1]=0; Trecovery[2]=0; Trecovery[3]=0;
+	if (spareright) begin
+		if (sparerightcounter<205) begin
+			sparerightcounter<=sparerightcounter+1; // delays for 205 ticks, to wait for trigger board to be ready for counting (it was waiting for all normal triggers from all boards to cease)
+			Ttrig[0]<=0; Ttrig[1]<=0; Ttrig[2]<=0; Ttrig[3]<=0; // no pulses yet
+			Tcounter[0]<=0; Tcounter[1]<=0; Tcounter[2]<=0; Tcounter[3]<=0; //reset trig counters
 		end
-	end	
-	//else begin
+		else begin
+			Ttrig[0] <= (Tcounter_test_countdown!=0); // for calibration (clock skew) we fire trigger 0
+			if (Tcounter_test_countdown) Tcounter_test_countdown <= Tcounter_test_countdown-1;
+		end
+	end
+	else begin
 		i=0; while (i<4) begin
 			if (selftrigtemp[i]) Tcounter[i]<=10; // will count down from 10 (80 ns) (max is 255)
 			else if (Tcounter[i]) Tcounter[i]<=Tcounter[i]-1;
+			Ttrig[i] <= (Tcounter[i]>0);
 			i=i+1;
 		end
-		if (spareright) begin
-			if (sparerightcounter<205) begin
-				sparerightcounter<=sparerightcounter+1; // delays for 205 ticks, to wait for trigger board to be ready for counting (it was waiting for all normal triggers from all boards to cease)
-				trigout[0]<=0;//no pulses yet
-			end
-			else begin
-				trigout[0]<=(Tcounter_test_countdown!=0 && Tcounter_test[Pulsecounter]!=0); // for calibration (clock skew) we fire trigger 0
-				if (Tcounter_test_countdown) Tcounter_test_countdown <= Tcounter_test_countdown-1;
-			end
-		end
-		else begin
-			trigout[0]<=(Tcounter[Pulsecounter]!=0);
-			Tcounter_test_countdown <= 219; // should give 54 or 55 pulses (depending on when spareright fires)
-			sparerightcounter<=0;
-		end
-	//end
-	Pulsecounter<=Pulsecounter+1; // for iterating through the trigger bins
+		Tcounter_test_countdown <= 219; // should give 54 or 55 pulses (depending on when spareright fires)
+		sparerightcounter<=0;
+	end
 end
-reg[1:0] Pulsecounter2=0;
-reg[7:0] Trecovery2[3:0];
-always @(negedge clk_flash) begin // do the same on the negative edge, to see which edge syncs the triggers in better
-	if (imthefirst & testingtriggerreading) begin
-			//extraout11 <= (ext_trig_in && Pulsecounter2==0);
-			//extraout12 <= (ext_trig_in && Pulsecounter2==1);
-			//extraout13 <= (ext_trig_in && Pulsecounter2==2);
-			//extraout14 <= (ext_trig_in && Pulsecounter2==3);
-			if (trig_in[0] && Pulsecounter2==0) Trecovery2[0]<=Trecovery2[0]+1;
-			if (trig_in[0] && Pulsecounter2==1) Trecovery2[1]<=Trecovery2[1]+1;
-			if (trig_in[0] && Pulsecounter2==2) Trecovery2[2]<=Trecovery2[2]+1;
-			if (trig_in[0] && Pulsecounter2==3) Trecovery2[3]<=Trecovery2[3]+1;
-			delaycounter[4] <= (Trecovery2[0]/2==27 && Trecovery2[1]==0 && Trecovery2[2]==0 && Trecovery2[3]==0);
-			delaycounter[5] <= (Trecovery2[1]/2==27 && Trecovery2[0]==0 && Trecovery2[2]==0 && Trecovery2[3]==0);
-			delaycounter[6] <= (Trecovery2[2]/2==27 && Trecovery2[0]==0 && Trecovery2[1]==0 && Trecovery2[3]==0);
-			delaycounter[7] <= (Trecovery2[3]/2==27 && Trecovery2[0]==0 && Trecovery2[1]==0 && Trecovery2[2]==0);
-			if (~spareright) begin
-				Trecovery2[0]=0; Trecovery2[1]=0; Trecovery2[2]=0; Trecovery2[3]=0;
-			end
-	end	
-	Pulsecounter2<=Pulsecounter2+1;
+reg[1:0] Pulsecounter=0;
+always @(posedge clk_flash) begin
+	trigout[0]<=(Ttrig[Pulsecounter]);
+	Pulsecounter<=Pulsecounter+1; // for iterating through the trigger bins
 end
 assign spareleft = spareright; // pass the calibration signal along to the left
 

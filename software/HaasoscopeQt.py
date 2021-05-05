@@ -153,6 +153,9 @@ class MainWindow(TemplateBaseClass):
         
         chanonboard = d.selectedchannel%HaasoscopeLibQt.num_chan_per_board
         theboard = int(HaasoscopeLibQt.num_board-1-d.selectedchannel/HaasoscopeLibQt.num_chan_per_board)
+        if t.extclock:
+            if t.histostosend != theboard: t.set_histostosend(theboard)
+
         if d.havereadswitchdata:
             if d.testBit(d.switchpos[theboard],chanonboard):   self.ui.ohmCheck.setCheckState(QtCore.Qt.Unchecked)
             else:   self.ui.ohmCheck.setCheckState(QtCore.Qt.Checked)
@@ -671,9 +674,9 @@ class MainWindow(TemplateBaseClass):
         self.ui.textBrowser.setText(d.chantext())
         if t.extclock:
             delaycounters = t.get_delaycounters()
-            #print("delaycounter 0:", bin(t.delaycounters[0]))
+            self.ui.textBrowser.append("delaycounters: "+str(delaycounters))
+            t.get_histos()
             if not delaycounters[0]:
-                t.get_histos(0)
                 for i in range(10): d.increment_clk_phase(0) # increment clk of that board by 10 * 100ps
 
 try:    
