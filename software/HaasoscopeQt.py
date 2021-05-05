@@ -45,9 +45,9 @@ d.serialdelaytimerwait=serialdelaytimerwait #50 #100 #150 #300 # 600 # delay (in
 #d.db=True #turn on debugging
 
 #for talking with the trigger board
-t = HaasoscopeTrigLibQt.HaasoscopeTrig()
-t.construct("COM21")
-t.get_firmware_version()
+trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig()
+trigboard.construct("COM21")
+trigboard.get_firmware_version()
 
 app = QtGui.QApplication.instance()
 standalone = app is None
@@ -153,8 +153,8 @@ class MainWindow(TemplateBaseClass):
         
         chanonboard = d.selectedchannel%HaasoscopeLibQt.num_chan_per_board
         theboard = int(HaasoscopeLibQt.num_board-1-d.selectedchannel/HaasoscopeLibQt.num_chan_per_board)
-        if t.extclock:
-            if t.histostosend != theboard: t.set_histostosend(theboard)
+        if trigboard.extclock:
+            if trigboard.histostosend != theboard: trigboard.set_histostosend(theboard)
 
         if d.havereadswitchdata:
             if d.testBit(d.switchpos[theboard],chanonboard):   self.ui.ohmCheck.setCheckState(QtCore.Qt.Unchecked)
@@ -237,7 +237,7 @@ class MainWindow(TemplateBaseClass):
         if self.ui.minidisplayCheck.checkState()==QtCore.Qt.Checked:
             if d.chanforscreen != d.selectedchannel:
                 d.tellminidisplaychan(d.selectedchannel)
-    
+
     def posamount(self):
         amount=10
         modifiers = app.keyboardModifiers()
@@ -277,11 +277,11 @@ class MainWindow(TemplateBaseClass):
             self.timeslow()
         modifiers = QtWidgets.QApplication.keyboardModifiers()
         if event.key()==QtCore.Qt.Key_I:
-            if modifiers == QtCore.Qt.ShiftModifier:
+            if not modifiers == QtCore.Qt.ShiftModifier:
                 theboard = num_board - 1 - int(d.selectedchannel / HaasoscopeLibQt.num_chan_per_board)
                 d.increment_clk_phase(theboard)
             else:
-                t.increment_trig_board_clock_phase()
+                trigboard.increment_trig_board_clock_phase()
 
     def actionRead_from_file(self):
         d.readcalib()
@@ -295,7 +295,7 @@ class MainWindow(TemplateBaseClass):
 
     def actionOutput_clk_left(self):
         d.toggle_clk_last()
-        t.setclock(True)
+        trigboard.setclock(True)
 
     def exttrig(self):
         d.toggleuseexttrig()
@@ -573,7 +573,7 @@ class MainWindow(TemplateBaseClass):
         print("Handling closeEvent")
         self.timer.stop()
         self.timer2.stop()
-        t.cleanup()
+        trigboard.cleanup()
         d.cleanup()
         if self.savetofile: self.outf.close()
         if hasattr(self,"fftui"):
@@ -672,10 +672,10 @@ class MainWindow(TemplateBaseClass):
 
     def drawtext(self): # happens once per second
         self.ui.textBrowser.setText(d.chantext())
-        if t.extclock:
-            delaycounters = t.get_delaycounters()
+        if trigboard.extclock:
+            delaycounters = trigboard.get_delaycounters()
             self.ui.textBrowser.append("delaycounters: "+str(delaycounters))
-            self.ui.textBrowser.append(t.get_histos())
+            self.ui.textBrowser.append(trigboard.get_histos())
             if not delaycounters[0]:
                 for i in range(10): d.increment_clk_phase(0) # increment clk of that board by 10 * 100ps
 
