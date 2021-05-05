@@ -677,7 +677,7 @@ class MainWindow(TemplateBaseClass):
             self.ui.textBrowser.append("delaycounters: "+str(delaycounters))
             self.ui.textBrowser.append(trigboard.get_histos())
             if not delaycounters[0]:
-                for i in range(10): d.increment_clk_phase(0) # increment clk of that board by 10 * 100ps
+                d.increment_clk_phase(0,30) # increment clk of that board by 30*100ps=3ns
 
 try:    
     win = MainWindow()

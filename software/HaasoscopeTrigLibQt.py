@@ -36,9 +36,9 @@ class HaasoscopeTrig:
         self.firmwarev=b[0]
         print("trig board firmware v",self.firmwarev)
 
-    def increment_trig_board_clock_phase(self):
-        self.ser.write(bytearray([5])) #increment phase
-        print("incremented phase of trig board")
+    def increment_trig_board_clock_phase(self, times=1):
+        for t in range(times): self.ser.write(bytearray([5])) #increment phase
+        print("incremented phase of trig board",times,"time(s)")
 
     def get_delaycounters(self):
         self.ser.write(bytearray([11]))  # delaycounter trigger info
