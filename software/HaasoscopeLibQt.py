@@ -266,7 +266,15 @@ class Haasoscope():
         theboard = num_board-1-int(chan/num_chan_per_board)
         chanonboard = chan%num_chan_per_board
         self.ser.write(bytearray([theboard*num_chan_per_board+chanonboard])) # the channels are numbered differently in the firmware
-    
+
+    def set_ext_trig_delay(self,delay):
+        self.ser.write(bytearray([56,delay]))
+        print("Set ext trig delay to",delay)
+
+    def noselftrig(self):
+        self.ser.write(bytearray([57]))
+        print("Toggled self trig for boards")
+
     def setdaclevelforchan(self,chan,level):
         if level>4096*2-1: 
             print("level can't be bigger than 2**13-1=4096*2-1")

@@ -97,6 +97,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.exttrigCheck.stateChanged.connect(self.exttrig)
         self.ui.totBox.valueChanged.connect(self.tot)
         self.ui.autorearmCheck.stateChanged.connect(self.autorearm)
+        self.ui.noselftrigCheck.stateChanged.connect(self.noselftrig)
         self.ui.avgCheck.stateChanged.connect(self.avg)
         self.ui.logicCheck.stateChanged.connect(self.logic)
         self.ui.highresCheck.stateChanged.connect(self.highres)
@@ -306,7 +307,10 @@ class MainWindow(TemplateBaseClass):
         
     def autorearm(self):
         d.toggleautorearm()
-        
+
+    def noselftrig(self):
+        d.noselftrig()
+
     def avg(self):
         d.average = not d.average
         print("average",d.average)

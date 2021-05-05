@@ -7,7 +7,8 @@ triggerpoint,downsample, screendata,screenwren,screenaddr,screenreset,trigthresh
 SPIsend,SPIsenddata,delaycounter,carrycounter,usb_siwu,SPIstate,offset,gainsw,do_usb,
 i2c_ena,i2c_addr,i2c_rw,i2c_datawr,i2c_datard,i2c_busy,i2c_ackerror,   usb_clk60,usb_dataio,usb_txe_busy,usb_wr,
 rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_buffer1, nsmp, outputclk,
-phasecounterselect,phaseupdown,phasestep,scanclk
+phasecounterselect,phaseupdown,phasestep,scanclk,
+ext_trig_delay, noselftrig
 );
    input clk;
 	input[7:0] rxData;
@@ -71,6 +72,8 @@ phasecounterselect,phaseupdown,phasestep,scanclk
 	output reg highres=0;
 	output reg use_ext_trig=0;
 	output reg outputclk=1;
+	output reg[4:0] ext_trig_delay=0;
+	output reg noselftrig=0;
 	
 	output reg i2c_ena;
 	output reg [6:0] i2c_addr;
@@ -421,6 +424,24 @@ phasecounterselect,phaseupdown,phasestep,scanclk
 					state=PLLCLOCK;
 				end
 			end
+			
+			else if (readdata==56) begin
+				byteswanted=1;//wait for next byte which is the ext_trig_delay
+				comdata=readdata;	
+				newcomdata=1; //pass it on
+				if (bytesread<byteswanted) state=READMORE;
+				else begin
+					ext_trig_delay = extradata[0];
+					state=READ;
+				end
+			end
+			else if (57==readdata) begin // tell them all toggle just taking triggers in towards the right
+				noselftrig=~noselftrig;
+				comdata=readdata;
+				newcomdata=1; //pass it on
+				state=READ;
+			end
+			
 			
 			else if (100==readdata) begin
 				//tell them all to prime the trigger

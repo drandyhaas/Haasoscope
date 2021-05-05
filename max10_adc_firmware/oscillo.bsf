@@ -20,9 +20,9 @@ refer to the applicable agreement for further details.
 */
 (header "symbol" (version "1.1"))
 (symbol
-	(rect 16 16 376 544)
+	(rect 16 16 376 576)
 	(text "oscillo" (rect 5 0 27 12)(font "Arial" ))
-	(text "inst" (rect 8 512 20 524)(font "Arial" ))
+	(text "inst" (rect 8 544 20 556)(font "Arial" ))
 	(port
 		(pt 0 32)
 		(input)
@@ -227,6 +227,20 @@ refer to the applicable agreement for further details.
 		(line (pt 0 480)(pt 16 480)(line_width 1))
 	)
 	(port
+		(pt 0 496)
+		(input)
+		(text "ext_trig_delay[4..0]" (rect 0 0 77 12)(font "Arial" ))
+		(text "ext_trig_delay[4..0]" (rect 21 491 98 503)(font "Arial" ))
+		(line (pt 0 496)(pt 16 496)(line_width 3))
+	)
+	(port
+		(pt 0 512)
+		(input)
+		(text "noselftrig" (rect 0 0 35 12)(font "Arial" ))
+		(text "noselftrig" (rect 21 507 56 519)(font "Arial" ))
+		(line (pt 0 512)(pt 16 512)(line_width 1))
+	)
+	(port
 		(pt 360 32)
 		(output)
 		(text "pwr1" (rect 0 0 17 12)(font "Arial" ))
@@ -412,7 +426,7 @@ refer to the applicable agreement for further details.
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(drawing
-		(rectangle (rect 16 16 344 512)(line_width 1))
+		(rectangle (rect 16 16 344 544)(line_width 1))
 	)
 	(annotation_block (parameter)(rect 376 -64 476 16))
 )
