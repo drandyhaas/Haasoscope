@@ -675,7 +675,7 @@ class MainWindow(TemplateBaseClass):
         if t.extclock:
             delaycounters = t.get_delaycounters()
             self.ui.textBrowser.append("delaycounters: "+str(delaycounters))
-            t.get_histos()
+            self.ui.textBrowser.append(t.get_histos())
             if not delaycounters[0]:
                 for i in range(10): d.increment_clk_phase(0) # increment clk of that board by 10 * 100ps
 

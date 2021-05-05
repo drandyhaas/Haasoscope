@@ -56,10 +56,13 @@ class HaasoscopeTrig:
         self.ser.write(bytearray([10])) # get histos
         res = self.ser.read(32)
         b = unpack('%dB' % len(res), res)
+        mystr="histos for board"+str(self.histostosend)+": "
         myint=[]
         for i in range(8):
             myint.append( b[4*i+0]+256*b[4*i+1]+256*256*b[4*i+2]+0*256*256*256*b[4*i+3] )
-        print("histos for board",self.histostosend,":",myint[0],myint[1],myint[2],myint[3],",",myint[4],myint[5],myint[6],myint[7])
+            mystr+=str(myint[i])+" "
+            if i==3: mystr+=", "
+        return mystr
 
     def cleanup(self):
         self.setclock(False)
