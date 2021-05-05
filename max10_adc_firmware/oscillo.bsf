@@ -222,8 +222,8 @@ refer to the applicable agreement for further details.
 	(port
 		(pt 0 480)
 		(input)
-		(text "spareright" (rect 0 0 38 12)(font "Arial" ))
-		(text "spareright" (rect 21 475 59 487)(font "Arial" ))
+		(text "spareleft" (rect 0 0 34 12)(font "Arial" ))
+		(text "spareleft" (rect 21 475 55 487)(font "Arial" ))
 		(line (pt 0 480)(pt 16 480)(line_width 1))
 	)
 	(port
@@ -362,8 +362,8 @@ refer to the applicable agreement for further details.
 	(port
 		(pt 360 336)
 		(output)
-		(text "spareleft" (rect 0 0 34 12)(font "Arial" ))
-		(text "spareleft" (rect 305 331 339 343)(font "Arial" ))
+		(text "spareright" (rect 0 0 38 12)(font "Arial" ))
+		(text "spareright" (rect 301 331 339 343)(font "Arial" ))
 		(line (pt 360 336)(pt 344 336)(line_width 1))
 	)
 	(port

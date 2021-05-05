@@ -1,7 +1,7 @@
 module oscillo(clk, startTrigger, clk_flash, data_flash1, data_flash2, data_flash3, data_flash4, pwr1, pwr2, shdn_out, spen_out, trig_in, trig_out, rden, rdaddress, 
 data_ready, wraddress_triggerpoint, imthelast, imthefirst,rollingtrigger,trigDebug,triggerpoint,downsample,
 trigthresh,trigchannels,triggertype,triggertot,format_sdin_out,div_sclk_out,outsel_cs_out,clk_spi,SPIsend,SPIsenddata,
-wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig, nsmp, trigout, spareleft, spareright,
+wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig, nsmp, trigout, spareright, spareleft,
 extraout11, extraout12, extraout13, extraout14,delaycounter);
 input clk,clk_spi;
 input startTrigger;
@@ -38,8 +38,8 @@ input ext_trig_in, use_ext_trig;
 input [ram_width-1:0] nsmp;
 
 output reg [3:0] trigout;
-output wire spareleft;
-input wire spareright;
+output wire spareright;
+input wire spareleft;
 output reg extraout11;
 output reg extraout12;
 output reg extraout13;
@@ -213,14 +213,14 @@ if (imthelast) trig_out[1] = selftrig; // we trigger out to the right if we trig
 else trig_out[1] = trig_in[1]||selftrig; // we trigger out to the right if we got a trig in towards the right, or we triggered ourselves
 
 reg Ttrig[4]; // whether to fire each of the 4 trigger bits
-reg[7:0] Tcounter[4]; // counters for the output trigger bits (to hold them high for a while after a trigger)
+reg[3:0] Tcounter[4]; // counters for the output trigger bits (to hold them high for a while after a trigger)
 reg[7:0] Tcounter_test_countdown; // use for sending 50 test triggers
 output reg[7:0] delaycounter;
-integer sparerightcounter;
+integer spareleftcounter;
 always @(posedge clk_flash) begin
-	if (spareright) begin
-		if (sparerightcounter<205) begin
-			sparerightcounter<=sparerightcounter+1; // delays for 205 ticks, to wait for trigger board to be ready for counting (it was waiting for all normal triggers from all boards to cease)
+	if (spareleft) begin
+		if (spareleftcounter<205) begin
+			spareleftcounter<=spareleftcounter+1; // delays for 205 ticks, to wait for trigger board to be ready for counting (it was waiting for all normal triggers from all boards to cease)
 			Ttrig[0]<=0; Ttrig[1]<=0; Ttrig[2]<=0; Ttrig[3]<=0; // no pulses yet
 			Tcounter[0]<=0; Tcounter[1]<=0; Tcounter[2]<=0; Tcounter[3]<=0; //reset trig counters
 		end
@@ -231,13 +231,13 @@ always @(posedge clk_flash) begin
 	end
 	else begin
 		i=0; while (i<4) begin
-			if (selftrigtemp[i]) Tcounter[i]<=10; // will count down from 10 (80 ns) (max is 255)
+			if (selftrigtemp[i]) Tcounter[i]<=4; // will count down from 4 to send the trigger out once
 			else if (Tcounter[i]) Tcounter[i]<=Tcounter[i]-1;
 			Ttrig[i] <= (Tcounter[i]>0);
 			i=i+1;
 		end
-		Tcounter_test_countdown <= 219; // should give 54 or 55 pulses (depending on when spareright fires)
-		sparerightcounter<=0;
+		Tcounter_test_countdown <= 219; // should give 54 or 55 pulses (depending on when spareleft fires)
+		spareleftcounter<=0;
 	end
 end
 reg[1:0] Pulsecounter=0;
@@ -245,7 +245,7 @@ always @(posedge clk_flash) begin
 	trigout[0]<=(Ttrig[Pulsecounter]);
 	Pulsecounter<=Pulsecounter+1; // for iterating through the trigger bins
 end
-assign spareleft = spareright; // pass the calibration signal along to the left
+assign spareright = spareleft; // pass the calibration signal along to the right
 
 reg startAcquisition;//ready to trigger?
 always @(posedge clk) begin
