@@ -8,6 +8,7 @@ import sys, time
 from serial import SerialException
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtWidgets, QtGui, loadUiType
+import h5py
 
 import HaasoscopeLibQt
 import HaasoscopeTrigLibQt
@@ -129,6 +130,7 @@ class MainWindow(TemplateBaseClass):
         self.lines = []
         self.otherlines = []
         self.savetofile=False # save scope data to file
+        self.doh5=True # use the h5 binary file format
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.updateplot)
         self.timer2 = QtCore.QTimer()
@@ -462,8 +464,13 @@ class MainWindow(TemplateBaseClass):
     def record(self):
         self.savetofile = not self.savetofile
         if self.savetofile:
-            fname="Haasoscope_out_"+time.strftime("%Y%m%d-%H%M%S")+".csv"
-            self.outf = open(fname,"wt")
+            fname="xxx"
+            if self.doh5:
+                fname="Haasoscope_out_" + time.strftime("%Y%m%d-%H%M%S") + ".h5"
+                self.outf = h5py.File(fname,"w")
+            else:
+                fname="Haasoscope_out_" + time.strftime("%Y%m%d-%H%M%S") + ".csv"
+                self.outf = open(fname,"wt")
             self.ui.statusBar.showMessage("now recording to file"+fname)
             self.ui.actionRecord.setText("Stop recording")
         else:
@@ -618,19 +625,50 @@ class MainWindow(TemplateBaseClass):
             self.fps = self.fps * (1-s) + (1.0/dt) * s
         self.ui.plot.setTitle('%0.2f fps' % self.fps)
         app.processEvents()
-    
+
+    oldxscale=0
     def dosavetofile(self):
         time_s=str(time.time())
-        for c in range(HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board):
-            if self.lines[c].isVisible(): # only save the data for visible channels
-                self.outf.write(str(self.nevents)+",") # start of each line is the event number
-                self.outf.write(time_s+",") # next column is the time in seconds of the current event
-                self.outf.write(str(c)) # next column is the channel number
-                self.outf.write(str(self.vline*d.xscaling)+",") # next column is the trigger time
-                self.outf.write(str(2.*d.xscale/d.num_samples)+",") # next column is the time between samples, in ns
-                self.outf.write(str(d.num_samples)+",") # next column is the number of samples
-                d.xydata[c][1].tofile(self.outf,",",format="%.3f") # save y data (1) from fast adc channel c
-                self.outf.write("\n") # newline
+        if self.doh5:
+            datatosave=d.xydata[:,1,:] # save all y data by default
+            if d.xscale != self.oldxscale:
+                datatosave=d.xydata # since the x scale changed (or is the first event), save all data for this event
+                self.oldxscale=d.xscale
+            h5ds = self.outf.create_dataset(str(self.nevents), data=datatosave, compression="lzf") #compression="gzip", compression_opts=5)
+            #about 3kB per event per board (4 channels) for 512 samples
+            h5ds.attrs['time']=time_s
+            h5ds.attrs['trigger_position']=str(self.vline*d.xscaling)
+            h5ds.attrs['sample_period'] =str(2.*d.xscale/d.num_samples)
+            h5ds.attrs['num_samples'] =str(d.num_samples)
+            #Read like this:
+            #import h5py
+            #f=h5py.File('Haasoscope_out_20210506-103212.h5',"r")
+            #len(f.keys()) #number of events stored
+            #events=list(f.items())
+            #def mysort(val): return int(val[0])
+            #events.sort(key=mysort)
+            #e=events[0] #first event
+            #e=events[-1] #last event
+            #evtnum=int(e[0])
+            #data=e[1]
+            #data=f["event_9"] # or you can get an event like this
+            #data.attrs.get("time")
+            #chan=1; samp=240
+            #print(data.shape) # the first event, or any following where the timebase has changed, will have x values stored too
+            #if data.shape == (4,2,511): print(data[chan][0][samp],data[chan][1][samp]) # x(time),y(voltage) of the data from that channel and sample
+            #if data.shape == (4,511): print(data[chan][samp]) # y(voltage) of the data from that channel and sample
+            #f.close()
+        else:
+            for c in range(HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board):
+                if self.lines[c].isVisible(): # only save the data for visible channels
+                    self.outf.write(str(self.nevents)+",") # start of each line is the event number
+                    self.outf.write(time_s+",") # next column is the time in seconds of the current event
+                    self.outf.write(str(c)) # next column is the channel number
+                    self.outf.write(str(self.vline*d.xscaling)+",") # next column is the trigger time
+                    self.outf.write(str(2.*d.xscale/d.num_samples)+",") # next column is the time between samples, in ns
+                    self.outf.write(str(d.num_samples)+",") # next column is the number of samples
+                    d.xydata[c][1].tofile(self.outf,",",format="%.3f") # save y data (1) from fast adc channel c
+                    self.outf.write("\n") # newline
         # should also write out the 8 digital bits per board (if logic analyzer on)
         # stored in d.xydatalogicraw[board]
     
@@ -641,26 +679,10 @@ class MainWindow(TemplateBaseClass):
     def mainloop(self):
         if d.paused: time.sleep(.1)
         else:
-            try:
-                status=d.getchannels()
-            except SerialException:
-                sys.exit(1)
-            if status==2:#we updated the switch data
-                self.selectchannel()
-            
-            #print d.xydata[0][0][12], d.xydata[0][1][12] # print the x and y data, respectively, for the 13th sample on fast adc channel 0
-            
+            try: status=d.getchannels()
+            except SerialException: sys.exit(1)
+            if status==2: self.selectchannel() #we updated the switch data
             if self.savetofile: self.dosavetofile()
-            
-            #if len(HaasoscopeLibQt.max10adcchans)>0: print "slow", d.xydataslow[0][0][99], d.xydataslow[0][1][99] # print the x and y data, respectively, for the 100th sample on slow max10 adc channel 0
-            
-            #if d.dolockin: print d.lockinamp, d.lockinphase # print the lockin info
-            
-            #if d.fftdrawn: # print some fft info (the freq with the biggest amplitude)
-            #    fftxdata = d.fftfreqplot.get_xdata(); fftydata = d.fftfreqplot.get_ydata()
-            #    maxfftydata=np.max(fftydata); maxfftfrq=fftxdata[fftydata.argmax()]
-            #    print "max amp=",maxfftydata, "at freq=",maxfftfrq, d.fftax.get_xlabel().replace('Freq ','')
-            
             if d.db: print(time.time()-d.oldtime,"done with evt",self.nevents)
             self.nevents += 1
             if self.nevents-self.oldnevents >= self.tinterval:
