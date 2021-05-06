@@ -208,11 +208,13 @@ else if (imthelast) Trigger = selftrig||trig_in[0]; // we trigger if we triggere
 else Trigger = selftrig||trig_in[0]||trig_in[1]; // we trigger if we triggered ourselves, or got a trigger from the left or right
 
 always @(posedge clk_flash)
-if (imthefirst) trig_out[0] = selftrig; // we trigger out to the left if we triggered ourselves
+if (noselftrig) trig_out[0] = 0; // we don't trigger out to the left
+else if (imthefirst) trig_out[0] = selftrig; // we trigger out to the left if we triggered ourselves
 else trig_out[0] = trig_in[0]||selftrig; // we trigger out to the left if we got a trig in towards the left, or we triggered ourselves
 
 always @(posedge clk_flash)
-if (imthelast) trig_out[1] = selftrig; // we trigger out to the right if we triggered ourselves
+if (noselftrig) trig_out[1] = trig_in[1]; // we trigger out to the right if we got a trig in towards the right
+else if (imthelast) trig_out[1] = selftrig; // we trigger out to the right if we triggered ourselves
 else trig_out[1] = trig_in[1]||selftrig; // we trigger out to the right if we got a trig in towards the right, or we triggered ourselves
 
 reg Ttrig[4]; // whether to fire each of the 4 trigger bits
