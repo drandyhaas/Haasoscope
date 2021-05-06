@@ -16,6 +16,8 @@ import HaasoscopeTrigLibQt
 serialdelaytimerwait=100
 ram_width=9
 num_board=1
+trigboardport="COM21"
+manserport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
 print ('Number of arguments:', len(sys.argv), 'arguments.')
 print ('Argument List:', str(sys.argv))
 for a in sys.argv:
@@ -30,6 +32,12 @@ for a in sys.argv:
         if a[1]=="b":
             num_board=int(a[2:])
             print("num_board set to",num_board)
+        if a[1]=="p":
+            manserport=a[2:]
+            print("serial port manually set to",manserport)
+        if a[1]=="t":
+            trigboardport=a[2:]
+            print("trigboardport set to",trigboardport)
 
 #Some pre-options
 HaasoscopeLibQt.num_board = num_board # Number of Haasoscope boards to read out (default is 1)
@@ -40,14 +48,14 @@ d = HaasoscopeLibQt.Haasoscope()
 d.construct()
 
 #Some other options
-#d.serport="COM7" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
+if manserport!="": d.serport=manserport
 d.serialdelaytimerwait=serialdelaytimerwait #50 #100 #150 #300 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
 #d.dolockin=True # whether to calculate the lockin info on the FPGA and read it out (off by default)
 #d.db=True #turn on debugging
 
 #for talking with the trigger board
 trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig()
-trigboard.construct("COM21")
+trigboard.construct(trigboardport)
 trigboard.get_firmware_version()
 
 app = QtGui.QApplication.instance()
@@ -155,7 +163,7 @@ class MainWindow(TemplateBaseClass):
         if d.havereadswitchdata: self.ui.supergainCheck.setEnabled(False)
         
         chanonboard = d.selectedchannel%HaasoscopeLibQt.num_chan_per_board
-        theboard = int(HaasoscopeLibQt.num_board-1-d.selectedchannel/HaasoscopeLibQt.num_chan_per_board)
+        theboard = HaasoscopeLibQt.num_board-1-int(d.selectedchannel/HaasoscopeLibQt.num_chan_per_board)
         if trigboard.extclock:
             if trigboard.histostosend != theboard: trigboard.set_histostosend(theboard)
 

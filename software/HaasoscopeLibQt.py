@@ -68,7 +68,7 @@ class Haasoscope():
         self.downsample=2 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
         self.dofft=False #drawing the FFT plot
         self.dousb=False #whether to use USB2 output
-        self.dousbparallel=True #whether to tell all board to read out over USB2 in parallel (experimental)
+        self.dousbparallel=False #whether to tell all board to read out over USB2 in parallel (experimental)
         self.sincresample=0 # amount of resampling to do (sinx/x)
         self.dogetotherdata=False # whether to read other calculated data like TDC
         self.tdcdata=0 # TDC data
@@ -1235,7 +1235,7 @@ class Haasoscope():
             print("Not a USB2 connection for each board!")
             return False
         if len(self.usbser)>1:
-            for usb in np.arange(num_board): self.usbser[usb].timeout=.5 # lower the timeout on the connections, temporarily
+            for usb in np.arange(num_board): self.usbser[usb].timeout=.1 # lower the timeout on the connections, temporarily
             foundusbs=[]
             for bn in np.arange(num_board):
                 self.ser.write(bytearray([100])) # prime the trigger
