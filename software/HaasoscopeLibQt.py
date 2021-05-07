@@ -82,6 +82,7 @@ class Haasoscope():
         self.recordedchannellength=250 #number of events to overlay in the 2d persist plot
         self.ydatarefchan=-1 #the reference channel for each board, whose ydata will be subtracted from other channels' ydata on the board
         self.chtext = "Ch." #the text in the legend for each channel
+        self.noselftrig=False
         self.db = False #debugging #True #False
     
         self.dolockin=False # read lockin info
@@ -271,9 +272,10 @@ class Haasoscope():
         self.ser.write(bytearray([56,delay]))
         print("Set ext trig delay to",delay)
 
-    def noselftrig(self):
+    def donoselftrig(self):
         self.ser.write(bytearray([57]))
-        print("Toggled self trig for boards")
+        self.noselftrig = not self.noselftrig
+        print("Toggled self trig for boards to",self.noselftrig)
 
     def setdaclevelforchan(self,chan,level):
         if level>4096*2-1: 
@@ -833,8 +835,9 @@ class Haasoscope():
                     xdatanew = (self.xdata4-self.num_samples*2)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling/4.) #downsample isn't less than 0 for xscaling
                     theydata4=np.concatenate([theydata[l],theydata[l+1],theydata[l+2],theydata[l+3]]) # concatenate the 4 lists
                     ydatanew=(127-theydata4)*(self.yscale/256.) # got to flip it, since it's a negative feedback op amp
-                else:
-                    xdatanew = (self.xdata-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
+                else: # no oversampling
+                    xboardshift=(11.0*board/8.0)/pow(2,max(self.downsample,0)) # shift the board data to the right by this number of samples (to account for the readout delay) #downsample isn't less than 0 for xscaling
+                    xdatanew = (self.xdata-xboardshift-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
                     ydatanew=(127-theydata[l])*(self.yscale/256.) # got to flip it, since it's a negative feedback op amp
                     if self.ydatarefchan>=0: ydatanew -= (127-theydata[self.ydatarefchan])*(self.yscale/256.) # subtract the board's reference channel ydata from this channel's ydata
                 if self.sincresample>0:
@@ -1476,6 +1479,7 @@ class Haasoscope():
             self.min_y = -self.yscale/2. #-4.0 #0 ADC
             self.max_y = self.yscale/2. #4.0 #256 ADC
             self.tellrolltrig(self.rolltrigger)
+            #self.donoselftrig()
             self.tellsamplesmax10adc()
             self.tellsamplessend()
             self.tellbytesskip()
@@ -1506,6 +1510,7 @@ class Haasoscope():
         try:
             self.setbacktoserialreadout()
             self.resetchans()
+            if self.noselftrig: self.donoselftrig()
             if self.autorearm: self.toggleautorearm()
             if self.dohighres: self.togglehighres()
             if self.useexttrig: self.toggleuseexttrig()

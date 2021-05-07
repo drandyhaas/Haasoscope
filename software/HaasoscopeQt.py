@@ -319,7 +319,7 @@ class MainWindow(TemplateBaseClass):
         d.toggleautorearm()
 
     def noselftrig(self):
-        d.noselftrig()
+        d.donoselftrig()
 
     def avg(self):
         d.average = not d.average
