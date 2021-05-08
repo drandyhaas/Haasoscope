@@ -555,7 +555,7 @@ class Haasoscope():
         for chan in np.arange(num_board*num_chan_per_board):
             if self.gain[chan]==0:
                 self.tellswitchgain(chan) # set all gains back to low gain
-            if  self.trigsactive[chan]==0:
+            if self.trigsactive[chan]==0:
                 self.toggletriggerchan(chan) # set all trigger channels back to active
             if self.dooversample[chan]: 
                 self.oversamp(chan) # set all channels back to no oversampling
@@ -1028,7 +1028,6 @@ class Haasoscope():
                 self.fig2d.canvas.set_window_title('Persist display of channel '+str(self.recorddatachan))
                 self.ax2d.set_ylabel('Volts')
                 self.ax2d.grid()
-                self.setxaxis(self.ax2d,self.fig2d)
 
     def handle_xy_close(self,evt):
         self.drawnxy=False
