@@ -1143,6 +1143,24 @@
          <string>Show FFT</string>
         </property>
        </widget>
+       <widget class="QCheckBox" name="persistCheck">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>380</y>
+          <width>91</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <family>Arial</family>
+         </font>
+        </property>
+        <property name="text">
+         <string>Show persist</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QGroupBox" name="channelgroupBox_5">
        <property name="geometry">
