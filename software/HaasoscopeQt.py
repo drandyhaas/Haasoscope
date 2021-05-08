@@ -16,7 +16,7 @@ import HaasoscopeTrigLibQt
 serialdelaytimerwait=100
 ram_width=9
 num_board=1
-trigboardport="COM21"
+trigboardport=""
 manserport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
 print ('Number of arguments:', len(sys.argv), 'arguments.')
 print ('Argument List:', str(sys.argv))
@@ -166,7 +166,7 @@ class MainWindow(TemplateBaseClass):
         
         chanonboard = d.selectedchannel%HaasoscopeLibQt.num_chan_per_board
         theboard = HaasoscopeLibQt.num_board-1-int(d.selectedchannel/HaasoscopeLibQt.num_chan_per_board)
-        if trigboard.extclock:
+        if trigboardport!="" and trigboard.extclock:
             if trigboard.histostosend != theboard: trigboard.set_histostosend(theboard)
 
         if d.havereadswitchdata:
@@ -708,7 +708,7 @@ class MainWindow(TemplateBaseClass):
 
     def drawtext(self): # happens once per second
         self.ui.textBrowser.setText(d.chantext())
-        if trigboard.extclock:
+        if trigboardport!="" and trigboard.extclock:
             delaycounters = trigboard.get_delaycounters()
             self.ui.textBrowser.append("delaycounters: "+str(delaycounters))
             self.ui.textBrowser.append(trigboard.get_histos())

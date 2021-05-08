@@ -275,7 +275,7 @@ class Haasoscope():
     def donoselftrig(self):
         self.ser.write(bytearray([57]))
         self.noselftrig = not self.noselftrig
-        print("Toggled self trig for boards to",self.noselftrig)
+        print("Toggled no self trig for boards to",self.noselftrig)
 
     def setdaclevelforchan(self,chan,level):
         if level>4096*2-1: 
