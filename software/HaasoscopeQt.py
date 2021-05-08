@@ -85,6 +85,33 @@ class FFTWindow(FFTTemplateBaseClass):
         self.fftlastTime = time.time() - 10
         self.fftyrange = 1
 
+# Define persist window class from template
+PersistWindowTemplate, PersistTemplateBaseClass = loadUiType("HaasoscopePersist.ui")
+class PersistWindow(PersistTemplateBaseClass):
+    def __init__(self):
+        PersistTemplateBaseClass.__init__(self)
+
+        # Create the main window
+        self.ui = PersistWindowTemplate()
+        self.ui.setupUi(self)
+
+        ## Create image items
+        data = np.fromfunction(lambda i, j: 1-3*np.sin(i/50)*np.sin(j/50), (100, 100))
+        noisy_data = data * (1 + 0.2 * np.random.random(data.shape) )
+        noisy_transposed = noisy_data.transpose()
+
+        #--- add non-interactive image with integrated color -----------------
+        i1 = pg.ImageItem(image=data)
+        p1 = self.ui.plot
+        p1.addItem( i1 )
+        p1.setMouseEnabled( x=False, y=False)
+        p1.disableAutoRange()
+        p1.hideButtons()
+        p1.setRange(xRange=(0,100), yRange=(0,100), padding=0.02)
+        cmap = pg.colormap.get('CET-D8')
+        bar = pg.ColorBarItem(interactive=False, values= (np.min(noisy_data), np.max(noisy_data)), cmap=cmap)
+        bar.setImageItem(i1)
+
 # Define main window class from template
 WindowTemplate, TemplateBaseClass = loadUiType("Haasoscope.ui")
 class MainWindow(TemplateBaseClass):
@@ -134,6 +161,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.overoversampCheck.clicked.connect(self.overoversamp)
         self.ui.decodeCheck.clicked.connect(self.decode)
         self.ui.fftCheck.clicked.connect(self.fft)
+        self.ui.persistCheck.clicked.connect(self.persist)
         self.db=False
         self.lastTime = time.time()
         self.fps = None
@@ -471,6 +499,16 @@ class MainWindow(TemplateBaseClass):
             self.fftui.close()
             d.dofft = False
 
+    def persist(self):
+        if self.ui.persistCheck.checkState() == QtCore.Qt.Checked:
+            #d.persistchan = d.selectedchannel
+            self.persistui = PersistWindow()
+            self.persistui.show()
+            #d.dopersist = True
+        else:
+            self.persistui.close()
+            #d.dopersist = False
+
     def record(self):
         self.savetofile = not self.savetofile
         if self.savetofile:
@@ -599,6 +637,8 @@ class MainWindow(TemplateBaseClass):
         if self.savetofile: self.outf.close()
         if hasattr(self,"fftui"):
             self.fftui.close()
+        if hasattr(self,"persistui"):
+            self.persistui.close()
         
     def updateplot(self):
         self.mainloop()
@@ -625,6 +665,11 @@ class MainWindow(TemplateBaseClass):
             if not self.fftui.isVisible(): # closed the fft window
                 d.dofft = False
                 self.ui.fftCheck.setCheckState(QtCore.Qt.Unchecked)
+        #if d.dopersist:
+        #    updatethepersistplot
+        #    if not self.persistui.isVisible(): # closed the fft window
+        #        d.dopersist = False
+        #        self.ui.persistCheck.setCheckState(QtCore.Qt.Unchecked)
         now = time.time()
         dt = now - self.lastTime
         self.lastTime = now
