@@ -1,5 +1,6 @@
 from serial import Serial
 from struct import unpack
+import random
 
 print("Loading HaasoscopeTrigLibQt.py")
 
@@ -27,6 +28,15 @@ class HaasoscopeTrig:
         b = unpack('%dB' % len(res), res)
         print("trig board now using clock", b[0])
         self.extclock = b[0]
+
+    def setrngseed(self):
+        random.seed()
+        b1=random.randbytes(1)
+        b2=random.randbytes(1)
+        b3=random.randbytes(1)
+        b4=random.randbytes(1)
+        self.ser.write(bytearray([6,b1,b2,b3,b4]))
+        print("set trigboard random seed to")
 
     def get_firmware_version(self):
         self.ser.write(bytearray([0])) # firmware version

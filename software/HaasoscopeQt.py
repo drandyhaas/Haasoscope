@@ -54,9 +54,11 @@ d.serialdelaytimerwait=serialdelaytimerwait #50 #100 #150 #300 # 600 # delay (in
 #d.db=True #turn on debugging
 
 #for talking with the trigger board
-trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig()
-trigboard.construct(trigboardport)
-trigboard.get_firmware_version()
+if trigboardport!="":
+    trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig()
+    trigboard.construct(trigboardport)
+    trigboard.get_firmware_version()
+    trigboard.setrngseed()
 
 app = QtGui.QApplication.instance()
 standalone = app is None
@@ -592,7 +594,7 @@ class MainWindow(TemplateBaseClass):
         print("Handling closeEvent")
         self.timer.stop()
         self.timer2.stop()
-        trigboard.cleanup()
+        if trigboardport!="": trigboard.cleanup()
         d.cleanup()
         if self.savetofile: self.outf.close()
         if hasattr(self,"fftui"):
