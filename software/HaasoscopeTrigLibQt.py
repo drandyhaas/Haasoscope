@@ -36,7 +36,15 @@ class HaasoscopeTrig:
         b3=random.randbytes(1)
         b4=random.randbytes(1)
         self.ser.write(bytearray([6,b1,b2,b3,b4]))
-        print("set trigboard random seed to")
+        print("set trigboard random seed to",b1,b2,b3,b4)
+
+    def set_prescale(self,prescale):
+        b4=int(prescale/256/256/256)%256
+        b3=int(prescale/256/256)%256
+        b2=int(prescale/256)%256
+        b1=int(prescale)%256
+        self.ser.write(bytearray([7,b1,b2,b3,b4]))
+        print("set trigboard prescale to",prescale,"bytes:",b1,b2,b3,b4)
 
     def get_firmware_version(self):
         self.ser.write(bytearray([0])) # firmware version
