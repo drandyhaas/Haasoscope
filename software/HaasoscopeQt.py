@@ -42,7 +42,7 @@ for a in sys.argv:
 #Some pre-options
 HaasoscopeLibQt.num_board = num_board # Number of Haasoscope boards to read out (default is 1)
 HaasoscopeLibQt.ram_width = ram_width # width in bits of sample ram to use (e.g. 9==512 samples (default), 12(max)==4096 samples) (min is 2)
-#HaasoscopeLibQt.max10adcchans =  [(0,110),(0,118)] #[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp # default is none, []
+HaasoscopeLibQt.max10adcchans =  [(0,110),(0,118)] #[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp # default is none, []
 
 d = HaasoscopeLibQt.Haasoscope()
 d.construct()
@@ -139,6 +139,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.actionOutput_clk_left.triggered.connect(self.actionOutput_clk_left)
         self.ui.actionDo_autocalibration.triggered.connect(self.actionDo_autocalibration)
         self.ui.chanonCheck.stateChanged.connect(self.chanon)
+        self.ui.slowchanonCheck.stateChanged.connect(self.slowchanon)
         self.ui.trigchanonCheck.stateChanged.connect(self.trigchanon)
         self.ui.oversampCheck.clicked.connect(self.oversamp)
         self.ui.overoversampCheck.clicked.connect(self.overoversamp)
@@ -232,6 +233,13 @@ class MainWindow(TemplateBaseClass):
             if not d.trigsactive[d.selectedchannel]: d.toggletriggerchan(d.selectedchannel)
         else:
             if d.trigsactive[d.selectedchannel]: d.toggletriggerchan(d.selectedchannel)
+    
+    def slowchanon(self):
+        maxchan=self.ui.slowchanBox.value()+HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board
+        if self.ui.slowchanonCheck.checkState() == QtCore.Qt.Checked:
+            self.lines[maxchan].setVisible(True)
+        else:
+            self.lines[maxchan].setVisible(False)
     
     def acdc(self):
         if self.ui.acdcCheck.checkState() == QtCore.Qt.Checked: #ac coupled
