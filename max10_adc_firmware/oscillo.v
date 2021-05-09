@@ -2,7 +2,7 @@ module oscillo(clk, startTrigger, clk_flash, data_flash1, data_flash2, data_flas
 data_ready, wraddress_triggerpoint, imthelast, imthefirst,rollingtrigger,trigDebug,triggerpoint,downsample,
 trigthresh,trigchannels,triggertype,triggertot,format_sdin_out,div_sclk_out,outsel_cs_out,clk_spi,SPIsend,SPIsenddata,
 wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig, nsmp, trigout, spareright, spareleft,
-extraout11, extraout12, extraout13, extraout14,delaycounter,ext_trig_delay, noselftrig);
+delaycounter,ext_trig_delay, noselftrig);
 input clk,clk_spi;
 input startTrigger;
 input [1:0] trig_in;
@@ -42,10 +42,6 @@ input noselftrig;
 output reg [3:0] trigout;
 output wire spareright;
 input wire spareleft;
-output reg extraout11;
-output reg extraout12;
-output reg extraout13;
-output reg extraout14;
 
 reg [31:0] SPIcounter=0;//clock counter for SPI
 input [15:0] SPIsenddata;//the bits to send

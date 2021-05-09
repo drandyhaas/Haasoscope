@@ -383,37 +383,9 @@ refer to the applicable agreement for further details.
 	(port
 		(pt 360 352)
 		(output)
-		(text "extraout11" (rect 0 0 38 12)(font "Arial" ))
-		(text "extraout11" (rect 301 347 339 359)(font "Arial" ))
-		(line (pt 360 352)(pt 344 352)(line_width 1))
-	)
-	(port
-		(pt 360 368)
-		(output)
-		(text "extraout12" (rect 0 0 40 12)(font "Arial" ))
-		(text "extraout12" (rect 299 363 339 375)(font "Arial" ))
-		(line (pt 360 368)(pt 344 368)(line_width 1))
-	)
-	(port
-		(pt 360 384)
-		(output)
-		(text "extraout13" (rect 0 0 40 12)(font "Arial" ))
-		(text "extraout13" (rect 299 379 339 391)(font "Arial" ))
-		(line (pt 360 384)(pt 344 384)(line_width 1))
-	)
-	(port
-		(pt 360 400)
-		(output)
-		(text "extraout14" (rect 0 0 41 12)(font "Arial" ))
-		(text "extraout14" (rect 298 395 339 407)(font "Arial" ))
-		(line (pt 360 400)(pt 344 400)(line_width 1))
-	)
-	(port
-		(pt 360 416)
-		(output)
 		(text "delaycounter[7..0]" (rect 0 0 70 12)(font "Arial" ))
-		(text "delaycounter[7..0]" (rect 269 411 339 423)(font "Arial" ))
-		(line (pt 360 416)(pt 344 416)(line_width 3))
+		(text "delaycounter[7..0]" (rect 269 347 339 359)(font "Arial" ))
+		(line (pt 360 352)(pt 344 352)(line_width 3))
 	)
 	(parameter
 		"ram_width"
