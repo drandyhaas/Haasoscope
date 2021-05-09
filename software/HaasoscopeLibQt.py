@@ -79,7 +79,7 @@ class Haasoscope():
         self.useexttrig=False #whether to use the external trigger input
         self.autocalibchannel=-1 #which channel we are auto-calibrating
         self.autocalibgainac=0 #which stage of gain and acdc we are auto-calibrating
-        self.recordedchannellength=250 #number of events to overlay in the 2d persist plot
+        self.recordedchannellength=25 #number of events to overlay in the 2d persist plot
         self.ydatarefchan=-1 #the reference channel for each board, whose ydata will be subtracted from other channels' ydata on the board
         self.chtext = "Ch." #the text in the legend for each channel
         self.noselftrig=False
@@ -892,10 +892,8 @@ class Haasoscope():
                             print("fit exception!")
                 if self.doxyplot and (thechan==self.xychan or thechan==(self.xychan+1)): self.drawxyplot(xdatanew,ydatanew,thechan)# the xy plot
                 if self.recorddata and thechan==self.recorddatachan: self.dopersistplot(xdatanew,ydatanew)# the persist shaded plot
-                
                 if thechan==self.refsinchan-1 and self.reffreq==0: self.oldchanphase=-1.; self.fittosin(xdatanew, ydatanew, thechan) # first fit the previous channel, for comparison
                 elif thechan==self.refsinchan and self.reffreq==0: self.reffreq = self.fittosin(xdatanew, ydatanew, thechan) # then fit for the ref freq and store the result
-                
                 if self.autocalibchannel>=0 and thechan==self.autocalibchannel: self.autocalibrate(thechan,ydatanew)
     
     def fittosin(self,xdatanew, ydatanew, chan):
@@ -1008,38 +1006,14 @@ class Haasoscope():
     recorddata=False
     recordindex=0 # for recording data, the last N events, for the shaded persist display window
     recordedchannel=[]
-    drawn2d=False
     def dopersistplot(self,xdatanew,ydatanew):
-        if len(self.recordedchannel)<self.recordedchannellength: self.recordedchannel.append(ydatanew)
+        self.min_x=xdatanew[0]; self.max_x=xdatanew[-1]
+        if len(self.recordedchannel)<=self.recordindex: self.recordedchannel.append(ydatanew)
         else: self.recordedchannel[self.recordindex]=ydatanew
         self.recordindex+=1
-        if self.recordindex>=self.recordedchannellength: self.recordindex=0;
-        if len(self.recordedchannel)==self.recordedchannellength:
-            if not self.drawn2d: # got to make the plot window the first time
-                #self.fig2d, self.ax2d = plt.subplots(1,1)
-                self.fig2d.canvas.mpl_connect('close_event', self.handle_persist_close)
-                self.drawn2d=True
-            if self.recordindex==0:
-                self.ax2d.clear()
-                self.ax2d.hist2d(
-                    np.tile(xdatanew,self.recordedchannellength), np.concatenate(tuple(self.recordedchannel)), 
-                    bins=[min(self.num_samples,1024),256], range=[[xdatanew[0],xdatanew[len(xdatanew)-1]],[self.min_y,self.max_y]],
-                    cmin=1, cmap='rainbow') #, Blues, Reds, coolwarm, seismic
-                self.fig2d.canvas.set_window_title('Persist display of channel '+str(self.recorddatachan))
-                self.ax2d.set_ylabel('Volts')
-                self.ax2d.grid()
-
-    def handle_xy_close(self,evt):
-        self.drawnxy=False
-        self.doxyplot=False
-    def handle_persist_close(self,evt):
-        self.drawn2d=False
-        self.recorddata=False
-    def handle_fft_close(self,evt):
-        self.dofft=False
-    def handle_lockin_close(self,evt):
-        self.dolockinplot=False
-        self.lockindrawn=False
+        self.recorded2d,xaxes,yaxes = np.histogram2d( np.tile(xdatanew,len(self.recordedchannel)), np.concatenate(tuple(self.recordedchannel)), bins=[int(self.num_samples-1),int(256)], range=[[self.min_x,self.max_x],[self.min_y,self.max_y]] )
+        if self.recordindex>=self.recordedchannellength:
+            self.recordindex=0
     
     def plot_fft(self,bn): # pass in the board number
         channumonboard = self.fftchan%num_chan_per_board # this is what channel (0--3) we want to draw fft from for the board

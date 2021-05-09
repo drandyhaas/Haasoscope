@@ -70,18 +70,16 @@ FFTWindowTemplate, FFTTemplateBaseClass = loadUiType("HaasoscopeFFT.ui")
 class FFTWindow(FFTTemplateBaseClass):
     def __init__(self):
         FFTTemplateBaseClass.__init__(self)
-
-        # Create the main window
         self.ui = FFTWindowTemplate()
         self.ui.setupUi(self)
         self.ui.plot.setLabel('bottom', 'Freq (MHz)')
         self.ui.plot.setLabel('left', '|Y(freq)|')
+        self.ui.plot.showGrid(x=True, y=True, alpha=1.0)
         self.ui.plot.setRange(xRange=(0.0, 65.0))
         self.ui.plot.setBackground('w')
         c = (10, 10, 10)
         self.fftpen = pg.mkPen(color=c)  # add linewidth=0.5, alpha=.5
         self.fftline = self.ui.plot.plot(pen=self.fftpen, name="fft_plot")
-        self.ui.plot.showGrid(x=True, y=True)
         self.fftlastTime = time.time() - 10
         self.fftyrange = 1
 
@@ -90,27 +88,12 @@ PersistWindowTemplate, PersistTemplateBaseClass = loadUiType("HaasoscopePersist.
 class PersistWindow(PersistTemplateBaseClass):
     def __init__(self):
         PersistTemplateBaseClass.__init__(self)
-
-        # Create the main window
         self.ui = PersistWindowTemplate()
         self.ui.setupUi(self)
-
-        ## Create image items
-        data = np.fromfunction(lambda i, j: 1-3*np.sin(i/50)*np.sin(j/50), (100, 100))
-        noisy_data = data * (1 + 0.2 * np.random.random(data.shape) )
-        noisy_transposed = noisy_data.transpose()
-
-        #--- add non-interactive image with integrated color -----------------
-        i1 = pg.ImageItem(image=data)
-        p1 = self.ui.plot
-        p1.addItem( i1 )
-        p1.setMouseEnabled( x=False, y=False)
-        p1.disableAutoRange()
-        p1.hideButtons()
-        p1.setRange(xRange=(0,100), yRange=(0,100), padding=0.02)
-        cmap = pg.colormap.get('CET-D8')
-        bar = pg.ColorBarItem(interactive=False, values= (np.min(noisy_data), np.max(noisy_data)), cmap=cmap)
-        bar.setImageItem(i1)
+        self.ui.plot.setLabel('bottom', 'Time')
+        self.ui.plot.setLabel('left', 'Volts')
+        self.ui.plot.showGrid(x=True, y=True, alpha=1.0)
+        self.ui.plot.setBackground('w')
 
 # Define main window class from template
 WindowTemplate, TemplateBaseClass = loadUiType("Haasoscope.ui")
@@ -322,7 +305,7 @@ class MainWindow(TemplateBaseClass):
                 theboard = num_board - 1 - int(d.selectedchannel / HaasoscopeLibQt.num_chan_per_board)
                 d.increment_clk_phase(theboard)
             else:
-                trigboard.increment_trig_board_clock_phase()
+                if trigboardport!="": trigboard.increment_trig_board_clock_phase()
 
     def actionRead_from_file(self):
         d.readcalib()
@@ -336,7 +319,7 @@ class MainWindow(TemplateBaseClass):
 
     def actionOutput_clk_left(self):
         d.toggle_clk_last()
-        trigboard.setclock(True)
+        if trigboardport!="": trigboard.setclock(True)
 
     def exttrig(self):
         d.toggleuseexttrig()
@@ -501,13 +484,16 @@ class MainWindow(TemplateBaseClass):
 
     def persist(self):
         if self.ui.persistCheck.checkState() == QtCore.Qt.Checked:
-            #d.persistchan = d.selectedchannel
             self.persistui = PersistWindow()
+            self.persistui.setWindowTitle('HaasoscopeQt persist of channel ' + str(d.selectedchannel))
             self.persistui.show()
-            #d.dopersist = True
+            d.recorddata=True; d.recorddatachan=d.selectedchannel; d.recordedchannel=[]
+            self.firstpersist=True
+            print("recorddata now",d.recorddata,"for channel",d.recorddatachan)
         else:
+            d.recorddata=False; d.recorddatachan=d.selectedchannel; d.recordedchannel=[]
+            print("recorddata now",d.recorddata)
             self.persistui.close()
-            #d.dopersist = False
 
     def record(self):
         self.savetofile = not self.savetofile
@@ -547,17 +533,15 @@ class MainWindow(TemplateBaseClass):
                 if self.ydatarefchan<0: self.ydatarefchan=self.selectedchannel
                 else: self.ydatarefchan=-1
             elif event.key==">": self.refsinchan=self.selectedchannel; self.oldchanphase=-1.; self.reffreq=0;
-            
             elif event.key=="Y": 
                 if self.selectedchannel+1>=len(self.dooversample): print "can't do XY plot on last channel"
                 else:
                     if self.dooversample[self.selectedchannel]==self.dooversample[self.selectedchannel+1]:
                         self.doxyplot=True; self.xychan=self.selectedchannel; print "doxyplot now",self.doxyplot,"for channel",self.xychan; return;
                     else: print "oversampling settings must match between channels for XY plotting"
-                self.keyShift=False
-            elif event.key=="Z": self.recorddata=True; self.recorddatachan=self.selectedchannel; self.recordedchannel=[]; print "recorddata now",self.recorddata,"for channel",self.recorddatachan; self.keyShift=False; return;
     """
     
+    linepens=[]
     def launch(self):        
         self.nlines = HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board+len(HaasoscopeLibQt.max10adcchans)
         if self.db: print("nlines=",self.nlines)
@@ -594,6 +578,7 @@ class MainWindow(TemplateBaseClass):
             line.curve.setClickable(True)
             line.curve.sigClicked.connect(self.fastadclineclick)
             self.lines.append(line)
+            self.linepens.append(pen)
         self.ui.chanBox.setMaximum(HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board-1)
         self.ui.slowchanBox.setMaximum(len(HaasoscopeLibQt.max10adcchans)-1)
         #for the logic analyzer
@@ -653,7 +638,9 @@ class MainWindow(TemplateBaseClass):
             for li in np.arange(8):
                 self.lines[d.logicline1+li].setData(d.xydatalogic[li][0],d.xydatalogic[li][1])
         if d.dofft:
+            self.fftui.fftline.setPen(self.linepens[d.fftchan])
             self.fftui.fftline.setData(d.fftfreqplot_xdata,d.fftfreqplot_ydata)
+            self.fftui.ui.plot.setTitle("FFT plot of channel "+str(d.fftchan))
             self.fftui.ui.plot.setLabel('bottom', d.fftax_xlabel)
             self.fftui.ui.plot.setRange(xRange=(0.0, d.fftax_xlim))
             now = time.time()
@@ -665,11 +652,23 @@ class MainWindow(TemplateBaseClass):
             if not self.fftui.isVisible(): # closed the fft window
                 d.dofft = False
                 self.ui.fftCheck.setCheckState(QtCore.Qt.Unchecked)
-        #if d.dopersist:
-        #    updatethepersistplot
-        #    if not self.persistui.isVisible(): # closed the fft window
-        #        d.dopersist = False
-        #        self.ui.persistCheck.setCheckState(QtCore.Qt.Unchecked)
+        if d.recorddata:
+            if self.firstpersist:
+               self.image1 = pg.ImageItem(image=d.recorded2d,opacity=0.5)
+               self.image1.setRect(QtCore.QRectF(d.min_x,d.min_y,d.max_x-d.min_x,d.max_y-d.min_y))
+               self.persistui.ui.plot.addItem(self.image1)
+               self.persistui.ui.plot.setTitle("Persist plot of channel "+str(d.recorddatachan))
+               self.cmap = pg.colormap.get('CET-D8')
+               self.bar = pg.ColorBarItem(interactive=False, values= (0, np.max(d.recorded2d)), cmap=self.cmap)
+               self.bar.setImageItem(self.image1)
+               self.firstpersist=False
+            else:
+               self.image1.setImage(image=d.recorded2d,opacity=0.5)
+               self.image1.setRect(QtCore.QRectF(d.min_x,d.min_y,d.max_x-d.min_x,d.max_y-d.min_y))
+               self.persistui.ui.plot.setLabel('bottom', d.xlabel)
+            if not self.persistui.isVisible(): # closed the fft window
+                d.recorddata = False
+                self.ui.persistCheck.setCheckState(QtCore.Qt.Unchecked)
         now = time.time()
         dt = now - self.lastTime
         self.lastTime = now
@@ -749,6 +748,10 @@ class MainWindow(TemplateBaseClass):
                 if lastrate>40: self.tinterval=500.
                 else: self.tinterval=100.
                 self.oldnevents=self.nevents
+                newrecordedchannellength=int(max(10,5*lastrate)) #the number of events to show on the persist plot
+                if newrecordedchannellength<len(d.recordedchannel):
+                    del d.recordedchannel[0:len(d.recordedchannel)-newrecordedchannellength]
+                d.recordedchannellength=newrecordedchannellength 
             if d.getone and not d.timedout: self.dostartstop()
 
     def drawtext(self): # happens once per second
