@@ -654,18 +654,17 @@ class MainWindow(TemplateBaseClass):
                 self.ui.fftCheck.setCheckState(QtCore.Qt.Unchecked)
         if d.recorddata:
             if self.firstpersist:
-               self.image1 = pg.ImageItem(image=d.recorded2d,opacity=0.5)
-               self.image1.setRect(QtCore.QRectF(d.min_x,d.min_y,d.max_x-d.min_x,d.max_y-d.min_y))
-               self.persistui.ui.plot.addItem(self.image1)
-               self.persistui.ui.plot.setTitle("Persist plot of channel "+str(d.recorddatachan))
-               self.cmap = pg.colormap.get('CET-D8')
-               self.bar = pg.ColorBarItem(interactive=False, values= (0, np.max(d.recorded2d)), cmap=self.cmap)
-               self.bar.setImageItem(self.image1)
-               self.firstpersist=False
+                self.image1 = pg.ImageItem(image=d.recorded2d,opacity=0.5)
+                self.persistui.ui.plot.addItem(self.image1)
+                self.persistui.ui.plot.setTitle("Persist plot of channel "+str(d.recorddatachan))
+                self.cmap = pg.colormap.get('CET-D8')
+                self.firstpersist=False
             else:
-               self.image1.setImage(image=d.recorded2d,opacity=0.5)
-               self.image1.setRect(QtCore.QRectF(d.min_x,d.min_y,d.max_x-d.min_x,d.max_y-d.min_y))
-               self.persistui.ui.plot.setLabel('bottom', d.xlabel)
+                self.image1.setImage(image=d.recorded2d,opacity=0.5)
+            self.image1.setRect(QtCore.QRectF(d.min_x,d.min_y,d.max_x-d.min_x,d.max_y-d.min_y))
+            self.persistui.ui.plot.setLabel('bottom', d.xlabel)
+            self.bar = pg.ColorBarItem(interactive=False, values= (0, np.max(d.recorded2d)), cmap=self.cmap)
+            self.bar.setImageItem(self.image1)
             if not self.persistui.isVisible(): # closed the fft window
                 d.recorddata = False
                 self.ui.persistCheck.setCheckState(QtCore.Qt.Unchecked)
