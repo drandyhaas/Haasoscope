@@ -6,7 +6,10 @@ adcdata,adcready,getadcdata,getadcadr,adcvalid,adcreset,adcramdata,writesamp,wri
 triggerpoint,downsample, screendata,screenwren,screenaddr,screenreset,trigthresh,trigchannels,triggertype,triggertot,
 SPIsend,SPIsenddata,delaycounter,carrycounter,usb_siwu,SPIstate,offset,gainsw,do_usb,
 i2c_ena,i2c_addr,i2c_rw,i2c_datawr,i2c_datard,i2c_busy,i2c_ackerror,   usb_clk60,usb_dataio,usb_txe_busy,usb_wr,
-rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_buffer1, nsmp);
+rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_buffer1, nsmp, outputclk,
+phasecounterselect,phaseupdown,phasestep,scanclk,
+ext_trig_delay, noselftrig
+);
    input clk;
 	input[7:0] rxData;
    input rxReady;
@@ -68,6 +71,9 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 	input [63:0] chip_id;
 	output reg highres=0;
 	output reg use_ext_trig=0;
+	output reg outputclk=1;
+	output reg[4:0] ext_trig_delay=0;
+	output reg noselftrig=0;
 	
 	output reg i2c_ena;
 	output reg [6:0] i2c_addr;
@@ -84,7 +90,8 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
   localparam READ=0, SOLVING=1, WAITING=2, WRITE_EXT1=3, WRITE_EXT2=4, WAIT_ADC1=5, WAIT_ADC2=6, WRITE_BYTE1=7, WRITE_BYTE2=8, READMORE=9, 
 	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15, //WRITEUSB1=16,WRITEUSB2=17, 
 	LOCKIN1=18,LOCKIN2=19,LOCKIN3=20,LOCKINWRITE1=21,LOCKINWRITE2=22,
-	WRITE_USB_EXT1=33, WRITE_USB_EXT2=34, WRITE_USB_EXT3=35, WRITE_USB_EXT4=36, WRITE_USB_EXT5=37;
+	WRITE_USB_EXT1=33, WRITE_USB_EXT2=34, WRITE_USB_EXT3=35, WRITE_USB_EXT4=36, WRITE_USB_EXT5=37,
+	PLLCLOCK=40;
   integer state,i2cstate;
 
   reg [7:0] myid;
@@ -103,6 +110,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
   reg [7:0] chanforscreen=0;
   reg autorearm=0;
   integer thecounter=0, timeoutcounter=0, serialdelaytimer=0,serialdelaytimerwait=0;
+  reg addonetoextradata=0;
   
   reg [7:0] usb2counter;
   output reg do_usb=0;
@@ -126,6 +134,14 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
   reg [15:0] lockinnumtoshift = 0;
   integer chan2mean, chan3mean;
   reg calcmeans;
+  
+  //for clock phase
+  integer pllclock_counter=0;
+  integer scanclk_cycles=0;
+  output reg[2:0] phasecounterselect; // Dynamic phase shift counter Select. 000:all 001:M 010:C0 011:C1 100:C2 101:C3 110:C4. Registered in the rising edge of scanclk.
+  output reg phaseupdown=1; // Dynamic phase shift direction; 1:UP, 0:DOWN. Registered in the PLL on the rising edge of scanclk.
+  output reg phasestep=0;
+  output reg scanclk=0;
   
   initial begin
     state<=READ;
@@ -158,7 +174,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
   always @(posedge clk) begin
 	thecounter<=thecounter+1;
 	usb_txe_not_busy <= ~usb_txe_busy;
-	debug1 <= usb_txe_not_busy;
+	//debug1 <= usb_txe_not_busy;
    if (thecounter[26]==1'b1 ) begin //flash every few seconds
 		if (imthelast) begin
 			led1<=0;		led2<=0;		led3<=0;//all off
@@ -180,6 +196,12 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 		else begin
 			led1<=1;
 		end
+	end
+	if (thecounter[24]==1'b1 ) begin //pulse faster
+		io3 <= 0;
+	end
+	else begin
+		io3 <= 1;
 	end
   end
   reg oldled1,oldled2,oldled3,oldled4,oldio1,oldio2,oldio3,oldio4;
@@ -220,6 +242,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 		  i2cgo=0;
 		  usb_wr<=1;
         ioCount = 0;
+		  addonetoextradata=0;
         if (rxReady) begin
 			 readdata = rxData;
           state = SOLVING;
@@ -245,7 +268,8 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 			newcomdata=0;
 			if (rxReady) begin
 				extradata[bytesread] = rxData;
-				comdata=rxData;
+				if (addonetoextradata) comdata=rxData+1;//for propogating the board ID
+				else comdata=rxData;
 				newcomdata=1; //pass it on
 				bytesread = bytesread+1;
 				if (bytesread>=byteswanted) state=SOLVING;
@@ -279,8 +303,14 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				end
 			end
 			else if (readdata > 19 && readdata < 30) begin // got character "20-29"
-				if (myid==(readdata-20)) imthelast=1; // I'm the last one
-				else imthelast=0;
+				if (myid==(readdata-20)) begin
+					imthelast=1; // I'm the last one
+					outputclk=0;
+				end
+				else begin
+					imthelast=0;
+					outputclk=1;
+				end
 				comdata=readdata;
 				newcomdata=1; //pass it on
 				state=READ;
@@ -298,6 +328,120 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				end
 				state=READ;
 			end
+			
+			else if (readdata==50) begin
+				byteswanted=1;//wait for next byte which is the ID to take (replacing 0-9)
+				comdata=readdata;	
+				newcomdata=1; //pass it on
+				addonetoextradata=1;// give the next one an ID one larger
+				if (bytesread<byteswanted) state=READMORE;
+				else begin
+					myid=extradata[0];//remember my ID
+					if (extradata[0]==0) begin
+						master_clock=2'b00; //remain my own master
+					end
+					else master_clock=2'b01; //now a slave!
+					state=READ;
+				end
+			end
+			else if (readdata==51) begin
+				byteswanted=1;//wait for next byte which is the board to read out (replacing 10-19)
+				comdata=readdata;	
+				newcomdata=1; //pass it on
+				if (bytesread<byteswanted) state=READMORE;
+				else begin
+					if (myid==extradata[0] || extradata[0]==255) begin // if 255 all boards read out with one command
+						//read me out
+						serial_passthrough=0;
+						timeoutcounter=0;//start the clock
+						state=WAITING;
+					end
+					else begin
+						//if (myid<extradata[0]) begin
+							//pass it on, and set serial to "passthrough mode"
+							serial_passthrough=1;
+						//end
+						state=READ;
+					end
+				end
+			end
+			else if (readdata==52) begin
+				byteswanted=1;//wait for next byte which is the board id that's the last one (replacing 20-29)
+				comdata=readdata;	
+				newcomdata=1; //pass it on
+				if (bytesread<byteswanted) state=READMORE;
+				else begin
+					if (myid==extradata[0]) begin
+						imthelast=1; // I'm the last one
+						outputclk=0;
+					end
+					else begin
+						imthelast=0;
+						outputclk=1;
+					end
+					state=READ;
+				end
+			end
+			else if (readdata==53) begin
+				byteswanted=1;//wait for next byte which is the board to not set to serial passthrough, but all others go into serial passthough (replacing 30-39)
+				comdata=readdata;	
+				newcomdata=1; //pass it on
+				if (bytesread<byteswanted) state=READMORE;
+				else begin
+					if (myid==extradata[0]) begin
+						//make me active
+						serial_passthrough=0;
+					end
+					else begin
+						//if (myid<extradata[0]) begin
+							//pass it on, and set serial to "passthrough mode"
+							serial_passthrough=1;
+						//end
+					end
+					state=READ;
+				end
+			end
+			
+			else if (54==readdata) begin
+				if (imthelast) outputclk = ~outputclk; //tell the last one to toggle outputting the clock on the left
+				comdata=readdata;
+				newcomdata=1; //pass it on
+				state=READ;
+			end
+			else if (55==readdata) begin //adjust clock phases, if I'm the active one
+				if (serial_passthrough) begin
+					comdata=readdata;
+					newcomdata=1; //pass it on
+					state=READ;
+				end
+				else begin
+					phasecounterselect=3'b000; // all clocks - see https://www.intel.com/content/dam/www/programmable/us/en/pdfs/literature/hb/cyc3/cyc3_ciii51006.pdf table 5-10
+					//phaseupdown=1'b1; // up
+					scanclk=1'b0; // start low
+					phasestep=1'b1; // assert!
+					pllclock_counter=0;
+					scanclk_cycles=0;
+					state=PLLCLOCK;
+				end
+			end
+			
+			else if (readdata==56) begin
+				byteswanted=1;//wait for next byte which is the ext_trig_delay
+				comdata=readdata;	
+				newcomdata=1; //pass it on
+				if (bytesread<byteswanted) state=READMORE;
+				else begin
+					ext_trig_delay = extradata[0];
+					state=READ;
+				end
+			end
+			else if (57==readdata) begin // tell them all toggle just taking triggers in towards the right
+				noselftrig=~noselftrig;
+				comdata=readdata;
+				newcomdata=1; //pass it on
+				state=READ;
+			end
+			
 			
 			else if (100==readdata) begin
 				//tell them all to prime the trigger
@@ -671,7 +815,7 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				end
 				else begin
 					ioCountToSend = 1;
-					data[0]=16; // this is the firmware version
+					data[0]=18; // this is the firmware version
 					state=WRITE1;
 				end
 			end
@@ -687,7 +831,19 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 			end
 		end
 		
+		PLLCLOCK: begin // to step the clock phase, you have to toggle scanclk a few times
+			pllclock_counter=pllclock_counter+1;
+			if (pllclock_counter[4]) begin
+				scanclk = ~scanclk;
+				pllclock_counter=0;
+				scanclk_cycles=scanclk_cycles+1;
+				if (scanclk_cycles>5) phasestep=1'b0; // deassert!
+				if (scanclk_cycles>7) state=READ;
+			end
+		end
+		
 		WAITING: begin
+			newcomdata<=0; //set this back, to just send out data once
 			timeoutcounter=timeoutcounter+1;
 			if (ext_data_ready) begin // can read out
 				SendCount= 0;
@@ -867,11 +1023,11 @@ rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_
 				usb2counter<=0;
 				state=WRITE_USB_EXT2;
 			end
-			debug2<=1;
+			//debug2<=1;
 			rden = 1;
 		end
 		WRITE_USB_EXT2: begin
-			debug2<=0;
+			//debug2<=0;
 			usb2counter<=usb2counter+1;
 			//rotate through the outputs
 			case(SendCount[ram_width+2:ram_width])
