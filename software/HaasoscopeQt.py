@@ -57,7 +57,7 @@ d.serialdelaytimerwait=serialdelaytimerwait #50 #100 #150 #300 # 600 # delay (in
 if trigboardport!="":
     trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig()
     trigboard.construct(trigboardport)
-    trigboard.get_firmware_version()
+    if not trigboard.get_firmware_version(): exit()
     trigboard.setrngseed()
 
 app = QtGui.QApplication.instance()

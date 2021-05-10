@@ -53,10 +53,13 @@ class HaasoscopeTrig:
     def get_firmware_version(self):
         self.ser.write(bytearray([0])) # firmware version
         res = self.ser.read(1)
-        if len(res)==0: return
+        if len(res)==0:
+            print("could not get trigboard firmware version!")
+            return 0
         b = unpack('%dB' % len(res), res)
         self.firmwarev=b[0]
         print("trig board firmware v",self.firmwarev)
+        return self.firmwarev
 
     def increment_trig_board_clock_phase(self, times=1):
         for t in range(times): self.ser.write(bytearray([5])) #increment phase
