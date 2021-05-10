@@ -42,7 +42,7 @@ for a in sys.argv:
 #Some pre-options
 HaasoscopeLibQt.num_board = num_board # Number of Haasoscope boards to read out (default is 1)
 HaasoscopeLibQt.ram_width = ram_width # width in bits of sample ram to use (e.g. 9==512 samples (default), 12(max)==4096 samples) (min is 2)
-HaasoscopeLibQt.max10adcchans =  [(0,110),(0,118)] #[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp # default is none, []
+#HaasoscopeLibQt.max10adcchans =  [(0,110),(0,118)] #[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp # default is none, []
 
 d = HaasoscopeLibQt.Haasoscope()
 d.construct()

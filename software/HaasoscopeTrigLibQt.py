@@ -31,10 +31,10 @@ class HaasoscopeTrig:
 
     def setrngseed(self):
         random.seed()
-        b1=random.randbytes(1)
-        b2=random.randbytes(1)
-        b3=random.randbytes(1)
-        b4=random.randbytes(1)
+        b1=random.randint(0,255)
+        b2=random.randint(0,255)
+        b3=random.randint(0,255)
+        b4=random.randint(0,255)
         self.ser.write(bytearray([6,b1,b2,b3,b4]))
         print("set trigboard random seed to",b1,b2,b3,b4)
 
