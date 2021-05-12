@@ -1,9 +1,15 @@
-# For Altera USB-Blaster permissions.
-SUBSYSTEM=="usb",\
-ENV{DEVTYPE}=="usb_device",\
-ATTR{idVendor}=="09fb",\
-ATTR{idProduct}=="6001",\
-MODE="0666",\
-NAME="bus/usb/$env{BUSNUM}/$env{DEVNUM}",\
-RUN+="/bin/chmod 0666 %c"
+The USB Blaster udev rules on the Altera website
+( http://www.altera.com/download/drivers/dri-usb_b-lnx.html )
+did not work for me on Debian Jessie/Sid. A modified version of the file, listed below, works for me 
+(this is the contents of /etc/udev/rules.d/51-usbblaster.rules ). After restarting udev 
+(`sudo service udev restart`) I was able to program the DE0-Nano.
+
+# USB-Blaster
+SUBSYSTEM=="usb", ATTR{idVendor}=="09fb", ATTR{idProduct}=="6001", MODE="0666", GROUP="plugdev"
+SUBSYSTEM=="usb", ATTR{idVendor}=="09fb", ATTR{idProduct}=="6002", MODE="0666", GROUP="plugdev"
+SUBSYSTEM=="usb", ATTR{idVendor}=="09fb", ATTR{idProduct}=="6003", MODE="0666", GROUP="plugdev"
+
+# USB-Blaster II
+SUBSYSTEM=="usb", ATTR{idVendor}=="09fb", ATTR{idProduct}=="6010", MODE="0666", GROUP="plugdev"
+SUBSYSTEM=="usb", ATTR{idVendor}=="09fb", ATTR{idProduct}=="6810", MODE="0666", GROUP="plugdev"
 

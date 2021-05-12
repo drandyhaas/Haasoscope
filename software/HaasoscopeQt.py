@@ -59,6 +59,7 @@ if trigboardport!="":
     trigboard.construct(trigboardport)
     if not trigboard.get_firmware_version(): exit()
     trigboard.setrngseed()
+    trigboard.set_prescale(1.0)
 
 app = QtGui.QApplication.instance()
 standalone = app is None
@@ -314,6 +315,10 @@ class MainWindow(TemplateBaseClass):
                 d.increment_clk_phase(theboard)
             else:
                 if trigboardport!="": trigboard.increment_trig_board_clock_phase()
+        if event.key()==QtCore.Qt.Key_1:
+            trigboard.set_prescale(0.1)
+        if event.key()==QtCore.Qt.Key_2:
+            trigboard.set_prescale(0.2)
 
     def actionRead_from_file(self):
         d.readcalib()
