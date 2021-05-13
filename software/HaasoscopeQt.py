@@ -57,7 +57,7 @@ d.serialdelaytimerwait=serialdelaytimerwait #50 #100 #150 #300 # 600 # delay (in
 if trigboardport!="":
     trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig()
     trigboard.construct(trigboardport)
-    if not trigboard.get_firmware_version(): exit()
+    if not trigboard.get_firmware_version(): sys.exit()
     trigboard.setrngseed()
     trigboard.set_prescale(1.0)
 
@@ -682,7 +682,7 @@ class MainWindow(TemplateBaseClass):
                 d.recorddata = False
                 self.ui.persistCheck.setCheckState(QtCore.Qt.Unchecked)
         now = time.time()
-        dt = now - self.lastTime
+        dt = now - self.lastTime + 0.00001
         self.lastTime = now
         if self.fps is None:
             self.fps = 1.0/dt
@@ -746,7 +746,9 @@ class MainWindow(TemplateBaseClass):
         if d.paused: time.sleep(.1)
         else:
             try: status=d.getchannels()
-            except SerialException: sys.exit(1)
+            except SerialException:
+                print("Serial exception getting channels!!")
+                sys.exit(1)
             if status==2: self.selectchannel() #we updated the switch data
             if self.savetofile: self.dosavetofile()
             if d.db: print(time.time()-d.oldtime,"done with evt",self.nevents)
