@@ -15,7 +15,7 @@ import HaasoscopeTrigLibQt
 
 serialdelaytimerwait=100
 ram_width=9
-num_board=1
+num_boardss=1
 trigboardport=""
 manserport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
 print ('Number of arguments:', len(sys.argv), 'arguments.')
@@ -30,8 +30,8 @@ for a in sys.argv:
             ram_width=int(a[2:])
             print("ram_width set to",ram_width)
         if a[1]=="b":
-            num_board=int(a[2:])
-            print("num_board set to",num_board)
+            num_boardss=int(a[2:])
+            print("num_board set to",num_boardss)
         if a[1]=="p":
             manserport=a[2:]
             print("serial port manually set to",manserport)
@@ -40,7 +40,7 @@ for a in sys.argv:
             print("trigboardport set to",trigboardport)
 
 #Some pre-options
-HaasoscopeLibQt.num_board = num_board # Number of Haasoscope boards to read out (default is 1)
+HaasoscopeLibQt.num_board = num_boardss # Number of Haasoscope boards to read out (default is 1)
 HaasoscopeLibQt.ram_width = ram_width # width in bits of sample ram to use (e.g. 9==512 samples (default), 12(max)==4096 samples) (min is 2)
 #HaasoscopeLibQt.max10adcchans =  [(0,110),(0,118)] #[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp # default is none, []
 
@@ -311,7 +311,7 @@ class MainWindow(TemplateBaseClass):
         modifiers = QtWidgets.QApplication.keyboardModifiers()
         if event.key()==QtCore.Qt.Key_I:
             if not modifiers == QtCore.Qt.ShiftModifier:
-                theboard = num_board - 1 - int(d.selectedchannel / HaasoscopeLibQt.num_chan_per_board)
+                theboard = HaasoscopeLibQt.num_board - 1 - int(d.selectedchannel / HaasoscopeLibQt.num_chan_per_board)
                 d.increment_clk_phase(theboard)
             else:
                 if trigboardport!="": trigboard.increment_trig_board_clock_phase()
@@ -772,8 +772,9 @@ class MainWindow(TemplateBaseClass):
             delaycounters = trigboard.get_delaycounters()
             self.ui.textBrowser.append("delaycounters: "+str(delaycounters))
             self.ui.textBrowser.append(trigboard.get_histos())
-            if not delaycounters[0]:
-                d.increment_clk_phase(0,30) # increment clk of that board by 30*100ps=3ns
+            for b in range(HaasoscopeLibQt.num_board):
+                if not delaycounters[b]:
+                    d.increment_clk_phase(b,30) # increment clk of that board by 30*100ps=3ns
 
 try:    
     win = MainWindow()

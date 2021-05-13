@@ -1213,22 +1213,27 @@ class Haasoscope():
         if len(self.usbser)>1:
             for usb in np.arange(num_board): self.usbser[usb].timeout=.1 # lower the timeout on the connections, temporarily
             foundusbs=[]
+            self.ser.write(bytearray([100])) # prime the trigger (for all boards)
             for bn in np.arange(num_board):
-                self.ser.write(bytearray([100])) # prime the trigger
                 if self.minfirmwareversion>=17:
                     self.ser.write(bytearray([51,bn]))
                 else:
                     self.ser.write(bytearray([10+bn]))
+                foundit=False
                 for usb in np.arange(len(self.usbser)):
                     if not usb in foundusbs: # it's not already known that this usb connection is assigned to a board
                         rslt = self.usbser[usb].read(self.num_bytes) # try to get data from the board
                         if len(rslt)==self.num_bytes:
-                            #print "   got the right nbytes for board",bn,"from usb",usb
+                            print("   got the right nbytes for board",bn,"from usb",usb)
                             self.usbsermap[bn]=usb
                             foundusbs.append(usb) # remember that we already have figured out which board this usb connection is for, so we don't bother trying again for another board
+                            foundit=True
                             break # already found which board this usb connection is used for, so bail out
-                        #else: print "   got the wrong nbytes for board",bn,"from usb",usb
-                    #else: print "   already know what usb",usb,"is for"
+                        #else: print("   got the wrong nbytes for board",bn,"from usb",usb)
+                    #else: print("   already know what usb",usb,"is for")
+                if not foundit:
+                    print("could not find usb2 connection for board",bn)
+                    return False
             for usb in np.arange(num_board): self.usbser[usb].timeout=self.sertimeout # put back the timeout on the connections
         print("usbsermap is",self.usbsermap)
         return True
