@@ -10,6 +10,12 @@ class HaasoscopeTrig:
         self.ser=Serial(port,115200,timeout=0.2)
         self.extclock=0
         self.histostosend=-1
+        self.dorolling=1
+    
+    def togglerolling(self):
+        self.dorolling = not self.dorolling
+        self.ser.write(bytearray([13]))  # toggle rolling
+        print("trigboard rolling is now",self.dorolling)
 
     def setclock(self, wantactiveclock): # True for wanting sync with external clock
         self.extclock = 0
@@ -91,4 +97,6 @@ class HaasoscopeTrig:
 
     def cleanup(self):
         self.setclock(False)
+        if not self.dorolling: self.togglerolling()
         self.ser.close()
+    

@@ -443,6 +443,8 @@ class MainWindow(TemplateBaseClass):
     def rolling(self):
         d.rolltrigger = not d.rolltrigger
         d.tellrolltrig(d.rolltrigger)
+        if trigboardport!="":
+            trigboard.togglerolling()
         self.ui.rollingButton.setChecked(d.rolltrigger)
         if d.rolltrigger: self.ui.rollingButton.setText("Rolling/Auto")
         else: self.ui.rollingButton.setText("Normal")
