@@ -174,7 +174,7 @@ refer to the applicable agreement for further details.
 )
 (pin
 	(input)
-	(rect -368 1480 -192 1496)
+	(rect -368 1608 -192 1624)
 	(text "INPUT" (rect 133 0 161 10)(font "Arial" (font_size 6)))
 	(text "232_in2" (rect 9 0 46 12)(font "Arial" ))
 	(pt 176 8)
@@ -187,7 +187,7 @@ refer to the applicable agreement for further details.
 		(line (pt 117 12)(pt 121 8))
 	)
 	(text "VCC" (rect 136 7 156 17)(font "Arial" (font_size 6)))
-	(annotation_block (location)(rect -424 1496 -368 1520))
+	(annotation_block (location)(rect -424 1624 -368 1648))
 )
 (pin
 	(input)
@@ -429,7 +429,7 @@ refer to the applicable agreement for further details.
 )
 (pin
 	(output)
-	(rect 920 1432 1096 1448)
+	(rect 920 1560 1096 1576)
 	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
 	(text "232_out2" (rect 90 0 134 12)(font "Arial" ))
 	(pt 0 8)
@@ -442,7 +442,7 @@ refer to the applicable agreement for further details.
 		(line (pt 82 8)(pt 78 12))
 		(line (pt 78 12)(pt 82 8))
 	)
-	(annotation_block (location)(rect 1096 1448 1152 1472))
+	(annotation_block (location)(rect 1096 1576 1152 1600))
 )
 (pin
 	(output)
@@ -958,7 +958,7 @@ refer to the applicable agreement for further details.
 	(annotation_block (location)(rect 1888 488 1952 512))
 )
 (symbol
-	(rect 392 1424 600 1568)
+	(rect 392 1552 600 1696)
 	(text "processor_slave" (rect 5 0 86 12)(font "Arial" ))
 	(text "inst4" (rect 8 128 31 140)(font "Arial" ))
 	(port
@@ -1077,7 +1077,7 @@ refer to the applicable agreement for further details.
 	(annotation_block (parameter)(rect 1216 280 1344 320))
 )
 (symbol
-	(rect -160 1456 16 1536)
+	(rect -160 1584 16 1664)
 	(text "demux1to2" (rect 5 0 59 12)(font "Arial" ))
 	(text "inst2" (rect 8 64 31 76)(font "Arial" ))
 	(port
@@ -1616,7 +1616,7 @@ refer to the applicable agreement for further details.
 	(annotation_block (parameter)(rect 960 440 1236 482))
 )
 (symbol
-	(rect 680 1408 888 1520)
+	(rect 680 1536 888 1648)
 	(text "async_transmitter" (rect 5 0 94 12)(font "Arial" ))
 	(text "232_trans2" (rect 8 96 62 108)(font "Arial" ))
 	(port
@@ -1667,10 +1667,10 @@ refer to the applicable agreement for further details.
 	(drawing
 		(rectangle (rect 16 16 192 96))
 	)
-	(annotation_block (parameter)(rect 672 1520 948 1562))
+	(annotation_block (parameter)(rect 672 1648 948 1690))
 )
 (symbol
-	(rect 96 1440 296 1552)
+	(rect 96 1568 296 1680)
 	(text "async_receiver" (rect 5 0 81 12)(font "Arial" ))
 	(text "232_rec2" (rect 8 96 52 108)(font "Arial" ))
 	(port
@@ -1733,7 +1733,7 @@ refer to the applicable agreement for further details.
 	(drawing
 		(rectangle (rect 16 16 184 96))
 	)
-	(annotation_block (parameter)(rect 80 1552 357 1608))
+	(annotation_block (parameter)(rect 80 1680 357 1736))
 )
 (symbol
 	(rect 424 -624 680 -448)
@@ -3968,6 +3968,13 @@ refer to the applicable agreement for further details.
 		(text "usb_pwrsv" (rect 295 987 339 999)(font "Arial" ))
 		(line (pt 360 992)(pt 344 992))
 	)
+	(port
+		(pt 360 1008)
+		(output)
+		(text "clk_rd" (rect 0 0 29 12)(font "Arial" ))
+		(text "clk_rd" (rect 315 1003 339 1015)(font "Arial" ))
+		(line (pt 360 1008)(pt 344 1008))
+	)
 	(parameter
 		"ram_width"
 		"12"
@@ -4138,29 +4145,14 @@ refer to the applicable agreement for further details.
 	(pt -88 -520)
 )
 (connector
-	(text "clk_50" (rect -78 -496 -47 -484)(font "Arial" ))
-	(pt -16 -480)
-	(pt -88 -480)
-)
-(connector
 	(text "rden" (rect -510 -536 -489 -524)(font "Arial" ))
 	(pt -448 -520)
 	(pt -520 -520)
 )
 (connector
-	(text "clk_50" (rect -510 -496 -479 -484)(font "Arial" ))
-	(pt -448 -480)
-	(pt -520 -480)
-)
-(connector
 	(text "rden" (rect 802 -536 823 -524)(font "Arial" ))
 	(pt 792 -520)
 	(pt 864 -520)
-)
-(connector
-	(text "clk_50" (rect 802 -496 833 -484)(font "Arial" ))
-	(pt 792 -480)
-	(pt 864 -480)
 )
 (connector
 	(text "ram_output2[7..0]" (rect 250 -552 337 -540)(font "Arial" ))
@@ -4435,11 +4427,6 @@ refer to the applicable agreement for further details.
 	(pt -520 -496)
 )
 (connector
-	(text "clk_50" (rect 362 -496 393 -484)(font "Arial" ))
-	(pt 352 -480)
-	(pt 424 -480)
-)
-(connector
 	(pt 360 -224)
 	(pt 392 -224)
 )
@@ -4514,73 +4501,6 @@ refer to the applicable agreement for further details.
 	(text "clk_mainadc2" (rect 317 80 384 92)(font "Arial" ))
 	(pt 392 96)
 	(pt 312 96)
-)
-(connector
-	(pt 904 1584)
-	(pt 376 1584)
-)
-(connector
-	(pt 920 1440)
-	(pt 888 1440)
-)
-(connector
-	(pt 904 1456)
-	(pt 888 1456)
-)
-(connector
-	(pt 904 1584)
-	(pt 904 1456)
-)
-(connector
-	(pt 96 1488)
-	(pt 16 1488)
-)
-(connector
-	(pt 1232 392)
-	(pt 16 1504)
-)
-(connector
-	(pt 752 552)
-	(pt -160 1504)
-)
-(connector
-	(pt 376 1584)
-	(pt 376 1504)
-)
-(connector
-	(pt 376 1504)
-	(pt 392 1504)
-)
-(connector
-	(pt 680 1456)
-	(pt 600 1456)
-)
-(connector
-	(pt 296 1472)
-	(pt 392 1472)
-)
-(connector
-	(pt 680 1472)
-	(pt 600 1472)
-	(bus)
-)
-(connector
-	(pt 296 1488)
-	(pt 392 1488)
-	(bus)
-)
-(connector
-	(pt 752 472)
-	(pt 392 1520)
-)
-(connector
-	(pt 752 488)
-	(pt 392 1536)
-	(bus)
-)
-(connector
-	(pt -192 1488)
-	(pt -160 1488)
 )
 (connector
 	(pt 1472 848)
@@ -4912,11 +4832,6 @@ refer to the applicable agreement for further details.
 	(pt 1968 -256)
 )
 (connector
-	(text "clk_50" (rect 1432 -496 1463 -484)(font "Arial" ))
-	(pt 1512 -480)
-	(pt 1424 -480)
-)
-(connector
 	(text "clk_mainadc" (rect 1432 -512 1493 -500)(font "Arial" ))
 	(pt 1512 -496)
 	(pt 1424 -496)
@@ -5015,70 +4930,6 @@ refer to the applicable agreement for further details.
 	(pt 384 328)
 )
 (connector
-	(pt 1136 744)
-	(pt 1096 744)
-)
-(connector
-	(pt 672 1440)
-	(pt 680 1440)
-)
-(connector
-	(pt 56 1472)
-	(pt 96 1472)
-)
-(connector
-	(pt 1096 1400)
-	(pt 672 1400)
-)
-(connector
-	(pt 384 1456)
-	(pt 392 1456)
-)
-(connector
-	(pt 384 1424)
-	(pt 384 1456)
-)
-(connector
-	(pt 56 328)
-	(pt 56 392)
-)
-(connector
-	(pt 56 392)
-	(pt 56 680)
-)
-(connector
-	(pt 1096 744)
-	(pt 1096 848)
-)
-(connector
-	(pt 1096 848)
-	(pt 1096 1400)
-)
-(connector
-	(pt 56 680)
-	(pt 56 1424)
-)
-(connector
-	(pt 56 1424)
-	(pt 56 1472)
-)
-(connector
-	(pt 672 1400)
-	(pt 672 1424)
-)
-(connector
-	(pt 672 1424)
-	(pt 672 1440)
-)
-(connector
-	(pt 56 1424)
-	(pt 384 1424)
-)
-(connector
-	(pt 384 1424)
-	(pt 672 1424)
-)
-(connector
 	(pt 1456 816)
 	(pt 1456 416)
 )
@@ -5093,11 +4944,6 @@ refer to the applicable agreement for further details.
 (connector
 	(pt 1456 816)
 	(pt 1488 816)
-)
-(connector
-	(text "clk_50" (rect 266 -272 297 -255)(font "Intel Clear" ))
-	(pt 56 -256)
-	(pt 392 -256)
 )
 (connector
 	(pt 1352 376)
@@ -5144,10 +4990,6 @@ refer to the applicable agreement for further details.
 	(text "trigout[2]" (rect 944 -16 987 1)(font "Intel Clear" ))
 	(pt 920 0)
 	(pt 992 0)
-)
-(connector
-	(pt 56 -256)
-	(pt 56 328)
 )
 (connector
 	(text "chip_id[63..0]" (rect 1640 -16 1706 -4)(font "Arial" ))
@@ -5374,6 +5216,184 @@ refer to the applicable agreement for further details.
 	(pt 752 64)
 	(bus)
 )
+(connector
+	(text "clk_rd" (rect -510 -496 -481 -484)(font "Arial" ))
+	(pt -448 -480)
+	(pt -520 -480)
+)
+(connector
+	(text "clk_rd" (rect -78 -496 -49 -484)(font "Arial" ))
+	(pt -16 -480)
+	(pt -88 -480)
+)
+(connector
+	(text "clk_rd" (rect 362 -496 391 -484)(font "Arial" ))
+	(pt 352 -480)
+	(pt 424 -480)
+)
+(connector
+	(text "clk_rd" (rect 802 -496 831 -484)(font "Arial" ))
+	(pt 792 -480)
+	(pt 864 -480)
+)
+(connector
+	(text "clk_rd" (rect 1432 -496 1461 -484)(font "Arial" ))
+	(pt 1512 -480)
+	(pt 1424 -480)
+)
+(connector
+	(text "clk_50" (rect 266 -272 297 -255)(font "Intel Clear" ))
+	(pt 392 -256)
+	(pt 56 -256)
+)
+(connector
+	(pt 1136 744)
+	(pt 1096 744)
+)
+(connector
+	(pt 904 1712)
+	(pt 376 1712)
+)
+(connector
+	(pt 920 1568)
+	(pt 888 1568)
+)
+(connector
+	(pt 904 1584)
+	(pt 888 1584)
+)
+(connector
+	(pt 904 1712)
+	(pt 904 1584)
+)
+(connector
+	(pt 96 1616)
+	(pt 16 1616)
+)
+(connector
+	(pt 1232 392)
+	(pt 16 1632)
+)
+(connector
+	(pt 752 552)
+	(pt -160 1632)
+)
+(connector
+	(pt 376 1712)
+	(pt 376 1632)
+)
+(connector
+	(pt 376 1632)
+	(pt 392 1632)
+)
+(connector
+	(pt 680 1584)
+	(pt 600 1584)
+)
+(connector
+	(pt 296 1600)
+	(pt 392 1600)
+)
+(connector
+	(pt 680 1600)
+	(pt 600 1600)
+	(bus)
+)
+(connector
+	(pt 296 1616)
+	(pt 392 1616)
+	(bus)
+)
+(connector
+	(pt 752 472)
+	(pt 392 1648)
+)
+(connector
+	(pt 752 488)
+	(pt 392 1664)
+	(bus)
+)
+(connector
+	(pt -192 1616)
+	(pt -160 1616)
+)
+(connector
+	(pt 672 1568)
+	(pt 680 1568)
+)
+(connector
+	(pt 56 1600)
+	(pt 96 1600)
+)
+(connector
+	(pt 1096 1528)
+	(pt 672 1528)
+)
+(connector
+	(pt 384 1584)
+	(pt 392 1584)
+)
+(connector
+	(pt 384 1552)
+	(pt 384 1584)
+)
+(connector
+	(pt 56 -256)
+	(pt 56 328)
+)
+(connector
+	(pt 56 328)
+	(pt 56 392)
+)
+(connector
+	(pt 56 392)
+	(pt 56 680)
+)
+(connector
+	(pt 1096 744)
+	(pt 1096 848)
+)
+(connector
+	(pt 1096 848)
+	(pt 1096 1528)
+)
+(connector
+	(pt 56 680)
+	(pt 56 1552)
+)
+(connector
+	(pt 56 1552)
+	(pt 56 1600)
+)
+(connector
+	(pt 672 1528)
+	(pt 672 1552)
+)
+(connector
+	(pt 672 1552)
+	(pt 672 1568)
+)
+(connector
+	(pt 56 1552)
+	(pt 384 1552)
+)
+(connector
+	(pt 384 1552)
+	(pt 672 1552)
+)
+(connector
+	(pt 752 1352)
+	(pt 760 1352)
+)
+(connector
+	(pt 760 1352)
+	(pt 760 1360)
+)
+(connector
+	(text "clk_rd" (rect 769 1344 798 1361)(font "Intel Clear" ))
+	(pt 760 1360)
+	(pt 800 1360)
+)
 (junction (pt 56 328))
 (junction (pt 56 392))
 (junction (pt 56 680))
@@ -5384,9 +5404,6 @@ refer to the applicable agreement for further details.
 (junction (pt 384 328))
 (junction (pt 1456 816))
 (junction (pt 1472 848))
-(junction (pt 384 1424))
-(junction (pt 56 1424))
-(junction (pt 672 1424))
 (junction (pt 1664 -816))
 (junction (pt 1664 -792))
 (junction (pt 1664 -768))
@@ -5395,3 +5412,6 @@ refer to the applicable agreement for further details.
 (junction (pt 1664 -696))
 (junction (pt 1664 -672))
 (junction (pt 1664 -648))
+(junction (pt 384 1552))
+(junction (pt 56 1552))
+(junction (pt 672 1552))

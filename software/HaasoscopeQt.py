@@ -784,7 +784,9 @@ try:
     win = MainWindow()
     win.setWindowTitle('Haasoscope Qt')
     if not d.setup_connections(): sys.exit()
-    if not d.init(): sys.exit()
+    if not d.init():
+        d.cleanup()
+        sys.exit()
     win.launch()
     win.triggerposchanged(128) # center the trigger
     win.dostartstop()

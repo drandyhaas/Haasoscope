@@ -632,6 +632,13 @@ refer to the applicable agreement for further details.
 		(text "usb_pwrsv" (rect 295 987 339 999)(font "Arial" ))
 		(line (pt 360 992)(pt 344 992)(line_width 1))
 	)
+	(port
+		(pt 360 1008)
+		(output)
+		(text "clk_rd" (rect 0 0 24 12)(font "Arial" ))
+		(text "clk_rd" (rect 315 1003 339 1015)(font "Arial" ))
+		(line (pt 360 1008)(pt 344 1008)(line_width 1))
+	)
 	(parameter
 		"ram_width"
 		"12"

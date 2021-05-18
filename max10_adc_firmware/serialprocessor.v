@@ -8,7 +8,7 @@ SPIsend,SPIsenddata,delaycounter,carrycounter,usb_siwu,SPIstate,offset,gainsw,do
 i2c_ena,i2c_addr,i2c_rw,i2c_datawr,i2c_datard,i2c_busy,i2c_ackerror,   usb_clk60,usb_dataio,usb_txe_busy,usb_wr,
 rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_buffer1, nsmp, outputclk,
 phasecounterselect,phaseupdown,phasestep,scanclk,
-ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv
+ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 );
    input clk;
 	input[7:0] rxData;
@@ -116,6 +116,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv
   integer thecounter=0, timeoutcounter=0, serialdelaytimer=0,serialdelaytimerwait=0;
   reg addonetoextradata=0;
   
+  output wire clk_rd;
   reg [7:0] usb2counter;
   output reg do_usb=0;
   input usb_clk60;
@@ -238,12 +239,9 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv
 //	assign offset[1] = (PWMoffset1 > pwmcounter);  // comparators
 //	assign offset[2] = (PWMoffset2 > pwmcounter);  // comparators
 //	assign offset[3] = (PWMoffset3 > pwmcounter);  // comparators
-
-always @(posedge clk) begin 
-  usb_txe_not_busy <= ~usb_txe_busy;
-end
   
   always @(posedge clk) begin
+    usb_txe_not_busy <= ~usb_txe_busy;
     case (state)
 	 
       READ: begin
@@ -1202,7 +1200,7 @@ end
 //      end
 
 	 WRITE_USB_EXT: begin
-		send_fast_usb2=0;
+		if (!usb_wr_fast) send_fast_usb2=0;//check that writing has begun
 		if (send_fast_usb2_done) begin
 			rden=0;
 			state=READ;
@@ -1223,60 +1221,57 @@ assign rdaddress2 = ((do_usb && do_fast_usb) ? rdaddress2_fast : rdaddress2_slow
 assign usb_dataio = ((do_usb && do_fast_usb) ? usb_dataio_fast : usb_dataio_slow);
 assign usb_wr = ((do_usb && do_fast_usb) ? usb_wr_fast : usb_wr_slow);
 assign usb_siwu = ((do_usb && do_fast_usb) ? usb_siwu_fast : usb_siwu_slow);
+assign clk_rd = ((do_usb && do_fast_usb) ? usb_clk60 : clk);
+reg usb_txe_not_busy60;
 always @(posedge usb_clk60) begin
-case (usb2state)
-	WRITE_USB_EXT1: begin
-		//debug2<=1;
-		send_fast_usb2_done<=0;
-		if (send_fast_usb2) begin
-			//rden = 1;
-			usb2state=WRITE_USB_EXT2;
+	usb_txe_not_busy60<=~usb_txe_busy;
+	case (usb2state)
+		WRITE_USB_EXT1: begin
+			send_fast_usb2_done=0;
+			usb_wr_fast=1;
+			usb_siwu_fast=1;
+			SendCount_fast=0;
+			if (send_fast_usb2) begin
+				rdaddress_fast = wraddress_triggerpoint - triggerpoint;// - 1;
+				rdaddress2_fast = rdaddress_fast;
+				usb_wr_fast=0;
+				usb2state=WRITE_USB_EXT2;
+			end
 		end
-	end
-	WRITE_USB_EXT2: begin
-		//debug2<=0;
-		case(SendCount_fast[ram_width+2:ram_width]) //rotate through the outputs
-			0: usb_dataio_fast<=ram_output1;
-			1: usb_dataio_fast<=ram_output2;
-			2: usb_dataio_fast<=ram_output3;
-			3: usb_dataio_fast<=ram_output4;
-			4: usb_dataio_fast<=digital_buffer1; // the digital logic analyzer buffer
-		endcase
-		SendCount_fast = SendCount_fast + (2**sendincrement);
-		rdaddress_fast = rdaddress_fast + (2**sendincrement);
-		rdaddress2_fast = rdaddress_fast;
-		if (nsmp>0 && SendCount_fast[ram_width-1:0]>=nsmp) begin
-			SendCount_fast[ram_width-1:0]=0;
-			SendCount_fast[ram_width+2:ram_width] = (SendCount_fast[ram_width+2:ram_width] + 1);
-			rdaddress_fast = wraddress_triggerpoint - triggerpoint;// - 1;
-			rdaddress2_fast = rdaddress_fast;
+		WRITE_USB_EXT2: begin
+			usb_wr_fast=0;
+			case(SendCount_fast[ram_width+2:ram_width]) //rotate through the outputs
+				0: usb_dataio_fast<=ram_output1;
+				1: usb_dataio_fast<=ram_output2;
+				2: usb_dataio_fast<=ram_output3;
+				3: usb_dataio_fast<=ram_output4;
+				4: usb_dataio_fast<=digital_buffer1; // the digital logic analyzer buffer
+			endcase
+			if (usb_txe_not_busy60) begin
+				SendCount_fast = SendCount_fast + (2**sendincrement);
+				rdaddress_fast = rdaddress_fast + (2**sendincrement);
+				rdaddress2_fast = rdaddress_fast;
+			end
+			if (nsmp>0 && SendCount_fast[ram_width-1:0]>=nsmp) begin
+				SendCount_fast[ram_width-1:0]=0;
+				SendCount_fast[ram_width+2:ram_width] = (SendCount_fast[ram_width+2:ram_width] + 1);
+				rdaddress_fast = wraddress_triggerpoint - triggerpoint;// - 1;
+				rdaddress2_fast = rdaddress_fast;
+			end
+			if(SendCount_fast[ram_width+2:ram_width]==blockstosend) begin // it's 5 (or more) blocks including the logic analyzer info
+				send_fast_usb2_done=1;
+				usb_wr_fast=1;
+				usb_siwu_fast=0;//this sends out the data to the PC immediately, without waiting for the latency timer (16 ms by default!)
+				usb2state=WRITE_USB_EXT5;
+			end
 		end
-		usb2state=WRITE_USB_EXT3;
-	end
-	WRITE_USB_EXT3: begin
-		usb_wr_fast<= 0;
-		usb2state=WRITE_USB_EXT4;
-	end
-	WRITE_USB_EXT4: begin
-		usb_wr_fast<= 1;	
-		if(SendCount_fast[ram_width+2:ram_width]==blockstosend) begin // it's 5 (or more) blocks including the logic analyzer info
-			//rden = 0;
-			//if (autorearm) begin
-			//	//tell them all to prime the trigger
-			//	get_ext_data=1;
-			//end
-			send_fast_usb2_done<=1;
-			usb2state=WRITE_USB_EXT5;
+		WRITE_USB_EXT5: begin
+			send_fast_usb2_done=1;
+			usb_wr_fast=1;
+			usb_siwu_fast=0;
+			if (state==READ) usb2state=WRITE_USB_EXT1;//check that we got back to the READ state for the serial processor
 		end
-		else begin
-			usb2state=WRITE_USB_EXT1;
-		end
-	end
-	WRITE_USB_EXT5: begin
-		usb_siwu_fast=0;//this sends out the data to the PC immediately, without waiting for the latency timer (16 ms by default!)
-		usb2state=WRITE_USB_EXT1;
-	end
-endcase
+	endcase
 end
   
   //I2C, from https://eewiki.net/pages/viewpage.action?pageId=10125324
