@@ -17,7 +17,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
    output reg txStart;
    output reg[7:0] txData;
    output reg[7:0] readdata;//first byte we got
-   output reg spare1,spare2,spare3;
+   output wire spare1,spare2,spare3;
 	reg led1,led2,led3,led4;
 	reg io1,io2,io3,io4;
   	output reg get_ext_data;
@@ -71,7 +71,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 	output wire[3:0] offset;
 	output reg[3:0] gainsw;
 	reg[3:0] oversamp;
-	output reg debug1,debug2;
+	output wire debug1,debug2;
 	input [63:0] chip_id;
 	output reg highres=0;
 	output reg use_ext_trig=0;
@@ -92,11 +92,12 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 	reg i2cdoread=0;
 
   localparam READ=0, SOLVING=1, WAITING=2, WRITE_EXT1=3, WRITE_EXT2=4, WAIT_ADC1=5, WAIT_ADC2=6, WRITE_BYTE1=7, WRITE_BYTE2=8, READMORE=9, 
-	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15, //WRITEUSB1=16,WRITEUSB2=17, 
+	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15,
+	WRITE_USBFAST_EXT1=16, WRITE_USBFAST_EXT2=17,
 	LOCKIN1=18,LOCKIN2=19,LOCKIN3=20,LOCKINWRITE1=21,LOCKINWRITE2=22,
-	WRITE_USB_EXT=30, WRITE_USB_EXT1=33, WRITE_USB_EXT2=34, WRITE_USB_EXT3=35, WRITE_USB_EXT4=36, WRITE_USB_EXT5=37,
-	PLLCLOCK=40;
-  reg[7:0] state,i2cstate,usb2state;
+	WRITE_USB_EXT1=24, WRITE_USB_EXT2=25, WRITE_USB_EXT3=26, WRITE_USB_EXT4=27, WRITE_USB_EXT5=28,
+	PLLCLOCK=30;
+  reg[4:0] state,i2cstate;
 
   reg [7:0] myid;
   assign imthefirst = (myid==0);
@@ -129,7 +130,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
   output reg usb_oe=1;
   output reg usb_rd=1;
   input usb_rxf;
-  output reg usb_pwrsv=1;
+  output wire usb_pwrsv;//=1
   output wire usb_wr, usb_siwu;
   reg usb_wr_slow, usb_siwu_slow;
   reg usb_wr_fast, usb_siwu_fast;
@@ -160,7 +161,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
   initial begin
     state<=READ;
 	 i2cstate<=READ;
-	 usb2state<=WRITE_USB_EXT1;
+	 usb2state<=USBFAST_IDLE;
 	 myid<=200;
 	 master_clock<=2'b00;//start as my own master
 	 imthelast<=0;//probably not last
@@ -171,10 +172,6 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 	 usb_siwu_slow<=1;
 	 gainsw<=4'b0000;//1 is for 1k resistor (gain 2), 0 is for 100 Ohm resistor (gain .2)
 	 oversamp<=4'b0011;//1 is for _no_ oversampling (and only matters for bits 0 and 1)
-  	 debug1<=0; debug2<=0;
-	 spare1<=0;
-	 spare2<=0;
-	 spare3<=0;
 	 led1<=1; //on
 	 led2<=1; //on
 	 led3<=1; //on
@@ -256,7 +253,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 		  i2cgo=0;
 		  usb_wr_slow<=1;
         ioCount = 0;
-		  send_fast_usb2<=0;
+		  send_fast_usb2=0;
 		  addonetoextradata=0;
         if (rxReady) begin
 			 readdata = rxData;
@@ -883,9 +880,9 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 				else begin
 					if (do_usb) begin
 						if (do_fast_usb) begin
-							send_fast_usb2<=1;
+							send_fast_usb2=1;
 							rden=1;
-							state=WRITE_USB_EXT;
+							state=WRITE_USBFAST_EXT1;
 						end
 						else state=WRITE_USB_EXT1;
 					end
@@ -987,9 +984,9 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 				thecounterbit=thecounter[clockbitstowait];
 				if (do_usb) begin
 					if (do_fast_usb) begin
-						send_fast_usb2<=1;
+						send_fast_usb2=1;
 						rden=1;
-						state=WRITE_USB_EXT;
+						state=WRITE_USBFAST_EXT1;
 					end
 					else state=WRITE_USB_EXT1;
 				end
@@ -1179,79 +1176,86 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
         end
       end
 		
-//		//just writng out some data bytes over USB
-//		WRITEUSB1: begin
-//		  newcomdata<=0; //set this back, to just send out data once
-//        if (usb_txe_not_busy) begin
-//          usb_dataio_slow = data[ioCount];
-//			 usb_wr = 1;
-//          state = WRITEUSB2;
-//        end
-//      end
-//      WRITEUSB2: begin
-//        usb_wr = 0;
-//        if (ioCount != LENMAX) begin
-//          ioCount = ioCount + 1;
-//          state = WRITEUSB1;
-//        end else begin
-//          ioCount = 0;
-//          state = READ;
-//        end
-//      end
-
-	 WRITE_USB_EXT: begin
-		if (!usb_wr_fast) send_fast_usb2=0;//check that writing has begun
-		if (send_fast_usb2_done) begin
-			rden=0;
-			state=READ;
-		end
-	 end
+		 //writing out over fast usb2
+		 WRITE_USBFAST_EXT1: begin
+			if (usbdonecounterslow>5) state=WRITE_USBFAST_EXT2;
+			else usbdonecounterslow=usbdonecounterslow+1;
+		 end
+		 WRITE_USBFAST_EXT2: begin
+			send_fast_usb2=0;
+			usbdonecounterslow=0;
+			if (send_fast_usb2_done) begin
+				rden=0;
+				state=READ;
+			end
+		 end
 		
     endcase
 	 
   end
- 
+
+
+
+assign debug1=send_fast_usb2;//state[0];
+assign debug2=send_fast_usb2_done;//state[1];
+assign spare1=(usb2state[0]);
+assign spare2=(usb2state[1]);
+assign usb_pwrsv=(state==WRITE_USBFAST_EXT2);
+
+
 //for fast usb2
 reg send_fast_usb2=0;
 reg send_fast_usb2_done=0;
 reg do_fast_usb=0;
+reg[7:0] usbdonecounterfast=0;
+reg[7:0] usbdonecounterslow=0;
 reg [ram_width+2:0] SendCount_fast=0;
+reg[1:0] usb2state;
+localparam USBFAST_IDLE=0, USBFAST_BUSY=1, USBFAST_WRITE=2, USBFAST_DONE=3;
 assign rdaddress = ((do_usb && do_fast_usb) ? rdaddress_fast : rdaddress_slow);
 assign rdaddress2 = ((do_usb && do_fast_usb) ? rdaddress2_fast : rdaddress2_slow);
 assign usb_dataio = ((do_usb && do_fast_usb) ? usb_dataio_fast : usb_dataio_slow);
 assign usb_wr = ((do_usb && do_fast_usb) ? usb_wr_fast : usb_wr_slow);
 assign usb_siwu = ((do_usb && do_fast_usb) ? usb_siwu_fast : usb_siwu_slow);
 assign clk_rd = ((do_usb && do_fast_usb) ? usb_clk60 : clk);
-reg usb_txe_not_busy60;
 always @(posedge usb_clk60) begin
-	usb_txe_not_busy60<=~usb_txe_busy;
 	case (usb2state)
-		WRITE_USB_EXT1: begin
-			send_fast_usb2_done=0;
-			usb_wr_fast=1;
-			usb_siwu_fast=1;
+		USBFAST_IDLE: begin
+			send_fast_usb2_done<=0;
+			usb_wr_fast<=1;
+			usb_siwu_fast<=1;
 			SendCount_fast=0;
+			usbdonecounterfast<=0;
 			if (send_fast_usb2) begin
 				rdaddress_fast = wraddress_triggerpoint - triggerpoint;// - 1;
 				rdaddress2_fast = rdaddress_fast;
-				usb_wr_fast=0;
-				usb2state=WRITE_USB_EXT2;
+				usb2state<=USBFAST_BUSY;
 			end
 		end
-		WRITE_USB_EXT2: begin
-			usb_wr_fast=0;
-			case(SendCount_fast[ram_width+2:ram_width]) //rotate through the outputs
-				0: usb_dataio_fast<=ram_output1;
-				1: usb_dataio_fast<=ram_output2;
-				2: usb_dataio_fast<=ram_output3;
-				3: usb_dataio_fast<=ram_output4;
-				4: usb_dataio_fast<=digital_buffer1; // the digital logic analyzer buffer
-			endcase
-			if (usb_txe_not_busy60) begin
+		USBFAST_BUSY: begin			
+			if (!usb_txe_busy) begin
+				usb_wr_fast<=0;
+				usb2state<=USBFAST_WRITE;
+			end
+			else begin
+				usb_wr_fast<=1;
+			end			
+		end
+		USBFAST_WRITE: begin
+			if (!usb_txe_busy) begin
+				case(SendCount_fast[ram_width+2:ram_width]) //rotate through the outputs
+					0: usb_dataio_fast<=ram_output1;
+					1: usb_dataio_fast<=ram_output2;
+					2: usb_dataio_fast<=ram_output3;
+					3: usb_dataio_fast<=ram_output4;
+					4: usb_dataio_fast<=digital_buffer1; // the digital logic analyzer buffer
+				endcase
 				SendCount_fast = SendCount_fast + (2**sendincrement);
 				rdaddress_fast = rdaddress_fast + (2**sendincrement);
 				rdaddress2_fast = rdaddress_fast;
 			end
+			else usb2state<=USBFAST_BUSY;
+			
 			if (nsmp>0 && SendCount_fast[ram_width-1:0]>=nsmp) begin
 				SendCount_fast[ram_width-1:0]=0;
 				SendCount_fast[ram_width+2:ram_width] = (SendCount_fast[ram_width+2:ram_width] + 1);
@@ -1259,17 +1263,16 @@ always @(posedge usb_clk60) begin
 				rdaddress2_fast = rdaddress_fast;
 			end
 			if(SendCount_fast[ram_width+2:ram_width]==blockstosend) begin // it's 5 (or more) blocks including the logic analyzer info
-				send_fast_usb2_done=1;
-				usb_wr_fast=1;
-				usb_siwu_fast=0;//this sends out the data to the PC immediately, without waiting for the latency timer (16 ms by default!)
-				usb2state=WRITE_USB_EXT5;
+				send_fast_usb2_done<=1;
+				usb_wr_fast<=1;
+				usb_siwu_fast<=0;//this sends out the data to the PC immediately, without waiting for the latency timer (16 ms by default!)
+				usb2state<=USBFAST_DONE;
 			end
+			
 		end
-		WRITE_USB_EXT5: begin
-			send_fast_usb2_done=1;
-			usb_wr_fast=1;
-			usb_siwu_fast=0;
-			if (state==READ) usb2state=WRITE_USB_EXT1;//check that we got back to the READ state for the serial processor
+		USBFAST_DONE: begin
+			if (usbdonecounterfast>5) usb2state<=USBFAST_IDLE;//gives a little time to make sure the processor sees the done signal
+			else usbdonecounterfast<=usbdonecounterfast+1;
 		end
 	endcase
 end
