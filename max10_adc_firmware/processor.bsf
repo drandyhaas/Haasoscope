@@ -20,9 +20,9 @@ refer to the applicable agreement for further details.
 */
 (header "symbol" (version "1.1"))
 (symbol
-	(rect 16 16 376 992)
+	(rect 16 16 376 1024)
 	(text "processor" (rect 5 0 45 12)(font "Arial" ))
-	(text "inst" (rect 8 960 20 972)(font "Arial" ))
+	(text "inst" (rect 8 992 20 1004)(font "Arial" ))
 	(port
 		(pt 0 32)
 		(input)
@@ -197,6 +197,27 @@ refer to the applicable agreement for further details.
 		(text "digital_buffer1[7..0]" (rect 0 0 74 12)(font "Arial" ))
 		(text "digital_buffer1[7..0]" (rect 21 411 95 423)(font "Arial" ))
 		(line (pt 0 416)(pt 16 416)(line_width 3))
+	)
+	(port
+		(pt 0 432)
+		(input)
+		(text "usb_oe" (rect 0 0 29 12)(font "Arial" ))
+		(text "usb_oe" (rect 21 427 50 439)(font "Arial" ))
+		(line (pt 0 432)(pt 16 432)(line_width 1))
+	)
+	(port
+		(pt 0 448)
+		(input)
+		(text "usb_rd" (rect 0 0 28 12)(font "Arial" ))
+		(text "usb_rd" (rect 21 443 49 455)(font "Arial" ))
+		(line (pt 0 448)(pt 16 448)(line_width 1))
+	)
+	(port
+		(pt 0 464)
+		(input)
+		(text "usb_rxf" (rect 0 0 31 12)(font "Arial" ))
+		(text "usb_rxf" (rect 21 459 52 471)(font "Arial" ))
+		(line (pt 0 464)(pt 16 464)(line_width 1))
 	)
 	(port
 		(pt 360 32)
@@ -604,13 +625,20 @@ refer to the applicable agreement for further details.
 		(text "noselftrig" (rect 304 939 339 951)(font "Arial" ))
 		(line (pt 360 944)(pt 344 944)(line_width 1))
 	)
+	(port
+		(pt 360 960)
+		(output)
+		(text "usb_pwrsv" (rect 0 0 44 12)(font "Arial" ))
+		(text "usb_pwrsv" (rect 295 955 339 967)(font "Arial" ))
+		(line (pt 360 960)(pt 344 960)(line_width 1))
+	)
 	(parameter
 		"ram_width"
 		"12"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(drawing
-		(rectangle (rect 16 16 344 960)(line_width 1))
+		(rectangle (rect 16 16 344 992)(line_width 1))
 	)
 	(annotation_block (parameter)(rect 376 -64 476 16))
 )

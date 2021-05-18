@@ -155,6 +155,8 @@ set_global_assignment -name QIP_FILE uniqueid.qip
 set_global_assignment -name SIP_FILE uniqueid.sip
 set_global_assignment -name CDF_FILE Chain1.cdf
 set_global_assignment -name CDF_FILE Chain2.cdf
-set_location_assignment PIN_124 -to debug1
-set_location_assignment PIN_130 -to debug2
+set_location_assignment PIN_130 -to usb_rd
+set_location_assignment PIN_135 -to usb_oe
+set_location_assignment PIN_124 -to usb_rxf
+set_location_assignment PIN_140 -to usb_pwrsv
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

@@ -8,7 +8,7 @@ SPIsend,SPIsenddata,delaycounter,carrycounter,usb_siwu,SPIstate,offset,gainsw,do
 i2c_ena,i2c_addr,i2c_rw,i2c_datawr,i2c_datard,i2c_busy,i2c_ackerror,   usb_clk60,usb_dataio,usb_txe_busy,usb_wr,
 rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_buffer1, nsmp, outputclk,
 phasecounterselect,phaseupdown,phasestep,scanclk,
-ext_trig_delay, noselftrig
+ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv
 );
    input clk;
 	input[7:0] rxData;
@@ -24,10 +24,14 @@ ext_trig_delay, noselftrig
 	input ext_data_ready;
 	parameter ram_width=12;//9 is 512 samples
 	input wire[ram_width-1:0] wraddress_triggerpoint;
-	output reg [ram_width-1:0] rdaddress;
-	output reg [ram_width-1:0] rdaddress2;
+	output wire [ram_width-1:0] rdaddress;
+	output wire [ram_width-1:0] rdaddress2;
+	reg [ram_width-1:0] rdaddress_slow;
+	reg [ram_width-1:0] rdaddress2_slow;
+	reg [ram_width-1:0] rdaddress_fast;
+	reg [ram_width-1:0] rdaddress2_fast;
 	output reg [ram_width-1:0] triggerpoint;
-	output reg rden;
+	output reg rden=0;
 	input wire [7:0] ram_output1;
 	input wire [7:0] ram_output2;
 	input wire [7:0] ram_output3;
@@ -90,9 +94,9 @@ ext_trig_delay, noselftrig
   localparam READ=0, SOLVING=1, WAITING=2, WRITE_EXT1=3, WRITE_EXT2=4, WAIT_ADC1=5, WAIT_ADC2=6, WRITE_BYTE1=7, WRITE_BYTE2=8, READMORE=9, 
 	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15, //WRITEUSB1=16,WRITEUSB2=17, 
 	LOCKIN1=18,LOCKIN2=19,LOCKIN3=20,LOCKINWRITE1=21,LOCKINWRITE2=22,
-	WRITE_USB_EXT1=33, WRITE_USB_EXT2=34, WRITE_USB_EXT3=35, WRITE_USB_EXT4=36, WRITE_USB_EXT5=37,
+	WRITE_USB_EXT=30, WRITE_USB_EXT1=33, WRITE_USB_EXT2=34, WRITE_USB_EXT3=35, WRITE_USB_EXT4=36, WRITE_USB_EXT5=37,
 	PLLCLOCK=40;
-  integer state,i2cstate;
+  reg[7:0] state,i2cstate,usb2state;
 
   reg [7:0] myid;
   assign imthefirst = (myid==0);
@@ -115,10 +119,16 @@ ext_trig_delay, noselftrig
   reg [7:0] usb2counter;
   output reg do_usb=0;
   input usb_clk60;
-  output reg [7:0] usb_dataio;
+  output wire [7:0] usb_dataio;
+  reg [7:0] usb_dataio_slow;
+  reg [7:0] usb_dataio_fast;
+
   input usb_txe_busy;
-  output reg usb_wr, usb_siwu;
-  reg usb_txe_not_busy;
+  input usb_oe, usb_rd, usb_rxf;
+  output reg usb_pwrsv=1;
+  output wire usb_wr, usb_siwu;
+  reg usb_wr_slow, usb_siwu_slow;
+  reg usb_wr_fast, usb_siwu_fast;
   
   //TODO: use memory bits for this, not register space??
   reg [5:0] screencolumndata [128]; //all the screen data, 128 columns of (8 rows of 8 dots)
@@ -146,6 +156,7 @@ ext_trig_delay, noselftrig
   initial begin
     state<=READ;
 	 i2cstate<=READ;
+	 usb2state<=WRITE_USB_EXT1;
 	 myid<=200;
 	 master_clock<=2'b00;//start as my own master
 	 imthelast<=0;//probably not last
@@ -153,7 +164,7 @@ ext_trig_delay, noselftrig
 	 triggerpoint<=(2**(ram_width-2));// 1/4 of the screen
 	 downsample<=1;
 	 serial_passthrough<=0;
-	 usb_siwu<=1;
+	 usb_siwu_slow<=1;
 	 gainsw<=4'b0000;//1 is for 1k resistor (gain 2), 0 is for 100 Ohm resistor (gain .2)
 	 oversamp<=4'b0011;//1 is for _no_ oversampling (and only matters for bits 0 and 1)
   	 debug1<=0; debug2<=0;
@@ -173,8 +184,6 @@ ext_trig_delay, noselftrig
   //set the LEDs to indicate my ID
   always @(posedge clk) begin
 	thecounter<=thecounter+1;
-	usb_txe_not_busy <= ~usb_txe_busy;
-	//debug1 <= usb_txe_not_busy;
    if (thecounter[26]==1'b1 ) begin //flash every few seconds
 		if (imthelast) begin
 			led1<=0;		led2<=0;		led3<=0;//all off
@@ -240,8 +249,9 @@ ext_trig_delay, noselftrig
 		  newcomdata<=0;
 		  SPIsend<=0;
 		  i2cgo=0;
-		  usb_wr<=1;
+		  usb_wr_slow<=1;
         ioCount = 0;
+		  send_fast_usb2<=0;
 		  addonetoextradata=0;
         if (rxReady) begin
 			 readdata = rxData;
@@ -437,6 +447,12 @@ ext_trig_delay, noselftrig
 			end
 			else if (57==readdata) begin // tell them all toggle just taking triggers in towards the right
 				noselftrig=~noselftrig;
+				comdata=readdata;
+				newcomdata=1; //pass it on
+				state=READ;
+			end
+			else if (58==readdata) begin // tell them all toggle fast usb2 (sync 245 fifo)
+				do_fast_usb=~do_fast_usb;
 				comdata=readdata;
 				newcomdata=1; //pass it on
 				state=READ;
@@ -847,8 +863,8 @@ ext_trig_delay, noselftrig
 			timeoutcounter=timeoutcounter+1;
 			if (ext_data_ready) begin // can read out
 				SendCount= 0;
-				rdaddress = wraddress_triggerpoint - triggerpoint;// - 1;
-				rdaddress2 = rdaddress;
+				rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
+				rdaddress2_slow = rdaddress_slow;
 				thecounterbit=thecounter[clockbitstowait];
 				thecounterbitlockin=thecounter[clockbitstowaitlockin];
 				if (lockinnumtoshift>0) begin
@@ -860,7 +876,14 @@ ext_trig_delay, noselftrig
 					state=LOCKIN1;
 				end
 				else begin
-					if (do_usb) state=WRITE_USB_EXT1;
+					if (do_usb) begin
+						if (do_fast_usb) begin
+							send_fast_usb2<=1;
+							rden=1;
+							state=WRITE_USB_EXT;
+						end
+						else state=WRITE_USB_EXT1;
+					end
 					else state=WRITE_EXT1;
 				end
 			end
@@ -903,9 +926,9 @@ ext_trig_delay, noselftrig
 				end
 			endcase			
 			SendCount = SendCount + 1;
-			rdaddress = rdaddress + 1;
-			if (SendCount[ram_width+1:ram_width]==1) rdaddress2=rdaddress-lockinnumtoshift;
-			else rdaddress2=rdaddress;
+			rdaddress_slow = rdaddress_slow + 1;
+			if (SendCount[ram_width+1:ram_width]==1) rdaddress2_slow=rdaddress_slow-lockinnumtoshift;
+			else rdaddress2_slow=rdaddress_slow;
 			state=LOCKIN2;
 			end // the counter
 		end
@@ -954,10 +977,17 @@ ext_trig_delay, noselftrig
           state = LOCKINWRITE1;
         end
 		  else begin
-				rdaddress = wraddress_triggerpoint - triggerpoint;// - 1;
-				rdaddress2 = rdaddress;
+				rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
+				rdaddress2_slow = rdaddress_slow;
 				thecounterbit=thecounter[clockbitstowait];
-				if (do_usb) state=WRITE_USB_EXT1;
+				if (do_usb) begin
+					if (do_fast_usb) begin
+						send_fast_usb2<=1;
+						rden=1;
+						state=WRITE_USB_EXT;
+					end
+					else state=WRITE_USB_EXT1;
+				end
 				else state=WRITE_EXT1;
         end
       end
@@ -975,13 +1005,13 @@ ext_trig_delay, noselftrig
 			if( (!txBusy) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles				
 				txStart<= 1;				
 				SendCount = SendCount + (2**sendincrement);
-				rdaddress = rdaddress + (2**sendincrement);
-				rdaddress2 = rdaddress;
+				rdaddress_slow = rdaddress_slow + (2**sendincrement);
+				rdaddress2_slow = rdaddress_slow;
 				if (nsmp>0 && SendCount[ram_width-1:0]>=nsmp) begin
 					SendCount[ram_width-1:0]=0;
 					SendCount[ram_width+2:ram_width] = (SendCount[ram_width+2:ram_width] + 1);
-					rdaddress = wraddress_triggerpoint - triggerpoint;// - 1;
-					rdaddress2 = rdaddress;
+					rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
+					rdaddress2_slow = rdaddress_slow;
 				end
 				state=WRITE_EXT2;
 			end
@@ -1006,8 +1036,8 @@ ext_trig_delay, noselftrig
 						serialdelaytimer=serialdelaytimer+1;
 					end
 					else begin
-						if ( (rdaddress- wraddress_triggerpoint-64)>=0 && (rdaddress-wraddress_triggerpoint+64)<128 && (!SendCount[ram_width+2]) ) begin //update display // ignore logic analyzer info
-							if (SendCount[ram_width+1:ram_width]==chanforscreen) screencolumndata[rdaddress - wraddress_triggerpoint - 64]=(63-txData[7:2]);//store most significant 6 bits
+						if ( (rdaddress_slow-wraddress_triggerpoint-64)>=0 && (rdaddress_slow-wraddress_triggerpoint+64)<128 && (!SendCount[ram_width+2]) ) begin //update display // ignore logic analyzer info
+							if (SendCount[ram_width+1:ram_width]==chanforscreen) screencolumndata[rdaddress_slow - wraddress_triggerpoint - 64]=(63-txData[7:2]);//store most significant 6 bits
 							screenwren = 1;
 						end
 						serialdelaytimer=0;
@@ -1018,7 +1048,7 @@ ext_trig_delay, noselftrig
 		end
 		
 		WRITE_USB_EXT1: begin
-			if (usb_txe_not_busy) begin
+			if (~usb_txe_busy) begin
 				thecounterbit=thecounter[clockbitstowait];
 				usb2counter<=0;
 				state=WRITE_USB_EXT2;
@@ -1031,34 +1061,34 @@ ext_trig_delay, noselftrig
 			usb2counter<=usb2counter+1;
 			//rotate through the outputs
 			case(SendCount[ram_width+2:ram_width])
-				0: usb_dataio<=ram_output1;
-				1: usb_dataio<=ram_output2;
-				2: usb_dataio<=ram_output3;
-				3: usb_dataio<=ram_output4;
-				4: usb_dataio<=digital_buffer1; // the digital logic analyzer buffer
+				0: usb_dataio_slow<=ram_output1;
+				1: usb_dataio_slow<=ram_output2;
+				2: usb_dataio_slow<=ram_output3;
+				3: usb_dataio_slow<=ram_output4;
+				4: usb_dataio_slow<=digital_buffer1; // the digital logic analyzer buffer
 			endcase
 			if( (usb2counter>clockbitstowait) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles (usb2counter was set to 0 in last state)
 				SendCount = SendCount + (2**sendincrement);
-				rdaddress = rdaddress + (2**sendincrement);
-				rdaddress2 = rdaddress;
+				rdaddress_slow = rdaddress_slow + (2**sendincrement);
+				rdaddress2_slow = rdaddress_slow;
 				if (nsmp>0 && SendCount[ram_width-1:0]>=nsmp) begin
 					SendCount[ram_width-1:0]=0;
 					SendCount[ram_width+2:ram_width] = (SendCount[ram_width+2:ram_width] + 1);
-					rdaddress = wraddress_triggerpoint - triggerpoint;// - 1;
-					rdaddress2 = rdaddress;
+					rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
+					rdaddress2_slow = rdaddress_slow;
 				end
 				state=WRITE_USB_EXT3;
 			end
 		end
 		WRITE_USB_EXT3: begin
-			usb_wr<= 0;
+			usb_wr_slow<= 0;
 			usb2counter<=0;
 			state=WRITE_USB_EXT4;
 		end
 		WRITE_USB_EXT4: begin
 			usb2counter=usb2counter+1;
 			if( (usb2counter>clockbitstowait) && (thecounter[clockbitstowait]==thecounterbit) ) begin // wait a few clock cycles (usb2counter was set to 0 in last state)
-				usb_wr<= 1;	
+				usb_wr_slow<= 1;	
 				if(SendCount[ram_width+2:ram_width]==blockstosend) begin // it's 5 (or more) blocks including the logic analyzer info
 					rden = 0;
 					if (autorearm) begin
@@ -1070,19 +1100,15 @@ ext_trig_delay, noselftrig
 				else begin
 					usb2counter=0;
 					state=WRITE_USB_EXT1;
-					if ( (rdaddress- wraddress_triggerpoint-64)>=0 && (rdaddress-wraddress_triggerpoint+64)<128 && (!SendCount[ram_width+2]) ) begin //update display // ignore logic analyzer info
-						if (SendCount[ram_width+1:ram_width]==chanforscreen) screencolumndata[rdaddress - wraddress_triggerpoint - 64]=(63-txData[7:2]);//store most significant 6 bits
-						screenwren = 1;
-					end
 				end
 			end
 		end
 		WRITE_USB_EXT5: begin
-			usb_siwu=0;//this sends out the data to the PC immediately, without waiting for the latency timer (16 ms by default!)
+			usb_siwu_slow=0;//this sends out the data to the PC immediately, without waiting for the latency timer (16 ms by default!)
 			usb2counter<=usb2counter+1;
 			if( (usb2counter>8) ) begin // wait a few clock cycles (usb2counter was set to 0 in last state)
 				state=READ;
-				usb_siwu=1;
+				usb_siwu_slow=1;
 			end
 		end
 
@@ -1152,7 +1178,7 @@ ext_trig_delay, noselftrig
 //		WRITEUSB1: begin
 //		  newcomdata<=0; //set this back, to just send out data once
 //        if (usb_txe_not_busy) begin
-//          usb_dataio = data[ioCount];
+//          usb_dataio_slow = data[ioCount];
 //			 usb_wr = 1;
 //          state = WRITEUSB2;
 //        end
@@ -1167,10 +1193,83 @@ ext_trig_delay, noselftrig
 //          state = READ;
 //        end
 //      end
+
+	 WRITE_USB_EXT: begin
+		send_fast_usb2=0;
+		if (send_fast_usb2_done) begin
+			rden=0;
+			state=READ;
+		end
+	 end
 		
     endcase
 	 
-  end  
+  end
+ 
+//for fast usb2
+reg send_fast_usb2=0;
+reg send_fast_usb2_done=0;
+reg do_fast_usb=0;
+reg [ram_width+2:0] SendCount_fast=0;
+assign rdaddress = ((do_usb && do_fast_usb) ? rdaddress_fast : rdaddress_slow);
+assign rdaddress2 = ((do_usb && do_fast_usb) ? rdaddress2_fast : rdaddress2_slow);
+assign usb_dataio = ((do_usb && do_fast_usb) ? usb_dataio_fast : usb_dataio_slow);
+assign usb_siwu = ((do_usb && do_fast_usb) ? usb_siwu_fast : usb_siwu_slow);
+always @(posedge usb_clk60) begin
+case (usb2state)
+	WRITE_USB_EXT1: begin
+		//debug2<=1;
+		send_fast_usb2_done<=0;
+		if (send_fast_usb2) begin
+			//rden = 1;
+			usb2state=WRITE_USB_EXT2;
+		end
+	end
+	WRITE_USB_EXT2: begin
+		//debug2<=0;
+		case(SendCount_fast[ram_width+2:ram_width]) //rotate through the outputs
+			0: usb_dataio_fast<=ram_output1;
+			1: usb_dataio_fast<=ram_output2;
+			2: usb_dataio_fast<=ram_output3;
+			3: usb_dataio_fast<=ram_output4;
+			4: usb_dataio_fast<=digital_buffer1; // the digital logic analyzer buffer
+		endcase
+		SendCount_fast = SendCount_fast + (2**sendincrement);
+		rdaddress_fast = rdaddress_fast + (2**sendincrement);
+		rdaddress2_fast = rdaddress_fast;
+		if (nsmp>0 && SendCount_fast[ram_width-1:0]>=nsmp) begin
+			SendCount_fast[ram_width-1:0]=0;
+			SendCount_fast[ram_width+2:ram_width] = (SendCount_fast[ram_width+2:ram_width] + 1);
+			rdaddress_fast = wraddress_triggerpoint - triggerpoint;// - 1;
+			rdaddress2_fast = rdaddress_fast;
+		end
+		usb2state=WRITE_USB_EXT3;
+	end
+	WRITE_USB_EXT3: begin
+		usb_wr_fast<= 0;
+		usb2state=WRITE_USB_EXT4;
+	end
+	WRITE_USB_EXT4: begin
+		usb_wr_fast<= 1;	
+		if(SendCount_fast[ram_width+2:ram_width]==blockstosend) begin // it's 5 (or more) blocks including the logic analyzer info
+			//rden = 0;
+			//if (autorearm) begin
+			//	//tell them all to prime the trigger
+			//	get_ext_data=1;
+			//end
+			send_fast_usb2_done<=1;
+			usb2state=WRITE_USB_EXT5;
+		end
+		else begin
+			usb2state=WRITE_USB_EXT1;
+		end
+	end
+	WRITE_USB_EXT5: begin
+		usb_siwu_fast=0;//this sends out the data to the PC immediately, without waiting for the latency timer (16 ms by default!)
+		usb2state=WRITE_USB_EXT1;
+	end
+endcase
+end
   
   //I2C, from https://eewiki.net/pages/viewpage.action?pageId=10125324
   always @(posedge clk) begin
