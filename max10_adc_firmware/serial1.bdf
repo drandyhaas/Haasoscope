@@ -204,7 +204,7 @@ refer to the applicable agreement for further details.
 		(line (pt 117 12)(pt 121 8))
 	)
 	(text "VCC" (rect 136 7 156 17)(font "Arial" (font_size 6)))
-	(annotation_block (location)(rect 104 736 168 760))
+	(annotation_block (location)(rect 104 728 168 752))
 )
 (pin
 	(input)
@@ -221,7 +221,7 @@ refer to the applicable agreement for further details.
 		(line (pt 117 12)(pt 121 8))
 	)
 	(text "VCC" (rect 136 7 156 17)(font "Arial" (font_size 6)))
-	(annotation_block (location)(rect 104 720 168 744))
+	(annotation_block (location)(rect 104 704 168 728))
 )
 (pin
 	(input)
@@ -397,7 +397,7 @@ refer to the applicable agreement for further details.
 	(input)
 	(rect 224 768 392 784)
 	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
-	(text "usb_oe" (rect 5 0 41 12)(font "Arial" ))
+	(text "usb_rxf" (rect 5 0 39 17)(font "Intel Clear" ))
 	(pt 168 8)
 	(drawing
 		(line (pt 84 12)(pt 109 12))
@@ -409,40 +409,6 @@ refer to the applicable agreement for further details.
 	)
 	(text "VCC" (rect 128 7 148 17)(font "Arial" (font_size 6)))
 	(annotation_block (location)(rect 160 784 224 808))
-)
-(pin
-	(input)
-	(rect 224 784 392 800)
-	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
-	(text "usb_rd" (rect 5 0 37 17)(font "Intel Clear" ))
-	(pt 168 8)
-	(drawing
-		(line (pt 84 12)(pt 109 12))
-		(line (pt 84 4)(pt 109 4))
-		(line (pt 113 8)(pt 168 8))
-		(line (pt 84 12)(pt 84 4))
-		(line (pt 109 4)(pt 113 8))
-		(line (pt 109 12)(pt 113 8))
-	)
-	(text "VCC" (rect 128 7 148 17)(font "Arial" (font_size 6)))
-	(annotation_block (location)(rect 160 800 224 824))
-)
-(pin
-	(input)
-	(rect 224 800 392 816)
-	(text "INPUT" (rect 125 0 153 10)(font "Arial" (font_size 6)))
-	(text "usb_rxf" (rect 5 0 40 17)(font "Intel Clear" ))
-	(pt 168 8)
-	(drawing
-		(line (pt 84 12)(pt 109 12))
-		(line (pt 84 4)(pt 109 4))
-		(line (pt 113 8)(pt 168 8))
-		(line (pt 84 12)(pt 84 4))
-		(line (pt 109 4)(pt 113 8))
-		(line (pt 109 12)(pt 113 8))
-	)
-	(text "VCC" (rect 128 7 148 17)(font "Arial" (font_size 6)))
-	(annotation_block (location)(rect 160 816 224 840))
 )
 (pin
 	(output)
@@ -906,7 +872,7 @@ refer to the applicable agreement for further details.
 )
 (pin
 	(output)
-	(rect 752 1296 928 1312)
+	(rect 752 1328 928 1344)
 	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
 	(text "usb_pwrsv" (rect 90 0 143 12)(font "Arial" ))
 	(pt 0 8)
@@ -919,6 +885,41 @@ refer to the applicable agreement for further details.
 		(line (pt 82 8)(pt 78 12))
 		(line (pt 78 12)(pt 82 8))
 	)
+	(annotation_block (location)(rect 928 1328 992 1352))
+)
+(pin
+	(output)
+	(rect 752 1296 928 1312)
+	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
+	(text "usb_oe" (rect 90 0 124 17)(font "Intel Clear" ))
+	(pt 0 8)
+	(drawing
+		(line (pt 0 8)(pt 52 8))
+		(line (pt 52 4)(pt 78 4))
+		(line (pt 52 12)(pt 78 12))
+		(line (pt 52 12)(pt 52 4))
+		(line (pt 78 4)(pt 82 8))
+		(line (pt 82 8)(pt 78 12))
+		(line (pt 78 12)(pt 82 8))
+	)
+	(annotation_block (location)(rect 928 1296 992 1320))
+)
+(pin
+	(output)
+	(rect 752 1312 928 1328)
+	(text "OUTPUT" (rect 1 0 39 10)(font "Arial" (font_size 6)))
+	(text "usb_rd" (rect 90 0 123 12)(font "Arial" ))
+	(pt 0 8)
+	(drawing
+		(line (pt 0 8)(pt 52 8))
+		(line (pt 52 4)(pt 78 4))
+		(line (pt 52 12)(pt 78 12))
+		(line (pt 52 12)(pt 52 4))
+		(line (pt 78 4)(pt 82 8))
+		(line (pt 82 8)(pt 78 12))
+		(line (pt 78 12)(pt 82 8))
+	)
+	(annotation_block (location)(rect 928 1312 992 1336))
 )
 (pin
 	(bidir)
@@ -3355,9 +3356,9 @@ refer to the applicable agreement for further details.
 	(annotation_block (parameter)(rect 760 240 960 296))
 )
 (symbol
-	(rect 392 344 752 1352)
+	(rect 392 344 752 1384)
 	(text "processor" (rect 5 0 53 12)(font "Arial" ))
-	(text "inst" (rect 8 992 25 1004)(font "Arial" ))
+	(text "inst" (rect 8 1024 25 1036)(font "Arial" ))
 	(port
 		(pt 0 32)
 		(input)
@@ -3536,23 +3537,9 @@ refer to the applicable agreement for further details.
 	(port
 		(pt 0 432)
 		(input)
-		(text "usb_oe" (rect 0 0 35 12)(font "Arial" ))
-		(text "usb_oe" (rect 21 427 56 439)(font "Arial" ))
-		(line (pt 0 432)(pt 16 432))
-	)
-	(port
-		(pt 0 448)
-		(input)
-		(text "usb_rd" (rect 0 0 33 12)(font "Arial" ))
-		(text "usb_rd" (rect 21 443 54 455)(font "Arial" ))
-		(line (pt 0 448)(pt 16 448))
-	)
-	(port
-		(pt 0 464)
-		(input)
 		(text "usb_rxf" (rect 0 0 37 12)(font "Arial" ))
-		(text "usb_rxf" (rect 21 459 58 471)(font "Arial" ))
-		(line (pt 0 464)(pt 16 464))
+		(text "usb_rxf" (rect 21 427 58 439)(font "Arial" ))
+		(line (pt 0 432)(pt 16 432))
 	)
 	(port
 		(pt 360 32)
@@ -3963,9 +3950,23 @@ refer to the applicable agreement for further details.
 	(port
 		(pt 360 960)
 		(output)
-		(text "usb_pwrsv" (rect 0 0 53 12)(font "Arial" ))
-		(text "usb_pwrsv" (rect 295 955 339 967)(font "Arial" ))
+		(text "usb_oe" (rect 0 0 35 12)(font "Arial" ))
+		(text "usb_oe" (rect 310 955 339 967)(font "Arial" ))
 		(line (pt 360 960)(pt 344 960))
+	)
+	(port
+		(pt 360 976)
+		(output)
+		(text "usb_rd" (rect 0 0 33 12)(font "Arial" ))
+		(text "usb_rd" (rect 312 971 339 983)(font "Arial" ))
+		(line (pt 360 976)(pt 344 976))
+	)
+	(port
+		(pt 360 992)
+		(output)
+		(text "usb_pwrsv" (rect 0 0 53 12)(font "Arial" ))
+		(text "usb_pwrsv" (rect 295 987 339 999)(font "Arial" ))
+		(line (pt 360 992)(pt 344 992))
 	)
 	(parameter
 		"ram_width"
@@ -3973,9 +3974,9 @@ refer to the applicable agreement for further details.
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(drawing
-		(rectangle (rect 16 16 344 992))
+		(rectangle (rect 16 16 344 1024))
 	)
-	(annotation_block (parameter)(rect 200 1120 383 1148))
+	(annotation_block (parameter)(rect 248 1360 431 1388))
 )
 (connector
 	(pt 16 408)
@@ -5243,16 +5244,8 @@ refer to the applicable agreement for further details.
 	(bus)
 )
 (connector
-	(pt 336 728)
-	(pt 344 728)
-)
-(connector
 	(pt 344 728)
 	(pt 392 728)
-)
-(connector
-	(pt 336 712)
-	(pt 344 712)
 )
 (connector
 	(text "clk60" (rect 359 704 384 716)(font "Arial" ))
@@ -5394,8 +5387,6 @@ refer to the applicable agreement for further details.
 (junction (pt 384 1424))
 (junction (pt 56 1424))
 (junction (pt 672 1424))
-(junction (pt 344 728))
-(junction (pt 344 712))
 (junction (pt 1664 -816))
 (junction (pt 1664 -792))
 (junction (pt 1664 -768))

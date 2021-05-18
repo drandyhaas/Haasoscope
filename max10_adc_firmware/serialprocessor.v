@@ -124,7 +124,10 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv
   reg [7:0] usb_dataio_fast;
 
   input usb_txe_busy;
-  input usb_oe, usb_rd, usb_rxf;
+  reg usb_txe_not_busy;
+  output reg usb_oe=1;
+  output reg usb_rd=1;
+  input usb_rxf;
   output reg usb_pwrsv=1;
   output wire usb_wr, usb_siwu;
   reg usb_wr_slow, usb_siwu_slow;
@@ -235,6 +238,10 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv
 //	assign offset[1] = (PWMoffset1 > pwmcounter);  // comparators
 //	assign offset[2] = (PWMoffset2 > pwmcounter);  // comparators
 //	assign offset[3] = (PWMoffset3 > pwmcounter);  // comparators
+
+always @(posedge clk) begin 
+  usb_txe_not_busy <= ~usb_txe_busy;
+end
   
   always @(posedge clk) begin
     case (state)
@@ -1048,7 +1055,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv
 		end
 		
 		WRITE_USB_EXT1: begin
-			if (~usb_txe_busy) begin
+			if (usb_txe_not_busy) begin
 				thecounterbit=thecounter[clockbitstowait];
 				usb2counter<=0;
 				state=WRITE_USB_EXT2;
@@ -1214,6 +1221,7 @@ reg [ram_width+2:0] SendCount_fast=0;
 assign rdaddress = ((do_usb && do_fast_usb) ? rdaddress_fast : rdaddress_slow);
 assign rdaddress2 = ((do_usb && do_fast_usb) ? rdaddress2_fast : rdaddress2_slow);
 assign usb_dataio = ((do_usb && do_fast_usb) ? usb_dataio_fast : usb_dataio_slow);
+assign usb_wr = ((do_usb && do_fast_usb) ? usb_wr_fast : usb_wr_slow);
 assign usb_siwu = ((do_usb && do_fast_usb) ? usb_siwu_fast : usb_siwu_slow);
 always @(posedge usb_clk60) begin
 case (usb2state)
