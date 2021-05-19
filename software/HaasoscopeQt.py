@@ -18,6 +18,7 @@ ram_width=9
 num_boardss=1
 trigboardport=""
 manserport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
+dofastusb=False
 print ('Number of arguments:', len(sys.argv), 'arguments.')
 print ('Argument List:', str(sys.argv))
 for a in sys.argv:
@@ -38,6 +39,9 @@ for a in sys.argv:
         if a[1]=="t":
             trigboardport=a[2:]
             print("trigboardport set to",trigboardport)
+        if a[1:8]=="fastusb":
+            dofastusb=True
+            print("dofastusb",dofastusb)
 
 #Some pre-options
 HaasoscopeLibQt.num_board = num_boardss # Number of Haasoscope boards to read out (default is 1)
@@ -50,6 +54,8 @@ d.construct()
 #Some other options
 if manserport!="": d.serport=manserport
 d.serialdelaytimerwait=serialdelaytimerwait #50 #100 #150 #300 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
+d.dofastusb = dofastusb
+if dofastusb: d.dousbparallel=True
 #d.dolockin=True # whether to calculate the lockin info on the FPGA and read it out (off by default)
 #d.db=True #turn on debugging
 

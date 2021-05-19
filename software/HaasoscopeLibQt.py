@@ -69,8 +69,8 @@ class Haasoscope():
         self.downsample=2 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
         self.dofft=False #drawing the FFT plot
         self.dousb=False #whether to use USB2 output
-        self.dofastusb=True #whether to do sync 245 fifo mode on usb2 (need to reprogram ft232h hat) (experimental)
-        self.dousbparallel=self.dofastusb #whether to tell all board to read out over USB2 in parallel (experimental)
+        self.dofastusb=False #whether to do sync 245 fifo mode on usb2 (need to reprogram ft232h hat) (experimental)
+        self.dousbparallel=False #whether to tell all board to read out over USB2 in parallel (experimental)
         self.sincresample=0 # amount of resampling to do (sinx/x)
         self.dogetotherdata=False # whether to read other calculated data like TDC
         self.tdcdata=0 # TDC data
@@ -447,8 +447,8 @@ class Haasoscope():
         else:
             self.dousb = not self.dousb
             self.ser.write(bytearray([137]))
-            print("dousb toggled to",self.dousb)
-            if self.dousb: print("rate theoretically",round(4000000./(self.num_bytes*num_board+len(max10adcchans)*self.nsamp),2),"Hz over USB2")
+            print("dousb toggled to",self.dousb,"and dofastusb is",self.dofastusb,"and dousbparallel is",self.dousbparallel)
+            #if self.dousb: print("rate theoretically",round(4000000./(self.num_bytes*num_board+len(max10adcchans)*self.nsamp),2),"Hz over USB2")
             self.telltickstowait()
     
     def togglehighres(self):#toggle whether to do highres averaging during downsampling or not
@@ -1242,7 +1242,7 @@ class Haasoscope():
                             foundit=True
                             break # already found which board this usb connection is used for, so bail out
                         else: print("   got the wrong nbytes",len(rslt),"for board",bn,"from usb",usb)
-                    else: print("   already know what usb",usb,"is for")
+                    #else: print("   already know what usb",usb,"is for")
                 if not foundit:
                     print("could not find usb2 connection for board",bn)
                     return False
@@ -1263,6 +1263,11 @@ class Haasoscope():
             try:
                 #self.ser.write(bytearray([40+board])) # for debugging timing, does nuttin
                 rslt = self.usbser[self.usbsermap[board]].read(self.num_bytes)
+                if self.dofastusb:
+                    nq = self.usbser[self.usbsermap[board]].getQueueStatus()
+                    if nq>0:
+                        print(nq,"bytes still available for usb on board",board,"...purging")
+                        self.usbser[self.usbsermap[board]].purge(ftd.defines.PURGE_RX)
                 #self.ser.write(bytearray([40+board])) # for debugging timing, does nuttin
             except ftd.DeviceError as msgnum:
                 print("Error reading from USB2", self.usbsermap[board], msgnum)
