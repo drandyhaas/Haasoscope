@@ -147,6 +147,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.decodeCheck.clicked.connect(self.decode)
         self.ui.fftCheck.clicked.connect(self.fft)
         self.ui.persistCheck.clicked.connect(self.persist)
+        self.ui.drawingCheck.clicked.connect(self.drawing)
         self.db=False
         self.lastTime = time.time()
         self.fps = None
@@ -509,6 +510,14 @@ class MainWindow(TemplateBaseClass):
             d.recorddata=False; d.recorddatachan=d.selectedchannel; d.recordedchannel=[]
             print("recorddata now",d.recorddata)
             self.persistui.close()
+
+    def drawing(self):
+        if self.ui.drawingCheck.checkState() == QtCore.Qt.Checked:
+            d.dodrawing=True
+            print("drawing now",d.dodrawing)
+        else:
+            d.dodrawing=False
+            print("drawing now",d.dodrawing)
 
     def record(self):
         self.savetofile = not self.savetofile
