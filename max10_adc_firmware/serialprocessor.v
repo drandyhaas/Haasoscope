@@ -130,7 +130,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
   output reg usb_oe=1;
   output reg usb_rd=1;
   input usb_rxf;
-  output wire usb_pwrsv;//=1
+  output reg usb_pwrsv=1;
   output wire usb_wr, usb_siwu;
   reg usb_wr_slow, usb_siwu_slow;
   reg usb_wr_fast, usb_siwu_fast;
@@ -1203,7 +1203,6 @@ assign debug1=send_fast_usb2;//state[0];
 assign debug2=send_fast_usb2_done;//state[1];
 assign spare1=(usb2state[0]);
 assign spare2=(usb2state[1]);
-assign usb_pwrsv=(state==WRITE_USBFAST_EXT2);
 
 //for fast usb2
 reg send_fast_usb2=0;
