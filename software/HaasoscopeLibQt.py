@@ -69,7 +69,7 @@ class Haasoscope():
         self.downsample=2 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
         self.dofft=False #drawing the FFT plot
         self.dousb=False #whether to use USB2 output
-        self.dousbparallel=True #whether to tell all board to read out over USB2 in parallel (experimental)
+        self.dousbparallel=False #whether to tell all board to read out over USB2 in parallel (experimental)
         self.dofastusb=True #whether to do sync 245 fifo mode on usb2 (need to reprogram ft232h hat) (Experimental)
         self.sincresample=0 # amount of resampling to do (sinx/x)
         self.dogetotherdata=False # whether to read other calculated data like TDC
@@ -1229,7 +1229,11 @@ class Haasoscope():
                 time.sleep(0.5)
                 for usb in np.arange(len(self.usbser)):
                     if not usb in foundusbs: # it's not already known that this usb connection is assigned to a board
-                        rslt = self.usbser[usb].read(self.num_bytes) # try to get data from the board
+                        try:
+                            rslt = self.usbser[usb].read(self.num_bytes) # try to get data from the board
+                        except ftd.DeviceError as msgnum:
+                            print("Error reading from USB2", usb, msgnum)
+                            return
                         if len(rslt)==self.num_bytes:
                             print("   got the right nbytes for board",bn,"from usb",usb)
                             self.usbsermap[bn]=usb
@@ -1255,10 +1259,11 @@ class Haasoscope():
             if self.db: print(time.time()-self.oldtime,"asked for data from board",board)
             if self.dolockin: self.getlockindata(board)
         if self.dousb:
-            #try:
-            rslt = self.usbser[self.usbsermap[board]].read(self.num_bytes)
-            #usbser.flushInput() #just in case
-        #except serial.SerialException: pass
+            try:
+                rslt = self.usbser[self.usbsermap[board]].read(self.num_bytes)
+            except ftd.DeviceError as msgnum:
+                print("Error reading from USB2", self.usbsermap[board], msgnum)
+                return
         else:
             rslt = self.ser.read(int(self.num_bytes))
             #ser.flushInput() #just in case
@@ -1285,10 +1290,11 @@ class Haasoscope():
             #get extra logic analyzer data, if needed
             logicbytes=int(self.num_bytes/4)
             if self.dousb:
-                #try:
-                rslt = self.usbser[self.usbsermap[board]].read(logicbytes)
-                #usbser.flushInput() #just in case
-            #except serial.SerialException: pass
+                try:
+                    rslt = self.usbser[self.usbsermap[board]].read(logicbytes)
+                except ftd.DeviceError as msgnum:
+                    print("Error reading from USB2", self.usbsermap[board], msgnum)
+                    return
             else:
                 rslt = self.ser.read(logicbytes)
                 #ser.flushInput() #just in case
