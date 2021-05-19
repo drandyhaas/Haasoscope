@@ -69,7 +69,7 @@ class Haasoscope():
         self.downsample=2 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
         self.dofft=False #drawing the FFT plot
         self.dousb=False #whether to use USB2 output
-        self.dousbparallel=False #whether to tell all board to read out over USB2 in parallel (experimental)
+        self.dousbparallel=True #whether to tell all board to read out over USB2 in parallel (experimental)
         self.dofastusb=True #whether to do sync 245 fifo mode on usb2 (need to reprogram ft232h hat) (Experimental)
         self.sincresample=0 # amount of resampling to do (sinx/x)
         self.dogetotherdata=False # whether to read other calculated data like TDC
@@ -1537,20 +1537,18 @@ class Haasoscope():
             except SerialException:
                 print("Could not open",p,"!"); return False
             print("connected USBserial to",p,", 32Mb/s, timeout",self.sertimeout,"seconds")
-        if self.dofastusb:
+        if self.dofastusb and ftd.listDevices():
             for ftd_n in range(len(ftd.listDevices())):
                 ftd_d = ftd.open(ftd_n)
-                if str(ftd_d.getDeviceInfo()["description"]).find("Haasoscope")>=0:
+                if str(ftd_d.getDeviceInfo()["description"]).find("Haasoscope USB2 FTD2XX")>=0:
                     print("Adding ftd usb2 device:",ftd_d.getDeviceInfo())
                     ftd_d.setTimeouts(3000, 3000)
-                    time.sleep(0.1)
-                    ftd_d.setBitMode(0xff, 0x00)
                     time.sleep(0.1)
                     ftd_d.setBitMode(0xff, 0x40)
                     time.sleep(0.1)
                     ftd_d.setUSBParameters(0x10000, 0x10000)
                     time.sleep(0.1)
-                    ftd_d.setLatencyTimer(2)
+                    ftd_d.setLatencyTimer(1)
                     time.sleep(0.1)
                     ftd_d.setFlowControl(ftd.defines.FLOW_RTS_CTS, 0, 0)
                     time.sleep(0.1)
