@@ -769,7 +769,7 @@ class MainWindow(TemplateBaseClass):
                 elapsedtime=now-self.oldtime
                 self.oldtime=now
                 lastrate = round(self.tinterval/elapsedtime,2)
-                print(self.nevents,"events,",lastrate,"Hz")
+                print(self.nevents,"events,",lastrate,"Hz",round(lastrate*HaasoscopeLibQt.num_board*d.num_samples*HaasoscopeLibQt.num_chan_per_board/1e6,3),"MB/s")
                 if lastrate>40: self.tinterval=500.
                 else: self.tinterval=100.
                 self.oldnevents=self.nevents

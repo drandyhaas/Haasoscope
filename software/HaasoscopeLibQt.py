@@ -1272,12 +1272,14 @@ class Haasoscope():
         if self.db: print(time.time()-self.oldtime,"getdata wanted",self.num_bytes,"bytes and got",len(rslt),"from board",board)
         if len(rslt)==self.num_bytes:
             self.timedout = False
-            #byte_array = unpack('%dB' % len(rslt), rslt)  # Convert serial data to array of numbers
-            #self.ydata=np.reshape(byte_array,(num_chan_per_board,self.num_samples)) #slow!
-            self.ydata=[ np.frombuffer(rslt,dtype=np.uint8,count=self.num_samples,offset=0*self.num_samples),
-                         np.frombuffer(rslt,dtype=np.uint8,count=self.num_samples,offset=1*self.num_samples),
-                         np.frombuffer(rslt,dtype=np.uint8,count=self.num_samples,offset=2*self.num_samples),
-                         np.frombuffer(rslt,dtype=np.uint8,count=self.num_samples,offset=3*self.num_samples) ]
+            #byte_arrayold = unpack('%dB' % len(rslt), rslt)  # Convert serial data to array of numbers
+            #self.ydataold=np.reshape(byte_arrayold,(num_chan_per_board,self.num_samples)) #slow!
+            self.ydata=[ np.frombuffer(rslt,dtype=np.int8,count=self.num_samples,offset=0*self.num_samples), #need the int8 type because we'll later subtract it from 127 to flip it over
+                         np.frombuffer(rslt,dtype=np.int8,count=self.num_samples,offset=1*self.num_samples),
+                         np.frombuffer(rslt,dtype=np.int8,count=self.num_samples,offset=2*self.num_samples),
+                         np.frombuffer(rslt,dtype=np.int8,count=self.num_samples,offset=3*self.num_samples) ]
+            #print(127-self.ydataold[0])
+            #print(127-self.ydata[0])
             #self.ser.write(bytearray([40 + board]))  # for debugging timing, does nuttin
             if self.dooversample[num_chan_per_board*(num_board-board-1)]: self.oversample(0,2)
             if self.dooversample[num_chan_per_board*(num_board-board-1)+1]: self.oversample(1,3)
