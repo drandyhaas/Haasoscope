@@ -69,8 +69,8 @@ class Haasoscope():
         self.downsample=2 #adc speed reduction, log 2... so 0 (none), 1(factor 2), 2(factor 4), etc.
         self.dofft=False #drawing the FFT plot
         self.dousb=False #whether to use USB2 output
-        self.dousbparallel=True #whether to tell all board to read out over USB2 in parallel (experimental)
-        self.dofastusb=True #whether to do sync 245 fifo mode on usb2 (need to reprogram ft232h hat) (Experimental)
+        self.dofastusb=True #whether to do sync 245 fifo mode on usb2 (need to reprogram ft232h hat) (experimental)
+        self.dousbparallel=self.dofastusb #whether to tell all board to read out over USB2 in parallel (experimental)
         self.sincresample=0 # amount of resampling to do (sinx/x)
         self.dogetotherdata=False # whether to read other calculated data like TDC
         self.tdcdata=0 # TDC data
@@ -1384,17 +1384,17 @@ class Haasoscope():
     oldtime=time.time()
     oldtime2=time.time()
     def getchannels(self):
-        status=0
-        if not self.autorearm:
-            if self.db: print(time.time()-self.oldtime,"priming trigger")
-            self.ser.write(bytearray([100]))
-        self.max10adcchan=1
         if self.dousb and self.dousbparallel:
             if self.minfirmwareversion>=17:
-                self.ser.write(bytearray([51,255])) # 255 gets data from ALL boards
+                self.ser.write(bytearray([100,51,255])) # prime, then get data... 255 gets data from ALL boards
             else:
                 print("You need firmware >17 for USBparallel reading!")
             if self.db: print(time.time()-self.oldtime,"asked for data from all boards")
+        elif not self.autorearm:
+            if self.db: print(time.time()-self.oldtime,"priming trigger")
+            self.ser.write(bytearray([100]))
+        status = 0
+        self.max10adcchan=1
         for bn in np.arange(num_board):
             if self.db: print(time.time()-self.oldtime,"getting board",bn)
             self.getdata(bn) #this sets all boards before this board into serial passthrough mode, so this and following calls for data will go to this board and then travel back over serial
@@ -1552,7 +1552,7 @@ class Haasoscope():
                     ftd_d.setTimeouts(1000, 1000)
                     ftd_d.setBitMode(0xff, 0x40)
                     ftd_d.setUSBParameters(0x10000, 0x10000)
-                    ftd_d.setLatencyTimer(2)
+                    ftd_d.setLatencyTimer(1)
                     ftd_d.setFlowControl(ftd.defines.FLOW_RTS_CTS, 0, 0)
                     ftd_d.purge(ftd.defines.PURGE_RX)
                     ftd_d.purge(ftd.defines.PURGE_TX)
