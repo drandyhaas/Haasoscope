@@ -297,7 +297,8 @@ IN</text>
 <dimension x1="-12" y1="60" x2="86" y2="60" x3="37" y3="92" textsize="0.8128" layer="21" visible="yes"/>
 <text x="-3.01" y="16.61" size="0.8128" layer="21" font="vector" rot="R90">GND</text>
 <text x="-3.01" y="11.61" size="0.8128" layer="21" font="vector" rot="R90">GND</text>
-<dimension x1="-20" y1="29" x2="-20" y2="34.08" x3="-19" y3="31.54" textsize="1.778" layer="21" visible="yes"/>
+<dimension x1="-20" y1="29" x2="-20" y2="34.08" x3="-19" y3="31.54" textsize="1.27" layer="21" visible="yes"/>
+<dimension x1="-21" y1="29" x2="-21" y2="-12" x3="-22" y3="8.5" textsize="1.27" layer="21" visible="yes"/>
 </plain>
 <libraries>
 <library name="rcl">
@@ -7200,7 +7201,6 @@ design rules under a new name.
 <attribute name="MPN" value="MF-LED-0805-RED" x="39" y="84" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="NAME" x="41" y="80.5" size="0.8128" layer="25" rot="R90"/>
 <attribute name="OC_NEWARK" value="unknown" x="39" y="84" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="VALUE" x="41" y="82.5" size="1.27" layer="27" rot="R90"/>
 </element>
 <element name="CIN56_1" library="rcl@1" package="C0603" value="56pF" x="60" y="0.6" smashed="yes" rot="MR180">
 <attribute name="MPN" value="06035A560FAT2A" x="60" y="0.6" size="1.778" layer="28" rot="MR180" display="off"/>
@@ -7262,7 +7262,6 @@ design rules under a new name.
 <element name="PIN_ANALOG_IOEXP1" library="pinhead" library_urn="urn:adsk.eagle:library:325" package="2X08/90" package3d_urn="urn:adsk.eagle:package:22488/2" value="15-91-2160" x="-11.4" y="43.4" smashed="yes" rot="R90">
 <attribute name="MPN" value="15-91-2160" x="-11.4" y="43.4" size="1.778" layer="27" rot="R90" display="off"/>
 <attribute name="POPULARITY" value="0" x="-11.4" y="43.4" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="VALUE" x="-7.59" y="55.465" size="1.27" layer="27" rot="R180"/>
 </element>
 </elements>
 <signals>
