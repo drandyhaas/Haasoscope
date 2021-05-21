@@ -1554,7 +1554,7 @@ class Haasoscope():
         if self.dofastusb and ftd.listDevices():
             for ftd_n in range(len(ftd.listDevices())):
                 ftd_d = ftd.open(ftd_n)
-                if str(ftd_d.getDeviceInfo()["description"]).find("Haasoscope USB2 FTD2XX")>=0:
+                if str(ftd_d.getDeviceInfo()["description"]).find("Haasoscope")>=0:
                     print("Adding ftd usb2 device:",ftd_d.getDeviceInfo())
                     ftd_d.setTimeouts(1000, 1000)
                     ftd_d.setBitMode(0xff, 0x40)
@@ -1564,7 +1564,7 @@ class Haasoscope():
                     ftd_d.purge(ftd.defines.PURGE_RX)
                     ftd_d.purge(ftd.defines.PURGE_TX)
                     self.usbser.append(ftd_d)
-            print(self.usbser[0].getDeviceInfo())
+            #print(self.usbser[0].getDeviceInfo())
         if self.serport=="": print("No serial COM port opened!"); return False
         return True
     
