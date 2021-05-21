@@ -7,7 +7,7 @@
 <setting keepoldvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="1" unitdist="mm" unit="mm" style="dots" multiple="1" display="yes" altdistance="0.1" altunitdist="mm" altunit="mm"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="dots" multiple="1" display="yes" altdistance="0.1" altunitdist="mm" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="10" fill="15" visible="yes" active="yes"/>
@@ -251,25 +251,25 @@ ExtTrig</text>
 <text x="11.99" y="60.19" size="0.8128" layer="21" font="vector" rot="R180">127</text>
 <text x="14.89" y="60.19" size="0.8128" layer="21" font="vector" rot="R180">124</text>
 <text x="-3.8" y="52" size="0.8128" layer="21" font="vector">GND</text>
-<text x="-3.8" y="49.5" size="0.8128" layer="21" font="vector">RX L</text>
-<text x="-3.8" y="43.8" size="0.8128" layer="21" font="vector">TRIG
+<text x="0.14" y="49.42" size="0.8128" layer="21" font="vector">RX L</text>
+<text x="0.14" y="43.72" size="0.8128" layer="21" font="vector">TRIG
 OUT</text>
-<text x="-3.8" y="47" size="0.8128" layer="21" font="vector">TX L</text>
-<text x="-3.8" y="41.2" size="0.8128" layer="21" font="vector">TRIG
+<text x="0.14" y="46.92" size="0.8128" layer="21" font="vector">TX L</text>
+<text x="0.14" y="41.12" size="0.8128" layer="21" font="vector">TRIG
 IN</text>
-<text x="-3.8" y="39.4" size="0.8128" layer="21" font="vector">5V</text>
-<text x="-3.8" y="36.8" size="0.8128" layer="21" font="vector">SPR L R</text>
-<text x="-3.8" y="33.7" size="0.8128" layer="21" font="vector">CLK
+<text x="0.14" y="39.32" size="0.8128" layer="21" font="vector">5V</text>
+<text x="-2.4" y="36.72" size="0.8128" layer="21" font="vector">SPR R L</text>
+<text x="0.14" y="33.62" size="0.8128" layer="21" font="vector">CLK
 OUT</text>
-<text x="1.81" y="52.81" size="0.8128" layer="21" font="vector" rot="R180">GND</text>
-<text x="1.91" y="50.31" size="0.8128" layer="21" font="vector" rot="R180">RX</text>
-<text x="1.91" y="47.71" size="0.8128" layer="21" font="vector" rot="R180">TX</text>
-<text x="1.91" y="45.81" size="0.8128" layer="21" font="vector" rot="R180">TRG
+<text x="-0.69" y="52.61" size="0.8128" layer="21" font="vector" rot="R180">GND</text>
+<text x="-0.59" y="50.11" size="0.8128" layer="21" font="vector" rot="R180">RX</text>
+<text x="-0.59" y="47.51" size="0.8128" layer="21" font="vector" rot="R180">TX</text>
+<text x="-0.59" y="45.61" size="0.8128" layer="21" font="vector" rot="R180">TRG
 IN</text>
-<text x="1.81" y="43.11" size="0.8128" layer="21" font="vector" rot="R180">TRG
+<text x="-0.69" y="42.91" size="0.8128" layer="21" font="vector" rot="R180">TRG
 OUT</text>
-<text x="0.91" y="40.11" size="0.8128" layer="21" font="vector" rot="R180">5V</text>
-<text x="1.61" y="35.71" size="0.8128" layer="21" font="vector" rot="R180">CLK
+<text x="-1.59" y="39.91" size="0.8128" layer="21" font="vector" rot="R180">5V</text>
+<text x="-0.89" y="35.51" size="0.8128" layer="21" font="vector" rot="R180">CLK
 IN</text>
 <text x="-7.11" y="-11.19" size="0.8128" layer="21" font="vector" rot="R90">1.6mm</text>
 <dimension x1="100" y1="32" x2="100" y2="22" x3="98.6" y3="27" textsize="0.8128" layer="37" dtype="vertical" visible="yes"/>
@@ -297,7 +297,7 @@ IN</text>
 <dimension x1="-12" y1="60" x2="86" y2="60" x3="37" y3="92" textsize="0.8128" layer="21" visible="yes"/>
 <text x="-3.01" y="16.61" size="0.8128" layer="21" font="vector" rot="R90">GND</text>
 <text x="-3.01" y="11.61" size="0.8128" layer="21" font="vector" rot="R90">GND</text>
-<dimension x1="-20" y1="29" x2="-20" y2="34.08" x3="-19" y3="31.54" textsize="1.27" layer="21" visible="yes"/>
+<dimension x1="-20" y1="29" x2="-20" y2="34.08" x3="6.4" y3="31.54" textsize="1.27" layer="21" visible="yes"/>
 <dimension x1="-21" y1="29" x2="-21" y2="-12" x3="-22" y3="8.5" textsize="1.27" layer="21" visible="yes"/>
 </plain>
 <libraries>
@@ -7259,9 +7259,9 @@ design rules under a new name.
 <attribute name="NAME" x="45" y="58.75" size="0.8128" layer="25" ratio="18" rot="R180"/>
 <attribute name="VALUE" x="46" y="67" size="0.8128" layer="27" ratio="10" rot="R180"/>
 </element>
-<element name="PIN_ANALOG_IOEXP1" library="pinhead" library_urn="urn:adsk.eagle:library:325" package="2X08/90" package3d_urn="urn:adsk.eagle:package:22488/2" value="15-91-2160" x="-11.4" y="43.4" smashed="yes" rot="R90">
-<attribute name="MPN" value="15-91-2160" x="-11.4" y="43.4" size="1.778" layer="27" rot="R90" display="off"/>
-<attribute name="POPULARITY" value="0" x="-11.4" y="43.4" size="1.778" layer="27" rot="R90" display="off"/>
+<element name="PIN_ANALOG_IOEXP1" library="pinhead" library_urn="urn:adsk.eagle:library:325" package="2X08/90" package3d_urn="urn:adsk.eagle:package:22488/2" value="15-91-2160" x="-1.2" y="43.38" smashed="yes" rot="MR90">
+<attribute name="MPN" value="15-91-2160" x="-1.2" y="43.38" size="1.778" layer="28" rot="MR90" display="off"/>
+<attribute name="POPULARITY" value="0" x="-1.2" y="43.38" size="1.778" layer="28" rot="MR90" display="off"/>
 </element>
 </elements>
 <signals>
@@ -7281,7 +7281,7 @@ design rules under a new name.
 <wire x1="43.3" y1="55.9" x2="47" y2="55.85" width="0" layer="19" extent="16-16"/>
 <wire x1="10.99" y1="83.4" x2="46.7" y2="61" width="0" layer="19" extent="1-1"/>
 <wire x1="-6.79" y1="58" x2="10.99" y2="83.4" width="0" layer="19" extent="1-1"/>
-<wire x1="-7.59" y1="39.59" x2="-6.79" y2="58" width="0" layer="19" extent="1-1"/>
+<wire x1="-5.01" y1="39.57" x2="-6.79" y2="58" width="0" layer="19" extent="1-1"/>
 <wire x1="41.6" y1="2.4" x2="43.3" y2="55.9" width="0" layer="19" extent="16-16"/>
 <wire x1="44.4" y1="1.05" x2="41.6" y2="2.4" width="0" layer="19" extent="16-16"/>
 <wire x1="46.7" y1="1" x2="44.4" y2="1.05" width="0" layer="19" extent="16-16"/>
@@ -7591,8 +7591,8 @@ design rules under a new name.
 <wire x1="-4.5" y1="69.85" x2="-4.5" y2="73.35" width="0" layer="19" extent="16-16"/>
 <wire x1="-7.86" y1="70.3" x2="-4.5" y2="69.85" width="0" layer="19" extent="1-16"/>
 <wire x1="-9.33" y1="58" x2="-7.86" y2="70.3" width="0" layer="19" extent="1-1"/>
-<wire x1="-7.59" y1="52.29" x2="-9.33" y2="58" width="0" layer="19" extent="1-1"/>
-<wire x1="-5.05" y1="52.29" x2="-7.59" y2="52.29" width="0" layer="19" extent="1-1"/>
+<wire x1="-5.01" y1="52.27" x2="-9.33" y2="58" width="0" layer="19" extent="1-1"/>
+<wire x1="-7.55" y1="52.27" x2="-5.01" y2="52.27" width="0" layer="19" extent="1-1"/>
 <wire x1="-5.73" y1="4.08" x2="16.29" y2="2.42" width="0" layer="19" extent="1-1"/>
 <wire x1="-7.59" y1="11.61" x2="-5.73" y2="4.08" width="0" layer="19" extent="1-1"/>
 <wire x1="-7.59" y1="14.15" x2="-7.59" y2="11.61" width="0" layer="19" extent="1-1"/>
@@ -8073,7 +8073,7 @@ design rules under a new name.
 <signal name="CLKOUTTOLEFT_29">
 <contactref element="FPGA" pad="29"/>
 <contactref element="PIN_ANALOG_IOEXP1" pad="2"/>
-<wire x1="36.21" y1="19.38" x2="-7.59" y2="34.51" width="0" layer="19" extent="1-1"/>
+<wire x1="-5.01" y1="34.49" x2="36.21" y2="19.38" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="LED4">
 <contactref element="IOEXPAND_0X21_TOP" pad="24"/>
@@ -8083,56 +8083,56 @@ design rules under a new name.
 <signal name="TRIGOUTTOLEFT_106">
 <contactref element="FPGA" pad="106"/>
 <contactref element="PIN_ANALOG_IOEXP1" pad="10"/>
-<wire x1="23.21" y1="40.88" x2="-7.59" y2="44.67" width="0" layer="19" extent="1-1"/>
+<wire x1="-5.01" y1="44.65" x2="23.21" y2="40.88" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="TRIGINFROMRIGHT_86">
 <contactref element="FPGA" pad="86"/>
 <contactref element="PIN_ANALOG_IOEXP1" pad="9"/>
-<wire x1="33.21" y1="40.88" x2="-5.05" y2="44.67" width="0" layer="19" extent="1-1"/>
+<wire x1="-7.55" y1="44.65" x2="33.21" y2="40.88" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="TRIGOUTORIGHT_87">
 <contactref element="FPGA" pad="87"/>
 <contactref element="PIN_ANALOG_IOEXP1" pad="7"/>
-<wire x1="32.71" y1="40.88" x2="-5.05" y2="42.13" width="0" layer="19" extent="1-1"/>
+<wire x1="-7.55" y1="42.11" x2="32.71" y2="40.88" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="SERIALTORIGHT_RX_92">
 <contactref element="FPGA" pad="92"/>
 <contactref element="U340G" pad="3"/>
 <contactref element="PIN_ANALOG_IOEXP1" pad="13"/>
-<wire x1="30.21" y1="40.88" x2="-5.05" y2="49.75" width="0" layer="19" extent="1-1"/>
-<wire x1="8.605" y1="74.695" x2="30.21" y2="40.88" width="0" layer="19" extent="1-1"/>
+<wire x1="-7.55" y1="49.73" x2="8.605" y2="74.695" width="0" layer="19" extent="1-1"/>
+<wire x1="30.21" y1="40.88" x2="8.605" y2="74.695" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="SERIALFROMRIGHT_TX_93">
 <contactref element="FPGA" pad="93"/>
 <contactref element="U340G" pad="2"/>
 <contactref element="PIN_ANALOG_IOEXP1" pad="11"/>
-<wire x1="29.71" y1="40.88" x2="-5.05" y2="47.21" width="0" layer="19" extent="1-1"/>
-<wire x1="9.875" y1="74.695" x2="29.71" y2="40.88" width="0" layer="19" extent="1-1"/>
+<wire x1="-7.55" y1="47.19" x2="9.875" y2="74.695" width="0" layer="19" extent="1-1"/>
+<wire x1="29.71" y1="40.88" x2="9.875" y2="74.695" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="SERIALTOLEFT_96">
 <contactref element="FPGA" pad="96"/>
 <contactref element="PIN_ANALOG_IOEXP1" pad="12"/>
-<wire x1="28.21" y1="40.88" x2="-7.59" y2="47.21" width="0" layer="19" extent="1-1"/>
+<wire x1="-5.01" y1="47.19" x2="28.21" y2="40.88" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="SERIALFROMLEFT_98">
 <contactref element="FPGA" pad="98"/>
 <contactref element="PIN_ANALOG_IOEXP1" pad="14"/>
-<wire x1="27.21" y1="40.88" x2="-7.59" y2="49.75" width="0" layer="19" extent="1-1"/>
+<wire x1="-5.01" y1="49.73" x2="27.21" y2="40.88" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="CLKINFROMRIGHT_26">
 <contactref element="FPGA" pad="26"/>
 <contactref element="PIN_ANALOG_IOEXP1" pad="1"/>
-<wire x1="34.71" y1="19.38" x2="-5.05" y2="34.51" width="0" layer="19" extent="1-1"/>
+<wire x1="-7.55" y1="34.49" x2="34.71" y2="19.38" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="SPARELEFT_102">
 <contactref element="FPGA" pad="102"/>
 <contactref element="PIN_ANALOG_IOEXP1" pad="4"/>
-<wire x1="25.21" y1="40.88" x2="-7.59" y2="37.05" width="0" layer="19" extent="1-1"/>
+<wire x1="-5.01" y1="37.03" x2="25.21" y2="40.88" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="SPARERIGHT_99">
 <contactref element="FPGA" pad="99"/>
 <contactref element="PIN_ANALOG_IOEXP1" pad="3"/>
-<wire x1="26.71" y1="40.88" x2="-5.05" y2="37.05" width="0" layer="19" extent="1-1"/>
+<wire x1="-7.55" y1="37.03" x2="26.71" y2="40.88" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="5VINFROMUSB" class="3">
 <contactref element="USB1" pad="1"/>
@@ -8208,7 +8208,7 @@ design rules under a new name.
 <signal name="5VINFROMRIGHT" class="3">
 <contactref element="S9" pad="3"/>
 <contactref element="PIN_ANALOG_IOEXP1" pad="5"/>
-<wire x1="-5.05" y1="39.59" x2="46.7" y2="63.5" width="0" layer="19" extent="1-1"/>
+<wire x1="-7.55" y1="39.57" x2="46.7" y2="63.5" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="CLKOUT_32">
 <contactref element="FPGA" pad="32"/>
@@ -8952,7 +8952,7 @@ design rules under a new name.
 <signal name="TRIGINFROMLEFT_28">
 <contactref element="FPGA" pad="28"/>
 <contactref element="PIN_ANALOG_IOEXP1" pad="8"/>
-<wire x1="35.71" y1="19.38" x2="-7.59" y2="42.13" width="0" layer="19" extent="1-1"/>
+<wire x1="-5.01" y1="42.11" x2="35.71" y2="19.38" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="IO_105">
 <contactref element="FPGA" pad="105"/>

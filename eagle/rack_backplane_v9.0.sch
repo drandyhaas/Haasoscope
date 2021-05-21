@@ -192,12 +192,6 @@
 <text x="-2.54" y="-2.54" size="1.778" layer="96">&gt;VALUE</text>
 <pin name="GND" x="0" y="2.54" visible="off" length="short" direction="sup" rot="R270"/>
 </symbol>
-<symbol name="+3V3">
-<wire x1="1.27" y1="-1.905" x2="0" y2="0" width="0.254" layer="94"/>
-<wire x1="0" y1="0" x2="-1.27" y2="-1.905" width="0.254" layer="94"/>
-<text x="-2.54" y="-5.08" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
-<pin name="+3V3" x="0" y="-2.54" visible="off" length="short" direction="sup" rot="R90"/>
-</symbol>
 </symbols>
 <devicesets>
 <deviceset name="+5V" prefix="P+">
@@ -217,19 +211,6 @@
 <description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
 <gates>
 <gate name="1" symbol="GND" x="0" y="0"/>
-</gates>
-<devices>
-<device name="">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="+3V3" prefix="+3V3">
-<description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
-<gates>
-<gate name="G$1" symbol="+3V3" x="0" y="0"/>
 </gates>
 <devices>
 <device name="">
@@ -601,48 +582,444 @@ DIN A3, landscape with location and doc. field</description>
 <part name="GND7" library="supply1" deviceset="GND" device=""/>
 <part name="P+1" library="supply1" deviceset="+5V" device=""/>
 <part name="GND13" library="supply1" deviceset="GND" device=""/>
-<part name="PIN_AIN_IO2_PWRGND" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="/90" package3d_urn="urn:adsk.eagle:package:22488/2" value="15-91-2160">
+<part name="PIN_AIN_PWRGND1" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
 <attribute name="MPN" value="15-91-2160"/>
 </part>
 <part name="GND70" library="supply1" deviceset="GND" device=""/>
-<part name="+3V9" library="supply1" deviceset="+3V3" device=""/>
 <part name="FRAME1" library="frames" library_urn="urn:adsk.eagle:library:229" deviceset="A3L-LOC" device=""/>
-<part name="PIN_ANALOG_IOEXP1" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="/90" package3d_urn="urn:adsk.eagle:package:22488/2" value="15-91-2160">
+<part name="PIN_ANALOG_1" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
 <attribute name="MPN" value="15-91-2160"/>
 </part>
+<part name="GND1" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND2" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND3" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_ANALOG_21" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_2" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_3" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_4" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_5" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_6" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_7" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_8" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_9" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_10" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_11" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_12" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_13" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_14" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_15" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_16" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_17" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_18" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_19" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="PIN_ANALOG_20" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND4" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND3" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND5" library="supply1" deviceset="GND" device=""/>
+<part name="GND6" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND4" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND8" library="supply1" deviceset="GND" device=""/>
+<part name="GND9" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND5" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND10" library="supply1" deviceset="GND" device=""/>
+<part name="GND11" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND6" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND12" library="supply1" deviceset="GND" device=""/>
+<part name="GND14" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND7" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND15" library="supply1" deviceset="GND" device=""/>
+<part name="GND16" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND8" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND17" library="supply1" deviceset="GND" device=""/>
+<part name="GND18" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND9" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND19" library="supply1" deviceset="GND" device=""/>
+<part name="GND20" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND10" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND21" library="supply1" deviceset="GND" device=""/>
+<part name="GND22" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND11" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND23" library="supply1" deviceset="GND" device=""/>
+<part name="GND24" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND12" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND25" library="supply1" deviceset="GND" device=""/>
+<part name="GND26" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND13" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND27" library="supply1" deviceset="GND" device=""/>
+<part name="GND28" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND14" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND29" library="supply1" deviceset="GND" device=""/>
+<part name="GND30" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND15" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND31" library="supply1" deviceset="GND" device=""/>
+<part name="GND32" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND16" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND33" library="supply1" deviceset="GND" device=""/>
+<part name="GND34" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND17" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND35" library="supply1" deviceset="GND" device=""/>
+<part name="GND36" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND18" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND37" library="supply1" deviceset="GND" device=""/>
+<part name="GND39" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND19" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND40" library="supply1" deviceset="GND" device=""/>
+<part name="GND41" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND20" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND42" library="supply1" deviceset="GND" device=""/>
+<part name="PIN_AIN_PWRGND21" library="pinhead" library_urn="urn:adsk.eagle:library:325" deviceset="PINHD-2X8" device="" package3d_urn="urn:adsk.eagle:package:22481/2" value="15-91-2160">
+<attribute name="MPN" value="15-91-2160"/>
+</part>
+<part name="GND2" library="supply1" deviceset="GND" device=""/>
+<part name="GND38" library="supply1" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
 <description>Digital</description>
 <plain>
-<text x="50.8" y="50.8" size="2.54" layer="95">Back pinout 2</text>
 <wire x1="210.82" y1="7.62" x2="5.08" y2="7.62" width="0.1524" layer="95"/>
-<text x="50.8" y="137.16" size="2.54" layer="95">Back pinout 1</text>
+<text x="22.86" y="233.68" size="1.778" layer="97">Trrig board</text>
+<text x="40.64" y="121.92" size="1.778" layer="97">Trrig board</text>
 </plain>
 <instances>
-<instance part="GND7" gate="1" x="53.34" y="60.96" smashed="yes">
-<attribute name="VALUE" x="50.8" y="58.42" size="1.778" layer="96"/>
+<instance part="GND7" gate="1" x="327.66" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="330.2" y="139.7" size="1.778" layer="96" rot="MR0"/>
 </instance>
-<instance part="P+1" gate="1" x="71.12" y="172.72" smashed="yes" rot="MR0">
-<attribute name="VALUE" x="68.58" y="175.26" size="1.778" layer="96" rot="MR180"/>
+<instance part="P+1" gate="1" x="337.82" y="233.68" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="335.28" y="236.22" size="1.778" layer="96" rot="MR180"/>
 </instance>
-<instance part="GND13" gate="1" x="50.8" y="146.05" smashed="yes" rot="MR0">
-<attribute name="VALUE" x="53.34" y="143.51" size="1.778" layer="96" rot="MR0"/>
+<instance part="GND13" gate="1" x="343.916" y="203.2" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="346.456" y="200.66" size="1.778" layer="96" rot="MR0"/>
 </instance>
-<instance part="PIN_AIN_IO2_PWRGND" gate="A" x="63.5" y="76.2" smashed="yes" rot="R180">
-<attribute name="MPN" x="63.5" y="76.2" size="1.778" layer="96" rot="R180" display="off"/>
+<instance part="PIN_AIN_PWRGND1" gate="A" x="337.82" y="160.02" smashed="yes" rot="MR0">
+<attribute name="MPN" x="337.82" y="160.02" size="1.778" layer="96" rot="MR0" display="off"/>
 </instance>
-<instance part="GND70" gate="1" x="71.12" y="60.96" smashed="yes">
-<attribute name="VALUE" x="68.58" y="58.42" size="1.778" layer="96"/>
-</instance>
-<instance part="+3V9" gate="G$1" x="76.2" y="93.98" smashed="yes" rot="MR0">
-<attribute name="VALUE" x="73.66" y="96.52" size="1.778" layer="96" rot="MR180"/>
+<instance part="GND70" gate="1" x="345.44" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="347.98" y="139.7" size="1.778" layer="96" rot="MR0"/>
 </instance>
 <instance part="FRAME1" gate="G$1" x="0" y="0" smashed="yes">
 <attribute name="SHEET" x="357.505" y="5.08" size="2.54" layer="94"/>
 </instance>
-<instance part="PIN_ANALOG_IOEXP1" gate="A" x="60.96" y="158.75" smashed="yes">
-<attribute name="MPN" x="60.96" y="158.75" size="1.778" layer="96" display="off"/>
+<instance part="PIN_ANALOG_1" gate="A" x="345.44" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="345.44" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="GND1" gate="1" x="276.86" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="279.4" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND2" gate="A" x="287.02" y="160.02" smashed="yes" rot="MR0">
+<attribute name="MPN" x="287.02" y="160.02" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND3" gate="1" x="294.64" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="297.18" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_ANALOG_21" gate="A" x="30.48" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="30.48" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_2" gate="A" x="330.2" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="330.2" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_3" gate="A" x="314.96" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="314.96" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_4" gate="A" x="299.72" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="299.72" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_5" gate="A" x="284.48" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="284.48" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_6" gate="A" x="269.24" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="269.24" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_7" gate="A" x="254" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="254" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_8" gate="A" x="238.76" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="238.76" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_9" gate="A" x="223.52" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="223.52" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_10" gate="A" x="208.28" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="208.28" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_11" gate="A" x="193.04" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="193.04" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_12" gate="A" x="177.8" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="177.8" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_13" gate="A" x="162.56" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="162.56" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_14" gate="A" x="147.32" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="147.32" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_15" gate="A" x="132.08" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="132.08" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_16" gate="A" x="116.84" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="116.84" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_17" gate="A" x="101.6" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="101.6" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_18" gate="A" x="86.36" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="86.36" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_19" gate="A" x="71.12" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="71.12" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="PIN_ANALOG_20" gate="A" x="55.88" y="217.17" smashed="yes" rot="R180">
+<attribute name="MPN" x="55.88" y="217.17" size="1.778" layer="96" rot="R180" display="off"/>
+</instance>
+<instance part="GND4" gate="1" x="193.04" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="195.58" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND3" gate="A" x="203.2" y="160.02" smashed="yes" rot="MR0">
+<attribute name="MPN" x="203.2" y="160.02" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND5" gate="1" x="210.82" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="213.36" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND6" gate="1" x="167.64" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="170.18" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND4" gate="A" x="177.8" y="160.02" smashed="yes" rot="MR0">
+<attribute name="MPN" x="177.8" y="160.02" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND8" gate="1" x="185.42" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="187.96" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND9" gate="1" x="142.24" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="144.78" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND5" gate="A" x="152.4" y="160.02" smashed="yes" rot="MR0">
+<attribute name="MPN" x="152.4" y="160.02" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND10" gate="1" x="160.02" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="162.56" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND11" gate="1" x="116.84" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="119.38" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND6" gate="A" x="127" y="160.02" smashed="yes" rot="MR0">
+<attribute name="MPN" x="127" y="160.02" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND12" gate="1" x="134.62" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="137.16" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND14" gate="1" x="91.44" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="93.98" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND7" gate="A" x="101.6" y="160.02" smashed="yes" rot="MR0">
+<attribute name="MPN" x="101.6" y="160.02" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND15" gate="1" x="109.22" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="111.76" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND16" gate="1" x="66.04" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="68.58" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND8" gate="A" x="76.2" y="160.02" smashed="yes" rot="MR0">
+<attribute name="MPN" x="76.2" y="160.02" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND17" gate="1" x="83.82" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="86.36" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND18" gate="1" x="40.64" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="43.18" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND9" gate="A" x="50.8" y="160.02" smashed="yes" rot="MR0">
+<attribute name="MPN" x="50.8" y="160.02" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND19" gate="1" x="58.42" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="60.96" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND20" gate="1" x="15.24" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="17.78" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND10" gate="A" x="25.4" y="160.02" smashed="yes" rot="MR0">
+<attribute name="MPN" x="25.4" y="160.02" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND21" gate="1" x="33.02" y="142.24" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="35.56" y="139.7" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND22" gate="1" x="347.98" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="350.52" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND11" gate="A" x="358.14" y="106.68" smashed="yes" rot="MR0">
+<attribute name="MPN" x="358.14" y="106.68" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND23" gate="1" x="365.76" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="368.3" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND24" gate="1" x="322.58" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="325.12" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND12" gate="A" x="332.74" y="106.68" smashed="yes" rot="MR0">
+<attribute name="MPN" x="332.74" y="106.68" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND25" gate="1" x="340.36" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="342.9" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND26" gate="1" x="297.18" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="299.72" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND13" gate="A" x="307.34" y="106.68" smashed="yes" rot="MR0">
+<attribute name="MPN" x="307.34" y="106.68" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND27" gate="1" x="314.96" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="317.5" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND28" gate="1" x="271.78" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="274.32" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND14" gate="A" x="281.94" y="106.68" smashed="yes" rot="MR0">
+<attribute name="MPN" x="281.94" y="106.68" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND29" gate="1" x="289.56" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="292.1" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND30" gate="1" x="243.84" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="246.38" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND15" gate="A" x="254" y="106.68" smashed="yes" rot="MR0">
+<attribute name="MPN" x="254" y="106.68" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND31" gate="1" x="261.62" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="264.16" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND32" gate="1" x="218.44" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="220.98" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND16" gate="A" x="228.6" y="106.68" smashed="yes" rot="MR0">
+<attribute name="MPN" x="228.6" y="106.68" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND33" gate="1" x="236.22" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="238.76" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND34" gate="1" x="193.04" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="195.58" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND17" gate="A" x="203.2" y="106.68" smashed="yes" rot="MR0">
+<attribute name="MPN" x="203.2" y="106.68" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND35" gate="1" x="210.82" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="213.36" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND36" gate="1" x="167.64" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="170.18" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND18" gate="A" x="177.8" y="106.68" smashed="yes" rot="MR0">
+<attribute name="MPN" x="177.8" y="106.68" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND37" gate="1" x="185.42" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="187.96" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND39" gate="1" x="139.7" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="142.24" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND19" gate="A" x="149.86" y="106.68" smashed="yes" rot="MR0">
+<attribute name="MPN" x="149.86" y="106.68" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND40" gate="1" x="157.48" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="160.02" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND41" gate="1" x="114.3" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="116.84" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND20" gate="A" x="124.46" y="106.68" smashed="yes" rot="MR0">
+<attribute name="MPN" x="124.46" y="106.68" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND42" gate="1" x="132.08" y="88.9" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="134.62" y="86.36" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="PIN_AIN_PWRGND21" gate="A" x="48.26" y="106.68" smashed="yes" rot="MR0">
+<attribute name="MPN" x="48.26" y="106.68" size="1.778" layer="96" rot="MR0" display="off"/>
+</instance>
+<instance part="GND2" gate="1" x="25.4" y="200.66" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="27.94" y="198.12" size="1.778" layer="96" rot="MR0"/>
+</instance>
+<instance part="GND38" gate="1" x="43.18" y="86.36" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="45.72" y="83.82" size="1.778" layer="96" rot="MR0"/>
 </instance>
 </instances>
 <busses>
@@ -651,219 +1028,2174 @@ DIN A3, landscape with location and doc. field</description>
 <net name="+5V" class="3">
 <segment>
 <pinref part="P+1" gate="1" pin="+5V"/>
-<wire x1="71.12" y1="170.18" x2="71.12" y2="161.29" width="0.1524" layer="91"/>
-<wire x1="71.12" y1="161.29" x2="66.04" y2="161.29" width="0.1524" layer="91"/>
-<pinref part="PIN_ANALOG_IOEXP1" gate="A" pin="6"/>
+<wire x1="337.82" y1="231.14" x2="337.82" y2="214.63" width="0.1524" layer="91"/>
+<wire x1="337.82" y1="214.63" x2="340.36" y2="214.63" width="0.1524" layer="91"/>
+<pinref part="PIN_ANALOG_1" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_2" gate="A" pin="5"/>
+<wire x1="332.74" y1="214.63" x2="340.36" y2="214.63" width="0.1524" layer="91"/>
+<junction x="340.36" y="214.63"/>
+<pinref part="PIN_ANALOG_2" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_3" gate="A" pin="5"/>
+<wire x1="317.5" y1="214.63" x2="325.12" y2="214.63" width="0.1524" layer="91"/>
+<wire x1="332.74" y1="214.63" x2="325.12" y2="214.63" width="0.1524" layer="91"/>
+<junction x="332.74" y="214.63"/>
+<junction x="325.12" y="214.63"/>
+<pinref part="PIN_ANALOG_3" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_4" gate="A" pin="5"/>
+<wire x1="302.26" y1="214.63" x2="309.88" y2="214.63" width="0.1524" layer="91"/>
+<wire x1="317.5" y1="214.63" x2="309.88" y2="214.63" width="0.1524" layer="91"/>
+<junction x="317.5" y="214.63"/>
+<junction x="309.88" y="214.63"/>
+<pinref part="PIN_ANALOG_4" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_5" gate="A" pin="5"/>
+<wire x1="287.02" y1="214.63" x2="294.64" y2="214.63" width="0.1524" layer="91"/>
+<wire x1="302.26" y1="214.63" x2="294.64" y2="214.63" width="0.1524" layer="91"/>
+<junction x="302.26" y="214.63"/>
+<junction x="294.64" y="214.63"/>
+<pinref part="PIN_ANALOG_5" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_6" gate="A" pin="5"/>
+<wire x1="271.78" y1="214.63" x2="279.4" y2="214.63" width="0.1524" layer="91"/>
+<wire x1="287.02" y1="214.63" x2="279.4" y2="214.63" width="0.1524" layer="91"/>
+<junction x="287.02" y="214.63"/>
+<junction x="279.4" y="214.63"/>
+<pinref part="PIN_ANALOG_6" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_7" gate="A" pin="5"/>
+<wire x1="256.54" y1="214.63" x2="264.16" y2="214.63" width="0.1524" layer="91"/>
+<wire x1="271.78" y1="214.63" x2="264.16" y2="214.63" width="0.1524" layer="91"/>
+<junction x="271.78" y="214.63"/>
+<junction x="264.16" y="214.63"/>
+<pinref part="PIN_ANALOG_7" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_8" gate="A" pin="5"/>
+<wire x1="241.3" y1="214.63" x2="248.92" y2="214.63" width="0.1524" layer="91"/>
+<wire x1="256.54" y1="214.63" x2="248.92" y2="214.63" width="0.1524" layer="91"/>
+<junction x="256.54" y="214.63"/>
+<junction x="248.92" y="214.63"/>
+<pinref part="PIN_ANALOG_8" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_9" gate="A" pin="5"/>
+<wire x1="226.06" y1="214.63" x2="233.68" y2="214.63" width="0.1524" layer="91"/>
+<wire x1="241.3" y1="214.63" x2="233.68" y2="214.63" width="0.1524" layer="91"/>
+<junction x="241.3" y="214.63"/>
+<junction x="233.68" y="214.63"/>
+<pinref part="PIN_ANALOG_9" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_10" gate="A" pin="5"/>
+<wire x1="210.82" y1="214.63" x2="218.44" y2="214.63" width="0.1524" layer="91"/>
+<wire x1="226.06" y1="214.63" x2="218.44" y2="214.63" width="0.1524" layer="91"/>
+<junction x="226.06" y="214.63"/>
+<junction x="218.44" y="214.63"/>
 </segment>
 </net>
 <net name="GND" class="1">
 <segment>
-<pinref part="PIN_AIN_IO2_PWRGND" gate="A" pin="6"/>
+<pinref part="PIN_AIN_PWRGND1" gate="A" pin="6"/>
 <pinref part="GND7" gate="1" pin="GND"/>
-<wire x1="53.34" y1="63.5" x2="53.34" y2="73.66" width="0.1524" layer="91"/>
-<pinref part="PIN_AIN_IO2_PWRGND" gate="A" pin="8"/>
-<wire x1="53.34" y1="73.66" x2="58.42" y2="73.66" width="0.1524" layer="91"/>
-<wire x1="58.42" y1="76.2" x2="53.34" y2="76.2" width="0.1524" layer="91"/>
-<wire x1="53.34" y1="76.2" x2="53.34" y2="73.66" width="0.1524" layer="91"/>
-<junction x="53.34" y="73.66"/>
-<wire x1="53.34" y1="81.28" x2="58.42" y2="81.28" width="0.1524" layer="91"/>
-<pinref part="PIN_AIN_IO2_PWRGND" gate="A" pin="10"/>
-<pinref part="PIN_AIN_IO2_PWRGND" gate="A" pin="12"/>
-<wire x1="58.42" y1="78.74" x2="53.34" y2="78.74" width="0.1524" layer="91"/>
-<wire x1="53.34" y1="78.74" x2="53.34" y2="81.28" width="0.1524" layer="91"/>
-<wire x1="53.34" y1="78.74" x2="53.34" y2="76.2" width="0.1524" layer="91"/>
-<junction x="53.34" y="78.74"/>
-<junction x="53.34" y="76.2"/>
-<pinref part="PIN_AIN_IO2_PWRGND" gate="A" pin="14"/>
-<pinref part="PIN_AIN_IO2_PWRGND" gate="A" pin="16"/>
-<wire x1="53.34" y1="86.36" x2="58.42" y2="86.36" width="0.1524" layer="91"/>
-<wire x1="58.42" y1="83.82" x2="53.34" y2="83.82" width="0.1524" layer="91"/>
-<wire x1="53.34" y1="83.82" x2="53.34" y2="86.36" width="0.1524" layer="91"/>
-<wire x1="53.34" y1="83.82" x2="53.34" y2="81.28" width="0.1524" layer="91"/>
-<junction x="53.34" y="83.82"/>
-<junction x="53.34" y="81.28"/>
+<wire x1="327.66" y1="144.78" x2="327.66" y2="162.56" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND1" gate="A" pin="8"/>
+<wire x1="327.66" y1="162.56" x2="332.74" y2="162.56" width="0.1524" layer="91"/>
+<wire x1="332.74" y1="160.02" x2="327.66" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="327.66" y1="160.02" x2="327.66" y2="162.56" width="0.1524" layer="91"/>
+<junction x="327.66" y="162.56"/>
+<wire x1="327.66" y1="154.94" x2="332.74" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND1" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND1" gate="A" pin="12"/>
+<wire x1="332.74" y1="157.48" x2="327.66" y2="157.48" width="0.1524" layer="91"/>
+<wire x1="327.66" y1="157.48" x2="327.66" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="327.66" y1="157.48" x2="327.66" y2="160.02" width="0.1524" layer="91"/>
+<junction x="327.66" y="157.48"/>
+<junction x="327.66" y="160.02"/>
+<pinref part="PIN_AIN_PWRGND1" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND1" gate="A" pin="16"/>
+<wire x1="327.66" y1="149.86" x2="332.74" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="332.74" y1="152.4" x2="327.66" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="327.66" y1="152.4" x2="327.66" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="327.66" y1="152.4" x2="327.66" y2="154.94" width="0.1524" layer="91"/>
+<junction x="327.66" y="152.4"/>
+<junction x="327.66" y="154.94"/>
 </segment>
 <segment>
-<pinref part="PIN_AIN_IO2_PWRGND" gate="A" pin="1"/>
+<pinref part="PIN_AIN_PWRGND1" gate="A" pin="1"/>
 <pinref part="GND70" gate="1" pin="GND"/>
-<wire x1="66.04" y1="68.58" x2="71.12" y2="68.58" width="0.1524" layer="91"/>
-<wire x1="71.12" y1="68.58" x2="71.12" y2="63.5" width="0.1524" layer="91"/>
+<wire x1="340.36" y1="167.64" x2="345.44" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="345.44" y1="167.64" x2="345.44" y2="144.78" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<wire x1="50.8" y1="148.59" x2="58.42" y2="148.59" width="0.1524" layer="91"/>
 <pinref part="GND13" gate="1" pin="GND"/>
-<pinref part="PIN_ANALOG_IOEXP1" gate="A" pin="15"/>
-<pinref part="PIN_ANALOG_IOEXP1" gate="A" pin="16"/>
-<wire x1="58.42" y1="148.59" x2="66.04" y2="148.59" width="0.1524" layer="91"/>
-<junction x="58.42" y="148.59"/>
+<wire x1="343.916" y1="205.74" x2="343.916" y2="227.076" width="0.1524" layer="91"/>
+<pinref part="PIN_ANALOG_1" gate="A" pin="15"/>
+<pinref part="PIN_ANALOG_1" gate="A" pin="16"/>
+<wire x1="347.98" y1="227.33" x2="340.36" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="343.916" y1="227.076" x2="347.98" y2="227.33" width="0.1524" layer="91"/>
+<junction x="347.98" y="227.33"/>
+<pinref part="PIN_ANALOG_2" gate="A" pin="15"/>
+<wire x1="332.74" y1="227.33" x2="340.36" y2="227.33" width="0.1524" layer="91"/>
+<junction x="340.36" y="227.33"/>
+<pinref part="PIN_ANALOG_2" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_3" gate="A" pin="15"/>
+<wire x1="317.5" y1="227.33" x2="325.12" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="332.74" y1="227.33" x2="325.12" y2="227.33" width="0.1524" layer="91"/>
+<junction x="332.74" y="227.33"/>
+<junction x="325.12" y="227.33"/>
+<pinref part="PIN_ANALOG_3" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_4" gate="A" pin="15"/>
+<wire x1="302.26" y1="227.33" x2="309.88" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="317.5" y1="227.33" x2="309.88" y2="227.33" width="0.1524" layer="91"/>
+<junction x="317.5" y="227.33"/>
+<junction x="309.88" y="227.33"/>
+<pinref part="PIN_ANALOG_4" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_5" gate="A" pin="15"/>
+<wire x1="287.02" y1="227.33" x2="294.64" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="302.26" y1="227.33" x2="294.64" y2="227.33" width="0.1524" layer="91"/>
+<junction x="302.26" y="227.33"/>
+<junction x="294.64" y="227.33"/>
+<pinref part="PIN_ANALOG_5" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_6" gate="A" pin="15"/>
+<wire x1="271.78" y1="227.33" x2="279.4" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="287.02" y1="227.33" x2="279.4" y2="227.33" width="0.1524" layer="91"/>
+<junction x="287.02" y="227.33"/>
+<junction x="279.4" y="227.33"/>
+<pinref part="PIN_ANALOG_6" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_7" gate="A" pin="15"/>
+<wire x1="256.54" y1="227.33" x2="264.16" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="271.78" y1="227.33" x2="264.16" y2="227.33" width="0.1524" layer="91"/>
+<junction x="271.78" y="227.33"/>
+<junction x="264.16" y="227.33"/>
+<pinref part="PIN_ANALOG_7" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_8" gate="A" pin="15"/>
+<wire x1="241.3" y1="227.33" x2="248.92" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="256.54" y1="227.33" x2="248.92" y2="227.33" width="0.1524" layer="91"/>
+<junction x="256.54" y="227.33"/>
+<junction x="248.92" y="227.33"/>
+<pinref part="PIN_ANALOG_8" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_9" gate="A" pin="15"/>
+<wire x1="226.06" y1="227.33" x2="233.68" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="241.3" y1="227.33" x2="233.68" y2="227.33" width="0.1524" layer="91"/>
+<junction x="241.3" y="227.33"/>
+<junction x="233.68" y="227.33"/>
+<pinref part="PIN_ANALOG_9" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_10" gate="A" pin="15"/>
+<wire x1="210.82" y1="227.33" x2="218.44" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="226.06" y1="227.33" x2="218.44" y2="227.33" width="0.1524" layer="91"/>
+<junction x="226.06" y="227.33"/>
+<junction x="218.44" y="227.33"/>
+<pinref part="PIN_ANALOG_10" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_11" gate="A" pin="15"/>
+<wire x1="195.58" y1="227.33" x2="203.2" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="210.82" y1="227.33" x2="203.2" y2="227.33" width="0.1524" layer="91"/>
+<junction x="210.82" y="227.33"/>
+<junction x="203.2" y="227.33"/>
+<pinref part="PIN_ANALOG_11" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_12" gate="A" pin="15"/>
+<wire x1="180.34" y1="227.33" x2="187.96" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="195.58" y1="227.33" x2="187.96" y2="227.33" width="0.1524" layer="91"/>
+<junction x="195.58" y="227.33"/>
+<junction x="187.96" y="227.33"/>
+<pinref part="PIN_ANALOG_12" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_13" gate="A" pin="15"/>
+<wire x1="165.1" y1="227.33" x2="172.72" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="180.34" y1="227.33" x2="172.72" y2="227.33" width="0.1524" layer="91"/>
+<junction x="180.34" y="227.33"/>
+<junction x="172.72" y="227.33"/>
+<pinref part="PIN_ANALOG_13" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_14" gate="A" pin="15"/>
+<wire x1="149.86" y1="227.33" x2="157.48" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="165.1" y1="227.33" x2="157.48" y2="227.33" width="0.1524" layer="91"/>
+<junction x="165.1" y="227.33"/>
+<junction x="157.48" y="227.33"/>
+<pinref part="PIN_ANALOG_14" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_15" gate="A" pin="15"/>
+<wire x1="134.62" y1="227.33" x2="142.24" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="149.86" y1="227.33" x2="142.24" y2="227.33" width="0.1524" layer="91"/>
+<junction x="149.86" y="227.33"/>
+<junction x="142.24" y="227.33"/>
+<pinref part="PIN_ANALOG_15" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_16" gate="A" pin="15"/>
+<wire x1="119.38" y1="227.33" x2="127" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="134.62" y1="227.33" x2="127" y2="227.33" width="0.1524" layer="91"/>
+<junction x="134.62" y="227.33"/>
+<junction x="127" y="227.33"/>
+<pinref part="PIN_ANALOG_16" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_17" gate="A" pin="15"/>
+<wire x1="104.14" y1="227.33" x2="111.76" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="119.38" y1="227.33" x2="111.76" y2="227.33" width="0.1524" layer="91"/>
+<junction x="119.38" y="227.33"/>
+<junction x="111.76" y="227.33"/>
+<pinref part="PIN_ANALOG_17" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_18" gate="A" pin="15"/>
+<wire x1="88.9" y1="227.33" x2="96.52" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="104.14" y1="227.33" x2="96.52" y2="227.33" width="0.1524" layer="91"/>
+<junction x="104.14" y="227.33"/>
+<junction x="96.52" y="227.33"/>
+<pinref part="PIN_ANALOG_18" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_19" gate="A" pin="15"/>
+<wire x1="73.66" y1="227.33" x2="81.28" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="227.33" x2="81.28" y2="227.33" width="0.1524" layer="91"/>
+<junction x="88.9" y="227.33"/>
+<junction x="81.28" y="227.33"/>
+<pinref part="PIN_ANALOG_21" gate="A" pin="15"/>
+<pinref part="PIN_ANALOG_20" gate="A" pin="16"/>
+<wire x1="50.8" y1="227.33" x2="33.02" y2="227.33" width="0.1524" layer="91"/>
+<pinref part="PIN_ANALOG_19" gate="A" pin="16"/>
+<pinref part="PIN_ANALOG_20" gate="A" pin="15"/>
+<wire x1="58.42" y1="227.33" x2="66.04" y2="227.33" width="0.1524" layer="91"/>
+<wire x1="50.8" y1="227.33" x2="58.42" y2="227.33" width="0.1524" layer="91"/>
+<junction x="50.8" y="227.33"/>
+<junction x="58.42" y="227.33"/>
+<wire x1="73.66" y1="227.33" x2="66.04" y2="227.33" width="0.1524" layer="91"/>
+<junction x="73.66" y="227.33"/>
+<junction x="66.04" y="227.33"/>
+<pinref part="PIN_ANALOG_21" gate="A" pin="16"/>
+<wire x1="33.02" y1="227.33" x2="25.4" y2="227.33" width="0.1524" layer="91"/>
+<junction x="33.02" y="227.33"/>
 </segment>
-</net>
-<net name="+3V3" class="2">
 <segment>
-<pinref part="+3V9" gate="G$1" pin="+3V3"/>
-<pinref part="PIN_AIN_IO2_PWRGND" gate="A" pin="3"/>
-<wire x1="76.2" y1="91.44" x2="76.2" y2="71.12" width="0.1524" layer="91"/>
-<wire x1="76.2" y1="71.12" x2="66.04" y2="71.12" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND2" gate="A" pin="6"/>
+<pinref part="GND1" gate="1" pin="GND"/>
+<wire x1="276.86" y1="144.78" x2="276.86" y2="162.56" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND2" gate="A" pin="8"/>
+<wire x1="276.86" y1="162.56" x2="281.94" y2="162.56" width="0.1524" layer="91"/>
+<wire x1="281.94" y1="160.02" x2="276.86" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="276.86" y1="160.02" x2="276.86" y2="162.56" width="0.1524" layer="91"/>
+<junction x="276.86" y="162.56"/>
+<wire x1="276.86" y1="154.94" x2="281.94" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND2" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND2" gate="A" pin="12"/>
+<wire x1="281.94" y1="157.48" x2="276.86" y2="157.48" width="0.1524" layer="91"/>
+<wire x1="276.86" y1="157.48" x2="276.86" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="276.86" y1="157.48" x2="276.86" y2="160.02" width="0.1524" layer="91"/>
+<junction x="276.86" y="157.48"/>
+<junction x="276.86" y="160.02"/>
+<pinref part="PIN_AIN_PWRGND2" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND2" gate="A" pin="16"/>
+<wire x1="276.86" y1="149.86" x2="281.94" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="281.94" y1="152.4" x2="276.86" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="276.86" y1="152.4" x2="276.86" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="276.86" y1="152.4" x2="276.86" y2="154.94" width="0.1524" layer="91"/>
+<junction x="276.86" y="152.4"/>
+<junction x="276.86" y="154.94"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND2" gate="A" pin="1"/>
+<pinref part="GND3" gate="1" pin="GND"/>
+<wire x1="289.56" y1="167.64" x2="294.64" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="294.64" y1="167.64" x2="294.64" y2="144.78" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND3" gate="A" pin="6"/>
+<pinref part="GND4" gate="1" pin="GND"/>
+<wire x1="193.04" y1="144.78" x2="193.04" y2="162.56" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND3" gate="A" pin="8"/>
+<wire x1="193.04" y1="162.56" x2="198.12" y2="162.56" width="0.1524" layer="91"/>
+<wire x1="198.12" y1="160.02" x2="193.04" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="193.04" y1="160.02" x2="193.04" y2="162.56" width="0.1524" layer="91"/>
+<junction x="193.04" y="162.56"/>
+<wire x1="193.04" y1="154.94" x2="198.12" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND3" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND3" gate="A" pin="12"/>
+<wire x1="198.12" y1="157.48" x2="193.04" y2="157.48" width="0.1524" layer="91"/>
+<wire x1="193.04" y1="157.48" x2="193.04" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="193.04" y1="157.48" x2="193.04" y2="160.02" width="0.1524" layer="91"/>
+<junction x="193.04" y="157.48"/>
+<junction x="193.04" y="160.02"/>
+<pinref part="PIN_AIN_PWRGND3" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND3" gate="A" pin="16"/>
+<wire x1="193.04" y1="149.86" x2="198.12" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="198.12" y1="152.4" x2="193.04" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="193.04" y1="152.4" x2="193.04" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="193.04" y1="152.4" x2="193.04" y2="154.94" width="0.1524" layer="91"/>
+<junction x="193.04" y="152.4"/>
+<junction x="193.04" y="154.94"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND3" gate="A" pin="1"/>
+<pinref part="GND5" gate="1" pin="GND"/>
+<wire x1="205.74" y1="167.64" x2="210.82" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="210.82" y1="167.64" x2="210.82" y2="144.78" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND4" gate="A" pin="6"/>
+<pinref part="GND6" gate="1" pin="GND"/>
+<wire x1="167.64" y1="144.78" x2="167.64" y2="162.56" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND4" gate="A" pin="8"/>
+<wire x1="167.64" y1="162.56" x2="172.72" y2="162.56" width="0.1524" layer="91"/>
+<wire x1="172.72" y1="160.02" x2="167.64" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="160.02" x2="167.64" y2="162.56" width="0.1524" layer="91"/>
+<junction x="167.64" y="162.56"/>
+<wire x1="167.64" y1="154.94" x2="172.72" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND4" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND4" gate="A" pin="12"/>
+<wire x1="172.72" y1="157.48" x2="167.64" y2="157.48" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="157.48" x2="167.64" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="157.48" x2="167.64" y2="160.02" width="0.1524" layer="91"/>
+<junction x="167.64" y="157.48"/>
+<junction x="167.64" y="160.02"/>
+<pinref part="PIN_AIN_PWRGND4" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND4" gate="A" pin="16"/>
+<wire x1="167.64" y1="149.86" x2="172.72" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="172.72" y1="152.4" x2="167.64" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="152.4" x2="167.64" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="152.4" x2="167.64" y2="154.94" width="0.1524" layer="91"/>
+<junction x="167.64" y="152.4"/>
+<junction x="167.64" y="154.94"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND4" gate="A" pin="1"/>
+<pinref part="GND8" gate="1" pin="GND"/>
+<wire x1="180.34" y1="167.64" x2="185.42" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="185.42" y1="167.64" x2="185.42" y2="144.78" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND5" gate="A" pin="6"/>
+<pinref part="GND9" gate="1" pin="GND"/>
+<wire x1="142.24" y1="144.78" x2="142.24" y2="162.56" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND5" gate="A" pin="8"/>
+<wire x1="142.24" y1="162.56" x2="147.32" y2="162.56" width="0.1524" layer="91"/>
+<wire x1="147.32" y1="160.02" x2="142.24" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="160.02" x2="142.24" y2="162.56" width="0.1524" layer="91"/>
+<junction x="142.24" y="162.56"/>
+<wire x1="142.24" y1="154.94" x2="147.32" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND5" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND5" gate="A" pin="12"/>
+<wire x1="147.32" y1="157.48" x2="142.24" y2="157.48" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="157.48" x2="142.24" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="157.48" x2="142.24" y2="160.02" width="0.1524" layer="91"/>
+<junction x="142.24" y="157.48"/>
+<junction x="142.24" y="160.02"/>
+<pinref part="PIN_AIN_PWRGND5" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND5" gate="A" pin="16"/>
+<wire x1="142.24" y1="149.86" x2="147.32" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="147.32" y1="152.4" x2="142.24" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="152.4" x2="142.24" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="152.4" x2="142.24" y2="154.94" width="0.1524" layer="91"/>
+<junction x="142.24" y="152.4"/>
+<junction x="142.24" y="154.94"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND5" gate="A" pin="1"/>
+<pinref part="GND10" gate="1" pin="GND"/>
+<wire x1="154.94" y1="167.64" x2="160.02" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="160.02" y1="167.64" x2="160.02" y2="144.78" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND6" gate="A" pin="6"/>
+<pinref part="GND11" gate="1" pin="GND"/>
+<wire x1="116.84" y1="144.78" x2="116.84" y2="162.56" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND6" gate="A" pin="8"/>
+<wire x1="116.84" y1="162.56" x2="121.92" y2="162.56" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="160.02" x2="116.84" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="160.02" x2="116.84" y2="162.56" width="0.1524" layer="91"/>
+<junction x="116.84" y="162.56"/>
+<wire x1="116.84" y1="154.94" x2="121.92" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND6" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND6" gate="A" pin="12"/>
+<wire x1="121.92" y1="157.48" x2="116.84" y2="157.48" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="157.48" x2="116.84" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="157.48" x2="116.84" y2="160.02" width="0.1524" layer="91"/>
+<junction x="116.84" y="157.48"/>
+<junction x="116.84" y="160.02"/>
+<pinref part="PIN_AIN_PWRGND6" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND6" gate="A" pin="16"/>
+<wire x1="116.84" y1="149.86" x2="121.92" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="152.4" x2="116.84" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="152.4" x2="116.84" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="152.4" x2="116.84" y2="154.94" width="0.1524" layer="91"/>
+<junction x="116.84" y="152.4"/>
+<junction x="116.84" y="154.94"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND6" gate="A" pin="1"/>
+<pinref part="GND12" gate="1" pin="GND"/>
+<wire x1="129.54" y1="167.64" x2="134.62" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="134.62" y1="167.64" x2="134.62" y2="144.78" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND7" gate="A" pin="6"/>
+<pinref part="GND14" gate="1" pin="GND"/>
+<wire x1="91.44" y1="144.78" x2="91.44" y2="162.56" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND7" gate="A" pin="8"/>
+<wire x1="91.44" y1="162.56" x2="96.52" y2="162.56" width="0.1524" layer="91"/>
+<wire x1="96.52" y1="160.02" x2="91.44" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="160.02" x2="91.44" y2="162.56" width="0.1524" layer="91"/>
+<junction x="91.44" y="162.56"/>
+<wire x1="91.44" y1="154.94" x2="96.52" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND7" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND7" gate="A" pin="12"/>
+<wire x1="96.52" y1="157.48" x2="91.44" y2="157.48" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="157.48" x2="91.44" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="157.48" x2="91.44" y2="160.02" width="0.1524" layer="91"/>
+<junction x="91.44" y="157.48"/>
+<junction x="91.44" y="160.02"/>
+<pinref part="PIN_AIN_PWRGND7" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND7" gate="A" pin="16"/>
+<wire x1="91.44" y1="149.86" x2="96.52" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="96.52" y1="152.4" x2="91.44" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="152.4" x2="91.44" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="152.4" x2="91.44" y2="154.94" width="0.1524" layer="91"/>
+<junction x="91.44" y="152.4"/>
+<junction x="91.44" y="154.94"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND7" gate="A" pin="1"/>
+<pinref part="GND15" gate="1" pin="GND"/>
+<wire x1="104.14" y1="167.64" x2="109.22" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="109.22" y1="167.64" x2="109.22" y2="144.78" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND8" gate="A" pin="6"/>
+<pinref part="GND16" gate="1" pin="GND"/>
+<wire x1="66.04" y1="144.78" x2="66.04" y2="162.56" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND8" gate="A" pin="8"/>
+<wire x1="66.04" y1="162.56" x2="71.12" y2="162.56" width="0.1524" layer="91"/>
+<wire x1="71.12" y1="160.02" x2="66.04" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="66.04" y1="160.02" x2="66.04" y2="162.56" width="0.1524" layer="91"/>
+<junction x="66.04" y="162.56"/>
+<wire x1="66.04" y1="154.94" x2="71.12" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND8" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND8" gate="A" pin="12"/>
+<wire x1="71.12" y1="157.48" x2="66.04" y2="157.48" width="0.1524" layer="91"/>
+<wire x1="66.04" y1="157.48" x2="66.04" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="66.04" y1="157.48" x2="66.04" y2="160.02" width="0.1524" layer="91"/>
+<junction x="66.04" y="157.48"/>
+<junction x="66.04" y="160.02"/>
+<pinref part="PIN_AIN_PWRGND8" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND8" gate="A" pin="16"/>
+<wire x1="66.04" y1="149.86" x2="71.12" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="71.12" y1="152.4" x2="66.04" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="66.04" y1="152.4" x2="66.04" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="66.04" y1="152.4" x2="66.04" y2="154.94" width="0.1524" layer="91"/>
+<junction x="66.04" y="152.4"/>
+<junction x="66.04" y="154.94"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND8" gate="A" pin="1"/>
+<pinref part="GND17" gate="1" pin="GND"/>
+<wire x1="78.74" y1="167.64" x2="83.82" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="83.82" y1="167.64" x2="83.82" y2="144.78" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND9" gate="A" pin="6"/>
+<pinref part="GND18" gate="1" pin="GND"/>
+<wire x1="40.64" y1="144.78" x2="40.64" y2="162.56" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND9" gate="A" pin="8"/>
+<wire x1="40.64" y1="162.56" x2="45.72" y2="162.56" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="160.02" x2="40.64" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="160.02" x2="40.64" y2="162.56" width="0.1524" layer="91"/>
+<junction x="40.64" y="162.56"/>
+<wire x1="40.64" y1="154.94" x2="45.72" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND9" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND9" gate="A" pin="12"/>
+<wire x1="45.72" y1="157.48" x2="40.64" y2="157.48" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="157.48" x2="40.64" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="157.48" x2="40.64" y2="160.02" width="0.1524" layer="91"/>
+<junction x="40.64" y="157.48"/>
+<junction x="40.64" y="160.02"/>
+<pinref part="PIN_AIN_PWRGND9" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND9" gate="A" pin="16"/>
+<wire x1="40.64" y1="149.86" x2="45.72" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="152.4" x2="40.64" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="152.4" x2="40.64" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="152.4" x2="40.64" y2="154.94" width="0.1524" layer="91"/>
+<junction x="40.64" y="152.4"/>
+<junction x="40.64" y="154.94"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND9" gate="A" pin="1"/>
+<pinref part="GND19" gate="1" pin="GND"/>
+<wire x1="53.34" y1="167.64" x2="58.42" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="58.42" y1="167.64" x2="58.42" y2="144.78" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND10" gate="A" pin="6"/>
+<pinref part="GND20" gate="1" pin="GND"/>
+<wire x1="15.24" y1="144.78" x2="15.24" y2="162.56" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND10" gate="A" pin="8"/>
+<wire x1="15.24" y1="162.56" x2="20.32" y2="162.56" width="0.1524" layer="91"/>
+<wire x1="20.32" y1="160.02" x2="15.24" y2="160.02" width="0.1524" layer="91"/>
+<wire x1="15.24" y1="160.02" x2="15.24" y2="162.56" width="0.1524" layer="91"/>
+<junction x="15.24" y="162.56"/>
+<wire x1="15.24" y1="154.94" x2="20.32" y2="154.94" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND10" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND10" gate="A" pin="12"/>
+<wire x1="20.32" y1="157.48" x2="15.24" y2="157.48" width="0.1524" layer="91"/>
+<wire x1="15.24" y1="157.48" x2="15.24" y2="154.94" width="0.1524" layer="91"/>
+<wire x1="15.24" y1="157.48" x2="15.24" y2="160.02" width="0.1524" layer="91"/>
+<junction x="15.24" y="157.48"/>
+<junction x="15.24" y="160.02"/>
+<pinref part="PIN_AIN_PWRGND10" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND10" gate="A" pin="16"/>
+<wire x1="15.24" y1="149.86" x2="20.32" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="20.32" y1="152.4" x2="15.24" y2="152.4" width="0.1524" layer="91"/>
+<wire x1="15.24" y1="152.4" x2="15.24" y2="149.86" width="0.1524" layer="91"/>
+<wire x1="15.24" y1="152.4" x2="15.24" y2="154.94" width="0.1524" layer="91"/>
+<junction x="15.24" y="152.4"/>
+<junction x="15.24" y="154.94"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND10" gate="A" pin="1"/>
+<pinref part="GND21" gate="1" pin="GND"/>
+<wire x1="27.94" y1="167.64" x2="33.02" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="33.02" y1="167.64" x2="33.02" y2="144.78" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND11" gate="A" pin="6"/>
+<pinref part="GND22" gate="1" pin="GND"/>
+<wire x1="347.98" y1="91.44" x2="347.98" y2="109.22" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND11" gate="A" pin="8"/>
+<wire x1="347.98" y1="109.22" x2="353.06" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="353.06" y1="106.68" x2="347.98" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="347.98" y1="106.68" x2="347.98" y2="109.22" width="0.1524" layer="91"/>
+<junction x="347.98" y="109.22"/>
+<wire x1="347.98" y1="101.6" x2="353.06" y2="101.6" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND11" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND11" gate="A" pin="12"/>
+<wire x1="353.06" y1="104.14" x2="347.98" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="347.98" y1="104.14" x2="347.98" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="347.98" y1="104.14" x2="347.98" y2="106.68" width="0.1524" layer="91"/>
+<junction x="347.98" y="104.14"/>
+<junction x="347.98" y="106.68"/>
+<pinref part="PIN_AIN_PWRGND11" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND11" gate="A" pin="16"/>
+<wire x1="347.98" y1="96.52" x2="353.06" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="353.06" y1="99.06" x2="347.98" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="347.98" y1="99.06" x2="347.98" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="347.98" y1="99.06" x2="347.98" y2="101.6" width="0.1524" layer="91"/>
+<junction x="347.98" y="99.06"/>
+<junction x="347.98" y="101.6"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND11" gate="A" pin="1"/>
+<pinref part="GND23" gate="1" pin="GND"/>
+<wire x1="360.68" y1="114.3" x2="365.76" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="365.76" y1="114.3" x2="365.76" y2="91.44" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND12" gate="A" pin="6"/>
+<pinref part="GND24" gate="1" pin="GND"/>
+<wire x1="322.58" y1="91.44" x2="322.58" y2="109.22" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND12" gate="A" pin="8"/>
+<wire x1="322.58" y1="109.22" x2="327.66" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="327.66" y1="106.68" x2="322.58" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="322.58" y1="106.68" x2="322.58" y2="109.22" width="0.1524" layer="91"/>
+<junction x="322.58" y="109.22"/>
+<wire x1="322.58" y1="101.6" x2="327.66" y2="101.6" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND12" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND12" gate="A" pin="12"/>
+<wire x1="327.66" y1="104.14" x2="322.58" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="322.58" y1="104.14" x2="322.58" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="322.58" y1="104.14" x2="322.58" y2="106.68" width="0.1524" layer="91"/>
+<junction x="322.58" y="104.14"/>
+<junction x="322.58" y="106.68"/>
+<pinref part="PIN_AIN_PWRGND12" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND12" gate="A" pin="16"/>
+<wire x1="322.58" y1="96.52" x2="327.66" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="327.66" y1="99.06" x2="322.58" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="322.58" y1="99.06" x2="322.58" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="322.58" y1="99.06" x2="322.58" y2="101.6" width="0.1524" layer="91"/>
+<junction x="322.58" y="99.06"/>
+<junction x="322.58" y="101.6"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND12" gate="A" pin="1"/>
+<pinref part="GND25" gate="1" pin="GND"/>
+<wire x1="335.28" y1="114.3" x2="340.36" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="340.36" y1="114.3" x2="340.36" y2="91.44" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND13" gate="A" pin="6"/>
+<pinref part="GND26" gate="1" pin="GND"/>
+<wire x1="297.18" y1="91.44" x2="297.18" y2="109.22" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND13" gate="A" pin="8"/>
+<wire x1="297.18" y1="109.22" x2="302.26" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="302.26" y1="106.68" x2="297.18" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="297.18" y1="106.68" x2="297.18" y2="109.22" width="0.1524" layer="91"/>
+<junction x="297.18" y="109.22"/>
+<wire x1="297.18" y1="101.6" x2="302.26" y2="101.6" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND13" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND13" gate="A" pin="12"/>
+<wire x1="302.26" y1="104.14" x2="297.18" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="297.18" y1="104.14" x2="297.18" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="297.18" y1="104.14" x2="297.18" y2="106.68" width="0.1524" layer="91"/>
+<junction x="297.18" y="104.14"/>
+<junction x="297.18" y="106.68"/>
+<pinref part="PIN_AIN_PWRGND13" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND13" gate="A" pin="16"/>
+<wire x1="297.18" y1="96.52" x2="302.26" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="302.26" y1="99.06" x2="297.18" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="297.18" y1="99.06" x2="297.18" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="297.18" y1="99.06" x2="297.18" y2="101.6" width="0.1524" layer="91"/>
+<junction x="297.18" y="99.06"/>
+<junction x="297.18" y="101.6"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND13" gate="A" pin="1"/>
+<pinref part="GND27" gate="1" pin="GND"/>
+<wire x1="309.88" y1="114.3" x2="314.96" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="314.96" y1="114.3" x2="314.96" y2="91.44" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND14" gate="A" pin="6"/>
+<pinref part="GND28" gate="1" pin="GND"/>
+<wire x1="271.78" y1="91.44" x2="271.78" y2="109.22" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND14" gate="A" pin="8"/>
+<wire x1="271.78" y1="109.22" x2="276.86" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="276.86" y1="106.68" x2="271.78" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="271.78" y1="106.68" x2="271.78" y2="109.22" width="0.1524" layer="91"/>
+<junction x="271.78" y="109.22"/>
+<wire x1="271.78" y1="101.6" x2="276.86" y2="101.6" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND14" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND14" gate="A" pin="12"/>
+<wire x1="276.86" y1="104.14" x2="271.78" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="271.78" y1="104.14" x2="271.78" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="271.78" y1="104.14" x2="271.78" y2="106.68" width="0.1524" layer="91"/>
+<junction x="271.78" y="104.14"/>
+<junction x="271.78" y="106.68"/>
+<pinref part="PIN_AIN_PWRGND14" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND14" gate="A" pin="16"/>
+<wire x1="271.78" y1="96.52" x2="276.86" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="276.86" y1="99.06" x2="271.78" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="271.78" y1="99.06" x2="271.78" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="271.78" y1="99.06" x2="271.78" y2="101.6" width="0.1524" layer="91"/>
+<junction x="271.78" y="99.06"/>
+<junction x="271.78" y="101.6"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND14" gate="A" pin="1"/>
+<pinref part="GND29" gate="1" pin="GND"/>
+<wire x1="284.48" y1="114.3" x2="289.56" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="289.56" y1="114.3" x2="289.56" y2="91.44" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND15" gate="A" pin="6"/>
+<pinref part="GND30" gate="1" pin="GND"/>
+<wire x1="243.84" y1="91.44" x2="243.84" y2="109.22" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND15" gate="A" pin="8"/>
+<wire x1="243.84" y1="109.22" x2="248.92" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="248.92" y1="106.68" x2="243.84" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="243.84" y1="106.68" x2="243.84" y2="109.22" width="0.1524" layer="91"/>
+<junction x="243.84" y="109.22"/>
+<wire x1="243.84" y1="101.6" x2="248.92" y2="101.6" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND15" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND15" gate="A" pin="12"/>
+<wire x1="248.92" y1="104.14" x2="243.84" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="243.84" y1="104.14" x2="243.84" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="243.84" y1="104.14" x2="243.84" y2="106.68" width="0.1524" layer="91"/>
+<junction x="243.84" y="104.14"/>
+<junction x="243.84" y="106.68"/>
+<pinref part="PIN_AIN_PWRGND15" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND15" gate="A" pin="16"/>
+<wire x1="243.84" y1="96.52" x2="248.92" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="248.92" y1="99.06" x2="243.84" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="243.84" y1="99.06" x2="243.84" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="243.84" y1="99.06" x2="243.84" y2="101.6" width="0.1524" layer="91"/>
+<junction x="243.84" y="99.06"/>
+<junction x="243.84" y="101.6"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND15" gate="A" pin="1"/>
+<pinref part="GND31" gate="1" pin="GND"/>
+<wire x1="256.54" y1="114.3" x2="261.62" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="261.62" y1="114.3" x2="261.62" y2="91.44" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND16" gate="A" pin="6"/>
+<pinref part="GND32" gate="1" pin="GND"/>
+<wire x1="218.44" y1="91.44" x2="218.44" y2="109.22" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND16" gate="A" pin="8"/>
+<wire x1="218.44" y1="109.22" x2="223.52" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="223.52" y1="106.68" x2="218.44" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="218.44" y1="106.68" x2="218.44" y2="109.22" width="0.1524" layer="91"/>
+<junction x="218.44" y="109.22"/>
+<wire x1="218.44" y1="101.6" x2="223.52" y2="101.6" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND16" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND16" gate="A" pin="12"/>
+<wire x1="223.52" y1="104.14" x2="218.44" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="218.44" y1="104.14" x2="218.44" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="218.44" y1="104.14" x2="218.44" y2="106.68" width="0.1524" layer="91"/>
+<junction x="218.44" y="104.14"/>
+<junction x="218.44" y="106.68"/>
+<pinref part="PIN_AIN_PWRGND16" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND16" gate="A" pin="16"/>
+<wire x1="218.44" y1="96.52" x2="223.52" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="223.52" y1="99.06" x2="218.44" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="218.44" y1="99.06" x2="218.44" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="218.44" y1="99.06" x2="218.44" y2="101.6" width="0.1524" layer="91"/>
+<junction x="218.44" y="99.06"/>
+<junction x="218.44" y="101.6"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND16" gate="A" pin="1"/>
+<pinref part="GND33" gate="1" pin="GND"/>
+<wire x1="231.14" y1="114.3" x2="236.22" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="236.22" y1="114.3" x2="236.22" y2="91.44" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND17" gate="A" pin="6"/>
+<pinref part="GND34" gate="1" pin="GND"/>
+<wire x1="193.04" y1="91.44" x2="193.04" y2="109.22" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND17" gate="A" pin="8"/>
+<wire x1="193.04" y1="109.22" x2="198.12" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="198.12" y1="106.68" x2="193.04" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="193.04" y1="106.68" x2="193.04" y2="109.22" width="0.1524" layer="91"/>
+<junction x="193.04" y="109.22"/>
+<wire x1="193.04" y1="101.6" x2="198.12" y2="101.6" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND17" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND17" gate="A" pin="12"/>
+<wire x1="198.12" y1="104.14" x2="193.04" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="193.04" y1="104.14" x2="193.04" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="193.04" y1="104.14" x2="193.04" y2="106.68" width="0.1524" layer="91"/>
+<junction x="193.04" y="104.14"/>
+<junction x="193.04" y="106.68"/>
+<pinref part="PIN_AIN_PWRGND17" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND17" gate="A" pin="16"/>
+<wire x1="193.04" y1="96.52" x2="198.12" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="198.12" y1="99.06" x2="193.04" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="193.04" y1="99.06" x2="193.04" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="193.04" y1="99.06" x2="193.04" y2="101.6" width="0.1524" layer="91"/>
+<junction x="193.04" y="99.06"/>
+<junction x="193.04" y="101.6"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND17" gate="A" pin="1"/>
+<pinref part="GND35" gate="1" pin="GND"/>
+<wire x1="205.74" y1="114.3" x2="210.82" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="210.82" y1="114.3" x2="210.82" y2="91.44" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND18" gate="A" pin="6"/>
+<pinref part="GND36" gate="1" pin="GND"/>
+<wire x1="167.64" y1="91.44" x2="167.64" y2="109.22" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND18" gate="A" pin="8"/>
+<wire x1="167.64" y1="109.22" x2="172.72" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="172.72" y1="106.68" x2="167.64" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="106.68" x2="167.64" y2="109.22" width="0.1524" layer="91"/>
+<junction x="167.64" y="109.22"/>
+<wire x1="167.64" y1="101.6" x2="172.72" y2="101.6" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND18" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND18" gate="A" pin="12"/>
+<wire x1="172.72" y1="104.14" x2="167.64" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="104.14" x2="167.64" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="104.14" x2="167.64" y2="106.68" width="0.1524" layer="91"/>
+<junction x="167.64" y="104.14"/>
+<junction x="167.64" y="106.68"/>
+<pinref part="PIN_AIN_PWRGND18" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND18" gate="A" pin="16"/>
+<wire x1="167.64" y1="96.52" x2="172.72" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="172.72" y1="99.06" x2="167.64" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="99.06" x2="167.64" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="99.06" x2="167.64" y2="101.6" width="0.1524" layer="91"/>
+<junction x="167.64" y="99.06"/>
+<junction x="167.64" y="101.6"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND18" gate="A" pin="1"/>
+<pinref part="GND37" gate="1" pin="GND"/>
+<wire x1="180.34" y1="114.3" x2="185.42" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="185.42" y1="114.3" x2="185.42" y2="91.44" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND19" gate="A" pin="6"/>
+<pinref part="GND39" gate="1" pin="GND"/>
+<wire x1="139.7" y1="91.44" x2="139.7" y2="109.22" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND19" gate="A" pin="8"/>
+<wire x1="139.7" y1="109.22" x2="144.78" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="144.78" y1="106.68" x2="139.7" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="139.7" y1="106.68" x2="139.7" y2="109.22" width="0.1524" layer="91"/>
+<junction x="139.7" y="109.22"/>
+<wire x1="139.7" y1="101.6" x2="144.78" y2="101.6" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND19" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND19" gate="A" pin="12"/>
+<wire x1="144.78" y1="104.14" x2="139.7" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="139.7" y1="104.14" x2="139.7" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="139.7" y1="104.14" x2="139.7" y2="106.68" width="0.1524" layer="91"/>
+<junction x="139.7" y="104.14"/>
+<junction x="139.7" y="106.68"/>
+<pinref part="PIN_AIN_PWRGND19" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND19" gate="A" pin="16"/>
+<wire x1="139.7" y1="96.52" x2="144.78" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="144.78" y1="99.06" x2="139.7" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="139.7" y1="99.06" x2="139.7" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="139.7" y1="99.06" x2="139.7" y2="101.6" width="0.1524" layer="91"/>
+<junction x="139.7" y="99.06"/>
+<junction x="139.7" y="101.6"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND19" gate="A" pin="1"/>
+<pinref part="GND40" gate="1" pin="GND"/>
+<wire x1="152.4" y1="114.3" x2="157.48" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="157.48" y1="114.3" x2="157.48" y2="91.44" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND20" gate="A" pin="6"/>
+<pinref part="GND41" gate="1" pin="GND"/>
+<wire x1="114.3" y1="91.44" x2="114.3" y2="109.22" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND20" gate="A" pin="8"/>
+<wire x1="114.3" y1="109.22" x2="119.38" y2="109.22" width="0.1524" layer="91"/>
+<wire x1="119.38" y1="106.68" x2="114.3" y2="106.68" width="0.1524" layer="91"/>
+<wire x1="114.3" y1="106.68" x2="114.3" y2="109.22" width="0.1524" layer="91"/>
+<junction x="114.3" y="109.22"/>
+<wire x1="114.3" y1="101.6" x2="119.38" y2="101.6" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND20" gate="A" pin="10"/>
+<pinref part="PIN_AIN_PWRGND20" gate="A" pin="12"/>
+<wire x1="119.38" y1="104.14" x2="114.3" y2="104.14" width="0.1524" layer="91"/>
+<wire x1="114.3" y1="104.14" x2="114.3" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="114.3" y1="104.14" x2="114.3" y2="106.68" width="0.1524" layer="91"/>
+<junction x="114.3" y="104.14"/>
+<junction x="114.3" y="106.68"/>
+<pinref part="PIN_AIN_PWRGND20" gate="A" pin="14"/>
+<pinref part="PIN_AIN_PWRGND20" gate="A" pin="16"/>
+<wire x1="114.3" y1="96.52" x2="119.38" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="119.38" y1="99.06" x2="114.3" y2="99.06" width="0.1524" layer="91"/>
+<wire x1="114.3" y1="99.06" x2="114.3" y2="96.52" width="0.1524" layer="91"/>
+<wire x1="114.3" y1="99.06" x2="114.3" y2="101.6" width="0.1524" layer="91"/>
+<junction x="114.3" y="99.06"/>
+<junction x="114.3" y="101.6"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND20" gate="A" pin="1"/>
+<pinref part="GND42" gate="1" pin="GND"/>
+<wire x1="127" y1="114.3" x2="132.08" y2="114.3" width="0.1524" layer="91"/>
+<wire x1="132.08" y1="114.3" x2="132.08" y2="91.44" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND21" gate="A" pin="16"/>
+<pinref part="GND38" gate="1" pin="GND"/>
+<wire x1="43.18" y1="96.52" x2="43.18" y2="88.9" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND21" gate="A" pin="15"/>
+<wire x1="50.8" y1="96.52" x2="43.18" y2="96.52" width="0.1524" layer="91"/>
+<junction x="43.18" y="96.52"/>
+</segment>
+<segment>
+<pinref part="GND2" gate="1" pin="GND"/>
+<pinref part="PIN_ANALOG_21" gate="A" pin="2"/>
+<wire x1="25.4" y1="203.2" x2="25.4" y2="209.55" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="AIN1" class="0">
 <segment>
-<label x="45.72" y="68.58" size="1.778" layer="95"/>
-<wire x1="58.42" y1="68.58" x2="45.72" y2="68.58" width="0.1524" layer="91"/>
-<pinref part="PIN_AIN_IO2_PWRGND" gate="A" pin="2"/>
-</segment>
-</net>
-<net name="CLKOUTTOLEFT_29" class="0">
-<segment>
-<wire x1="66.04" y1="166.37" x2="96.774" y2="166.37" width="0.1524" layer="91"/>
-<label x="96.52" y="166.37" size="1.778" layer="95" rot="MR0"/>
-<pinref part="PIN_ANALOG_IOEXP1" gate="A" pin="2"/>
-</segment>
-</net>
-<net name="TRIGOUTTOLEFT_106" class="0">
-<segment>
-<wire x1="66.04" y1="156.21" x2="96.52" y2="156.21" width="0.1524" layer="91"/>
-<label x="96.52" y="156.21" size="1.778" layer="95" rot="MR0"/>
-<pinref part="PIN_ANALOG_IOEXP1" gate="A" pin="10"/>
+<label x="320.04" y="167.64" size="1.778" layer="95" rot="MR180"/>
+<wire x1="332.74" y1="167.64" x2="320.04" y2="167.64" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND1" gate="A" pin="2"/>
 </segment>
 </net>
 <net name="TRIGINFROMRIGHT_86" class="0">
 <segment>
-<label x="53.34" y="156.21" size="1.778" layer="95" rot="MR0"/>
-<wire x1="58.42" y1="156.21" x2="20.32" y2="156.21" width="0.1524" layer="91"/>
-<pinref part="PIN_ANALOG_IOEXP1" gate="A" pin="9"/>
+<label x="353.06" y="219.71" size="1.778" layer="95" rot="MR180"/>
+<wire x1="347.98" y1="219.71" x2="383.54" y2="219.71" width="0.1524" layer="91"/>
+<pinref part="PIN_ANALOG_1" gate="A" pin="9"/>
 </segment>
 </net>
 <net name="SERIALTORIGHT_RX_92" class="0">
 <segment>
-<label x="53.34" y="151.13" size="1.778" layer="95" rot="MR0"/>
-<wire x1="58.42" y1="151.13" x2="20.32" y2="151.13" width="0.1524" layer="91"/>
-<pinref part="PIN_ANALOG_IOEXP1" gate="A" pin="13"/>
+<label x="353.06" y="224.79" size="1.778" layer="95" rot="MR180"/>
+<wire x1="347.98" y1="224.79" x2="378.46" y2="224.79" width="0.1524" layer="91"/>
+<pinref part="PIN_ANALOG_1" gate="A" pin="13"/>
 </segment>
 </net>
 <net name="SERIALFROMRIGHT_TX_93" class="0">
 <segment>
-<label x="53.34" y="153.67" size="1.778" layer="95" rot="MR0"/>
-<wire x1="58.42" y1="153.67" x2="20.32" y2="153.67" width="0.1524" layer="91"/>
-<pinref part="PIN_ANALOG_IOEXP1" gate="A" pin="11"/>
-</segment>
-</net>
-<net name="SERIALTOLEFT_96" class="0">
-<segment>
-<wire x1="96.52" y1="153.67" x2="66.04" y2="153.67" width="0.1524" layer="91"/>
-<label x="96.52" y="153.67" size="1.778" layer="95" rot="MR0"/>
-<pinref part="PIN_ANALOG_IOEXP1" gate="A" pin="12"/>
-</segment>
-</net>
-<net name="SERIALFROMLEFT_98" class="0">
-<segment>
-<wire x1="96.52" y1="151.13" x2="66.04" y2="151.13" width="0.1524" layer="91"/>
-<label x="96.52" y="151.13" size="1.778" layer="95" rot="MR0"/>
-<pinref part="PIN_ANALOG_IOEXP1" gate="A" pin="14"/>
+<label x="353.06" y="222.25" size="1.778" layer="95" rot="MR180"/>
+<wire x1="347.98" y1="222.25" x2="383.54" y2="222.25" width="0.1524" layer="91"/>
+<pinref part="PIN_ANALOG_1" gate="A" pin="11"/>
 </segment>
 </net>
 <net name="CLKINFROMRIGHT_26" class="0">
 <segment>
-<wire x1="58.42" y1="166.37" x2="20.32" y2="166.37" width="0.1524" layer="91"/>
-<label x="53.34" y="166.37" size="1.778" layer="95" rot="MR0"/>
-<pinref part="PIN_ANALOG_IOEXP1" gate="A" pin="1"/>
-</segment>
-</net>
-<net name="SPARELEFT_102" class="0">
-<segment>
-<wire x1="96.52" y1="163.83" x2="66.04" y2="163.83" width="0.1524" layer="91"/>
-<label x="96.52" y="163.83" size="1.778" layer="95" rot="MR0"/>
-<pinref part="PIN_ANALOG_IOEXP1" gate="A" pin="4"/>
+<wire x1="347.98" y1="209.55" x2="381" y2="209.55" width="0.1524" layer="91"/>
+<label x="353.06" y="209.55" size="1.778" layer="95" rot="MR180"/>
+<pinref part="PIN_ANALOG_1" gate="A" pin="1"/>
 </segment>
 </net>
 <net name="SPARERIGHT_99" class="0">
 <segment>
-<wire x1="58.42" y1="163.83" x2="20.32" y2="163.83" width="0.1524" layer="91"/>
-<label x="53.34" y="163.83" size="1.778" layer="95" rot="MR0"/>
-<pinref part="PIN_ANALOG_IOEXP1" gate="A" pin="3"/>
+<wire x1="347.98" y1="212.09" x2="378.46" y2="212.09" width="0.1524" layer="91"/>
+<label x="353.06" y="212.09" size="1.778" layer="95" rot="MR180"/>
+<pinref part="PIN_ANALOG_1" gate="A" pin="3"/>
 </segment>
 </net>
 <net name="5VINFROMRIGHT" class="3">
 <segment>
-<wire x1="20.32" y1="161.29" x2="58.42" y2="161.29" width="0.1524" layer="91"/>
-<label x="53.34" y="161.29" size="1.778" layer="95" rot="MR0"/>
-<pinref part="PIN_ANALOG_IOEXP1" gate="A" pin="5"/>
+<wire x1="381" y1="214.63" x2="347.98" y2="214.63" width="0.1524" layer="91"/>
+<label x="353.06" y="214.63" size="1.778" layer="95" rot="MR180"/>
+<pinref part="PIN_ANALOG_1" gate="A" pin="5"/>
 </segment>
 </net>
-<net name="IO_101" class="0">
+<net name="IO_101_1" class="0">
 <segment>
-<wire x1="66.04" y1="86.36" x2="91.44" y2="86.36" width="0.1524" layer="91"/>
-<label x="91.44" y="86.36" size="1.778" layer="95" rot="MR0"/>
-<pinref part="PIN_AIN_IO2_PWRGND" gate="A" pin="15"/>
+<wire x1="340.36" y1="149.86" x2="365.76" y2="149.86" width="0.1524" layer="91"/>
+<label x="365.76" y="149.86" size="1.778" layer="95" rot="R180"/>
+<pinref part="PIN_AIN_PWRGND1" gate="A" pin="15"/>
+</segment>
+<segment>
+<pinref part="PIN_ANALOG_21" gate="A" pin="4"/>
+<wire x1="25.4" y1="212.09" x2="7.62" y2="212.09" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="212.09" x2="7.62" y2="210.82" width="0.1524" layer="91"/>
+<label x="7.62" y="210.82" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="IO_100" class="0">
+<net name="IO_100_1" class="0">
 <segment>
-<wire x1="66.04" y1="83.82" x2="91.44" y2="83.82" width="0.1524" layer="91"/>
-<label x="91.44" y="83.82" size="1.778" layer="95" rot="MR0"/>
-<pinref part="PIN_AIN_IO2_PWRGND" gate="A" pin="13"/>
+<wire x1="340.36" y1="152.4" x2="365.76" y2="152.4" width="0.1524" layer="91"/>
+<label x="365.76" y="152.4" size="1.778" layer="95" rot="R180"/>
+<pinref part="PIN_AIN_PWRGND1" gate="A" pin="13"/>
 </segment>
 </net>
-<net name="IO_CLK_91" class="0">
+<net name="IO_CLK_91_1" class="0">
 <segment>
-<wire x1="91.44" y1="81.28" x2="66.04" y2="81.28" width="0.1524" layer="91"/>
-<label x="91.44" y="81.28" size="1.778" layer="95" rot="MR0"/>
-<pinref part="PIN_AIN_IO2_PWRGND" gate="A" pin="11"/>
+<wire x1="365.76" y1="154.94" x2="340.36" y2="154.94" width="0.1524" layer="91"/>
+<label x="365.76" y="154.94" size="1.778" layer="95" rot="R180"/>
+<pinref part="PIN_AIN_PWRGND1" gate="A" pin="11"/>
 </segment>
 </net>
-<net name="IO_CLK_90" class="0">
+<net name="IO_CLK_90_!" class="0">
 <segment>
-<wire x1="66.04" y1="78.74" x2="91.44" y2="78.74" width="0.1524" layer="91"/>
-<label x="91.44" y="78.74" size="1.778" layer="95" rot="MR0"/>
-<pinref part="PIN_AIN_IO2_PWRGND" gate="A" pin="9"/>
+<wire x1="340.36" y1="157.48" x2="365.76" y2="157.48" width="0.1524" layer="91"/>
+<label x="365.76" y="157.48" size="1.778" layer="95" rot="R180"/>
+<pinref part="PIN_AIN_PWRGND1" gate="A" pin="9"/>
 </segment>
 </net>
-<net name="IO_CLK_89" class="0">
+<net name="IO_CLK_89_1" class="0">
 <segment>
-<wire x1="66.04" y1="76.2" x2="91.44" y2="76.2" width="0.1524" layer="91"/>
-<label x="91.44" y="76.2" size="1.778" layer="95" rot="MR0"/>
-<pinref part="PIN_AIN_IO2_PWRGND" gate="A" pin="7"/>
+<wire x1="340.36" y1="160.02" x2="365.76" y2="160.02" width="0.1524" layer="91"/>
+<label x="365.76" y="160.02" size="1.778" layer="95" rot="R180"/>
+<pinref part="PIN_AIN_PWRGND1" gate="A" pin="7"/>
 </segment>
 </net>
-<net name="IO_CLK_88" class="0">
+<net name="IO_CLK_88_1" class="0">
 <segment>
-<wire x1="66.04" y1="73.66" x2="91.44" y2="73.66" width="0.1524" layer="91"/>
-<label x="91.44" y="73.66" size="1.778" layer="95" rot="MR0"/>
-<pinref part="PIN_AIN_IO2_PWRGND" gate="A" pin="5"/>
+<wire x1="340.36" y1="162.56" x2="365.76" y2="162.56" width="0.1524" layer="91"/>
+<label x="365.76" y="162.56" size="1.778" layer="95" rot="R180"/>
+<pinref part="PIN_AIN_PWRGND1" gate="A" pin="5"/>
 </segment>
 </net>
 <net name="L121" class="0">
 <segment>
-<wire x1="45.72" y1="71.12" x2="58.42" y2="71.12" width="0.1524" layer="91"/>
-<label x="45.72" y="71.12" size="1.778" layer="95"/>
-<pinref part="PIN_AIN_IO2_PWRGND" gate="A" pin="4"/>
-</segment>
-</net>
-<net name="TRIGINFROMLEFT_28" class="0">
-<segment>
-<wire x1="96.52" y1="158.75" x2="66.04" y2="158.75" width="0.1524" layer="91"/>
-<label x="96.52" y="158.75" size="1.778" layer="95" rot="MR0"/>
-<pinref part="PIN_ANALOG_IOEXP1" gate="A" pin="8"/>
+<wire x1="320.04" y1="165.1" x2="332.74" y2="165.1" width="0.1524" layer="91"/>
+<label x="320.04" y="165.1" size="1.778" layer="95" rot="MR180"/>
+<pinref part="PIN_AIN_PWRGND1" gate="A" pin="4"/>
 </segment>
 </net>
 <net name="TRIGOUTORIGHT_87" class="0">
 <segment>
-<label x="53.34" y="158.75" size="1.778" layer="95" rot="MR0"/>
-<wire x1="58.42" y1="158.75" x2="20.32" y2="158.75" width="0.1524" layer="91"/>
-<pinref part="PIN_ANALOG_IOEXP1" gate="A" pin="7"/>
+<label x="353.06" y="217.17" size="1.778" layer="95" rot="MR180"/>
+<wire x1="347.98" y1="217.17" x2="383.54" y2="217.17" width="0.1524" layer="91"/>
+<pinref part="PIN_ANALOG_1" gate="A" pin="7"/>
+</segment>
+</net>
+<net name="N$1" class="0">
+<segment>
+<pinref part="PIN_ANALOG_1" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_2" gate="A" pin="13"/>
+<wire x1="340.36" y1="224.79" x2="332.74" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$2" class="0">
+<segment>
+<pinref part="PIN_ANALOG_2" gate="A" pin="11"/>
+<pinref part="PIN_ANALOG_1" gate="A" pin="12"/>
+<wire x1="332.74" y1="222.25" x2="340.36" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$3" class="0">
+<segment>
+<pinref part="PIN_ANALOG_1" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_2" gate="A" pin="9"/>
+<wire x1="340.36" y1="219.71" x2="332.74" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$4" class="0">
+<segment>
+<pinref part="PIN_ANALOG_1" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_2" gate="A" pin="7"/>
+<wire x1="340.36" y1="217.17" x2="332.74" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$5" class="0">
+<segment>
+<pinref part="PIN_ANALOG_1" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_2" gate="A" pin="3"/>
+<wire x1="340.36" y1="212.09" x2="332.74" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$6" class="0">
+<segment>
+<pinref part="PIN_ANALOG_2" gate="A" pin="1"/>
+<pinref part="PIN_ANALOG_1" gate="A" pin="2"/>
+<wire x1="332.74" y1="209.55" x2="340.36" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$7" class="0">
+<segment>
+<pinref part="PIN_ANALOG_2" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_3" gate="A" pin="1"/>
+<wire x1="317.5" y1="209.55" x2="325.12" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$8" class="0">
+<segment>
+<pinref part="PIN_ANALOG_2" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_3" gate="A" pin="3"/>
+<wire x1="317.5" y1="212.09" x2="325.12" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$10" class="0">
+<segment>
+<pinref part="PIN_ANALOG_2" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_3" gate="A" pin="7"/>
+<wire x1="317.5" y1="217.17" x2="325.12" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$11" class="0">
+<segment>
+<pinref part="PIN_ANALOG_2" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_3" gate="A" pin="9"/>
+<wire x1="317.5" y1="219.71" x2="325.12" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$12" class="0">
+<segment>
+<pinref part="PIN_ANALOG_2" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_3" gate="A" pin="11"/>
+<wire x1="317.5" y1="222.25" x2="325.12" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$13" class="0">
+<segment>
+<pinref part="PIN_ANALOG_2" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_3" gate="A" pin="13"/>
+<wire x1="317.5" y1="224.79" x2="325.12" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$15" class="0">
+<segment>
+<pinref part="PIN_ANALOG_3" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_4" gate="A" pin="1"/>
+<wire x1="302.26" y1="209.55" x2="309.88" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$16" class="0">
+<segment>
+<pinref part="PIN_ANALOG_3" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_4" gate="A" pin="3"/>
+<wire x1="302.26" y1="212.09" x2="309.88" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$19" class="0">
+<segment>
+<pinref part="PIN_ANALOG_3" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_4" gate="A" pin="7"/>
+<wire x1="302.26" y1="217.17" x2="309.88" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$20" class="0">
+<segment>
+<pinref part="PIN_ANALOG_3" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_4" gate="A" pin="9"/>
+<wire x1="302.26" y1="219.71" x2="309.88" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$21" class="0">
+<segment>
+<pinref part="PIN_ANALOG_3" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_4" gate="A" pin="11"/>
+<wire x1="302.26" y1="222.25" x2="309.88" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$22" class="0">
+<segment>
+<pinref part="PIN_ANALOG_3" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_4" gate="A" pin="13"/>
+<wire x1="302.26" y1="224.79" x2="309.88" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$24" class="0">
+<segment>
+<pinref part="PIN_ANALOG_4" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_5" gate="A" pin="1"/>
+<wire x1="287.02" y1="209.55" x2="294.64" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$25" class="0">
+<segment>
+<pinref part="PIN_ANALOG_4" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_5" gate="A" pin="3"/>
+<wire x1="287.02" y1="212.09" x2="294.64" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$27" class="0">
+<segment>
+<pinref part="PIN_ANALOG_4" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_5" gate="A" pin="7"/>
+<wire x1="287.02" y1="217.17" x2="294.64" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$28" class="0">
+<segment>
+<pinref part="PIN_ANALOG_4" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_5" gate="A" pin="9"/>
+<wire x1="287.02" y1="219.71" x2="294.64" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$29" class="0">
+<segment>
+<pinref part="PIN_ANALOG_4" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_5" gate="A" pin="11"/>
+<wire x1="287.02" y1="222.25" x2="294.64" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$30" class="0">
+<segment>
+<pinref part="PIN_ANALOG_4" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_5" gate="A" pin="13"/>
+<wire x1="287.02" y1="224.79" x2="294.64" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$32" class="0">
+<segment>
+<pinref part="PIN_ANALOG_5" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_6" gate="A" pin="1"/>
+<wire x1="271.78" y1="209.55" x2="279.4" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$33" class="0">
+<segment>
+<pinref part="PIN_ANALOG_5" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_6" gate="A" pin="3"/>
+<wire x1="271.78" y1="212.09" x2="279.4" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$35" class="0">
+<segment>
+<pinref part="PIN_ANALOG_5" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_6" gate="A" pin="7"/>
+<wire x1="271.78" y1="217.17" x2="279.4" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$36" class="0">
+<segment>
+<pinref part="PIN_ANALOG_5" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_6" gate="A" pin="9"/>
+<wire x1="271.78" y1="219.71" x2="279.4" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$37" class="0">
+<segment>
+<pinref part="PIN_ANALOG_5" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_6" gate="A" pin="11"/>
+<wire x1="271.78" y1="222.25" x2="279.4" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$38" class="0">
+<segment>
+<pinref part="PIN_ANALOG_5" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_6" gate="A" pin="13"/>
+<wire x1="271.78" y1="224.79" x2="279.4" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$40" class="0">
+<segment>
+<pinref part="PIN_ANALOG_6" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_7" gate="A" pin="1"/>
+<wire x1="256.54" y1="209.55" x2="264.16" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$41" class="0">
+<segment>
+<pinref part="PIN_ANALOG_6" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_7" gate="A" pin="3"/>
+<wire x1="256.54" y1="212.09" x2="264.16" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$43" class="0">
+<segment>
+<pinref part="PIN_ANALOG_6" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_7" gate="A" pin="7"/>
+<wire x1="256.54" y1="217.17" x2="264.16" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$44" class="0">
+<segment>
+<pinref part="PIN_ANALOG_6" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_7" gate="A" pin="9"/>
+<wire x1="256.54" y1="219.71" x2="264.16" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$45" class="0">
+<segment>
+<pinref part="PIN_ANALOG_6" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_7" gate="A" pin="11"/>
+<wire x1="256.54" y1="222.25" x2="264.16" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$46" class="0">
+<segment>
+<pinref part="PIN_ANALOG_6" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_7" gate="A" pin="13"/>
+<wire x1="256.54" y1="224.79" x2="264.16" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$48" class="0">
+<segment>
+<pinref part="PIN_ANALOG_7" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_8" gate="A" pin="1"/>
+<wire x1="241.3" y1="209.55" x2="248.92" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$49" class="0">
+<segment>
+<pinref part="PIN_ANALOG_7" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_8" gate="A" pin="3"/>
+<wire x1="241.3" y1="212.09" x2="248.92" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$51" class="0">
+<segment>
+<pinref part="PIN_ANALOG_7" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_8" gate="A" pin="7"/>
+<wire x1="241.3" y1="217.17" x2="248.92" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$52" class="0">
+<segment>
+<pinref part="PIN_ANALOG_7" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_8" gate="A" pin="9"/>
+<wire x1="241.3" y1="219.71" x2="248.92" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$53" class="0">
+<segment>
+<pinref part="PIN_ANALOG_7" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_8" gate="A" pin="11"/>
+<wire x1="241.3" y1="222.25" x2="248.92" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$54" class="0">
+<segment>
+<pinref part="PIN_ANALOG_7" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_8" gate="A" pin="13"/>
+<wire x1="241.3" y1="224.79" x2="248.92" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$56" class="0">
+<segment>
+<pinref part="PIN_ANALOG_8" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_9" gate="A" pin="1"/>
+<wire x1="226.06" y1="209.55" x2="233.68" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$57" class="0">
+<segment>
+<pinref part="PIN_ANALOG_8" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_9" gate="A" pin="3"/>
+<wire x1="226.06" y1="212.09" x2="233.68" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$59" class="0">
+<segment>
+<pinref part="PIN_ANALOG_8" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_9" gate="A" pin="7"/>
+<wire x1="226.06" y1="217.17" x2="233.68" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$60" class="0">
+<segment>
+<pinref part="PIN_ANALOG_8" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_9" gate="A" pin="9"/>
+<wire x1="226.06" y1="219.71" x2="233.68" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$61" class="0">
+<segment>
+<pinref part="PIN_ANALOG_8" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_9" gate="A" pin="11"/>
+<wire x1="226.06" y1="222.25" x2="233.68" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$62" class="0">
+<segment>
+<pinref part="PIN_ANALOG_8" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_9" gate="A" pin="13"/>
+<wire x1="226.06" y1="224.79" x2="233.68" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$64" class="0">
+<segment>
+<pinref part="PIN_ANALOG_9" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_10" gate="A" pin="1"/>
+<wire x1="210.82" y1="209.55" x2="218.44" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$65" class="0">
+<segment>
+<pinref part="PIN_ANALOG_9" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_10" gate="A" pin="3"/>
+<wire x1="210.82" y1="212.09" x2="218.44" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$67" class="0">
+<segment>
+<pinref part="PIN_ANALOG_9" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_10" gate="A" pin="7"/>
+<wire x1="210.82" y1="217.17" x2="218.44" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$68" class="0">
+<segment>
+<pinref part="PIN_ANALOG_9" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_10" gate="A" pin="9"/>
+<wire x1="210.82" y1="219.71" x2="218.44" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$69" class="0">
+<segment>
+<pinref part="PIN_ANALOG_9" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_10" gate="A" pin="11"/>
+<wire x1="210.82" y1="222.25" x2="218.44" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$70" class="0">
+<segment>
+<pinref part="PIN_ANALOG_9" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_10" gate="A" pin="13"/>
+<wire x1="210.82" y1="224.79" x2="218.44" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$72" class="0">
+<segment>
+<pinref part="PIN_ANALOG_10" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_11" gate="A" pin="1"/>
+<wire x1="195.58" y1="209.55" x2="203.2" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$73" class="0">
+<segment>
+<pinref part="PIN_ANALOG_10" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_11" gate="A" pin="3"/>
+<wire x1="195.58" y1="212.09" x2="203.2" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$74" class="0">
+<segment>
+<pinref part="PIN_ANALOG_10" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_11" gate="A" pin="5"/>
+<wire x1="195.58" y1="214.63" x2="203.2" y2="214.63" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$75" class="0">
+<segment>
+<pinref part="PIN_ANALOG_10" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_11" gate="A" pin="7"/>
+<wire x1="195.58" y1="217.17" x2="203.2" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$76" class="0">
+<segment>
+<pinref part="PIN_ANALOG_10" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_11" gate="A" pin="9"/>
+<wire x1="195.58" y1="219.71" x2="203.2" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$77" class="0">
+<segment>
+<pinref part="PIN_ANALOG_10" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_11" gate="A" pin="11"/>
+<wire x1="195.58" y1="222.25" x2="203.2" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$78" class="0">
+<segment>
+<pinref part="PIN_ANALOG_10" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_11" gate="A" pin="13"/>
+<wire x1="195.58" y1="224.79" x2="203.2" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$80" class="0">
+<segment>
+<pinref part="PIN_ANALOG_11" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_12" gate="A" pin="1"/>
+<wire x1="180.34" y1="209.55" x2="187.96" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$81" class="0">
+<segment>
+<pinref part="PIN_ANALOG_11" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_12" gate="A" pin="3"/>
+<wire x1="180.34" y1="212.09" x2="187.96" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$82" class="0">
+<segment>
+<pinref part="PIN_ANALOG_11" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_12" gate="A" pin="5"/>
+<wire x1="180.34" y1="214.63" x2="187.96" y2="214.63" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$83" class="0">
+<segment>
+<pinref part="PIN_ANALOG_11" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_12" gate="A" pin="7"/>
+<wire x1="180.34" y1="217.17" x2="187.96" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$84" class="0">
+<segment>
+<pinref part="PIN_ANALOG_11" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_12" gate="A" pin="9"/>
+<wire x1="180.34" y1="219.71" x2="187.96" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$85" class="0">
+<segment>
+<pinref part="PIN_ANALOG_11" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_12" gate="A" pin="11"/>
+<wire x1="180.34" y1="222.25" x2="187.96" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$86" class="0">
+<segment>
+<pinref part="PIN_ANALOG_11" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_12" gate="A" pin="13"/>
+<wire x1="180.34" y1="224.79" x2="187.96" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$88" class="0">
+<segment>
+<pinref part="PIN_ANALOG_12" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_13" gate="A" pin="1"/>
+<wire x1="165.1" y1="209.55" x2="172.72" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$89" class="0">
+<segment>
+<pinref part="PIN_ANALOG_12" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_13" gate="A" pin="3"/>
+<wire x1="165.1" y1="212.09" x2="172.72" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$90" class="0">
+<segment>
+<pinref part="PIN_ANALOG_12" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_13" gate="A" pin="5"/>
+<wire x1="165.1" y1="214.63" x2="172.72" y2="214.63" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$91" class="0">
+<segment>
+<pinref part="PIN_ANALOG_12" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_13" gate="A" pin="7"/>
+<wire x1="165.1" y1="217.17" x2="172.72" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$92" class="0">
+<segment>
+<pinref part="PIN_ANALOG_12" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_13" gate="A" pin="9"/>
+<wire x1="165.1" y1="219.71" x2="172.72" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$93" class="0">
+<segment>
+<pinref part="PIN_ANALOG_12" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_13" gate="A" pin="11"/>
+<wire x1="165.1" y1="222.25" x2="172.72" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$94" class="0">
+<segment>
+<pinref part="PIN_ANALOG_12" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_13" gate="A" pin="13"/>
+<wire x1="165.1" y1="224.79" x2="172.72" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$96" class="0">
+<segment>
+<pinref part="PIN_ANALOG_13" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_14" gate="A" pin="1"/>
+<wire x1="149.86" y1="209.55" x2="157.48" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$97" class="0">
+<segment>
+<pinref part="PIN_ANALOG_13" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_14" gate="A" pin="3"/>
+<wire x1="149.86" y1="212.09" x2="157.48" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$98" class="0">
+<segment>
+<pinref part="PIN_ANALOG_13" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_14" gate="A" pin="5"/>
+<wire x1="149.86" y1="214.63" x2="157.48" y2="214.63" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$99" class="0">
+<segment>
+<pinref part="PIN_ANALOG_13" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_14" gate="A" pin="7"/>
+<wire x1="149.86" y1="217.17" x2="157.48" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$100" class="0">
+<segment>
+<pinref part="PIN_ANALOG_13" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_14" gate="A" pin="9"/>
+<wire x1="149.86" y1="219.71" x2="157.48" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$101" class="0">
+<segment>
+<pinref part="PIN_ANALOG_13" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_14" gate="A" pin="11"/>
+<wire x1="149.86" y1="222.25" x2="157.48" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$102" class="0">
+<segment>
+<pinref part="PIN_ANALOG_13" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_14" gate="A" pin="13"/>
+<wire x1="149.86" y1="224.79" x2="157.48" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$104" class="0">
+<segment>
+<pinref part="PIN_ANALOG_14" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_15" gate="A" pin="1"/>
+<wire x1="134.62" y1="209.55" x2="142.24" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$105" class="0">
+<segment>
+<pinref part="PIN_ANALOG_14" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_15" gate="A" pin="3"/>
+<wire x1="134.62" y1="212.09" x2="142.24" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$106" class="0">
+<segment>
+<pinref part="PIN_ANALOG_14" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_15" gate="A" pin="5"/>
+<wire x1="134.62" y1="214.63" x2="142.24" y2="214.63" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$107" class="0">
+<segment>
+<pinref part="PIN_ANALOG_14" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_15" gate="A" pin="7"/>
+<wire x1="134.62" y1="217.17" x2="142.24" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$108" class="0">
+<segment>
+<pinref part="PIN_ANALOG_14" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_15" gate="A" pin="9"/>
+<wire x1="134.62" y1="219.71" x2="142.24" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$109" class="0">
+<segment>
+<pinref part="PIN_ANALOG_14" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_15" gate="A" pin="11"/>
+<wire x1="134.62" y1="222.25" x2="142.24" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$110" class="0">
+<segment>
+<pinref part="PIN_ANALOG_14" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_15" gate="A" pin="13"/>
+<wire x1="134.62" y1="224.79" x2="142.24" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$112" class="0">
+<segment>
+<pinref part="PIN_ANALOG_15" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_16" gate="A" pin="1"/>
+<wire x1="119.38" y1="209.55" x2="127" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$113" class="0">
+<segment>
+<pinref part="PIN_ANALOG_15" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_16" gate="A" pin="3"/>
+<wire x1="119.38" y1="212.09" x2="127" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$114" class="0">
+<segment>
+<pinref part="PIN_ANALOG_15" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_16" gate="A" pin="5"/>
+<wire x1="119.38" y1="214.63" x2="127" y2="214.63" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$115" class="0">
+<segment>
+<pinref part="PIN_ANALOG_15" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_16" gate="A" pin="7"/>
+<wire x1="119.38" y1="217.17" x2="127" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$116" class="0">
+<segment>
+<pinref part="PIN_ANALOG_15" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_16" gate="A" pin="9"/>
+<wire x1="119.38" y1="219.71" x2="127" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$117" class="0">
+<segment>
+<pinref part="PIN_ANALOG_15" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_16" gate="A" pin="11"/>
+<wire x1="119.38" y1="222.25" x2="127" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$118" class="0">
+<segment>
+<pinref part="PIN_ANALOG_15" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_16" gate="A" pin="13"/>
+<wire x1="119.38" y1="224.79" x2="127" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$120" class="0">
+<segment>
+<pinref part="PIN_ANALOG_16" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_17" gate="A" pin="1"/>
+<wire x1="104.14" y1="209.55" x2="111.76" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$121" class="0">
+<segment>
+<pinref part="PIN_ANALOG_16" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_17" gate="A" pin="3"/>
+<wire x1="104.14" y1="212.09" x2="111.76" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$122" class="0">
+<segment>
+<pinref part="PIN_ANALOG_16" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_17" gate="A" pin="5"/>
+<wire x1="104.14" y1="214.63" x2="111.76" y2="214.63" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$123" class="0">
+<segment>
+<pinref part="PIN_ANALOG_16" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_17" gate="A" pin="7"/>
+<wire x1="104.14" y1="217.17" x2="111.76" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$124" class="0">
+<segment>
+<pinref part="PIN_ANALOG_16" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_17" gate="A" pin="9"/>
+<wire x1="104.14" y1="219.71" x2="111.76" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$125" class="0">
+<segment>
+<pinref part="PIN_ANALOG_16" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_17" gate="A" pin="11"/>
+<wire x1="104.14" y1="222.25" x2="111.76" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$126" class="0">
+<segment>
+<pinref part="PIN_ANALOG_16" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_17" gate="A" pin="13"/>
+<wire x1="104.14" y1="224.79" x2="111.76" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$128" class="0">
+<segment>
+<pinref part="PIN_ANALOG_17" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_18" gate="A" pin="1"/>
+<wire x1="88.9" y1="209.55" x2="96.52" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$129" class="0">
+<segment>
+<pinref part="PIN_ANALOG_17" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_18" gate="A" pin="3"/>
+<wire x1="88.9" y1="212.09" x2="96.52" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$130" class="0">
+<segment>
+<pinref part="PIN_ANALOG_17" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_18" gate="A" pin="5"/>
+<wire x1="88.9" y1="214.63" x2="96.52" y2="214.63" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$131" class="0">
+<segment>
+<pinref part="PIN_ANALOG_17" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_18" gate="A" pin="7"/>
+<wire x1="88.9" y1="217.17" x2="96.52" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$132" class="0">
+<segment>
+<pinref part="PIN_ANALOG_17" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_18" gate="A" pin="9"/>
+<wire x1="88.9" y1="219.71" x2="96.52" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$133" class="0">
+<segment>
+<pinref part="PIN_ANALOG_17" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_18" gate="A" pin="11"/>
+<wire x1="88.9" y1="222.25" x2="96.52" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$134" class="0">
+<segment>
+<pinref part="PIN_ANALOG_17" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_18" gate="A" pin="13"/>
+<wire x1="88.9" y1="224.79" x2="96.52" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$136" class="0">
+<segment>
+<pinref part="PIN_ANALOG_18" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_19" gate="A" pin="1"/>
+<wire x1="73.66" y1="209.55" x2="81.28" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$137" class="0">
+<segment>
+<pinref part="PIN_ANALOG_18" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_19" gate="A" pin="3"/>
+<wire x1="73.66" y1="212.09" x2="81.28" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$138" class="0">
+<segment>
+<pinref part="PIN_ANALOG_18" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_19" gate="A" pin="5"/>
+<wire x1="73.66" y1="214.63" x2="81.28" y2="214.63" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$139" class="0">
+<segment>
+<pinref part="PIN_ANALOG_18" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_19" gate="A" pin="7"/>
+<wire x1="73.66" y1="217.17" x2="81.28" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$140" class="0">
+<segment>
+<pinref part="PIN_ANALOG_18" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_19" gate="A" pin="9"/>
+<wire x1="73.66" y1="219.71" x2="81.28" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$141" class="0">
+<segment>
+<pinref part="PIN_ANALOG_18" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_19" gate="A" pin="11"/>
+<wire x1="73.66" y1="222.25" x2="81.28" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$142" class="0">
+<segment>
+<pinref part="PIN_ANALOG_18" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_19" gate="A" pin="13"/>
+<wire x1="73.66" y1="224.79" x2="81.28" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$144" class="0">
+<segment>
+<pinref part="PIN_ANALOG_19" gate="A" pin="2"/>
+<pinref part="PIN_ANALOG_20" gate="A" pin="1"/>
+<wire x1="58.42" y1="209.55" x2="66.04" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$145" class="0">
+<segment>
+<pinref part="PIN_ANALOG_19" gate="A" pin="4"/>
+<pinref part="PIN_ANALOG_20" gate="A" pin="3"/>
+<wire x1="58.42" y1="212.09" x2="66.04" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$146" class="0">
+<segment>
+<pinref part="PIN_ANALOG_19" gate="A" pin="6"/>
+<pinref part="PIN_ANALOG_20" gate="A" pin="5"/>
+<wire x1="58.42" y1="214.63" x2="66.04" y2="214.63" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$147" class="0">
+<segment>
+<pinref part="PIN_ANALOG_19" gate="A" pin="8"/>
+<pinref part="PIN_ANALOG_20" gate="A" pin="7"/>
+<wire x1="58.42" y1="217.17" x2="66.04" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$148" class="0">
+<segment>
+<pinref part="PIN_ANALOG_19" gate="A" pin="10"/>
+<pinref part="PIN_ANALOG_20" gate="A" pin="9"/>
+<wire x1="58.42" y1="219.71" x2="66.04" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$149" class="0">
+<segment>
+<pinref part="PIN_ANALOG_19" gate="A" pin="12"/>
+<pinref part="PIN_ANALOG_20" gate="A" pin="11"/>
+<wire x1="58.42" y1="222.25" x2="66.04" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$150" class="0">
+<segment>
+<pinref part="PIN_ANALOG_19" gate="A" pin="14"/>
+<pinref part="PIN_ANALOG_20" gate="A" pin="13"/>
+<wire x1="58.42" y1="224.79" x2="66.04" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$152" class="0">
+<segment>
+<pinref part="PIN_ANALOG_21" gate="A" pin="1"/>
+<pinref part="PIN_ANALOG_20" gate="A" pin="2"/>
+<wire x1="50.8" y1="209.55" x2="33.02" y2="209.55" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$153" class="0">
+<segment>
+<pinref part="PIN_ANALOG_21" gate="A" pin="3"/>
+<pinref part="PIN_ANALOG_20" gate="A" pin="4"/>
+<wire x1="50.8" y1="212.09" x2="33.02" y2="212.09" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$154" class="0">
+<segment>
+<pinref part="PIN_ANALOG_21" gate="A" pin="5"/>
+<pinref part="PIN_ANALOG_20" gate="A" pin="6"/>
+<wire x1="50.8" y1="214.63" x2="33.02" y2="214.63" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$155" class="0">
+<segment>
+<pinref part="PIN_ANALOG_21" gate="A" pin="7"/>
+<pinref part="PIN_ANALOG_20" gate="A" pin="8"/>
+<wire x1="50.8" y1="217.17" x2="33.02" y2="217.17" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$156" class="0">
+<segment>
+<pinref part="PIN_ANALOG_21" gate="A" pin="9"/>
+<pinref part="PIN_ANALOG_20" gate="A" pin="10"/>
+<wire x1="50.8" y1="219.71" x2="33.02" y2="219.71" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$157" class="0">
+<segment>
+<pinref part="PIN_ANALOG_21" gate="A" pin="11"/>
+<pinref part="PIN_ANALOG_20" gate="A" pin="12"/>
+<wire x1="50.8" y1="222.25" x2="33.02" y2="222.25" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$158" class="0">
+<segment>
+<pinref part="PIN_ANALOG_21" gate="A" pin="13"/>
+<pinref part="PIN_ANALOG_20" gate="A" pin="14"/>
+<wire x1="50.8" y1="224.79" x2="33.02" y2="224.79" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="AIN1_2" class="0">
+<segment>
+<label x="269.24" y="167.64" size="1.778" layer="95" rot="MR180"/>
+<wire x1="281.94" y1="167.64" x2="269.24" y2="167.64" width="0.1524" layer="91"/>
+<pinref part="PIN_AIN_PWRGND2" gate="A" pin="2"/>
+</segment>
+</net>
+<net name="L121_2" class="0">
+<segment>
+<wire x1="269.24" y1="165.1" x2="281.94" y2="165.1" width="0.1524" layer="91"/>
+<label x="269.24" y="165.1" size="1.778" layer="95" rot="MR180"/>
+<pinref part="PIN_AIN_PWRGND2" gate="A" pin="4"/>
+</segment>
+</net>
+<net name="IO_CLK_88_2" class="0">
+<segment>
+<wire x1="289.56" y1="162.56" x2="314.96" y2="162.56" width="0.1524" layer="91"/>
+<label x="314.96" y="162.56" size="1.778" layer="95" rot="R180"/>
+<pinref part="PIN_AIN_PWRGND2" gate="A" pin="5"/>
+</segment>
+</net>
+<net name="IO_CLK_89_2" class="0">
+<segment>
+<wire x1="289.56" y1="160.02" x2="314.96" y2="160.02" width="0.1524" layer="91"/>
+<label x="314.96" y="160.02" size="1.778" layer="95" rot="R180"/>
+<pinref part="PIN_AIN_PWRGND2" gate="A" pin="7"/>
+</segment>
+</net>
+<net name="IO_CLK_90_2" class="0">
+<segment>
+<wire x1="289.56" y1="157.48" x2="314.96" y2="157.48" width="0.1524" layer="91"/>
+<label x="314.96" y="157.48" size="1.778" layer="95" rot="R180"/>
+<pinref part="PIN_AIN_PWRGND2" gate="A" pin="9"/>
+</segment>
+</net>
+<net name="IO_CLK_91_2" class="0">
+<segment>
+<wire x1="314.96" y1="154.94" x2="289.56" y2="154.94" width="0.1524" layer="91"/>
+<label x="314.96" y="154.94" size="1.778" layer="95" rot="R180"/>
+<pinref part="PIN_AIN_PWRGND2" gate="A" pin="11"/>
+</segment>
+</net>
+<net name="IO_100_2" class="0">
+<segment>
+<wire x1="289.56" y1="152.4" x2="314.96" y2="152.4" width="0.1524" layer="91"/>
+<label x="314.96" y="152.4" size="1.778" layer="95" rot="R180"/>
+<pinref part="PIN_AIN_PWRGND2" gate="A" pin="13"/>
+</segment>
+</net>
+<net name="IO_101_2" class="0">
+<segment>
+<wire x1="289.56" y1="149.86" x2="314.96" y2="149.86" width="0.1524" layer="91"/>
+<label x="314.96" y="149.86" size="1.778" layer="95" rot="R180"/>
+<pinref part="PIN_AIN_PWRGND2" gate="A" pin="15"/>
+</segment>
+<segment>
+<pinref part="PIN_ANALOG_21" gate="A" pin="6"/>
+<wire x1="25.4" y1="214.63" x2="7.62" y2="214.63" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="214.63" x2="7.62" y2="213.36" width="0.1524" layer="91"/>
+<label x="7.62" y="213.36" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="3V3_1" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND1" gate="A" pin="3"/>
+<wire x1="340.36" y1="165.1" x2="365.76" y2="165.1" width="0.1524" layer="91"/>
+<label x="358.14" y="165.1" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="3V3_2" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND2" gate="A" pin="3"/>
+<wire x1="289.56" y1="165.1" x2="314.96" y2="165.1" width="0.1524" layer="91"/>
+<label x="307.34" y="165.1" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_3" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND3" gate="A" pin="15"/>
+<wire x1="205.74" y1="149.86" x2="215.9" y2="149.86" width="0.1524" layer="91"/>
+<label x="205.74" y="149.86" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_ANALOG_21" gate="A" pin="8"/>
+<wire x1="25.4" y1="217.17" x2="7.62" y2="217.17" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="217.17" x2="7.62" y2="215.9" width="0.1524" layer="91"/>
+<label x="7.62" y="215.9" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_4" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND4" gate="A" pin="15"/>
+<wire x1="180.34" y1="149.86" x2="190.5" y2="149.86" width="0.1524" layer="91"/>
+<label x="182.88" y="149.86" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_ANALOG_21" gate="A" pin="10"/>
+<wire x1="25.4" y1="219.71" x2="7.62" y2="219.71" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="219.71" x2="7.62" y2="218.44" width="0.1524" layer="91"/>
+<label x="7.62" y="218.44" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_5" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND5" gate="A" pin="15"/>
+<wire x1="154.94" y1="149.86" x2="165.1" y2="149.86" width="0.1524" layer="91"/>
+<label x="157.48" y="149.86" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_ANALOG_21" gate="A" pin="12"/>
+<wire x1="25.4" y1="222.25" x2="7.62" y2="222.25" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="222.25" x2="7.62" y2="220.98" width="0.1524" layer="91"/>
+<label x="7.62" y="220.98" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_6" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND6" gate="A" pin="15"/>
+<wire x1="129.54" y1="149.86" x2="139.7" y2="149.86" width="0.1524" layer="91"/>
+<label x="132.08" y="149.86" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_ANALOG_21" gate="A" pin="14"/>
+<wire x1="25.4" y1="224.79" x2="7.62" y2="224.79" width="0.1524" layer="91"/>
+<wire x1="7.62" y1="224.79" x2="7.62" y2="223.52" width="0.1524" layer="91"/>
+<label x="7.62" y="223.52" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_7" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND7" gate="A" pin="15"/>
+<wire x1="104.14" y1="149.86" x2="114.3" y2="149.86" width="0.1524" layer="91"/>
+<label x="106.68" y="149.86" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND21" gate="A" pin="13"/>
+<wire x1="50.8" y1="99.06" x2="63.5" y2="99.06" width="0.1524" layer="91"/>
+<label x="53.34" y="99.06" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_8" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND8" gate="A" pin="15"/>
+<wire x1="78.74" y1="149.86" x2="88.9" y2="149.86" width="0.1524" layer="91"/>
+<label x="81.28" y="149.86" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND21" gate="A" pin="11"/>
+<wire x1="50.8" y1="101.6" x2="63.5" y2="101.6" width="0.1524" layer="91"/>
+<label x="53.34" y="101.6" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_9" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND9" gate="A" pin="15"/>
+<wire x1="53.34" y1="149.86" x2="63.5" y2="149.86" width="0.1524" layer="91"/>
+<label x="53.34" y="149.86" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND21" gate="A" pin="9"/>
+<wire x1="50.8" y1="104.14" x2="63.5" y2="104.14" width="0.1524" layer="91"/>
+<label x="53.34" y="104.14" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_10" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND10" gate="A" pin="15"/>
+<wire x1="27.94" y1="149.86" x2="38.1" y2="149.86" width="0.1524" layer="91"/>
+<label x="27.94" y="149.86" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND21" gate="A" pin="7"/>
+<wire x1="50.8" y1="106.68" x2="63.5" y2="106.68" width="0.1524" layer="91"/>
+<label x="53.34" y="106.68" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_20" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND20" gate="A" pin="15"/>
+<wire x1="127" y1="96.52" x2="137.16" y2="96.52" width="0.1524" layer="91"/>
+<label x="127" y="96.52" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND21" gate="A" pin="2"/>
+<wire x1="43.18" y1="114.3" x2="30.48" y2="114.3" width="0.1524" layer="91"/>
+<label x="25.4" y="114.3" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_19" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND19" gate="A" pin="15"/>
+<wire x1="152.4" y1="96.52" x2="162.56" y2="96.52" width="0.1524" layer="91"/>
+<label x="152.4" y="96.52" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND21" gate="A" pin="4"/>
+<wire x1="43.18" y1="111.76" x2="30.48" y2="111.76" width="0.1524" layer="91"/>
+<label x="25.4" y="111.76" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_18" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND18" gate="A" pin="15"/>
+<wire x1="180.34" y1="96.52" x2="190.5" y2="96.52" width="0.1524" layer="91"/>
+<label x="180.34" y="96.52" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND21" gate="A" pin="6"/>
+<wire x1="43.18" y1="109.22" x2="30.48" y2="109.22" width="0.1524" layer="91"/>
+<label x="25.4" y="109.22" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_17" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND17" gate="A" pin="15"/>
+<wire x1="205.74" y1="96.52" x2="215.9" y2="96.52" width="0.1524" layer="91"/>
+<label x="205.74" y="96.52" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND21" gate="A" pin="8"/>
+<wire x1="43.18" y1="106.68" x2="30.48" y2="106.68" width="0.1524" layer="91"/>
+<label x="25.4" y="106.68" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_16" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND16" gate="A" pin="15"/>
+<wire x1="231.14" y1="96.52" x2="241.3" y2="96.52" width="0.1524" layer="91"/>
+<label x="231.14" y="96.52" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND21" gate="A" pin="10"/>
+<wire x1="43.18" y1="104.14" x2="30.48" y2="104.14" width="0.1524" layer="91"/>
+<label x="25.4" y="104.14" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_15" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND15" gate="A" pin="15"/>
+<wire x1="256.54" y1="96.52" x2="269.24" y2="96.52" width="0.1524" layer="91"/>
+<label x="259.08" y="96.52" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND21" gate="A" pin="12"/>
+<wire x1="43.18" y1="101.6" x2="30.48" y2="101.6" width="0.1524" layer="91"/>
+<label x="25.4" y="101.6" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_14" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND14" gate="A" pin="15"/>
+<wire x1="284.48" y1="96.52" x2="294.64" y2="96.52" width="0.1524" layer="91"/>
+<label x="284.48" y="96.52" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND21" gate="A" pin="14"/>
+<wire x1="43.18" y1="99.06" x2="30.48" y2="99.06" width="0.1524" layer="91"/>
+<label x="25.4" y="99.06" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_13" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND13" gate="A" pin="15"/>
+<wire x1="309.88" y1="96.52" x2="320.04" y2="96.52" width="0.1524" layer="91"/>
+<label x="309.88" y="96.52" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND21" gate="A" pin="1"/>
+<wire x1="50.8" y1="114.3" x2="63.5" y2="114.3" width="0.1524" layer="91"/>
+<label x="53.34" y="114.3" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_12" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND12" gate="A" pin="15"/>
+<wire x1="335.28" y1="96.52" x2="345.44" y2="96.52" width="0.1524" layer="91"/>
+<label x="335.28" y="96.52" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND21" gate="A" pin="3"/>
+<wire x1="50.8" y1="111.76" x2="63.5" y2="111.76" width="0.1524" layer="91"/>
+<label x="53.34" y="111.76" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="IO_101_11" class="0">
+<segment>
+<pinref part="PIN_AIN_PWRGND11" gate="A" pin="15"/>
+<wire x1="360.68" y1="96.52" x2="370.84" y2="96.52" width="0.1524" layer="91"/>
+<label x="360.68" y="96.52" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="PIN_AIN_PWRGND21" gate="A" pin="5"/>
+<wire x1="50.8" y1="109.22" x2="63.5" y2="109.22" width="0.1524" layer="91"/>
+<label x="53.34" y="109.22" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
 </sheet>
 </sheets>
 <errors>
-<approved hash="104,1,20.32,71.12,OSC,VDD,+3V3,,,"/>
-<approved hash="202,1,45.72,60.96,OSC,TRI,,,,"/>
-<approved hash="204,1,228.6,35.56,USB1,SLD,,,,"/>
-<approved hash="104,1,104.14,60.96,IOEXPAND_0X20_BOT,VDD,+3V3,,,"/>
-<approved hash="104,1,104.14,20.32,IOEXPAND_0X20_BOT,VSS,GND,,,"/>
-<approved hash="104,1,165.1,60.96,IOEXPAND_0X21_TOP,VDD,+3V3,,,"/>
-<approved hash="104,1,165.1,20.32,IOEXPAND_0X21_TOP,VSS,GND,,,"/>
 <approved hash="113,1,193.571,130.071,FRAME1,,,,,"/>
 </errors>
 </schematic>
