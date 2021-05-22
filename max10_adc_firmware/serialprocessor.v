@@ -109,7 +109,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
   reg writebyte;//whether we're sending the first or second byte (since it's 12 bits from the Max10 ADC)
   integer bytesread, byteswanted;
   reg thecounterbit, thecounterbitlockin;
-  integer clockbitstowait=5, clockbitstowaitlockin=3; //wait 2^clockbitstowait (8?) ticks before sending each data byte
+  reg [7:0] clockbitstowait=5, clockbitstowaitlockin=3; //wait 2^clockbitstowait (8?) ticks before sending each data byte
   reg [3:0] sendincrement = 0; //skip 2**sendincrement bytes each time
   output reg [ram_width-1:0] nsmp = 0; // samplestosend
   reg [7:0] chanforscreen=0;

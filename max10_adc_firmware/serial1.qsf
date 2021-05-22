@@ -139,10 +139,8 @@ set_location_assignment PIN_89 -to debug1
 set_location_assignment PIN_90 -to debug2
 set_location_assignment PIN_91 -to debug3
 set_location_assignment PIN_100 -to debug4
-set_global_assignment -name SDC_FILE serial1.sdc
 set_global_assignment -name BDF_FILE serial1.bdf
-set_global_assignment -name VERILOG_FILE ring_counter.v
-set_global_assignment -name VERILOG_FILE tdc2.v
+set_global_assignment -name SDC_FILE serial1.sdc
 set_global_assignment -name VERILOG_FILE oscillo.v
 set_global_assignment -name VERILOG_FILE serialprocessor.v
 set_global_assignment -name VERILOG_FILE serialprocessor_slave.v

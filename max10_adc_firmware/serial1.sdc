@@ -33,13 +33,12 @@
 set_time_format -unit ns -decimal_places 3
 
 
-
 #**************************************************************
 # Create Clock
 #**************************************************************
 
 create_clock -name {clock_ext_osc} -period 20.000 -waveform { 0.000 10.000 } [get_ports {clock_ext_osc}]
-create_clock -name {processor:inst|scanclk} -period 100.000 -waveform { 0.000 50.000 } [get_registers {processor:inst|scanclk}]
+create_clock -name {scanclk} -period 100.000 -waveform { 0.000 50.000 } [get_registers {processor:inst|scanclk}]
 create_clock -name {usb_clk60} -period 16.666 -waveform { 0.000 8.333 } [get_ports {usb_clk60}]
 
 
@@ -47,10 +46,9 @@ create_clock -name {usb_clk60} -period 16.666 -waveform { 0.000 8.333 } [get_por
 # Create Generated Clock
 #**************************************************************
 
-create_generated_clock -name {inst15|altpll_component|auto_generated|pll1|clk[0]} -source [get_pins {inst15|altpll_component|auto_generated|pll1|inclk[0]}] -duty_cycle 50/1 -multiply_by 1 -divide_by 5 -master_clock {clock_ext_osc} [get_pins {inst15|altpll_component|auto_generated|pll1|clk[0]}] 
-create_generated_clock -name {inst15|altpll_component|auto_generated|pll1|clk[1]} -source [get_pins {inst15|altpll_component|auto_generated|pll1|inclk[0]}] -duty_cycle 50/1 -multiply_by 5 -divide_by 2 -master_clock {clock_ext_osc} [get_pins {inst15|altpll_component|auto_generated|pll1|clk[1]}] 
-create_generated_clock -name {inst15|altpll_component|auto_generated|pll1|clk[4]} -source [get_pins {inst15|altpll_component|auto_generated|pll1|inclk[0]}] -duty_cycle 50/1 -multiply_by 5 -divide_by 2 -phase 180/1 -master_clock {clock_ext_osc} [get_pins {inst15|altpll_component|auto_generated|pll1|clk[4]}] 
-
+create_generated_clock -name {clk_slowadc10} -source [get_pins {inst15|altpll_component|auto_generated|pll1|inclk[0]}] -duty_cycle 50/1 -multiply_by 1 -divide_by 5 -master_clock {clock_ext_osc} [get_pins {inst15|altpll_component|auto_generated|pll1|clk[0]}] 
+create_generated_clock -name {clk_mainadc} -source [get_pins {inst15|altpll_component|auto_generated|pll1|inclk[0]}] -duty_cycle 50/1 -multiply_by 5 -divide_by 2 -master_clock {clock_ext_osc} [get_pins {inst15|altpll_component|auto_generated|pll1|clk[1]}] 
+create_generated_clock -name {clk_mainadc2} -source [get_pins {inst15|altpll_component|auto_generated|pll1|inclk[0]}] -duty_cycle 50/1 -multiply_by 5 -divide_by 2 -phase 180/1 -master_clock {clock_ext_osc} [get_pins {inst15|altpll_component|auto_generated|pll1|clk[4]}] 
 
 #**************************************************************
 # Set Clock Latency
@@ -180,7 +178,7 @@ set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_gener
 # Set Clock Groups
 #**************************************************************
 
-
+set_clock_groups -asynchronous -group {clock_ext_osc clk_slowadc10 clk_mainadc clk_mainadc2} -group {usb_clk60}
 
 #**************************************************************
 # Set False Path
@@ -203,6 +201,12 @@ set_false_path -from [get_keepers {*fiftyfivenm_adcblock_primitive_wrapper:adcbl
 set_false_path -from [get_keepers {*fiftyfivenm_adcblock_primitive_wrapper:adcblock_instance|wire_from_adc_dout[11]}] -to [get_registers {*altera_modular_adc_control_fsm:u_control_fsm|dout_flp[11]}]
 set_false_path -from [get_registers {*altera_modular_adc_control_fsm:u_control_fsm|chsel[*]}] -to [get_pins -compatibility_mode {*|adc_inst|adcblock_instance|primitive_instance|chsel[*]}]
 set_false_path -from [get_registers {*altera_modular_adc_control_fsm:u_control_fsm|soc}] -to [get_pins -compatibility_mode {*|adc_inst|adcblock_instance|primitive_instance|soc}]
+
+#slow signals we don't care about bing on time
+set_false_path -from [get_registers processor:inst|triggertot*]
+set_false_path -to [get_registers processor:inst|screencolumndata*]
+set_false_path -to [get_registers processor:inst|screenwren*]
+set_false_path -from [get_registers uniqueid:inst19|altchip_id:uniqueid*]
 
 
 #**************************************************************

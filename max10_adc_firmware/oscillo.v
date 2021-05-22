@@ -36,6 +36,7 @@ parameter maxhighres=5;
 reg [7+maxhighres:0] highres1, highres2, highres3, highres4;
 input ext_trig_in, use_ext_trig;
 input [ram_width-1:0] nsmp;
+reg [ram_width-1:0] nsmp2; // to pass timing
 input [4:0] ext_trig_delay; // clk ticks to delay ext trigger by
 input noselftrig; 
 
@@ -111,9 +112,14 @@ reg [7:0] data_flash1_reg; always @(posedge clk_flash) data_flash1_reg <= data_f
 reg [7:0] data_flash2_reg; always @(posedge clk_flash) data_flash2_reg <= data_flash2; // no multiplexing
 //reg [7:0] data_flash2_reg; always @(negedge clk_flash) data_flash2_reg <= data_flash1; // for multiplexing
 
-reg [7:0] data_flash3_reg; always @(posedge clk_flash2) data_flash3_reg <= data_flash3;
-reg [7:0] data_flash4_reg; always @(posedge clk_flash2) data_flash4_reg <= data_flash4; // no multiplexing
-//reg [7:0] data_flash4_reg; always @(negedge clk_flash2) data_flash4_reg <= data_flash3; // for multiplexing
+reg [7:0] data_flash3_reg_temp; always @(posedge clk_flash2) data_flash3_reg_temp <= data_flash3;
+reg [7:0] data_flash4_reg_temp; always @(posedge clk_flash2) data_flash4_reg_temp <= data_flash4; // no multiplexing
+//reg [7:0] data_flash4_reg_temp; always @(negedge clk_flash2) data_flash4_reg_temp <= data_flash3; // for multiplexing
+
+//pipelines the reading in from clk2 to clk1, so we have a full clk1 cycle for calculations below
+reg [7:0] data_flash3_reg; always @(posedge clk_flash) data_flash3_reg <= data_flash3_reg_temp;
+reg [7:0] data_flash4_reg; always @(posedge clk_flash) data_flash4_reg <= data_flash4_reg_temp; // no multiplexing
+//reg [7:0] data_flash4_reg; always @(negedge clk_flash) data_flash4_reg <= data_flash3_reg_temp; // for multiplexing
 
 always @(posedge clk_flash) begin
 	i=0;
@@ -261,9 +267,9 @@ localparam INIT=0, PREACQ=1, WAITING=2, POSTACQ=3;
 integer state=INIT;
 reg [31:0] downsamplecounter;//max downsample is ?
 reg [maxhighres:0] highrescounter;//for counting highres
-wire downsamplego;
-assign downsamplego = downsamplecounter[downsample] || downsample==0; // pay attention to sample when downsamplego is true
+reg downsamplego;
 always @(posedge clk_flash) begin
+	nsmp2<=nsmp;//to pass timing
 	case (state)
 	INIT: begin // this is the beginning... wait for the go-ahead to start acquiring the pre-trigger samples
 		if (startAcquisition2) begin
@@ -295,7 +301,7 @@ always @(posedge clk_flash) begin
 		end
 	end
 	POSTACQ: begin
-		if(samplecount==nsmp) begin // got the rest of the bytes? then stop acquiring
+		if(samplecount==nsmp2) begin // got the rest of the bytes? then stop acquiring
 			Acquiring <= 0;
 			AcquiringAndTriggered <= 0;
 			HaveFullData <= 1;
@@ -306,6 +312,7 @@ always @(posedge clk_flash) begin
 	endcase
 	
 	downsamplecounter=downsamplecounter+1;
+	downsamplego <= downsamplecounter[downsample] || downsample==0; // pay attention to sample when downsamplego is true
 	if (highres && downsample>0) begin // doing highres mode (averaging over samples within each downsample)
 		highrescounter=highrescounter+1;
 		highres1=highres1+data_flash1_reg;
