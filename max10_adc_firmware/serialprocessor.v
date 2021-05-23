@@ -1212,6 +1212,7 @@ reg[3:0] usbdonecounterfast=0;
 reg[3:0] usbdonecounterslow=0;
 reg [ram_width+2:0] SendCount_fast=0;
 reg[1:0] usb2state;
+reg [3:0] sendincrementfast = 0;//for timing
 localparam USBFAST_IDLE=0, USBFAST_BUSY=1, USBFAST_WRITE=2, USBFAST_DONE=3;
 assign rdaddress = ((do_usb && do_fast_usb) ? rdaddress_fast : rdaddress_slow);
 assign rdaddress2 = ((do_usb && do_fast_usb) ? rdaddress2_fast : rdaddress2_slow);
@@ -1230,7 +1231,9 @@ always @(posedge usb_clk60) begin
 			if (send_fast_usb2) begin
 				rdaddress_fast = wraddress_triggerpoint - triggerpoint + 2;
 				rdaddress2_fast = rdaddress_fast;
+				usb_dataio_fast<=ram_output1;
 				usb2state<=USBFAST_BUSY;
+				sendincrementfast<=sendincrement;
 			end
 		end
 		USBFAST_BUSY: begin			
@@ -1243,16 +1246,16 @@ always @(posedge usb_clk60) begin
 			end			
 		end
 		USBFAST_WRITE: begin
-			if (!usb_txe_busy) begin
-				case(SendCount_fast[ram_width+2:ram_width]) //rotate through the outputs
+			case(SendCount_fast[ram_width+2:ram_width]) //rotate through the outputs
 					0: usb_dataio_fast<=ram_output1;
 					1: usb_dataio_fast<=ram_output2;
 					2: usb_dataio_fast<=ram_output3;
 					3: usb_dataio_fast<=ram_output4;
 					4: usb_dataio_fast<=digital_buffer1; // the digital logic analyzer buffer
-				endcase
-				SendCount_fast = SendCount_fast + (2**sendincrement);
-				rdaddress_fast = rdaddress_fast + (2**sendincrement);
+			endcase
+			if (!usb_txe_busy) begin				
+				SendCount_fast = SendCount_fast + (2**sendincrementfast);
+				rdaddress_fast = rdaddress_fast + (2**sendincrementfast);
 				rdaddress2_fast = rdaddress_fast;
 			end
 			else usb2state<=USBFAST_BUSY;
@@ -1268,8 +1271,7 @@ always @(posedge usb_clk60) begin
 				usb_wr_fast<=1;
 				usb_siwu_fast<=0;//this sends out the data to the PC immediately, without waiting for the latency timer (16 ms by default!)
 				usb2state<=USBFAST_DONE;
-			end
-			
+			end			
 		end
 		USBFAST_DONE: begin
 			if (usbdonecounterfast>0) usb2state<=USBFAST_IDLE;//gives a little time to make sure the processor sees the done signal
