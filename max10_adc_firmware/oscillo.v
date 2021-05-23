@@ -270,9 +270,13 @@ localparam INIT=0, PREACQ=1, WAITING=2, POSTACQ=3;
 reg[2:0] state=INIT;
 reg [23:0] downsamplecounter;//max downsample is 22
 reg [maxhighres:0] highrescounter;//for counting highres
-reg downsamplego;
+wire downsamplego;
+assign downsamplego = downsamplecounter[downsample2] || downsample2==0; // pay attention to sample when downsamplego is true
 always @(posedge clk_flash) begin
 	nsmp2<=nsmp;//to pass timing
+	triggertype2<=triggertype;//to pass timing
+	downsample2<=downsample;//to pass timing
+	
 	case (state)
 	INIT: begin // this is the beginning... wait for the go-ahead to start acquiring the pre-trigger samples
 		if (startAcquisition2) begin
@@ -315,7 +319,6 @@ always @(posedge clk_flash) begin
 	endcase
 	
 	downsamplecounter=downsamplecounter+1;
-	downsamplego <= downsamplecounter[downsample2] || downsample2==0; // pay attention to sample when downsamplego is true
 	if (highres) begin // doing highres mode (averaging over samples within each downsample)
 		highrescounter=highrescounter+1;
 		highres1=highres1+data_flash1_reg;

@@ -548,7 +548,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 				byteswanted=1;//wait for next byte which is the number of samples to skip in the ADC, log2
 				if (bytesread<byteswanted) state=READMORE;
 				else begin
-					if (extradata[0]>30) extradata[0]=30;
+					if (extradata[0]>22) extradata[0]=22;
 					downsample=extradata[0];
 					clockbitstowaitlockin = extradata[0]-2; // TODO - seems to work OK
 					state=READ;

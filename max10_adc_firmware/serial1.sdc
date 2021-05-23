@@ -60,119 +60,19 @@ create_generated_clock -name {clk_mainadc2} -source [get_pins {inst15|altpll_com
 # Set Clock Uncertainty
 #**************************************************************
 
-set_clock_uncertainty -rise_from [get_clocks {usb_clk60}] -rise_to [get_clocks {usb_clk60}]  0.070  
-set_clock_uncertainty -rise_from [get_clocks {usb_clk60}] -fall_to [get_clocks {usb_clk60}]  0.070  
-set_clock_uncertainty -rise_from [get_clocks {usb_clk60}] -rise_to [get_clocks {clock_ext_osc}] -setup 0.100  
-set_clock_uncertainty -rise_from [get_clocks {usb_clk60}] -rise_to [get_clocks {clock_ext_osc}] -hold 0.130  
-set_clock_uncertainty -rise_from [get_clocks {usb_clk60}] -fall_to [get_clocks {clock_ext_osc}] -setup 0.100  
-set_clock_uncertainty -rise_from [get_clocks {usb_clk60}] -fall_to [get_clocks {clock_ext_osc}] -hold 0.130  
-set_clock_uncertainty -fall_from [get_clocks {usb_clk60}] -rise_to [get_clocks {usb_clk60}]  0.070  
-set_clock_uncertainty -fall_from [get_clocks {usb_clk60}] -fall_to [get_clocks {usb_clk60}]  0.070  
-set_clock_uncertainty -fall_from [get_clocks {usb_clk60}] -rise_to [get_clocks {clock_ext_osc}] -setup 0.100  
-set_clock_uncertainty -fall_from [get_clocks {usb_clk60}] -rise_to [get_clocks {clock_ext_osc}] -hold 0.130  
-set_clock_uncertainty -fall_from [get_clocks {usb_clk60}] -fall_to [get_clocks {clock_ext_osc}] -setup 0.100  
-set_clock_uncertainty -fall_from [get_clocks {usb_clk60}] -fall_to [get_clocks {clock_ext_osc}] -hold 0.130  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {usb_clk60}] -setup 0.130  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {usb_clk60}] -hold 0.100  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {usb_clk60}] -setup 0.130  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {usb_clk60}] -hold 0.100  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {clock_ext_osc}]  0.130  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {clock_ext_osc}]  0.130  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {processor:inst|scanclk}] -setup 0.120  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {processor:inst|scanclk}] -hold 0.100  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {processor:inst|scanclk}] -setup 0.120  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {processor:inst|scanclk}] -hold 0.100  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -setup 0.110  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -hold 0.140  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -setup 0.110  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -hold 0.140  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -setup 0.110  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -hold 0.140  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -setup 0.110  
-set_clock_uncertainty -rise_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -hold 0.140  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {usb_clk60}] -setup 0.130  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {usb_clk60}] -hold 0.100  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {usb_clk60}] -setup 0.130  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {usb_clk60}] -hold 0.100  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {clock_ext_osc}]  0.130  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {clock_ext_osc}]  0.130  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {processor:inst|scanclk}] -setup 0.120  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {processor:inst|scanclk}] -hold 0.100  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {processor:inst|scanclk}] -setup 0.120  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {processor:inst|scanclk}] -hold 0.100  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -setup 0.110  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -hold 0.140  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -setup 0.110  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -hold 0.140  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -setup 0.110  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -rise_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -hold 0.140  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -setup 0.110  
-set_clock_uncertainty -fall_from [get_clocks {clock_ext_osc}] -fall_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -hold 0.140  
-set_clock_uncertainty -rise_from [get_clocks {processor:inst|scanclk}] -rise_to [get_clocks {clock_ext_osc}] -setup 0.100  
-set_clock_uncertainty -rise_from [get_clocks {processor:inst|scanclk}] -rise_to [get_clocks {clock_ext_osc}] -hold 0.120  
-set_clock_uncertainty -rise_from [get_clocks {processor:inst|scanclk}] -fall_to [get_clocks {clock_ext_osc}] -setup 0.100  
-set_clock_uncertainty -rise_from [get_clocks {processor:inst|scanclk}] -fall_to [get_clocks {clock_ext_osc}] -hold 0.120  
-set_clock_uncertainty -rise_from [get_clocks {processor:inst|scanclk}] -rise_to [get_clocks {processor:inst|scanclk}]  0.070  
-set_clock_uncertainty -rise_from [get_clocks {processor:inst|scanclk}] -fall_to [get_clocks {processor:inst|scanclk}]  0.070  
-set_clock_uncertainty -fall_from [get_clocks {processor:inst|scanclk}] -rise_to [get_clocks {clock_ext_osc}] -setup 0.100  
-set_clock_uncertainty -fall_from [get_clocks {processor:inst|scanclk}] -rise_to [get_clocks {clock_ext_osc}] -hold 0.120  
-set_clock_uncertainty -fall_from [get_clocks {processor:inst|scanclk}] -fall_to [get_clocks {clock_ext_osc}] -setup 0.100  
-set_clock_uncertainty -fall_from [get_clocks {processor:inst|scanclk}] -fall_to [get_clocks {clock_ext_osc}] -hold 0.120  
-set_clock_uncertainty -fall_from [get_clocks {processor:inst|scanclk}] -rise_to [get_clocks {processor:inst|scanclk}]  0.070  
-set_clock_uncertainty -fall_from [get_clocks {processor:inst|scanclk}] -fall_to [get_clocks {processor:inst|scanclk}]  0.070  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[4]}] -rise_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}]  0.070  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[4]}] -fall_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}]  0.070  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[4]}] -rise_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}]  0.070  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[4]}] -fall_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}]  0.070  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -rise_to [get_clocks {usb_clk60}] -setup 0.130  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -rise_to [get_clocks {usb_clk60}] -hold 0.110  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -fall_to [get_clocks {usb_clk60}] -setup 0.130  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -fall_to [get_clocks {usb_clk60}] -hold 0.110  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -rise_to [get_clocks {clock_ext_osc}] -setup 0.140  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -rise_to [get_clocks {clock_ext_osc}] -hold 0.110  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -fall_to [get_clocks {clock_ext_osc}] -setup 0.140  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -fall_to [get_clocks {clock_ext_osc}] -hold 0.110  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -rise_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[4]}]  0.070  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -fall_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[4]}]  0.070  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -rise_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}]  0.070  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -fall_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}]  0.070  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -rise_to [get_clocks {usb_clk60}] -setup 0.130  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -rise_to [get_clocks {usb_clk60}] -hold 0.110  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -fall_to [get_clocks {usb_clk60}] -setup 0.130  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -fall_to [get_clocks {usb_clk60}] -hold 0.110  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -rise_to [get_clocks {clock_ext_osc}] -setup 0.140  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -rise_to [get_clocks {clock_ext_osc}] -hold 0.110  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -fall_to [get_clocks {clock_ext_osc}] -setup 0.140  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -fall_to [get_clocks {clock_ext_osc}] -hold 0.110  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -rise_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[4]}]  0.070  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -fall_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[4]}]  0.070  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -rise_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}]  0.070  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}] -fall_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[1]}]  0.070  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -rise_to [get_clocks {clock_ext_osc}] -setup 0.140  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -rise_to [get_clocks {clock_ext_osc}] -hold 0.110  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -fall_to [get_clocks {clock_ext_osc}] -setup 0.140  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -fall_to [get_clocks {clock_ext_osc}] -hold 0.110  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -rise_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}]  0.070  
-set_clock_uncertainty -rise_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -fall_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}]  0.070  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -rise_to [get_clocks {clock_ext_osc}] -setup 0.140  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -rise_to [get_clocks {clock_ext_osc}] -hold 0.110  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -fall_to [get_clocks {clock_ext_osc}] -setup 0.140  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -fall_to [get_clocks {clock_ext_osc}] -hold 0.110  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -rise_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}]  0.070  
-set_clock_uncertainty -fall_from [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}] -fall_to [get_clocks {inst15|altpll_component|auto_generated|pll1|clk[0]}]  0.070  
-
+derive_clock_uncertainty
 
 #**************************************************************
 # Set Input Delay
 #**************************************************************
 
-
+#set_input_delay -clock { clock_ext_osc } .1 *
 
 #**************************************************************
 # Set Output Delay
 #**************************************************************
 
-
+#set_output_delay -clock { clock_ext_osc } .1 *
 
 #**************************************************************
 # Set Clock Groups
@@ -207,6 +107,7 @@ set_false_path -from [get_registers processor:inst|triggertot*]
 set_false_path -to [get_registers processor:inst|screencolumndata*]
 set_false_path -to [get_registers processor:inst|screenwren*]
 set_false_path -from [get_registers uniqueid:inst19|altchip_id:uniqueid*]
+set_false_path -from [get_registers processor:inst|rollingtrigger*]
 #ignore for now, don't understand it
 set_false_path -from [get_registers processor:inst|clockbitstowaitlockin*]
 #ignore for now, not sure how to fix it
