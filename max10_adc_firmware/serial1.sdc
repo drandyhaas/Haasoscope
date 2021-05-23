@@ -78,7 +78,8 @@ derive_clock_uncertainty
 # Set Clock Groups
 #**************************************************************
 
-set_clock_groups -asynchronous -group {clock_ext_osc clk_slowadc10 clk_mainadc clk_mainadc2} -group {usb_clk60}
+#causes an occasional issue with the readout of ch0!
+#set_clock_groups -asynchronous -group {clock_ext_osc clk_slowadc10 clk_mainadc clk_mainadc2} -group {usb_clk60}
 
 #**************************************************************
 # Set False Path
