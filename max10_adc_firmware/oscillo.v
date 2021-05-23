@@ -19,6 +19,7 @@ input [7:0] data_flash1, data_flash2, data_flash3, data_flash4;
 output reg [7:0] dout1, dout2, dout3, dout4;
 parameter ram_width=10;
 output reg[ram_width-1:0] wraddress_triggerpoint;
+reg[ram_width-1:0] wraddress_triggerpoint2;//to pass timing (need to send to slow clk domain)
 input wire [ram_width-1:0] rdaddress;
 input wire rden;//read enable
 output reg data_ready=0;
@@ -29,7 +30,9 @@ input [7:0] trigthresh, trigthresh2;
 input [3:0] trigchannels;
 input [ram_width-1:0] triggerpoint;
 input [7:0] downsample; // only record 1 out of every 2^downsample samples
+reg [7:0] downsample2; // to pass timing
 input [3:0] triggertype;
+reg [3:0] triggertype2; // to pass timing
 input [ram_width:0] triggertot; // the top bit says whether to do check every sample or only according to downsample
 input highres;
 parameter maxhighres=5;
@@ -133,7 +136,7 @@ always @(posedge clk_flash) begin
 			if (i==3) Threshold1[i] <= (data_flash4_reg>=trigthresh && data_flash4_reg<=trigthresh2);
 			Threshold2[i] <= Threshold1[i]; // was above threshold?
 			
-			if (triggertype[0]) begin // if positive edge, trigger! (possibly after demanding a timeout)
+			if (triggertype2[0]) begin // if positive edge, trigger! (possibly after demanding a timeout)
 				if (triggertot[ram_width-1:0]) begin
 					selftrigtemp[i] = 0;//assume we are not firing
 					if (Threshold3[i]) begin
@@ -223,7 +226,7 @@ reg Ttrig[4]; // whether to fire each of the 4 trigger bits
 reg[3:0] Tcounter[4]; // counters for the output trigger bits (to hold them high for a while after a trigger)
 reg[7:0] Tcounter_test_countdown; // use for sending 50 test triggers
 output reg[7:0] delaycounter;
-integer spareleftcounter;
+reg[7:0] spareleftcounter;
 always @(posedge clk_flash) begin
 	if (spareleft) begin
 		if (spareleftcounter<205) begin
@@ -264,8 +267,8 @@ reg startAcquisition1; always @(posedge clk_flash) startAcquisition1 <= startAcq
 reg startAcquisition2; always @(posedge clk_flash) startAcquisition2 <= startAcquisition1;
 
 localparam INIT=0, PREACQ=1, WAITING=2, POSTACQ=3;
-integer state=INIT;
-reg [31:0] downsamplecounter;//max downsample is ?
+reg[2:0] state=INIT;
+reg [23:0] downsamplecounter;//max downsample is 22
 reg [maxhighres:0] highrescounter;//for counting highres
 reg downsamplego;
 always @(posedge clk_flash) begin
@@ -296,7 +299,7 @@ always @(posedge clk_flash) begin
 		if(Trigger) begin // now we wait for the trigger, and then record the triggerpoint
 			AcquiringAndTriggered <= 1; // Trigger? Start getting the rest of the bytes
 			PreOrPostAcquiring <= 1;
-			wraddress_triggerpoint <= wraddress; // keep track of where the trigger happened
+			wraddress_triggerpoint2 <= wraddress; // keep track of where the trigger happened
 			state=POSTACQ;
 		end
 	end
@@ -312,8 +315,8 @@ always @(posedge clk_flash) begin
 	endcase
 	
 	downsamplecounter=downsamplecounter+1;
-	downsamplego <= downsamplecounter[downsample] || downsample==0; // pay attention to sample when downsamplego is true
-	if (highres && downsample>0) begin // doing highres mode (averaging over samples within each downsample)
+	downsamplego <= downsamplecounter[downsample2] || downsample2==0; // pay attention to sample when downsamplego is true
+	if (highres) begin // doing highres mode (averaging over samples within each downsample)
 		highrescounter=highrescounter+1;
 		highres1=highres1+data_flash1_reg;
 		highres2=highres2+data_flash2_reg;
@@ -321,17 +324,17 @@ always @(posedge clk_flash) begin
 		highres4=highres4+data_flash4_reg;
 		if (downsamplego || highrescounter[maxhighres]) begin
 			highrescounter=0;
-			if (downsample>maxhighres) begin			
+			if (downsample2>maxhighres) begin			
 				dout1=highres1>>maxhighres;
 				dout2=highres2>>maxhighres;
 				dout3=highres3>>maxhighres;
 				dout4=highres4>>maxhighres;
 			end
 			else begin
-				dout1=highres1>>downsample;
-				dout2=highres2>>downsample;
-				dout3=highres3>>downsample;
-				dout4=highres4>>downsample;
+				dout1=highres1>>downsample2;
+				dout2=highres2>>downsample2;
+				dout3=highres3>>downsample2;
+				dout4=highres4>>downsample2;
 			end
 			highres1=0;
 			highres2=0;
@@ -359,6 +362,7 @@ reg HaveFullData1; always @(posedge clk) HaveFullData1 <= HaveFullData;
 reg HaveFullData2; always @(posedge clk) HaveFullData2 <= HaveFullData1;
 
 always @(posedge clk) begin
+	wraddress_triggerpoint=wraddress_triggerpoint2; // sends to slow clk domain
 	if (startAcquisition) data_ready=0; // waiting for trigger
 	else if (HaveFullData2) data_ready=1; // ready to read out
 end

@@ -430,9 +430,9 @@ class Haasoscope():
             self.sendi2c("20 13 00") #turn off all port B of IOexp 1
         elif dotest==1:
             #Test the DAC
-            self.setdac(0,0)
+            self.setdac(0,0,0)
             time.sleep(3)
-            self.setdac(0,1200)
+            self.setdac(0,1200,0)
         elif dotest==2:
             #toggle led 3, at 0x21 a0
             self.a21=self.toggleBit(self.a21,3); self.sendi2c("21 12 "+ ('%0*x' % (2,self.a21)) )
@@ -1471,7 +1471,7 @@ class Haasoscope():
             print("minimum firmwareversion of all boards is",self.minfirmwareversion)
             self.maxdownsample=15 # slowest I can run
             if self.minfirmwareversion>=5: #updated firmware
-                self.maxdownsample=15 +(12-ram_width) # slowest I can run (can add 12-ram_width when using newer firmware)
+                self.maxdownsample=min(15 +(12-ram_width), 22) # can add 12-ram_width when using newer firmware, but not more than 22
             self.yscale = 7.5 # Vpp for full scale
             if self.minfirmwareversion>=15: #v9.0 boards
                 self.yscale*=1.1 # if we used 10M / 1.1M / 11k input resistors

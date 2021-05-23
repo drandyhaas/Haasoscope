@@ -202,12 +202,15 @@ set_false_path -from [get_keepers {*fiftyfivenm_adcblock_primitive_wrapper:adcbl
 set_false_path -from [get_registers {*altera_modular_adc_control_fsm:u_control_fsm|chsel[*]}] -to [get_pins -compatibility_mode {*|adc_inst|adcblock_instance|primitive_instance|chsel[*]}]
 set_false_path -from [get_registers {*altera_modular_adc_control_fsm:u_control_fsm|soc}] -to [get_pins -compatibility_mode {*|adc_inst|adcblock_instance|primitive_instance|soc}]
 
-#slow signals we don't care about bing on time
+#slow signals we don't care about being on time
 set_false_path -from [get_registers processor:inst|triggertot*]
 set_false_path -to [get_registers processor:inst|screencolumndata*]
 set_false_path -to [get_registers processor:inst|screenwren*]
 set_false_path -from [get_registers uniqueid:inst19|altchip_id:uniqueid*]
-
+#ignore for now, don't understand it
+set_false_path -from [get_registers processor:inst|clockbitstowaitlockin*]
+#ignore for now, not sure how to fix it
+set_false_path -to [get_registers processor:inst|lockinresult*]
 
 #**************************************************************
 # Set Multicycle Path

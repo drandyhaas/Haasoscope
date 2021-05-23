@@ -104,10 +104,10 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
   reg [7:0] extradata[10];//to store command extra data, like arguemnts (up to 10 bytes)
   reg [ram_width+2:0] SendCount=0;
   reg [2:0] blockstosend=4; // will be 4 for normal, but 5 (or more) for sending logic analyzer stuff etc.
-  integer nsamp = 6;
+  reg [15:0] nsamp = 6;
   input [11:0] adcramdata;
   reg writebyte;//whether we're sending the first or second byte (since it's 12 bits from the Max10 ADC)
-  integer bytesread, byteswanted;
+  reg[7:0] bytesread, byteswanted;
   reg thecounterbit, thecounterbitlockin;
   reg [7:0] clockbitstowait=5, clockbitstowaitlockin=3; //wait 2^clockbitstowait (8?) ticks before sending each data byte
   reg [3:0] sendincrement = 0; //skip 2**sendincrement bytes each time
@@ -139,7 +139,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
   reg [5:0] screencolumndata [128]; //all the screen data, 128 columns of (8 rows of 8 dots)
   
   //For writing out data in WRITE1,2
-  integer ioCount, ioCountToSend;
+  reg[7:0] ioCount, ioCountToSend;
   reg[7:0] data[0:15];
   
   //For lockin calculations
@@ -147,12 +147,12 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
   integer lockinresult1;
   integer lockinresult2;
   reg [15:0] lockinnumtoshift = 0;
-  integer chan2mean, chan3mean;
+  reg [31:0] chan2mean, chan3mean;
   reg calcmeans;
   
   //for clock phase
-  integer pllclock_counter=0;
-  integer scanclk_cycles=0;
+  reg[7:0] pllclock_counter=0;
+  reg[7:0] scanclk_cycles=0;
   output reg[2:0] phasecounterselect; // Dynamic phase shift counter Select. 000:all 001:M 010:C0 011:C1 100:C2 101:C3 110:C4. Registered in the rising edge of scanclk.
   output reg phaseupdown=1; // Dynamic phase shift direction; 1:UP, 0:DOWN. Registered in the PLL on the rising edge of scanclk.
   output reg phasestep=0;
@@ -914,13 +914,13 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 					// next time through we calculate c2 * offset c3
 					// shift rdaddress2 and then accumulate
 					if (SendCount[ram_width-1:0]>lockinnumtoshift && SendCount[ram_width-1:0]<(4096-lockinnumtoshift)) begin
-						lockinresult2 = lockinresult2 + (ram_output3-chan2mean)*(ram_output4-chan3mean);	// accumulate the vector of chanel 2 * shifted channel 3
+						lockinresult2 = lockinresult2 + (ram_output3-chan2mean[7:0])*(ram_output4-chan3mean[7:0]);	// accumulate the vector of channel 2 * shifted channel 3
 					end
 				end
 				2: begin
 					// next time through we calculate c2*c3
 					if (SendCount[ram_width-1:0]>lockinnumtoshift && SendCount[ram_width-1:0]<(4096-lockinnumtoshift)) begin
-						lockinresult1 = lockinresult1 + (ram_output3-chan2mean)*(ram_output4-chan3mean);	// accumulate the vector of chanel 2 * channel 3	
+						lockinresult1 = lockinresult1 + (ram_output3-chan2mean)*(ram_output4-chan3mean);	// accumulate the vector of channel 2 * channel 3	
 					end
 				end
 				3: begin
