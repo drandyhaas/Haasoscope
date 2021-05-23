@@ -108,6 +108,7 @@ set_false_path -to [get_registers processor:inst|screencolumndata*]
 set_false_path -to [get_registers processor:inst|screenwren*]
 set_false_path -from [get_registers uniqueid:inst19|altchip_id:uniqueid*]
 set_false_path -from [get_registers processor:inst|rollingtrigger*]
+set_false_path -from [get_registers processor:inst|highres*]
 #ignore for now, don't understand it
 set_false_path -from [get_registers processor:inst|clockbitstowaitlockin*]
 #ignore for now, not sure how to fix it
