@@ -78,7 +78,6 @@ derive_clock_uncertainty
 # Set Clock Groups
 #**************************************************************
 
-#causes an occasional issue with the readout of ch0!
 #set_clock_groups -asynchronous -group {clock_ext_osc clk_slowadc10 clk_mainadc clk_mainadc2} -group {usb_clk60}
 
 #**************************************************************
@@ -110,10 +109,22 @@ set_false_path -to [get_registers processor:inst|screenwren*]
 set_false_path -from [get_registers uniqueid:inst19|altchip_id:uniqueid*]
 set_false_path -from [get_registers processor:inst|rollingtrigger*]
 set_false_path -from [get_registers processor:inst|highres*]
+set_false_path -from [get_registers processor:inst|send_fast_usb2_done]
+set_false_path -from [get_registers processor:inst|send_fast_usb2]
+set_false_path -from [get_registers processor:inst|blockstosend*]
+set_false_path -from [get_registers processor:inst|do_usb]
+set_false_path -from [get_registers processor:inst|do_fast_usb]
+set_false_path -to [get_registers processor:inst|sendincrementfast*]
 #ignore for now, don't understand it
 set_false_path -from [get_registers processor:inst|clockbitstowaitlockin*]
 #ignore for now, not sure how to fix it
 set_false_path -to [get_registers processor:inst|lockinresult*]
+#probably don't care about these
+set_false_path -from [get_registers lp_ram_dp*]
+set_false_path -from [get_registers processor:inst|rdaddress*] -to [get_registers lp_ram_dp*]
+set_false_path -from [get_registers processor:inst|rden] -to [get_registers lp_ram_dp*]
+set_false_path -from [get_registers *triggerpoint*] -to [get_registers *rdaddress*]
+
 
 #**************************************************************
 # Set Multicycle Path
