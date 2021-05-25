@@ -880,8 +880,6 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 				else begin
 					if (do_usb) begin
 						if (do_fast_usb) begin
-							send_fast_usb2=1;
-							rden=1;
 							state=WRITE_USBFAST_EXT1;
 						end
 						else state=WRITE_USB_EXT1;
@@ -984,8 +982,6 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 				thecounterbit=thecounter[clockbitstowait];
 				if (do_usb) begin
 					if (do_fast_usb) begin
-						send_fast_usb2=1;
-						rden=1;
 						state=WRITE_USBFAST_EXT1;
 					end
 					else state=WRITE_USB_EXT1;
@@ -1178,7 +1174,9 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 		
 		 //writing out over fast usb2
 		 WRITE_USBFAST_EXT1: begin
-			if (usbdonecounterslow>1) state=WRITE_USBFAST_EXT2;
+			send_fast_usb2=1;
+			rden=1;
+			if (usbdonecounterslow>3) state=WRITE_USBFAST_EXT2;
 			else usbdonecounterslow<=usbdonecounterslow+1;
 		 end
 		 WRITE_USBFAST_EXT2: begin
@@ -1216,6 +1214,8 @@ reg[3:0] usbdonecounterslow=0;
 reg [ram_width+2:0] SendCount_fast=0;
 reg[1:0] usb2state;
 reg [3:0] sendincrementfast = 0;//for timing
+reg [ram_width-1:0] rdaddress_fast_start;
+reg [ram_width-1:0] rdaddress2_fast_start;
 localparam USBFAST_IDLE=0, USBFAST_BUSY=1, USBFAST_WRITE=2, USBFAST_DONE=3;
 assign rdaddress = ((do_usb && do_fast_usb) ? rdaddress_fast : rdaddress_slow);
 assign rdaddress2 = ((do_usb && do_fast_usb) ? rdaddress2_fast : rdaddress2_slow);
@@ -1230,14 +1230,14 @@ always @(posedge usb_clk60) begin
 			usb_wr_fast<=1;
 			usb_siwu_fast<=1;
 			SendCount_fast=0;
-			usbdonecounterfast<=2;
+			sendincrementfast<=sendincrement;
 			if (send_fast_usb2) begin
-				rdaddress_fast = wraddress_triggerpoint - triggerpoint + 2;
-				rdaddress2_fast = wraddress_triggerpoint - triggerpoint + 2;
-				usb_dataio_fast<=ram_output1;
-				sendincrementfast<=sendincrement;
-				if (usbdonecounterfast==0) usb2state<=USBFAST_BUSY;//need time to calculate the rdaddresses!
-				else usbdonecounterfast<=usbdonecounterfast-1;
+				rdaddress_fast <= wraddress_triggerpoint - triggerpoint + 2;
+				rdaddress2_fast <= rdaddress_fast;
+				rdaddress_fast_start <= rdaddress_fast;
+				rdaddress2_fast_start <= rdaddress_fast;
+				if (usbdonecounterfast>2) usb2state<=USBFAST_BUSY;//need time to calculate the rdaddresses!
+				else usbdonecounterfast<=usbdonecounterfast+1;
 			end
 		end
 		USBFAST_BUSY: begin			
@@ -1259,8 +1259,8 @@ always @(posedge usb_clk60) begin
 			endcase
 			if (!usb_txe_busy) begin				
 				SendCount_fast = SendCount_fast + (2**sendincrementfast);
-				rdaddress_fast = rdaddress_fast + (2**sendincrementfast);
-				rdaddress2_fast = rdaddress2_fast + (2**sendincrementfast);			
+				rdaddress_fast <= rdaddress_fast + (2**sendincrementfast);
+				rdaddress2_fast <= rdaddress2_fast + (2**sendincrementfast);			
 				if(SendCount_fast[ram_width+2:ram_width]==blockstosend) begin // it's 5 (or more) blocks including the logic analyzer info
 					send_fast_usb2_done<=1;
 					usb_wr_fast<=1;
@@ -1279,8 +1279,8 @@ always @(posedge usb_clk60) begin
 			else usb2state<=USBFAST_BUSY;
 		end
 		USBFAST_DONE: begin
-			if (usbdonecounterfast>1) usb2state<=USBFAST_IDLE;//gives a little time to make sure the processor sees the done signal
-			else usbdonecounterfast<=usbdonecounterfast+1;
+			if (usbdonecounterfast==0) usb2state<=USBFAST_IDLE;//gives a little time to make sure the processor sees the done signal
+			else usbdonecounterfast<=usbdonecounterfast-1;
 		end
 	endcase
 end
