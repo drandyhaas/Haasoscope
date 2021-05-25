@@ -390,6 +390,7 @@ class MainWindow(TemplateBaseClass):
         if self.ui.markerCheck.isChecked():
             for li in range(self.nlines):
                 self.lines[li].setSymbol("o")
+                self.lines[li].setSymbolSize(3)
         else:
             for li in range(self.nlines):
                 self.lines[li].setSymbol(None)
