@@ -530,6 +530,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 				else begin
 					nsmp=256*extradata[0]+extradata[1];
 					if (triggerpoint>(nsmp-5)) triggerpoint=nsmp/2;
+					nsmp_gt0 = (nsmp>0);// for timing
 					state=READ;
 				end
 			end
@@ -1223,14 +1224,15 @@ assign usb_dataio = ((do_usb && do_fast_usb) ? usb_dataio_fast : usb_dataio_slow
 assign usb_wr = ((do_usb && do_fast_usb) ? usb_wr_fast : usb_wr_slow);
 assign usb_siwu = ((do_usb && do_fast_usb) ? usb_siwu_fast : usb_siwu_slow);
 assign clk_rd = ((do_usb && do_fast_usb) ? usb_clk60 : clk);
-reg usbfastwasbusy=0;
+reg usbfastwasbusy=0, nsmp_gt0=0;
 always @(posedge usb_clk60) begin
 	case (usb2state)
 		USBFAST_IDLE: begin
 			send_fast_usb2_done<=0;
 			usb_wr_fast<=1;
 			usb_siwu_fast<=1;
-			SendCount_fast<=0 + (2**sendincrementfast);
+			if (nsmp_gt0) SendCount_fast<=0 + (2**sendincrementfast);
+			else SendCount_fast<=0;
 			sendincrementfast<=sendincrement;
 			usbfastwasbusy<=0;
 			if (send_fast_usb2) begin
@@ -1238,6 +1240,7 @@ always @(posedge usb_clk60) begin
 				rdaddress2_fast <= rdaddress_fast;
 				rdaddress_fast_start <= rdaddress_fast;
 				rdaddress2_fast_start <= rdaddress_fast;
+				usb_dataio_fast<=ram_output1;
 				if (usbdonecounterfast>2) usb2state<=USBFAST_BUSY;//need time to calculate the rdaddresses!
 				else usbdonecounterfast<=usbdonecounterfast+1;
 			end
@@ -1266,7 +1269,7 @@ always @(posedge usb_clk60) begin
 					usb_siwu_fast<=0;//this sends out the data to the PC immediately, without waiting for the latency timer (16 ms by default!)
 					usb2state<=USBFAST_DONE;
 				end
-				else if (nsmp>0 && SendCount_fast[ram_width-1:0]>=nsmp) begin
+				else if (nsmp_gt0 && SendCount_fast[ram_width-1:0]>=nsmp) begin
 					usb_wr_fast<=0;
 					SendCount_fast[ram_width-1:0] <= 0 + (2**sendincrementfast);
 					SendCount_fast[ram_width+2:ram_width] <= SendCount_fast[ram_width+2:ram_width] + 1;
