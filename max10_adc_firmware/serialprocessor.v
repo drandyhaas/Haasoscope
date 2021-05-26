@@ -1240,7 +1240,6 @@ always @(posedge usb_clk60) begin
 				rdaddress2_fast <= rdaddress_fast;
 				rdaddress_fast_start <= rdaddress_fast;
 				rdaddress2_fast_start <= rdaddress_fast;
-				usb_dataio_fast<=ram_output1;
 				if (usbdonecounterfast>2) usb2state<=USBFAST_BUSY;//need time to calculate the rdaddresses!
 				else usbdonecounterfast<=usbdonecounterfast+1;
 			end
@@ -1252,6 +1251,7 @@ always @(posedge usb_clk60) begin
 			end
 			else begin
 				usb_wr_fast<=1;
+				usbfastwasbusy<=1;
 			end			
 		end
 		USBFAST_WRITE: begin
