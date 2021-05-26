@@ -1223,14 +1223,16 @@ assign usb_dataio = ((do_usb && do_fast_usb) ? usb_dataio_fast : usb_dataio_slow
 assign usb_wr = ((do_usb && do_fast_usb) ? usb_wr_fast : usb_wr_slow);
 assign usb_siwu = ((do_usb && do_fast_usb) ? usb_siwu_fast : usb_siwu_slow);
 assign clk_rd = ((do_usb && do_fast_usb) ? usb_clk60 : clk);
+reg usbfastwasbusy=0;
 always @(posedge usb_clk60) begin
 	case (usb2state)
 		USBFAST_IDLE: begin
 			send_fast_usb2_done<=0;
 			usb_wr_fast<=1;
 			usb_siwu_fast<=1;
-			SendCount_fast=0;
+			SendCount_fast<=0 + (2**sendincrementfast);
 			sendincrementfast<=sendincrement;
+			usbfastwasbusy<=0;
 			if (send_fast_usb2) begin
 				rdaddress_fast <= wraddress_triggerpoint - triggerpoint + 2;
 				rdaddress2_fast <= rdaddress_fast;
@@ -1242,7 +1244,7 @@ always @(posedge usb_clk60) begin
 		end
 		USBFAST_BUSY: begin			
 			if (!usb_txe_busy) begin
-				usb_wr_fast<=0;
+				if (usbfastwasbusy) usb_wr_fast<=0;
 				usb2state<=USBFAST_WRITE;
 			end
 			else begin
@@ -1258,25 +1260,30 @@ always @(posedge usb_clk60) begin
 					4: usb_dataio_fast<=digital_buffer1; // the digital logic analyzer buffer
 			endcase
 			if (!usb_txe_busy) begin				
-				SendCount_fast = SendCount_fast + (2**sendincrementfast);
-				rdaddress_fast <= rdaddress_fast + (2**sendincrementfast);
-				rdaddress2_fast <= rdaddress2_fast + (2**sendincrementfast);			
 				if(SendCount_fast[ram_width+2:ram_width]==blockstosend) begin // it's 5 (or more) blocks including the logic analyzer info
-					send_fast_usb2_done<=1;
 					usb_wr_fast<=1;
+					send_fast_usb2_done<=1;
 					usb_siwu_fast<=0;//this sends out the data to the PC immediately, without waiting for the latency timer (16 ms by default!)
 					usb2state<=USBFAST_DONE;
 				end
-				/* // can't do this at 60 MHz!
 				else if (nsmp>0 && SendCount_fast[ram_width-1:0]>=nsmp) begin
-					SendCount_fast[ram_width-1:0]=0;
-					SendCount_fast[ram_width+2:ram_width] = (SendCount_fast[ram_width+2:ram_width] + 1);
-					rdaddress_fast = wraddress_triggerpoint - triggerpoint + 2;
-					rdaddress2_fast = rdaddress_fast;
+					usb_wr_fast<=0;
+					SendCount_fast[ram_width-1:0] <= 0 + (2**sendincrementfast);
+					SendCount_fast[ram_width+2:ram_width] <= SendCount_fast[ram_width+2:ram_width] + 1;
+					rdaddress_fast <= rdaddress_fast_start;
+					rdaddress2_fast <= rdaddress2_fast_start;
 				end
-				*/
+				else begin
+					usb_wr_fast<=0;
+					SendCount_fast <= SendCount_fast + (2**sendincrementfast);
+					rdaddress_fast <= rdaddress_fast + (2**sendincrementfast);
+					rdaddress2_fast <= rdaddress2_fast + (2**sendincrementfast);			
+				end
 			end
-			else usb2state<=USBFAST_BUSY;
+			else begin
+				usbfastwasbusy<=1;
+				usb2state<=USBFAST_BUSY;
+			end
 		end
 		USBFAST_DONE: begin
 			if (usbdonecounterfast==0) usb2state<=USBFAST_IDLE;//gives a little time to make sure the processor sees the done signal
