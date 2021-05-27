@@ -1224,19 +1224,20 @@ assign usb_dataio = ((do_usb && do_fast_usb) ? usb_dataio_fast : usb_dataio_slow
 assign usb_wr = ((do_usb && do_fast_usb) ? usb_wr_fast : usb_wr_slow);
 assign usb_siwu = ((do_usb && do_fast_usb) ? usb_siwu_fast : usb_siwu_slow);
 assign clk_rd = ((do_usb && do_fast_usb) ? usb_clk60 : clk);
-reg usbfastwasbusy=0, nsmp_gt0=0;
+reg usbfastwasbusy=0, nsmp_gt0=0, firstsamplefast=1;
 always @(posedge usb_clk60) begin
 	case (usb2state)
 		USBFAST_IDLE: begin
 			send_fast_usb2_done<=0;
 			usb_wr_fast<=1;
 			usb_siwu_fast<=1;
+			firstsamplefast<=1;
 			if (nsmp_gt0) SendCount_fast<=0 + (2**sendincrementfast);
 			else SendCount_fast<=0;
 			sendincrementfast<=sendincrement;
 			usbfastwasbusy<=0;
 			if (send_fast_usb2) begin
-				rdaddress_fast <= wraddress_triggerpoint - triggerpoint + 2;
+				rdaddress_fast <= wraddress_triggerpoint - triggerpoint + 1;
 				rdaddress2_fast <= rdaddress_fast;
 				rdaddress_fast_start <= rdaddress_fast;
 				rdaddress2_fast_start <= rdaddress_fast;
@@ -1277,8 +1278,11 @@ always @(posedge usb_clk60) begin
 					rdaddress2_fast <= rdaddress2_fast_start;
 				end
 				else begin
-					usb_wr_fast<=0;
-					SendCount_fast <= SendCount_fast + (2**sendincrementfast);
+					if (!firstsamplefast) begin
+						usb_wr_fast<=0;
+						SendCount_fast <= SendCount_fast + (2**sendincrementfast);
+					end
+					firstsamplefast<=0;
 					rdaddress_fast <= rdaddress_fast + (2**sendincrementfast);
 					rdaddress2_fast <= rdaddress2_fast + (2**sendincrementfast);			
 				end
