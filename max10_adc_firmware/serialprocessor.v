@@ -51,7 +51,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 	output reg getadcdata;
 	output reg [4:0] getadcadr;
 	output reg adcreset;
-	output reg [11:0] writesamp;//max of 4096 samples
+	output reg [10:0] writesamp;
 	output reg writeadc;
 	output reg [11:0] adctestout;
 	output reg [7:0] downsample;

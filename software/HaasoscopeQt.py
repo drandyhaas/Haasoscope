@@ -29,6 +29,9 @@ for a in sys.argv:
             print("serialdelaytimerwait set to",serialdelaytimerwait)
         if a[1]=="r":
             ram_width=int(a[2:])
+            if ram_width>HaasoscopeLibQt.max_ram_width:
+                print("ram_width",ram_width,"is bigger than the max allowed",HaasoscopeLibQt.max_ram_width)
+                ram_width = HaasoscopeLibQt.max_ram_width
             print("ram_width set to",ram_width)
         if a[1]=="b":
             num_boardss=int(a[2:])

@@ -3,7 +3,9 @@ print("Loading HaasoscopeLibQt.py")
 
 # You might adjust these, just override them before calling construct()
 num_board = 1 # Number of Haasoscope boards to read out
-ram_width = 9 # width in bits of sample ram to use (e.g. 9==512 samples, 12(max)==4096 samples)
+max_ram_width = 13
+max_slowadc_ram_width = 11
+ram_width = 9 # width in bits of sample ram to use (e.g. 9==512 samples)
 max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
@@ -41,7 +43,7 @@ class Haasoscope():
     def construct(self):
         self.num_samples = int(pow(2,ram_width)/pow(2,sendincrement)) # num samples per channel, max is pow(2,ram_width)/pow(2,0)=4096
         self.num_bytes = int(self.num_samples*num_chan_per_board) #num bytes per board
-        self.nsamp=int(pow(2,ram_width)-1) #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
+        self.nsamp=int(pow(2,min(ram_width,max_slowadc_ram_width))-1) #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
         print("num main ADC and max10adc bytes for all boards = ",self.num_bytes*num_board,"and",len(max10adcchans)*self.nsamp)
         self.serialdelaytimerwait=100 #150 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
         if mearm: self.serialdelaytimerwait=600
@@ -263,12 +265,12 @@ class Haasoscope():
         if ttt>self.num_samples and ttt>10:
             print("trigger time over/under thresh can't be bigger than num samples",self.num_samples); return
         usedownsamplefortriggertot=True
-        if usedownsamplefortriggertot: ttt+=pow(2,12) #set bit [ram_width] (max) = 1
+        if usedownsamplefortriggertot: ttt+=pow(2,ram_width) #set bit [ram_width] (max) = 1
         self.ser.write(bytearray([129]))
         myb=bytearray.fromhex('{:04x}'.format(ttt))
         self.ser.write(bytearray([myb[0]]))
         self.ser.write(bytearray([myb[1]]))
-        print("trigger time over/under thresh now",256*myb[0]+1*myb[1]-pow(2,12),"and usedownsamplefortriggertot is",usedownsamplefortriggertot)
+        print("trigger time over/under thresh now",256*myb[0]+1*myb[1]-pow(2,ram_width),"and usedownsamplefortriggertot is",usedownsamplefortriggertot)
     
     def writefirmchan(self,chan):
         theboard = num_board-1-int(chan/num_chan_per_board)
@@ -1471,7 +1473,7 @@ class Haasoscope():
             print("minimum firmwareversion of all boards is",self.minfirmwareversion)
             self.maxdownsample=15 # slowest I can run
             if self.minfirmwareversion>=5: #updated firmware
-                self.maxdownsample=min(15 +(12-ram_width), 22) # can add 12-ram_width when using newer firmware, but not more than 22
+                self.maxdownsample=min(15 +(max_ram_width-ram_width), 22) # can add max_ram_width-ram_width when using newer firmware, but not more than 22
             self.yscale = 7.5 # Vpp for full scale
             if self.minfirmwareversion>=15: #v9.0 boards
                 self.yscale*=1.1 # if we used 10M / 1.1M / 11k input resistors

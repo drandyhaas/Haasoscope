@@ -341,8 +341,8 @@ refer to the applicable agreement for further details.
 	(port
 		(pt 360 336)
 		(output)
-		(text "writesamp[11..0]" (rect 0 0 62 12)(font "Arial" ))
-		(text "writesamp[11..0]" (rect 277 331 339 343)(font "Arial" ))
+		(text "writesamp[10..0]" (rect 0 0 63 12)(font "Arial" ))
+		(text "writesamp[10..0]" (rect 276 331 339 343)(font "Arial" ))
 		(line (pt 360 336)(pt 344 336)(line_width 3))
 	)
 	(port
