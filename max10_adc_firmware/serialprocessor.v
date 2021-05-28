@@ -29,7 +29,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 	reg [ram_width-1:0] rdaddress_slow;
 	reg [ram_width-1:0] rdaddress2_slow;
 	reg [ram_width-1:0] rdaddress_fast;
-	reg [ram_width-1:0] rdaddress2_fast;
+	//reg [ram_width-1:0] rdaddress2_fast;//only for lockin stuff
 	output reg [ram_width-1:0] triggerpoint;
 	output reg rden=0;
 	input wire [7:0] ram_output1;
@@ -1215,10 +1215,9 @@ reg [ram_width:0] SendCount_fast=0;
 reg[1:0] usb2state;
 reg [ram_width-1:0] sendincrementfast = 0;//for timing
 reg [ram_width-1:0] rdaddress_fast_start;
-reg [ram_width-1:0] rdaddress2_fast_start;
 localparam USBFAST_IDLE=0, USBFAST_BUSY=1, USBFAST_WRITE=2, USBFAST_DONE=3;
 assign rdaddress = ((do_usb && do_fast_usb) ? rdaddress_fast : rdaddress_slow);
-assign rdaddress2 = ((do_usb && do_fast_usb) ? rdaddress2_fast : rdaddress2_slow);
+assign rdaddress2 = ((do_usb && do_fast_usb) ? rdaddress_fast : rdaddress2_slow);
 assign usb_dataio = ((do_usb && do_fast_usb) ? usb_dataio_fast : usb_dataio_slow);
 assign usb_wr = ((do_usb && do_fast_usb) ? usb_wr_fast : usb_wr_slow);
 assign usb_siwu = ((do_usb && do_fast_usb) ? usb_siwu_fast : usb_siwu_slow);
@@ -1241,9 +1240,7 @@ always @(posedge usb_clk60) begin
 			usbfastwasbusy<=0;
 			if (send_fast_usb2) begin
 				rdaddress_fast <= wraddress_triggerpoint - triggerpoint;
-				rdaddress2_fast <= rdaddress_fast;
 				rdaddress_fast_start <= rdaddress_fast;
-				rdaddress2_fast_start <= rdaddress_fast;
 				if (usbdonecounterfast>2) usb2state<=USBFAST_BUSY;//need time to calculate the rdaddresses!
 				else usbdonecounterfast<=usbdonecounterfast+1;
 			end
@@ -1278,13 +1275,11 @@ always @(posedge usb_clk60) begin
 					SendCount_fast <= sendincrementfast;
 					SendCount_fast_chan <= SendCount_fast_chan + 1;
 					rdaddress_fast <= rdaddress_fast_start;
-					rdaddress2_fast <= rdaddress2_fast_start;
 				end
 				else begin
 					usb_wr_fast<=0;
 					SendCount_fast <= SendCount_fast + sendincrementfast;
 					rdaddress_fast <= rdaddress_fast + sendincrementfast;
-					rdaddress2_fast <= rdaddress2_fast + sendincrementfast;			
 				end
 			end
 			else begin

@@ -125,6 +125,7 @@ set_false_path -from [get_registers lp_ram_dp*] -to [get_registers processor:ins
 set_false_path -from [get_registers processor:inst|rden] -to [get_registers lp_ram_dp*]
 set_false_path -from [get_registers *triggerpoint*] -to [get_registers *rdaddress*]
 set_false_path -from [get_registers *nsmp*] -to [get_registers *nsmp2*]
+set_false_path -from [get_registers processor:inst|rdaddress2_slow*]
 
 
 #**************************************************************
