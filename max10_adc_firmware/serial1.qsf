@@ -112,7 +112,7 @@ set_location_assignment PIN_32 -to clk_flash_out_2
 set_location_assignment PIN_21 -to i2c_sda
 set_location_assignment PIN_141 -to i2c_scl
 set_global_assignment -name TIMING_ANALYZER_MULTICORNER_ANALYSIS ON
-set_global_assignment -name OPTIMIZATION_MODE "HIGH PERFORMANCE EFFORT"
+set_global_assignment -name OPTIMIZATION_MODE BALANCED
 set_location_assignment PIN_132 -to usb_wr
 set_location_assignment PIN_127 -to usb_txe_busy
 set_location_assignment PIN_134 -to usb_clk60

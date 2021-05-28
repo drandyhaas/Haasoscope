@@ -72,7 +72,8 @@ class Haasoscope():
         self.dofft=False #drawing the FFT plot
         self.dousb=False #whether to use USB2 output
         self.dofastusb=False #whether to do sync 245 fifo mode on usb2 (need to reprogram ft232h hat) (experimental)
-        self.fastusbstartpadding=1 #number of bytes added to the start of each channel in fastusb mode
+        self.fastusbpadding=4 #number of bytes added total (start and end) to each channel in fastusb mode
+        self.fastusbendpadding=2 #number of bytes added to the end of each channel in fastusb mode
         self.dousbparallel=False #whether to tell all board to read out over USB2 in parallel (experimental)
         self.sincresample=0 # amount of resampling to do (sinx/x)
         self.dogetotherdata=False # whether to read other calculated data like TDC
@@ -1220,8 +1221,8 @@ class Haasoscope():
         if len(self.usbser)<num_board:
             print("Not a USB2 connection for each board!")
             return False
-        if self.dofastusb: startpadding = self.fastusbstartpadding
-        else: startpadding = 0
+        if self.dofastusb: padding = self.fastusbpadding
+        else: padding = 0
         if len(self.usbser)>0:
             for usb in np.arange(num_board): self.usbser[usb].timeout=.25 # lower the timeout on the connections, temporarily
             foundusbs=[]
@@ -1236,11 +1237,11 @@ class Haasoscope():
                 for usb in np.arange(len(self.usbser)):
                     if not usb in foundusbs: # it's not already known that this usb connection is assigned to a board
                         try:
-                            rslt = self.usbser[usb].read(self.num_bytes+startpadding*num_chan_per_board) # try to get data from the board
+                            rslt = self.usbser[usb].read(self.num_bytes+padding*num_chan_per_board) # try to get data from the board
                         except ftd.DeviceError as msgnum:
                             print("Error reading from USB2", usb, msgnum)
                             return
-                        if len(rslt)==self.num_bytes+startpadding*num_chan_per_board:
+                        if len(rslt)==self.num_bytes+padding*num_chan_per_board:
                             print("   got the right nbytes for board",bn,"from usb",usb)
                             self.usbsermap[bn]=usb
                             foundusbs.append(usb) # remember that we already have figured out which board this usb connection is for, so we don't bother trying again for another board
@@ -1264,13 +1265,15 @@ class Haasoscope():
                 self.ser.write(bytearray([10 + board]))
             if self.db: print(time.time()-self.oldtime,"asked for data from board",board)
             if self.dolockin: self.getlockindata(board)
-        startpadding = 0
+        padding = 0
+        endpadding = 0
         if self.dousb:
             try:
                 #self.ser.write(bytearray([40+board])) # for debugging timing, does nuttin
                 if self.dofastusb:
-                    startpadding = self.fastusbstartpadding
-                    rslt = self.usbser[self.usbsermap[board]].read(self.num_bytes+startpadding*num_chan_per_board)
+                    padding = self.fastusbpadding
+                    endpadding = self.fastusbendpadding
+                    rslt = self.usbser[self.usbsermap[board]].read(self.num_bytes+padding*num_chan_per_board)
                     nq = self.usbser[self.usbsermap[board]].getQueueStatus()
                     if nq>0:
                         print(nq,"bytes still available for usb on board",board,"...purging")
@@ -1284,14 +1287,14 @@ class Haasoscope():
         else:
             rslt = self.ser.read(int(self.num_bytes))
         if self.db: print(time.time()-self.oldtime,"getdata wanted",self.num_bytes,"bytes and got",len(rslt),"from board",board)
-        if len(rslt)==self.num_bytes+startpadding*num_chan_per_board:
+        if len(rslt)==self.num_bytes+padding*num_chan_per_board:
             self.timedout = False
             #byte_arrayold = unpack('%dB' % len(rslt), rslt)  # Convert serial data to array of numbers
             #self.ydataold=np.reshape(byte_arrayold,(num_chan_per_board,self.num_samples)) #slow!
-            self.ydata=[ np.frombuffer(rslt,dtype=np.int8,count=self.num_samples,offset=0*self.num_samples+1*startpadding), #need the int8 type because we'll later subtract it from 127 to flip it over
-                         np.frombuffer(rslt,dtype=np.int8,count=self.num_samples,offset=1*self.num_samples+2*startpadding),
-                         np.frombuffer(rslt,dtype=np.int8,count=self.num_samples,offset=2*self.num_samples+3*startpadding),
-                         np.frombuffer(rslt,dtype=np.int8,count=self.num_samples,offset=3*self.num_samples+4*startpadding) ]
+            self.ydata=[ np.frombuffer(rslt,dtype=np.int8,count=self.num_samples,offset=0*self.num_samples+1*padding-endpadding), #need the int8 type because we'll later subtract it from 127 to flip it over
+                         np.frombuffer(rslt,dtype=np.int8,count=self.num_samples,offset=1*self.num_samples+2*padding-endpadding),
+                         np.frombuffer(rslt,dtype=np.int8,count=self.num_samples,offset=2*self.num_samples+3*padding-endpadding),
+                         np.frombuffer(rslt,dtype=np.int8,count=self.num_samples,offset=3*self.num_samples+4*padding-endpadding) ]
             #print(127-self.ydataold[0])
             #print(127-self.ydata[0])
             #self.ser.write(bytearray([40 + board]))  # for debugging timing, does nuttin

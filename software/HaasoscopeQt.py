@@ -32,6 +32,9 @@ for a in sys.argv:
             if ram_width>HaasoscopeLibQt.max_ram_width:
                 print("ram_width",ram_width,"is bigger than the max allowed",HaasoscopeLibQt.max_ram_width)
                 ram_width = HaasoscopeLibQt.max_ram_width
+            if ram_width<1:
+                print("ram_width",ram_width,"is less than 1")
+                ram_width = 1
             print("ram_width set to",ram_width)
         if a[1]=="b":
             num_boardss=int(a[2:])

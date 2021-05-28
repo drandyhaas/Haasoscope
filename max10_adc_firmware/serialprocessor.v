@@ -1211,7 +1211,7 @@ reg send_fast_usb2_done=0;
 reg do_fast_usb=0;
 reg[3:0] usbdonecounterfast=0;
 reg[3:0] usbdonecounterslow=0;
-reg [ram_width+2:0] SendCount_fast=0;
+reg [ram_width:0] SendCount_fast=0;
 reg[1:0] usb2state;
 reg [ram_width-1:0] sendincrementfast = 0;//for timing
 reg [ram_width-1:0] rdaddress_fast_start;
@@ -1223,8 +1223,10 @@ assign usb_dataio = ((do_usb && do_fast_usb) ? usb_dataio_fast : usb_dataio_slow
 assign usb_wr = ((do_usb && do_fast_usb) ? usb_wr_fast : usb_wr_slow);
 assign usb_siwu = ((do_usb && do_fast_usb) ? usb_siwu_fast : usb_siwu_slow);
 assign clk_rd = ((do_usb && do_fast_usb) ? usb_clk60 : clk);
-reg usbfastwasbusy=0, nsmp_gt0=0;
-reg [ram_width-1:0] nsmp2 = 0; // for timing
+reg usbfastwasbusy=0;
+reg [ram_width:0] nsmp2 = 0; // for timing
+reg [2:0] SendCount_fast_chan=0;
+localparam fastusbpadding=4;
 always @(posedge usb_clk60) begin
 	case (usb2state)
 		USBFAST_IDLE: begin
@@ -1232,13 +1234,13 @@ always @(posedge usb_clk60) begin
 			usb_wr_fast<=1;
 			usb_siwu_fast<=1;
 			sendincrementfast<=(2**sendincrement);
-			nsmp2<=nsmp+1;
-			nsmp_gt0 = (nsmp>0);// for timing
-			if (nsmp_gt0) SendCount_fast<=sendincrementfast;
-			else SendCount_fast<=0;
+			if (nsmp>0) nsmp2<=nsmp+fastusbpadding;
+			else nsmp2<=(2**ram_width)+fastusbpadding;
+			SendCount_fast<=sendincrementfast;
+			SendCount_fast_chan<=0;
 			usbfastwasbusy<=0;
 			if (send_fast_usb2) begin
-				rdaddress_fast <= wraddress_triggerpoint - triggerpoint + 1;
+				rdaddress_fast <= wraddress_triggerpoint - triggerpoint;
 				rdaddress2_fast <= rdaddress_fast;
 				rdaddress_fast_start <= rdaddress_fast;
 				rdaddress2_fast_start <= rdaddress_fast;
@@ -1257,7 +1259,7 @@ always @(posedge usb_clk60) begin
 			end			
 		end
 		USBFAST_WRITE: begin
-			case(SendCount_fast[ram_width+2:ram_width]) //rotate through the outputs
+			case(SendCount_fast_chan) //rotate through the outputs
 					0: usb_dataio_fast<=ram_output1;
 					1: usb_dataio_fast<=ram_output2;
 					2: usb_dataio_fast<=ram_output3;
@@ -1265,16 +1267,16 @@ always @(posedge usb_clk60) begin
 					4: usb_dataio_fast<=digital_buffer1; // the digital logic analyzer buffer
 			endcase
 			if (!usb_txe_busy) begin				
-				if(SendCount_fast[ram_width+2:ram_width]==blockstosend) begin // it's 5 (or more) blocks including the logic analyzer info
+				if(SendCount_fast_chan==blockstosend) begin // it's 5 (or more) blocks including the logic analyzer info
 					usb_wr_fast<=1;
 					send_fast_usb2_done<=1;
 					usb_siwu_fast<=0;//this sends out the data to the PC immediately, without waiting for the latency timer (16 ms by default!)
 					usb2state<=USBFAST_DONE;
 				end
-				else if (nsmp_gt0 && SendCount_fast[ram_width-1:0]>=nsmp2) begin
+				else if (SendCount_fast>=nsmp2) begin
 					usb_wr_fast<=0;
-					SendCount_fast[ram_width-1:0] <= sendincrementfast;
-					SendCount_fast[ram_width+2:ram_width] <= SendCount_fast[ram_width+2:ram_width] + 1;
+					SendCount_fast <= sendincrementfast;
+					SendCount_fast_chan <= SendCount_fast_chan + 1;
 					rdaddress_fast <= rdaddress_fast_start;
 					rdaddress2_fast <= rdaddress2_fast_start;
 				end
