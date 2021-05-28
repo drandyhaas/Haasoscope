@@ -1,0 +1,11 @@
+
+
+C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/uniqueid.v
+
+May 28 12PM:57:47>: Megafunction Altera Unique Chip ID v15.0 is not listed in any 
+wizard.lst file in the specified library path(s).Wizard launch aborted
+
+C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/uniqueid.v
+
+May 28 12PM:58:30>: Megafunction Altera Unique Chip ID v15.0 is not listed in any 
+wizard.lst file in the specified library path(s).Wizard launch aborted

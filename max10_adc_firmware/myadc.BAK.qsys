@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<system name="$${FILENAME}">
+ <component
+   name="$${FILENAME}"
+   displayName="$${FILENAME}"
+   version="1.0"
+   description=""
+   tags="INTERNAL_COMPONENT=true"
+   categories="System" />
+ <parameter name="bonusData"><![CDATA[bonusData 
+{
+   element $${FILENAME}
+   {
+      datum _originalDeviceFamily
+      {
+         value = "MAX 10";
+         type = "String";
+      }
+   }
+   element modular_adc_0
+   {
+      datum _sortIndex
+      {
+         value = "0";
+         type = "int";
+      }
+   }
+}
+]]></parameter>
+ <parameter name="clockCrossingAdapter" value="HANDSHAKE" />
+ <parameter name="device" value="10M08SAE144C8GES" />
+ <parameter name="deviceFamily" value="MAX 10" />
+ <parameter name="deviceSpeedGrade" value="8" />
+ <parameter name="fabricMode" value="QSYS" />
+ <parameter name="generateLegacySim" value="false" />
+ <parameter name="generationId" value="0" />
+ <parameter name="globalResetBus" value="false" />
+ <parameter name="hdlLanguage" value="VERILOG" />
+ <parameter name="hideFromIPCatalog" value="true" />
+ <parameter name="lockedInterfaceDefinition" value="" />
+ <parameter name="maxAdditionalLatency" value="1" />
+ <parameter name="projectName" value="serial1.qpf" />
+ <parameter name="sopcBorderPoints" value="false" />
+ <parameter name="systemHash" value="0" />
+ <parameter name="testBenchDutName" value="" />
+ <parameter name="timeStamp" value="0" />
+ <parameter name="useTestBenchNamingPattern" value="false" />
+ <instanceScript></instanceScript>
+ <interface
+   name="adc_pll_clock"
+   internal="modular_adc_0.adc_pll_clock"
+   type="clock"
+   dir="end">
+  <port name="adc_pll_clock_clk" internal="adc_pll_clock_clk" />
+ </interface>
+ <interface
+   name="adc_pll_locked"
+   internal="modular_adc_0.adc_pll_locked"
+   type="conduit"
+   dir="end">
+  <port name="adc_pll_locked_export" internal="adc_pll_locked_export" />
+ </interface>
+ <interface name="clock" internal="modular_adc_0.clock" type="clock" dir="end">
+  <port name="clock_clk" internal="clock_clk" />
+ </interface>
+ <interface
+   name="command"
+   internal="modular_adc_0.command"
+   type="avalon_streaming"
+   dir="end">
+  <port name="command_valid" internal="command_valid" />
+  <port name="command_channel" internal="command_channel" />
+  <port name="command_startofpacket" internal="command_startofpacket" />
+  <port name="command_endofpacket" internal="command_endofpacket" />
+  <port name="command_ready" internal="command_ready" />
+ </interface>
+ <interface
+   name="reset_sink"
+   internal="modular_adc_0.reset_sink"
+   type="reset"
+   dir="end">
+  <port name="reset_sink_reset_n" internal="reset_sink_reset_n" />
+ </interface>
+ <interface
+   name="response"
+   internal="modular_adc_0.response"
+   type="avalon_streaming"
+   dir="start">
+  <port name="response_valid" internal="response_valid" />
+  <port name="response_channel" internal="response_channel" />
+  <port name="response_data" internal="response_data" />
+  <port name="response_startofpacket" internal="response_startofpacket" />
+  <port name="response_endofpacket" internal="response_endofpacket" />
+ </interface>
+ <interface name="sample_store_csr" internal="modular_adc_0.sample_store_csr" />
+ <interface name="sample_store_irq" internal="modular_adc_0.sample_store_irq" />
+ <interface name="sequencer_csr" internal="modular_adc_0.sequencer_csr" />
+ <interface name="threshold" internal="modular_adc_0.threshold" />
+ <module
+   name="modular_adc_0"
+   kind="altera_modular_adc"
+   version="15.0"
+   enabled="1"
+   autoexport="1">
+  <parameter name="AUTO_DEVICE_SPEEDGRADE" value="8" />
+  <parameter name="CLOCK_FREQ" value="0" />
+  <parameter name="CORE_VAR" value="3" />
+  <parameter name="DEVICE_PART" value="10M08SAE144C8GES" />
+  <parameter name="ENABLE_DEBUG" value="0" />
+  <parameter name="FAMILY" value="MAX 10" />
+  <parameter name="MONITOR_COUNT_WIDTH" value="12" />
+  <parameter name="clkdiv" value="2" />
+  <parameter name="en_thmax_ch0" value="false" />
+  <parameter name="en_thmax_ch1" value="false" />
+  <parameter name="en_thmax_ch10" value="false" />
+  <parameter name="en_thmax_ch11" value="false" />
+  <parameter name="en_thmax_ch12" value="false" />
+  <parameter name="en_thmax_ch13" value="false" />
+  <parameter name="en_thmax_ch14" value="false" />
+  <parameter name="en_thmax_ch15" value="false" />
+  <parameter name="en_thmax_ch16" value="false" />
+  <parameter name="en_thmax_ch2" value="false" />
+  <parameter name="en_thmax_ch3" value="false" />
+  <parameter name="en_thmax_ch4" value="false" />
+  <parameter name="en_thmax_ch5" value="false" />
+  <parameter name="en_thmax_ch6" value="false" />
+  <parameter name="en_thmax_ch7" value="false" />
+  <parameter name="en_thmax_ch8" value="false" />
+  <parameter name="en_thmax_ch9" value="false" />
+  <parameter name="en_thmin_ch0" value="false" />
+  <parameter name="en_thmin_ch1" value="false" />
+  <parameter name="en_thmin_ch10" value="false" />
+  <parameter name="en_thmin_ch11" value="false" />
+  <parameter name="en_thmin_ch12" value="false" />
+  <parameter name="en_thmin_ch13" value="false" />
+  <parameter name="en_thmin_ch14" value="false" />
+  <parameter name="en_thmin_ch15" value="false" />
+  <parameter name="en_thmin_ch16" value="false" />
+  <parameter name="en_thmin_ch2" value="false" />
+  <parameter name="en_thmin_ch3" value="false" />
+  <parameter name="en_thmin_ch4" value="false" />
+  <parameter name="en_thmin_ch5" value="false" />
+  <parameter name="en_thmin_ch6" value="false" />
+  <parameter name="en_thmin_ch7" value="false" />
+  <parameter name="en_thmin_ch8" value="false" />
+  <parameter name="en_thmin_ch9" value="false" />
+  <parameter name="en_tsd_max" value="false" />
+  <parameter name="en_tsd_min" value="false" />
+  <parameter name="external_vref" value="2.5" />
+  <parameter name="int_vref_vr" value="3.3" />
+  <parameter name="ip_is_for_which_adc" value="1" />
+  <parameter name="prescaler_ch16" value="false" />
+  <parameter name="prescaler_ch8" value="false" />
+  <parameter name="refsel" value="1" />
+  <parameter name="seq_order_length" value="2" />
+  <parameter name="seq_order_slot_1" value="0" />
+  <parameter name="seq_order_slot_10" value="30" />
+  <parameter name="seq_order_slot_11" value="30" />
+  <parameter name="seq_order_slot_12" value="30" />
+  <parameter name="seq_order_slot_13" value="30" />
+  <parameter name="seq_order_slot_14" value="30" />
+  <parameter name="seq_order_slot_15" value="30" />
+  <parameter name="seq_order_slot_16" value="30" />
+  <parameter name="seq_order_slot_17" value="30" />
+  <parameter name="seq_order_slot_18" value="30" />
+  <parameter name="seq_order_slot_19" value="30" />
+  <parameter name="seq_order_slot_2" value="17" />
+  <parameter name="seq_order_slot_20" value="30" />
+  <parameter name="seq_order_slot_21" value="30" />
+  <parameter name="seq_order_slot_22" value="30" />
+  <parameter name="seq_order_slot_23" value="30" />
+  <parameter name="seq_order_slot_24" value="30" />
+  <parameter name="seq_order_slot_25" value="30" />
+  <parameter name="seq_order_slot_26" value="30" />
+  <parameter name="seq_order_slot_27" value="30" />
+  <parameter name="seq_order_slot_28" value="30" />
+  <parameter name="seq_order_slot_29" value="30" />
+  <parameter name="seq_order_slot_3" value="17" />
+  <parameter name="seq_order_slot_30" value="30" />
+  <parameter name="seq_order_slot_31" value="30" />
+  <parameter name="seq_order_slot_32" value="30" />
+  <parameter name="seq_order_slot_33" value="30" />
+  <parameter name="seq_order_slot_34" value="30" />
+  <parameter name="seq_order_slot_35" value="30" />
+  <parameter name="seq_order_slot_36" value="30" />
+  <parameter name="seq_order_slot_37" value="30" />
+  <parameter name="seq_order_slot_38" value="30" />
+  <parameter name="seq_order_slot_39" value="30" />
+  <parameter name="seq_order_slot_4" value="30" />
+  <parameter name="seq_order_slot_40" value="30" />
+  <parameter name="seq_order_slot_41" value="30" />
+  <parameter name="seq_order_slot_42" value="30" />
+  <parameter name="seq_order_slot_43" value="30" />
+  <parameter name="seq_order_slot_44" value="30" />
+  <parameter name="seq_order_slot_45" value="30" />
+  <parameter name="seq_order_slot_46" value="30" />
+  <parameter name="seq_order_slot_47" value="30" />
+  <parameter name="seq_order_slot_48" value="30" />
+  <parameter name="seq_order_slot_49" value="30" />
+  <parameter name="seq_order_slot_5" value="30" />
+  <parameter name="seq_order_slot_50" value="30" />
+  <parameter name="seq_order_slot_51" value="30" />
+  <parameter name="seq_order_slot_52" value="30" />
+  <parameter name="seq_order_slot_53" value="30" />
+  <parameter name="seq_order_slot_54" value="30" />
+  <parameter name="seq_order_slot_55" value="30" />
+  <parameter name="seq_order_slot_56" value="30" />
+  <parameter name="seq_order_slot_57" value="30" />
+  <parameter name="seq_order_slot_58" value="30" />
+  <parameter name="seq_order_slot_59" value="30" />
+  <parameter name="seq_order_slot_6" value="30" />
+  <parameter name="seq_order_slot_60" value="30" />
+  <parameter name="seq_order_slot_61" value="30" />
+  <parameter name="seq_order_slot_62" value="30" />
+  <parameter name="seq_order_slot_63" value="30" />
+  <parameter name="seq_order_slot_64" value="30" />
+  <parameter name="seq_order_slot_7" value="30" />
+  <parameter name="seq_order_slot_8" value="30" />
+  <parameter name="seq_order_slot_9" value="30" />
+  <parameter name="thmax_ch0" value="0.0" />
+  <parameter name="thmax_ch1" value="0.0" />
+  <parameter name="thmax_ch10" value="0.0" />
+  <parameter name="thmax_ch11" value="0.0" />
+  <parameter name="thmax_ch12" value="0.0" />
+  <parameter name="thmax_ch13" value="0.0" />
+  <parameter name="thmax_ch14" value="0.0" />
+  <parameter name="thmax_ch15" value="0.0" />
+  <parameter name="thmax_ch16" value="0.0" />
+  <parameter name="thmax_ch2" value="0.0" />
+  <parameter name="thmax_ch3" value="0.0" />
+  <parameter name="thmax_ch4" value="0.0" />
+  <parameter name="thmax_ch5" value="0.0" />
+  <parameter name="thmax_ch6" value="0.0" />
+  <parameter name="thmax_ch7" value="0.0" />
+  <parameter name="thmax_ch8" value="0.0" />
+  <parameter name="thmax_ch9" value="0.0" />
+  <parameter name="thmin_ch0" value="0.0" />
+  <parameter name="thmin_ch1" value="0.0" />
+  <parameter name="thmin_ch10" value="0.0" />
+  <parameter name="thmin_ch11" value="0.0" />
+  <parameter name="thmin_ch12" value="0.0" />
+  <parameter name="thmin_ch13" value="0.0" />
+  <parameter name="thmin_ch14" value="0.0" />
+  <parameter name="thmin_ch15" value="0.0" />
+  <parameter name="thmin_ch16" value="0.0" />
+  <parameter name="thmin_ch2" value="0.0" />
+  <parameter name="thmin_ch3" value="0.0" />
+  <parameter name="thmin_ch4" value="0.0" />
+  <parameter name="thmin_ch5" value="0.0" />
+  <parameter name="thmin_ch6" value="0.0" />
+  <parameter name="thmin_ch7" value="0.0" />
+  <parameter name="thmin_ch8" value="0.0" />
+  <parameter name="thmin_ch9" value="0.0" />
+  <parameter name="tsclkdiv" value="1" />
+  <parameter name="tsclksel" value="1" />
+  <parameter name="tsd_max" value="125" />
+  <parameter name="tsd_min" value="0" />
+  <parameter name="use_ch0" value="true" />
+  <parameter name="use_ch1" value="false" />
+  <parameter name="use_ch10" value="false" />
+  <parameter name="use_ch11" value="false" />
+  <parameter name="use_ch12" value="false" />
+  <parameter name="use_ch13" value="false" />
+  <parameter name="use_ch14" value="false" />
+  <parameter name="use_ch15" value="false" />
+  <parameter name="use_ch16" value="false" />
+  <parameter name="use_ch2" value="false" />
+  <parameter name="use_ch3" value="false" />
+  <parameter name="use_ch4" value="false" />
+  <parameter name="use_ch5" value="false" />
+  <parameter name="use_ch6" value="false" />
+  <parameter name="use_ch7" value="false" />
+  <parameter name="use_ch8" value="false" />
+  <parameter name="use_ch9" value="false" />
+  <parameter name="use_tsd" value="true" />
+ </module>
+ <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
+ <interconnectRequirement for="$system" name="qsys_mm.enableEccProtection" value="FALSE" />
+ <interconnectRequirement for="$system" name="qsys_mm.insertDefaultSlave" value="FALSE" />
+ <interconnectRequirement for="$system" name="qsys_mm.maxAdditionalLatency" value="1" />
+</system>

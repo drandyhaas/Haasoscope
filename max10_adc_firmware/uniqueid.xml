@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<instance entity-name="altchip_id" version="15.0" >
+<generic name="DEVICE_FAMILY" value="MAX 10" />
+<generic name="ID_VALUE" value="18446744073709551615" />
+</instance>

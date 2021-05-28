@@ -1,0 +1,23 @@
+IP Ports Diff Report for myadc
+Fri May 28 12:57:00 2021
+Quartus Prime Version 18.0.0 Build 614 04/24/2018 SJ Lite Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. IP Information
+
+
+
++------------------------------------------------+
+; IP Information                                 ;
++----------------------+-------------------------+
+; IP Variation Name    ; myadc                   ;
+; Prior Version        ; 15.0                    ;
+; New Version          ; 18.0                    ;
+; New File             ; myadc/synthesis/myadc.v ;
+; Has Port Differences ; No                      ;
++----------------------+-------------------------+
+
+

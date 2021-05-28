@@ -1,15 +1,19 @@
-// (C) 2001-2015 Altera Corporation. All rights reserved.
-// Your use of Altera Corporation's design tools, logic functions and other 
+// (C) 2001-2018 Intel Corporation. All rights reserved.
+// Your use of Intel Corporation's design tools, logic functions and other 
 // software and tools, and its AMPP partner logic functions, and any output 
-// files any of the foregoing (including device programming or simulation 
+// files from any of the foregoing (including device programming or simulation 
 // files), and any associated documentation or information are expressly subject 
-// to the terms and conditions of the Altera Program License Subscription 
-// Agreement, Altera MegaCore Function License Agreement, or other applicable 
+// to the terms and conditions of the Intel Program License Subscription 
+// Agreement, Intel FPGA IP License Agreement, or other applicable 
 // license agreement, including, without limitation, that your use is for the 
-// sole purpose of programming logic devices manufactured by Altera and sold by 
-// Altera or its authorized distributors.  Please refer to the applicable 
+// sole purpose of programming logic devices manufactured by Intel and sold by 
+// Intel or its authorized distributors.  Please refer to the applicable 
 // agreement for further details.
 
+
+// synthesis translate_off
+`timescale 1ns / 1ps
+// synthesis translate_on
 
 module altera_modular_adc_control #(
     parameter clkdiv        = 1,
@@ -21,7 +25,26 @@ module altera_modular_adc_control #(
     parameter is_this_first_or_second_adc = 1,
     parameter analog_input_pin_mask = 17'h0,
     parameter hard_pwd = 0,
-    parameter dual_adc_mode = 0
+    parameter dual_adc_mode = 0,
+    parameter enable_usr_sim = 0,
+    parameter reference_voltage_sim = 65536,
+    parameter simfilename_ch0 = "simfilename_ch0",
+    parameter simfilename_ch1 = "simfilename_ch1",
+    parameter simfilename_ch2 = "simfilename_ch2",
+    parameter simfilename_ch3 = "simfilename_ch3",
+    parameter simfilename_ch4 = "simfilename_ch4",
+    parameter simfilename_ch5 = "simfilename_ch5",
+    parameter simfilename_ch6 = "simfilename_ch6",
+    parameter simfilename_ch7 = "simfilename_ch7",
+    parameter simfilename_ch8 = "simfilename_ch8",
+    parameter simfilename_ch9 = "simfilename_ch9",
+    parameter simfilename_ch10 = "simfilename_ch10",
+    parameter simfilename_ch11 = "simfilename_ch11",
+    parameter simfilename_ch12 = "simfilename_ch12",
+    parameter simfilename_ch13 = "simfilename_ch13",
+    parameter simfilename_ch14 = "simfilename_ch14",
+    parameter simfilename_ch15 = "simfilename_ch15",
+    parameter simfilename_ch16 = "simfilename_ch16"
 ) (
     input           clk,
     input           rst_n,
@@ -95,7 +118,26 @@ fiftyfivenm_adcblock_top_wrapper #(
     .prescalar                       (prescalar),
     .is_this_first_or_second_adc     (is_this_first_or_second_adc),
     .analog_input_pin_mask           (analog_input_pin_mask),
-    .hard_pwd                        (hard_pwd)
+    .hard_pwd                        (hard_pwd),
+    .enable_usr_sim                  (enable_usr_sim),
+    .reference_voltage_sim           (reference_voltage_sim),
+    .simfilename_ch0                 (simfilename_ch0),
+    .simfilename_ch1                 (simfilename_ch1),
+    .simfilename_ch2                 (simfilename_ch2),
+    .simfilename_ch3                 (simfilename_ch3),
+    .simfilename_ch4                 (simfilename_ch4),
+    .simfilename_ch5                 (simfilename_ch5),
+    .simfilename_ch6                 (simfilename_ch6),
+    .simfilename_ch7                 (simfilename_ch7),
+    .simfilename_ch8                 (simfilename_ch8),
+    .simfilename_ch9                 (simfilename_ch9),
+    .simfilename_ch10                (simfilename_ch10),
+    .simfilename_ch11                (simfilename_ch11),
+    .simfilename_ch12                (simfilename_ch12),
+    .simfilename_ch13                (simfilename_ch13),
+    .simfilename_ch14                (simfilename_ch14),
+    .simfilename_ch15                (simfilename_ch15),
+    .simfilename_ch16                (simfilename_ch16)
 ) adc_inst (
     //.reset              (reset),
     .chsel              (chsel),                        // 5-bits channel selection.

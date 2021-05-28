@@ -1,0 +1,12 @@
+
+WORK > DEFAULT
+DEFAULT:          ./libraries/work/            
+work:             ./libraries/work/            
+control_internal: ./libraries/control_internal/
+modular_adc_0:    ./libraries/modular_adc_0/   
+altera_ver:       ./libraries/altera_ver/      
+lpm_ver:          ./libraries/lpm_ver/         
+sgate_ver:        ./libraries/sgate_ver/       
+altera_mf_ver:    ./libraries/altera_mf_ver/   
+altera_lnsim_ver: ./libraries/altera_lnsim_ver/
+fiftyfivenm_ver:  ./libraries/fiftyfivenm_ver/ 

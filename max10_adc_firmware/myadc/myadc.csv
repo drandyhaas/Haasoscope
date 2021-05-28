@@ -1,0 +1,25 @@
+# system info myadc on 2021.05.28.12:56:46
+system_info:
+name,value
+DEVICE,10M08SAE144C8GES
+DEVICE_FAMILY,MAX 10
+GENERATION_ID,1622221001
+#
+#
+# Files generated for myadc on 2021.05.28.12:56:46
+files:
+filepath,kind,attributes,module,is_top
+simulation/myadc.v,VERILOG,,myadc,true
+simulation/submodules/myadc_modular_adc_0.v,VERILOG,,myadc_modular_adc_0,false
+simulation/submodules/altera_modular_adc_control.v,VERILOG,,altera_modular_adc_control,false
+simulation/submodules/altera_modular_adc_control_avrg_fifo.v,VERILOG,,altera_modular_adc_control,false
+simulation/submodules/altera_modular_adc_control_fsm.v,VERILOG,,altera_modular_adc_control,false
+simulation/submodules/chsel_code_converter_sw_to_hw.v,VERILOG,,altera_modular_adc_control,false
+simulation/submodules/fiftyfivenm_adcblock_primitive_wrapper.v,VERILOG,,altera_modular_adc_control,false
+simulation/submodules/fiftyfivenm_adcblock_top_wrapper.v,VERILOG,,altera_modular_adc_control,false
+#
+# Map from instance-path to kind of module
+instances:
+instancePath,module
+myadc.modular_adc_0,myadc_modular_adc_0
+myadc.modular_adc_0.control_internal,altera_modular_adc_control
