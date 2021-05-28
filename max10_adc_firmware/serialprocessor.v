@@ -1217,19 +1217,13 @@ reg [ram_width-1:0] sendincrementfast = 0;//for timing
 reg [ram_width-1:0] rdaddress_fast_start;
 reg [ram_width-1:0] rdaddress2_fast_start;
 localparam USBFAST_IDLE=0, USBFAST_BUSY=1, USBFAST_WRITE=2, USBFAST_DONE=3;
-//assign rdaddress = ((do_usb && do_fast_usb) ? rdaddress_fast : rdaddress_slow);
-//assign rdaddress2 = ((do_usb && do_fast_usb) ? rdaddress2_fast : rdaddress2_slow);
-//assign usb_dataio = ((do_usb && do_fast_usb) ? usb_dataio_fast : usb_dataio_slow);
-//assign usb_wr = ((do_usb && do_fast_usb) ? usb_wr_fast : usb_wr_slow);
-//assign usb_siwu = ((do_usb && do_fast_usb) ? usb_siwu_fast : usb_siwu_slow);
-//assign clk_rd = ((do_usb && do_fast_usb) ? usb_clk60 : clk);
-assign rdaddress = rdaddress_fast;
-assign rdaddress2 = rdaddress2_fast;
-assign usb_dataio = usb_dataio_fast;
-assign usb_wr = usb_wr_fast;
-assign usb_siwu = usb_siwu_fast;
-assign clk_rd = usb_clk60;
-reg usbfastwasbusy=0, nsmp_gt0=0, firstsamplefast=1;
+assign rdaddress = ((do_usb && do_fast_usb) ? rdaddress_fast : rdaddress_slow);
+assign rdaddress2 = ((do_usb && do_fast_usb) ? rdaddress2_fast : rdaddress2_slow);
+assign usb_dataio = ((do_usb && do_fast_usb) ? usb_dataio_fast : usb_dataio_slow);
+assign usb_wr = ((do_usb && do_fast_usb) ? usb_wr_fast : usb_wr_slow);
+assign usb_siwu = ((do_usb && do_fast_usb) ? usb_siwu_fast : usb_siwu_slow);
+assign clk_rd = ((do_usb && do_fast_usb) ? usb_clk60 : clk);
+reg usbfastwasbusy=0, nsmp_gt0=0;
 reg [ram_width-1:0] nsmp2 = 0; // for timing
 always @(posedge usb_clk60) begin
 	case (usb2state)
@@ -1237,10 +1231,9 @@ always @(posedge usb_clk60) begin
 			send_fast_usb2_done<=0;
 			usb_wr_fast<=1;
 			usb_siwu_fast<=1;
-			firstsamplefast<=1;
 			sendincrementfast<=(2**sendincrement);
-			nsmp2<=nsmp;
-			nsmp_gt0 = (nsmp2>0);// for timing
+			nsmp2<=nsmp+1;
+			nsmp_gt0 = (nsmp>0);// for timing
 			if (nsmp_gt0) SendCount_fast<=sendincrementfast;
 			else SendCount_fast<=0;
 			usbfastwasbusy<=0;
@@ -1286,11 +1279,8 @@ always @(posedge usb_clk60) begin
 					rdaddress2_fast <= rdaddress2_fast_start;
 				end
 				else begin
-					if (!firstsamplefast) begin
-						usb_wr_fast<=0;
-						SendCount_fast <= SendCount_fast + sendincrementfast;
-					end
-					firstsamplefast<=0;
+					usb_wr_fast<=0;
+					SendCount_fast <= SendCount_fast + sendincrementfast;
 					rdaddress_fast <= rdaddress_fast + sendincrementfast;
 					rdaddress2_fast <= rdaddress2_fast + sendincrementfast;			
 				end

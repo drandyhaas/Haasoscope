@@ -120,10 +120,11 @@ set_false_path -from [get_registers processor:inst|clockbitstowaitlockin*]
 #ignore for now, not sure how to fix it
 set_false_path -to [get_registers processor:inst|lockinresult*]
 #probably don't care about these
-#set_false_path -from [get_registers lp_ram_dp*]
-#set_false_path -from [get_registers processor:inst|rdaddress*] -to [get_registers lp_ram_dp*]
-#set_false_path -from [get_registers processor:inst|rden] -to [get_registers lp_ram_dp*]
-#set_false_path -from [get_registers *triggerpoint*] -to [get_registers *rdaddress*]
+set_false_path -from [get_registers lp_ram_dp*] -to [get_registers processor:inst|chan*mean*]
+set_false_path -from [get_registers lp_ram_dp*] -to [get_registers processor:inst|txData*]
+set_false_path -from [get_registers processor:inst|rden] -to [get_registers lp_ram_dp*]
+set_false_path -from [get_registers *triggerpoint*] -to [get_registers *rdaddress*]
+set_false_path -from [get_registers *nsmp*] -to [get_registers *nsmp2*]
 
 
 #**************************************************************
