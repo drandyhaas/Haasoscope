@@ -106,7 +106,6 @@ set_false_path -from [get_registers {*altera_modular_adc_control_fsm:u_control_f
 set_false_path -from [get_registers processor:inst|triggertot*]
 set_false_path -to [get_registers processor:inst|screencolumndata*]
 set_false_path -to [get_registers processor:inst|screenwren*]
-set_false_path -from [get_registers uniqueid:inst19|altchip_id:uniqueid*]
 set_false_path -from [get_registers processor:inst|rollingtrigger*]
 set_false_path -from [get_registers processor:inst|highres*]
 set_false_path -from [get_registers processor:inst|send_fast_usb2_done]
