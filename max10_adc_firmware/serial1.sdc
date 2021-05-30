@@ -78,7 +78,7 @@ derive_clock_uncertainty
 # Set Clock Groups
 #**************************************************************
 
-#set_clock_groups -asynchronous -group {clock_ext_osc clk_slowadc10 clk_mainadc clk_mainadc2} -group {usb_clk60}
+set_clock_groups -asynchronous -group {clock_ext_osc clk_slowadc10 clk_mainadc clk_mainadc2} -group {usb_clk60}
 
 #**************************************************************
 # Set False Path
@@ -114,20 +114,22 @@ set_false_path -from [get_registers processor:inst|send_fast_usb2]
 set_false_path -from [get_registers processor:inst|blockstosend*]
 set_false_path -from [get_registers processor:inst|do_usb]
 set_false_path -from [get_registers processor:inst|do_fast_usb]
-set_false_path -to [get_registers processor:inst|sendincrementfast*]
+set_false_path -from [get_registers processor:inst|imthelast]
+set_false_path -from [get_registers processor:inst|noselftrig]
 #ignore for now, don't understand it
-set_false_path -from [get_registers processor:inst|clockbitstowaitlockin*]
+#set_false_path -from [get_registers processor:inst|clockbitstowaitlockin*]
 #ignore for now, not sure how to fix it
 set_false_path -to [get_registers processor:inst|lockinresult*]
 #probably don't care about these
-set_false_path -from [get_registers lp_ram_dp*] -to [get_registers processor:inst|chan*mean*]
-set_false_path -from [get_registers lp_ram_dp*] -to [get_registers processor:inst|txData*]
-set_false_path -from [get_registers processor:inst|rden] -to [get_registers lp_ram_dp*]
-set_false_path -from [get_registers *triggerpoint*] -to [get_registers *rdaddress*]
-set_false_path -from [get_registers *nsmp*] -to [get_registers *nsmp2*]
-set_false_path -from [get_registers processor:inst|rdaddress_slow*]
-set_false_path -from [get_registers processor:inst|rdaddress2_slow*]
-set_false_path -to [get_registers processor:inst|usb_dataio_slow*]
+#set_false_path -to [get_registers processor:inst|sendincrementfast*]
+#set_false_path -from [get_registers lp_ram_dp*] -to [get_registers processor:inst|chan*mean*]
+#set_false_path -from [get_registers lp_ram_dp*] -to [get_registers processor:inst|txData*]
+#set_false_path -from [get_registers processor:inst|rden] -to [get_registers lp_ram_dp*]
+#set_false_path -from [get_registers *triggerpoint*] -to [get_registers *rdaddress*]
+#set_false_path -from [get_registers *nsmp*] -to [get_registers *nsmp2*]
+#set_false_path -from [get_registers processor:inst|rdaddress_slow*]
+#set_false_path -from [get_registers processor:inst|rdaddress2_slow*]
+#set_false_path -to [get_registers processor:inst|usb_dataio_slow*]
 
 
 #**************************************************************

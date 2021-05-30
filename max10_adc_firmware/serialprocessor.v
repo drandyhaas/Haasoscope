@@ -833,7 +833,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 				end
 				else begin
 					ioCountToSend = 1;
-					data[0]=18; // this is the firmware version
+					data[0]=19; // this is the firmware version
 					state=WRITE1;
 				end
 			end
@@ -1225,7 +1225,7 @@ assign clk_rd = ((do_usb && do_fast_usb) ? usb_clk60 : clk);
 reg usbfastwasbusy=0;
 reg [ram_width:0] nsmp2 = 0; // for timing
 reg [2:0] SendCount_fast_chan=0;
-localparam fastusbpadding=4;
+localparam fastusbpadding=3;
 always @(posedge usb_clk60) begin
 	case (usb2state)
 		USBFAST_IDLE: begin
@@ -1235,7 +1235,7 @@ always @(posedge usb_clk60) begin
 			sendincrementfast<=(2**sendincrement);
 			if (nsmp>0) nsmp2<=nsmp+fastusbpadding;
 			else nsmp2<=(2**ram_width)+fastusbpadding;
-			SendCount_fast<=sendincrementfast;
+			SendCount_fast<=nsmp2;
 			SendCount_fast_chan<=0;
 			usbfastwasbusy<=0;
 			if (send_fast_usb2) begin
@@ -1270,15 +1270,15 @@ always @(posedge usb_clk60) begin
 					usb_siwu_fast<=0;//this sends out the data to the PC immediately, without waiting for the latency timer (16 ms by default!)
 					usb2state<=USBFAST_DONE;
 				end
-				else if (SendCount_fast>=nsmp2) begin
+				else if (SendCount_fast==0) begin
 					usb_wr_fast<=0;
-					SendCount_fast <= sendincrementfast;
+					SendCount_fast <= nsmp2;
 					SendCount_fast_chan <= SendCount_fast_chan + 1;
 					rdaddress_fast <= rdaddress_fast_start;
 				end
 				else begin
 					usb_wr_fast<=0;
-					SendCount_fast <= SendCount_fast + sendincrementfast;
+					SendCount_fast <= SendCount_fast - sendincrementfast;
 					rdaddress_fast <= rdaddress_fast + sendincrementfast;
 				end
 			end
