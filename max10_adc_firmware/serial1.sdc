@@ -48,6 +48,7 @@ create_clock -name {usb_clk60} -period 16.666 -waveform { 0.000 8.333 } [get_por
 
 create_generated_clock -name {clk_slowadc10} -source [get_pins {inst15|altpll_component|auto_generated|pll1|inclk[0]}] -duty_cycle 50/1 -multiply_by 1 -divide_by 5 -master_clock {clock_ext_osc} [get_pins {inst15|altpll_component|auto_generated|pll1|clk[0]}] 
 create_generated_clock -name {clk_mainadc} -source [get_pins {inst15|altpll_component|auto_generated|pll1|inclk[0]}] -duty_cycle 50/1 -multiply_by 5 -divide_by 2 -master_clock {clock_ext_osc} [get_pins {inst15|altpll_component|auto_generated|pll1|clk[1]}] 
+create_generated_clock -name {clk_50} -source [get_pins {inst15|altpll_component|auto_generated|pll1|inclk[0]}] -duty_cycle 50/1 -multiply_by 1 -divide_by 1 -master_clock {clock_ext_osc} [get_pins {inst15|altpll_component|auto_generated|pll1|clk[3]}] 
 create_generated_clock -name {clk_mainadc2} -source [get_pins {inst15|altpll_component|auto_generated|pll1|inclk[0]}] -duty_cycle 50/1 -multiply_by 5 -divide_by 2 -phase 180/1 -master_clock {clock_ext_osc} [get_pins {inst15|altpll_component|auto_generated|pll1|clk[4]}] 
 
 #**************************************************************
@@ -66,11 +67,11 @@ derive_clock_uncertainty
 # Set Input Delay
 #**************************************************************
 
-set_input_delay -clock { clock_ext_osc } 1 [get_ports 232_*]
-set_input_delay -clock { clock_ext_osc } 1 [get_ports clock_in]
-set_input_delay -clock { clock_ext_osc } 1 [get_ports i2c_*]
+set_input_delay -clock { clk_50 } 1 [get_ports 232_in*]
+set_input_delay -clock { clk_50 } 1 [get_ports clock_in]
+set_input_delay -clock { clk_50 } 1 [get_ports i2c_*]
 
-set_input_delay -clock { usb_clk60 } 1 [get_ports usb_*]
+set_input_delay -clock { usb_clk60 } 1 {usb_txe_busy usb_clk60 usb_rxf}
 
 set_input_delay -clock { clk_mainadc } 1 [get_ports ext_trig_in]
 set_input_delay -clock { clk_mainadc } 1 [get_ports spareleft]
@@ -88,21 +89,25 @@ set_input_delay -clock { clk_mainadc } -min 4 [get_ports digital_in*]
 # Set Output Delay
 #**************************************************************
 
-set_output_delay -clock { clock_ext_osc } 1 [get_ports debug*]
-set_output_delay -clock { clock_ext_osc } 1 [get_ports 232_*]
-set_output_delay -clock { clock_ext_osc } 1 [get_ports div_out]
-set_output_delay -clock { clock_ext_osc } 1 [get_ports format_out]
-set_output_delay -clock { clock_ext_osc } 1 [get_ports outsel_out]
-set_output_delay -clock { clock_ext_osc } 1 [get_ports i2c_*]
-set_output_delay -clock { clock_ext_osc } 1 [get_ports outclk_pin]
+set_output_delay -clock { clk_50 } 1 [get_ports debug*]
+set_output_delay -clock { clk_50 } 1 [get_ports 232_out*]
+set_output_delay -clock { clk_50 } 1 [get_ports div_out]
+set_output_delay -clock { clk_50 } 1 [get_ports format_out]
+set_output_delay -clock { clk_50 } 1 [get_ports outsel_out]
+set_output_delay -clock { clk_50 } 1 [get_ports i2c_*]
+set_output_delay -clock { clk_50 } 1 [get_ports outclk_pin]
+
+set_output_delay -clock { clk_50 } 1 [get_ports pin_*]
+set_output_delay -clock { usb_clk60 } 1 [get_ports pin_*] -add_delay
 
 set_output_delay -clock { clk_mainadc } -1 [get_ports spareright]
-set_output_delay -clock { clk_mainadc } -1 [get_ports trig*]
+set_output_delay -clock { clk_mainadc } -1 [get_ports trigout*]
+set_output_delay -clock { clk_mainadc } -1 [get_ports trig_out*]
 
-set_output_delay -clock { usb_clk60 } -min 1 [get_ports pin_*]
-set_output_delay -clock { usb_clk60 } -max 1 [get_ports pin_*]
-set_output_delay -clock { usb_clk60 } -min 1 [get_ports usb_*]
-set_output_delay -clock { usb_clk60 } -max 1 [get_ports usb_*]
+set_output_delay -clock { clk_50 } -min 1 {usb_wr usb_siwu usb_pwrsv usb_oe usb_rd}
+set_output_delay -clock { clk_50 } -max 1 {usb_wr usb_siwu usb_pwrsv usb_oe usb_rd}
+set_output_delay -clock { usb_clk60 } -min 1 {usb_wr usb_siwu usb_pwrsv usb_oe usb_rd} -add_delay
+set_output_delay -clock { usb_clk60 } -max 1 {usb_wr usb_siwu usb_pwrsv usb_oe usb_rd} -add_delay
 set_output_delay -clock { clk_mainadc } -min 1 [get_ports clk_flash_out]
 set_output_delay -clock { clk_mainadc } -max 0 [get_ports clk_flash_out]
 set_output_delay -clock { clk_mainadc2 } -min 1 [get_ports clk_flash_out_2]
@@ -113,7 +118,7 @@ set_output_delay -clock { clk_mainadc2 } -max 0 [get_ports clk_flash_out_2]
 # Set Clock Groups
 #**************************************************************
 
-set_clock_groups -asynchronous -group {clock_ext_osc clk_slowadc10 clk_mainadc clk_mainadc2} -group {usb_clk60}
+set_clock_groups -asynchronous -group {clock_ext_osc clk_slowadc10 clk_mainadc clk_50 clk_mainadc2} -group {usb_clk60}
 
 #**************************************************************
 # Set False Path
@@ -152,6 +157,8 @@ set_false_path -from [get_registers processor:inst|imthelast]
 set_false_path -from [get_registers processor:inst|noselftrig]
 set_false_path -from [get_registers processor:inst|trigchannels*]
 set_false_path -from [get_registers processor:inst|myid*]
+set_false_path -from [get_registers processor:inst|triggerpoint*]
+set_false_path -from [get_registers processor:inst|trigthresh*]
 #ignore for now, don't understand it
 #set_false_path -from [get_registers processor:inst|clockbitstowaitlockin*]
 #ignore for now, not sure how to fix it
@@ -172,7 +179,12 @@ set_false_path -to [get_registers processor:inst|lockinresult*]
 # Set Multicycle Path
 #**************************************************************
 
+set_multicycle_path -from [get_clocks {scanclk}] -to [get_clocks {clk_50}] -hold -end 2
 
+set_multicycle_path -from {clk_mainadc} -to {clk_flash_out} -setup -end 2
+set_multicycle_path -from {clk_mainadc2} -to {clk_flash_out_2} -setup -end 2
+set_multicycle_path -from {clk_mainadc} -to {clk_flash_out} -hold -end 2
+set_multicycle_path -from {clk_mainadc2} -to {clk_flash_out_2} -hold -end 2
 
 #**************************************************************
 # Set Maximum Delay
