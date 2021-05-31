@@ -1343,9 +1343,9 @@ class Haasoscope():
             tempc2=meanrms*(tempc2-mean_c2)/rms_c2 + meanmean
             #print mean_c1, mean_c2, rms_c1, rms_c2
         ns=self.num_samples
-        mergedsamps=np.empty(ns*2)
-        mergedsamps[0:ns*2:2]=tempc1 # a little tricky which is 0 and which is 1 (i.e. which is sampled first!)
-        mergedsamps[1:ns*2:2]=tempc2
+        mergedsamps=np.empty(ns*2,dtype=np.int8)
+        mergedsamps[0:ns*2:2]=tempc2 # a little tricky which is 0 and which is 1 (i.e. which is sampled first!)
+        mergedsamps[1:ns*2:2]=tempc1
         self.ydata[c1]=mergedsamps[0:ns]
         self.ydata[c2]=mergedsamps[ns:ns*2]
     
@@ -1364,9 +1364,9 @@ class Haasoscope():
             tempc2=meanrms*(tempc2-mean_c2)/rms_c2 + meanmean
             #print mean_c1, mean_c2, rms_c1, rms_c2
         ns=int(2*self.num_samples)
-        mergedsamps=np.empty(ns*2)
-        mergedsamps[0:ns*2:2]=tempc1 # a little tricky which is 0 and which is 1 (i.e. which is sampled first!)
-        mergedsamps[1:ns*2:2]=tempc2
+        mergedsamps=np.empty(ns*2,dtype=np.int8)
+        mergedsamps[0:ns*2:2]=tempc2 # a little tricky which is 0 and which is 1 (i.e. which is sampled first!)
+        mergedsamps[1:ns*2:2]=tempc1
         self.ydata[c1]=mergedsamps[0:int(ns/2)]
         self.ydata[c2]=mergedsamps[int(ns/2):ns]
         self.ydata[c1+2]=mergedsamps[ns:int(3*ns/2)]
