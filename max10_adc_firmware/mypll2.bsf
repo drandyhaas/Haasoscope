@@ -121,7 +121,7 @@ refer to the applicable agreement for further details.
 		(text "0.00" (rect 184 135 384 281)(font "Arial" ))
 		(text "50.00" (rect 216 135 453 281)(font "Arial" ))
 		(text "c3" (rect 134 149 276 309)(font "Arial" ))
-		(text "5/1" (rect 157 149 324 309)(font "Arial" ))
+		(text "1/1" (rect 157 149 324 309)(font "Arial" ))
 		(text "0.00" (rect 184 149 384 309)(font "Arial" ))
 		(text "50.00" (rect 216 149 453 309)(font "Arial" ))
 		(text "c4" (rect 134 163 277 337)(font "Arial" ))
