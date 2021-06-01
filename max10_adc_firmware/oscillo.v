@@ -39,7 +39,7 @@ parameter maxhighres=5;
 reg [7+maxhighres:0] highres1, highres2, highres3, highres4;
 input ext_trig_in, use_ext_trig;
 input [ram_width-1:0] nsmp;
-reg [ram_width-1:0] nsmp2,nsmp3; // to pass timing
+reg [ram_width-1:0] nsmp2; // to pass timing
 input [4:0] ext_trig_delay; // clk ticks to delay ext trigger by
 input noselftrig; 
 
@@ -274,8 +274,6 @@ wire downsamplego;
 assign downsamplego = downsamplecounter[downsample2] || downsample2==0; // pay attention to sample when downsamplego is true
 always @(posedge clk_flash) begin
 	nsmp2<=nsmp;//to pass timing
-	if (nsmp2>0) nsmp3<=nsmp2+1;//to cover fastusbpadding
-	else nsmp3<=nsmp2;
 	triggertype2<=triggertype;//to pass timing
 	downsample2<=downsample;//to pass timing
 	
@@ -310,7 +308,7 @@ always @(posedge clk_flash) begin
 		end
 	end
 	POSTACQ: begin
-		if(samplecount==nsmp3) begin // got the rest of the bytes? then stop acquiring
+		if(samplecount==nsmp2) begin // got the rest of the bytes? then stop acquiring
 			Acquiring <= 0;
 			AcquiringAndTriggered <= 0;
 			HaveFullData <= 1;
