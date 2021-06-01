@@ -134,6 +134,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
   output wire usb_wr, usb_siwu;
   reg usb_wr_slow, usb_siwu_slow;
   reg usb_wr_fast, usb_siwu_fast;
+  reg checkfastusbwriting=0;
   
   //TODO: use memory bits for this, not register space??
   reg [5:0] screencolumndata [128]; //all the screen data, 128 columns of (8 rows of 8 dots)
@@ -341,6 +342,8 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 				state=READ;
 			end
 			
+			// 40 is reserved for doing nothing, to check timing
+			
 			else if (readdata==50) begin
 				byteswanted=1;//wait for next byte which is the ID to take (replacing 0-9)
 				comdata=readdata;	
@@ -459,7 +462,12 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 				newcomdata=1; //pass it on
 				state=READ;
 			end
-			
+			else if (59==readdata) begin // tell them all toggle fast usb2 write cross-checking
+				checkfastusbwriting=~checkfastusbwriting;
+				comdata=readdata;
+				newcomdata=1; //pass it on
+				state=READ;
+			end			
 			
 			else if (100==readdata) begin
 				//tell them all to prime the trigger
@@ -880,7 +888,11 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 				else begin
 					if (do_usb) begin
 						if (do_fast_usb) begin
-							state=WRITE_USBFAST_EXT1;
+							if (checkfastusbwriting) begin
+								do_usb<=0;
+								state=WRITE_EXT1;
+							end
+							else state=WRITE_USBFAST_EXT1;
 						end
 						else state=WRITE_USB_EXT1;
 					end
@@ -1022,12 +1034,18 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 			if( thecounter[clockbitstowait]==thecounterbit ) begin
 				txStart<= 0;			
 				if(SendCount[ram_width+2:ram_width]==blockstosend) begin // it's 5 (or more) blocks including the logic analyzer info
-					rden = 0;
-					if (autorearm) begin
-						//tell them all to prime the trigger
-						get_ext_data=1;
+					if (!checkfastusbwriting) begin
+						rden = 0;
+						if (autorearm) begin
+							//tell them all to prime the trigger
+							get_ext_data=1;
+						end
+						state=READ;
 					end
-					state=READ;
+					else begin
+						do_usb<=1;
+						state=WRITE_USBFAST_EXT1;
+					end
 				end
 				else begin					
 					if(SendCount[4:0]==0 && serialdelaytimer<serialdelaytimerwait) begin // every 32 bytes, 50000 is 1 ms

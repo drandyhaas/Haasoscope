@@ -75,6 +75,7 @@ class Haasoscope():
         self.fastusbpadding=4 #number of bytes added total (start and end) to each channel in fastusb mode
         self.fastusbendpadding=2 #number of bytes added to the end of each channel in fastusb mode
         self.dousbparallel=False #whether to tell all board to read out over USB2 in parallel (experimental)
+        self.checkfastusbwriting=False #whether to cross-check the writing of fastusb data
         self.sincresample=0 # amount of resampling to do (sinx/x)
         self.dogetotherdata=False # whether to read other calculated data like TDC
         self.tdcdata=0 # TDC data
@@ -198,7 +199,12 @@ class Haasoscope():
     def toggle_fastusb(self):
         self.ser.write(bytearray([58]))
         print("toggled fast usb writing")
-    
+
+    def toggle_checkfastusbwriting(self):
+        self.ser.write(bytearray([59]))
+        self.checkfastusbwriting = not self.checkfastusbwriting
+        print("toggled checkfastusbwriting to",self.checkfastusbwriting)
+
     minfirmwareversion=255
     def getfirmwareversion(self, board):
         #get the firmware version of a board
@@ -1213,7 +1219,7 @@ class Haasoscope():
                     self.lockinphase = phase_fpga
                 if False:
                     print(ampl_fpga.round(2), phase_fpga.round(2), "<------ fpga ")
-            else: print("getdata asked for",16,"lockin bytes and got",len(rslt),"from board",board)        
+            else: print("getlockindata asked for",16,"lockin bytes and got",len(rslt),"from board",board)
     
     usbsermap=[]
     def makeusbsermap(self): # figure out which board is connected to which USB 2 connection
@@ -1246,6 +1252,9 @@ class Haasoscope():
                             self.usbsermap[bn]=usb
                             foundusbs.append(usb) # remember that we already have figured out which board this usb connection is for, so we don't bother trying again for another board
                             foundit=True
+                            if self.checkfastusbwriting:
+                                rsltslow = self.ser.read(int(self.num_bytes))  # to cross-check the readout
+                                print("got", len(rsltslow), "bytes from slow serial readout")
                             break # already found which board this usb connection is used for, so bail out
                         else: print("   got the wrong nbytes",len(rslt),"for board",bn,"from usb",usb)
                     #else: print("   already know what usb",usb,"is for")
@@ -1278,6 +1287,9 @@ class Haasoscope():
                     if nq>0:
                         print(nq,"bytes still available for usb on board",board,"...purging")
                         self.usbser[self.usbsermap[board]].purge(ftd.defines.PURGE_RX)
+                    if self.checkfastusbwriting:
+                        rsltslow = self.ser.read(int(self.num_bytes)) # to cross-check the readout
+                        #print("got",len(rsltslow),"bytes from slow serial readout")
                 else:
                     rslt = self.usbser[self.usbsermap[board]].read(self.num_bytes)
                 # self.ser.write(bytearray([40+board])) # for debugging timing, does nuttin
@@ -1295,6 +1307,19 @@ class Haasoscope():
                          np.frombuffer(rslt,dtype=np.int8,count=self.num_samples,offset=1*self.num_samples+2*padding-endpadding),
                          np.frombuffer(rslt,dtype=np.int8,count=self.num_samples,offset=2*self.num_samples+3*padding-endpadding),
                          np.frombuffer(rslt,dtype=np.int8,count=self.num_samples,offset=3*self.num_samples+4*padding-endpadding) ]
+            if self.checkfastusbwriting:
+                self.yrsltslow = [np.frombuffer(rsltslow, dtype=np.int8, count=self.num_samples,offset=0 * self.num_samples),
+                              np.frombuffer(rsltslow, dtype=np.int8, count=self.num_samples,offset=1 * self.num_samples),
+                              np.frombuffer(rsltslow, dtype=np.int8, count=self.num_samples,offset=2 * self.num_samples),
+                              np.frombuffer(rsltslow, dtype=np.int8, count=self.num_samples,offset=3 * self.num_samples)]
+                for c in range(num_chan_per_board):
+                    if (self.ydata[c][1:len(self.ydata[c])] == self.yrsltslow[c][1:len(self.yrsltslow[c])]).all():
+                        pass
+                        #print("yrsltslow crosscheck for channel",c,"passed")
+                    else:
+                        print("yrsltslow crosscheck for channel",c,"failed!")
+                        print(self.ydata[c])
+                        print(self.yrsltslow[c])
             #print(127-self.ydataold[0])
             #print(127-self.ydata[0])
             #self.ser.write(bytearray([40 + board]))  # for debugging timing, does nuttin
@@ -1491,6 +1516,7 @@ class Haasoscope():
             self.max_y = self.yscale/2. #4.0 #256 ADC
             self.tellrolltrig(self.rolltrigger)
             #self.donoselftrig()
+            #self.toggle_checkfastusbwriting()
             self.tellsamplesmax10adc()
             self.tellsamplessend()
             self.tellbytesskip()
@@ -1528,6 +1554,7 @@ class Haasoscope():
             if self.useexttrig: self.toggleuseexttrig()
             if self.dologicanalyzer: self.togglelogicanalyzer()
             if self.dofastusb: self.toggle_fastusb()
+            if self.checkfastusbwriting: self.toggle_checkfastusbwriting()
             if self.serport!="" and hasattr(self,'ser'):
                 self.shutdownadcs()
                 for p in self.usbser: p.close()

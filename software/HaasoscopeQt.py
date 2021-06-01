@@ -313,14 +313,10 @@ class MainWindow(TemplateBaseClass):
             else: self.downpos()
     
     def keyPressEvent(self, event):
-        if event.key()==QtCore.Qt.Key_Up:
-            self.uppos()
-        if event.key()==QtCore.Qt.Key_Down:
-            self.downpos()
-        if event.key()==QtCore.Qt.Key_Left:
-            self.timefast()
-        if event.key()==QtCore.Qt.Key_Right:
-            self.timeslow()
+        if event.key()==QtCore.Qt.Key_Up: self.uppos()
+        if event.key()==QtCore.Qt.Key_Down: self.downpos()
+        if event.key()==QtCore.Qt.Key_Left: self.timefast()
+        if event.key()==QtCore.Qt.Key_Right: self.timeslow()
         modifiers = QtWidgets.QApplication.keyboardModifiers()
         if event.key()==QtCore.Qt.Key_I:
             if not modifiers == QtCore.Qt.ShiftModifier:
@@ -328,10 +324,9 @@ class MainWindow(TemplateBaseClass):
                 d.increment_clk_phase(theboard)
             else:
                 if trigboardport!="": trigboard.increment_trig_board_clock_phase()
-        if event.key()==QtCore.Qt.Key_1:
-            trigboard.set_prescale(0.1)
-        if event.key()==QtCore.Qt.Key_2:
-            trigboard.set_prescale(0.2)
+        if event.key()==QtCore.Qt.Key_1: trigboard.set_prescale(0.1)
+        if event.key()==QtCore.Qt.Key_2: trigboard.set_prescale(0.2)
+        if event.key()==QtCore.Qt.Key_C: d.toggle_checkfastusbwriting()
 
     def actionRead_from_file(self):
         d.readcalib()
