@@ -1286,7 +1286,7 @@ class Haasoscope():
                 return
         else:
             rslt = self.ser.read(int(self.num_bytes))
-        if self.db: print(time.time()-self.oldtime,"getdata wanted",self.num_bytes,"bytes and got",len(rslt),"from board",board)
+        if self.db: print(time.time()-self.oldtime,"getdata wanted",self.num_bytes+padding*num_chan_per_board,"bytes and got",len(rslt),"from board",board)
         if len(rslt)==self.num_bytes+padding*num_chan_per_board:
             self.timedout = False
             #byte_arrayold = unpack('%dB' % len(rslt), rslt)  # Convert serial data to array of numbers
