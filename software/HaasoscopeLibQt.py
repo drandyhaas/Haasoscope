@@ -1231,7 +1231,9 @@ class Haasoscope():
         if self.dofastusb: padding = self.fastusbpadding
         else: padding = 0
         if len(self.usbser)>0:
-            for usb in np.arange(num_board): self.usbser[usb].timeout=.25 # lower the timeout on the connections, temporarily
+            for usb in np.arange(num_board):
+                if self.dofastusb: self.usbser[usb].setTimeouts(250,250)
+                else: self.usbser[usb].timeout=.25 # lower the timeout on the connections, temporarily
             foundusbs=[]
             self.ser.write(bytearray([100])) # prime the trigger (for all boards)
             for bn in np.arange(num_board):
@@ -1262,7 +1264,9 @@ class Haasoscope():
                 if not foundit:
                     print("could not find usb2 connection for board",bn)
                     return False
-            for usb in np.arange(num_board): self.usbser[usb].timeout=self.sertimeout # put back the timeout on the connections
+            for usb in np.arange(num_board):
+                if self.dofastusb: self.usbser[usb].setTimeouts(1000, 1000)
+                else: self.usbser[usb].timeout=self.sertimeout # put back the timeout on the connections
         print("usbsermap is",self.usbsermap)
         return True
     
