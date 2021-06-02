@@ -10,8 +10,9 @@ max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw 
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
 enable_ripyl=False # set to True to use ripyl serial decoding... have to get it from https://github.com/kevinpt/ripyl and then install it first!
+enable_fastusb=True # set to True to be able to use the fastusb2 writing
 
-import ftd2xx as ftd
+if enable_fastusb: import ftd2xx as ftd
 from serial import Serial, SerialException
 from struct import unpack
 import numpy as np
@@ -1592,8 +1593,8 @@ class Haasoscope():
             print("connected USBserial to",p,", 32Mb/s, timeout",self.sertimeout,"seconds")
         if self.dofastusb and ftd.listDevices():
             for ftd_n in range(len(ftd.listDevices())):
-                ftd_d = ftd.open(ftd_n)
-                if str(ftd_d.getDeviceInfo()["description"]).find("Haasoscope")>=0:
+                if str(ftd.getDeviceInfoDetail(ftd_n)["description"]).find("Haasoscope")>=0:
+                    ftd_d = ftd.open(ftd_n)
                     print("Adding ftd usb2 device:",ftd_d.getDeviceInfo())
                     ftd_d.setTimeouts(1000, 1000)
                     ftd_d.setBitMode(0xff, 0x40)
@@ -1606,4 +1607,3 @@ class Haasoscope():
             #print(self.usbser[0].getDeviceInfo())
         if self.serport=="": print("No serial COM port opened!"); return False
         return True
-    
