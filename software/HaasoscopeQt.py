@@ -222,9 +222,14 @@ class MainWindow(TemplateBaseClass):
         if d.oversamp(d.selectedchannel)>=0:
             self.prepareforsamplechange()
             self.timechanged()
-            #turn off chan+2
-            self.lines[d.selectedchannel+2].setVisible(False)
-            if d.trigsactive[d.selectedchannel+2]: d.toggletriggerchan(d.selectedchannel+2)
+            if d.dooversample[d.selectedchannel] > 0:
+                #turn off chan+2
+                self.lines[d.selectedchannel+2].setVisible(False)
+                if d.trigsactive[d.selectedchannel+2]: d.toggletriggerchan(d.selectedchannel+2)
+            else:
+                # turn on chan+2
+                self.lines[d.selectedchannel + 2].setVisible(True)
+                if not d.trigsactive[d.selectedchannel + 2]: d.toggletriggerchan(d.selectedchannel + 2)
     
     def overoversamp(self):
         if d.overoversamp()>=0:
