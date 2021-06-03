@@ -859,6 +859,11 @@ class Haasoscope():
                     xdatanew = (self.xdata-xboardshift-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
                     ydatanew=(127-theydata[l])*(self.yscale/256.) # got to flip it, since it's a negative feedback op amp
                     if self.ydatarefchan>=0: ydatanew -= (127-theydata[self.ydatarefchan])*(self.yscale/256.) # subtract the board's reference channel ydata from this channel's ydata
+                if self.average:
+                    numsamplestoaverage = 2
+                    ydatanew = np.repeat(
+                            np.mean(ydatanew.reshape(-1, numsamplestoaverage), axis=1),
+                            numsamplestoaverage)
                 if self.sincresample>0:
                     (ydatanew,xdatanew) = resample(ydatanew, len(xdatanew)*self.sincresample, t = xdatanew)
                     xdatanew = xdatanew[1*self.sincresample:len(xdatanew)*self.sincresample]
@@ -1333,11 +1338,6 @@ class Haasoscope():
             if self.dooversample[num_chan_per_board*(num_board-board-1)]: self.oversample(0,2)
             if self.dooversample[num_chan_per_board*(num_board-board-1)+1]: self.oversample(1,3)
             if self.dooversample[num_chan_per_board*(num_board-board-1)]==9: self.overoversample(0,1)
-            if self.average:
-                for c in np.arange(num_chan_per_board):
-                    for i in np.arange(int(self.num_samples/2)):
-                        val=(self.ydata[c][2*i]+self.ydata[c][2*i+1])/2
-                        self.ydata[c][2*i]=val; self.ydata[c][2*i+1]=val
         else:
             self.timedout = True
             if not self.db and self.rollingtrigger: print("getdata asked for",self.num_bytes,"bytes and got",len(rslt),"from board",board)
