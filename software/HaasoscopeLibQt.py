@@ -91,6 +91,7 @@ class Haasoscope():
         self.ydatarefchan=-1 #the reference channel for each board, whose ydata will be subtracted from other channels' ydata on the board
         self.chtext = "Ch." #the text in the legend for each channel
         self.noselftrig=False
+        self.num_logic_inputs=5 #number of active logic analyzer bits on each board
         self.db = False #debugging #True #False
     
         self.dolockin=False # read lockin info
@@ -836,7 +837,7 @@ class Haasoscope():
                 theboard = num_board - 1 - int(self.selectedchannel / num_chan_per_board)
                 self.xydatalogicraw[theboard] = a
                 if board==theboard:
-                    for l in np.arange(8):
+                    for l in np.arange(self.num_logic_inputs):
                         bl=b[7-l::8] # every 8th bit, starting at 7-l
                         ydatanew = bl*.3 + (l+1)*3.2/8. # scale it and shift it
                         self.xydatalogic[l][0]=xdatanew
@@ -1288,10 +1289,11 @@ class Haasoscope():
                     padding = self.fastusbpadding
                     endpadding = self.fastusbendpadding
                     rslt = self.usbser[self.usbsermap[board]].read(self.num_bytes+padding*num_chan_per_board)
-                    nq = self.usbser[self.usbsermap[board]].getQueueStatus()
-                    if nq>0:
-                        print(nq,"bytes still available for usb on board",board,"...purging")
-                        self.usbser[self.usbsermap[board]].purge(ftd.defines.PURGE_RX)
+                    if not self.dologicanalyzer:
+                        nq = self.usbser[self.usbsermap[board]].getQueueStatus()
+                        if nq>0:
+                            print(nq,"bytes still available for usb on board",board,"...purging")
+                            self.usbser[self.usbsermap[board]].purge(ftd.defines.PURGE_RX)
                     if self.checkfastusbwriting:
                         rsltslow = self.ser.read(int(self.num_bytes)) # to cross-check the readout
                         #print("got",len(rsltslow),"bytes from slow serial readout")
@@ -1341,10 +1343,19 @@ class Haasoscope():
             if not self.db and self.rollingtrigger: print("getdata asked for",self.num_bytes,"bytes and got",len(rslt),"from board",board)
         if self.dologicanalyzer:
             #get extra logic analyzer data, if needed
-            logicbytes=int(self.num_bytes/4)
+            logicbytes=int(self.num_bytes/num_chan_per_board)
             if self.dousb:
                 try:
-                    rslt = self.usbser[self.usbsermap[board]].read(logicbytes)
+                    if self.dofastusb:
+                        padding = self.fastusbpadding
+                        endpadding = self.fastusbendpadding
+                        rslt = self.usbser[self.usbsermap[board]].read(logicbytes + padding)
+                        nq = self.usbser[self.usbsermap[board]].getQueueStatus()
+                        if nq > 0:
+                            print(nq, "bytes still available for usb on board", board, "...purging")
+                            self.usbser[self.usbsermap[board]].purge(ftd.defines.PURGE_RX)
+                    else:
+                        rslt = self.usbser[self.usbsermap[board]].read(logicbytes)
                 except ftd.DeviceError as msgnum:
                     print("Error reading from USB2", self.usbsermap[board], msgnum)
                     return
@@ -1352,10 +1363,10 @@ class Haasoscope():
                 rslt = self.ser.read(logicbytes)
             if self.db: print(time.time()-self.oldtime,"getdata wanted",logicbytes,"logic bytes and got",len(rslt),"from board",board)
             byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
-            if len(rslt)==logicbytes:
-                self.ydatalogic=np.reshape(byte_array,(1,self.num_samples))
+            if len(rslt)==logicbytes+padding:
+                self.ydatalogic=np.reshape(byte_array[padding-endpadding:len(rslt)-endpadding],(1,self.num_samples))
             else:
-                if not self.db and self.rollingtrigger: print("getdata asked for",self.num_bytes,"logic bytes and got",len(rslt),"from board",board)
+                if not self.db and self.rollingtrigger: print("getdata asked for",logicbytes,"logic bytes and got",len(rslt),"from board",board)
                 if len(rslt)>0 and self.rollingtrigger: print(byte_array[0:10])
     
     def oversample(self,c1,c2):

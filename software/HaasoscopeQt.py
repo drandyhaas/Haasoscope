@@ -362,12 +362,12 @@ class MainWindow(TemplateBaseClass):
     def logic(self):
         d.togglelogicanalyzer()
         if d.dologicanalyzer:
-            for li in np.arange(8):
+            for li in np.arange(d.num_logic_inputs):
                 c=(0,0,0)
                 pen = pg.mkPen(color=c) # add linewidth=1.7, alpha=.65
                 self.lines[d.logicline1+li].setPen(pen)
         else:
-            for li in np.arange(8):
+            for li in np.arange(d.num_logic_inputs):
                 self.lines[d.logicline1+li].setPen(None)
         
     def highres(self):
@@ -614,7 +614,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.chanBox.setMaximum(HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board-1)
         self.ui.slowchanBox.setMaximum(len(HaasoscopeLibQt.max10adcchans)-1)
         #for the logic analyzer
-        for li in np.arange(8):
+        for li in np.arange(d.num_logic_inputs):
             line = self.ui.plot.plot(pen=None,name="logic_"+str(li)) # not drawn by default
             self.lines.append(line)
             if li==0: d.logicline1=len(self.lines)-1 # remember index where this first logic line is
@@ -667,7 +667,7 @@ class MainWindow(TemplateBaseClass):
             else:
                 self.lines[li].setData(d.xydata[li][0],d.xydata[li][1])
         if d.dologicanalyzer:
-            for li in np.arange(8):
+            for li in np.arange(d.num_logic_inputs):
                 self.lines[d.logicline1+li].setData(d.xydatalogic[li][0],d.xydatalogic[li][1])
         if d.dofft:
             self.fftui.fftline.setPen(self.linepens[d.fftchan])
@@ -725,6 +725,7 @@ class MainWindow(TemplateBaseClass):
             h5ds.attrs['trigger_position']=str(self.vline*d.xscaling)
             h5ds.attrs['sample_period'] =str(2.*d.xscale/d.num_samples)
             h5ds.attrs['num_samples'] =str(d.num_samples)
+            if d.dologicanalyzer: h5ds = self.outf.create_dataset(str(self.nevents)+"_logic", data=d.xydatalogicraw, compression="lzf")
             #Read like this:
             #import h5py
             #f=h5py.File('Haasoscope_out_20210506-103212.h5',"r")
@@ -754,6 +755,10 @@ class MainWindow(TemplateBaseClass):
                     self.outf.write(str(d.num_samples)+",") # next column is the number of samples
                     d.xydata[c][1].tofile(self.outf,",",format="%.3f") # save y data (1) from fast adc channel c
                     self.outf.write("\n") # newline
+            if d.dologicanalyzer:
+                for b in range(HaasoscopeLibQt.num_board):
+                    d.xydatalogicraw[b].tofile(self.outf,",")
+                    self.outf.write("\n")  # newline
         # should also write out the 8 digital bits per board (if logic analyzer on)
         # stored in d.xydatalogicraw[board]
     

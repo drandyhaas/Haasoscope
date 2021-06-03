@@ -1,12 +1,12 @@
 // from http://www.sparxeng.com/blog/software/communicating-with-your-cyclone-ii-fpga-over-serial-port-part-3-number-crunching
 
 module processor(clk, rxReady, rxData, txBusy, txStart, txData, readdata, get_ext_data, ext_data_ready, wraddress_triggerpoint, rden, rdaddress, ram_output1, ram_output2, ram_output3, ram_output4,
-newcomdata,comdata,spare1,spare2,spare3,serial_passthrough,master_clock, imthelast,imthefirst,rollingtrigger,trigDebug, 
+newcomdata,comdata,debug3,debug4,spare,serial_passthrough,master_clock, imthelast,imthefirst,rollingtrigger,trigDebug, 
 adcdata,adcready,getadcdata,getadcadr,adcvalid,adcreset,adcramdata,writesamp,writeadc,adctestout,
 triggerpoint,downsample, screendata,screenwren,screenaddr,screenreset,trigthresh,trigchannels,triggertype,triggertot,
 SPIsend,SPIsenddata,delaycounter,carrycounter,usb_siwu,SPIstate,offset,gainsw,do_usb,
 i2c_ena,i2c_addr,i2c_rw,i2c_datawr,i2c_datard,i2c_busy,i2c_ackerror,   usb_clk60,usb_dataio,usb_txe_busy,usb_wr,
-rdaddress2,trigthresh2, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_buffer1, nsmp, outputclk,
+rdadtwo,trigthreshtwo, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_buffer1, nsmp, outputclk,
 phasecounterselect,phaseupdown,phasestep,scanclk,
 ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 );
@@ -17,7 +17,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
    output reg txStart;
    output reg[7:0] txData;
    output reg[7:0] readdata;//first byte we got
-   output wire spare1,spare2,spare3;
+   output wire spare,debug3,debug4;
 	reg led1,led2,led3,led4;
 	reg io1,io2,io3,io4;
   	output reg get_ext_data;
@@ -25,11 +25,11 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 	parameter ram_width=12;//9 is 512 samples
 	input wire[ram_width-1:0] wraddress_triggerpoint;
 	output wire [ram_width-1:0] rdaddress;
-	output wire [ram_width-1:0] rdaddress2;
+	output wire [ram_width-1:0] rdadtwo;
 	reg [ram_width-1:0] rdaddress_slow;
-	reg [ram_width-1:0] rdaddress2_slow;
+	reg [ram_width-1:0] rdadtwo_slow;
 	reg [ram_width-1:0] rdaddress_fast;
-	//reg [ram_width-1:0] rdaddress2_fast;//only for lockin stuff
+	//reg [ram_width-1:0] rdadtwo_fast;//only for lockin stuff
 	output reg [ram_width-1:0] triggerpoint;
 	output reg rden=0;
 	input wire [7:0] ram_output1;
@@ -59,7 +59,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 	output reg screenwren=0;
 	output reg [9:0] screenaddr = 10'd0;
 	output reg screenreset=0;
-	output reg [7:0] trigthresh = 8'h80, trigthresh2=8'hff; // the normal and high trigger thresholds
+	output reg [7:0] trigthresh = 8'h80, trigthreshtwo=8'hff; // the normal and high trigger thresholds
 	output reg [3:0] trigchannels = 4'b1111;
 	output reg [3:0] triggertype = 4'b0001;//rising edge on, falling edge off, other off
    output reg [ram_width:0] triggertot;
@@ -742,7 +742,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 				newcomdata=1; //pass it on
 				if (bytesread<byteswanted) state=READMORE;
 				else begin
-					trigthresh2 = extradata[0];
+					trigthreshtwo = extradata[0];
 					state=READ;
 				end
 			end
@@ -874,7 +874,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 			if (ext_data_ready) begin // can read out
 				SendCount= 0;
 				rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
-				rdaddress2_slow = rdaddress_slow;
+				rdadtwo_slow = rdaddress_slow;
 				thecounterbit=thecounter[clockbitstowait];
 				thecounterbitlockin=thecounter[clockbitstowaitlockin];
 				if (lockinnumtoshift>0) begin
@@ -922,7 +922,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 						chan3mean = chan3mean/4096;
 					end
 					// next time through we calculate c2 * offset c3
-					// shift rdaddress2 and then accumulate
+					// shift rdadtwo and then accumulate
 					if (SendCount[ram_width-1:0]>lockinnumtoshift && SendCount[ram_width-1:0]<(4096-lockinnumtoshift)) begin
 						lockinresult2 = lockinresult2 + (ram_output3-chan2mean[7:0])*(ram_output4-chan3mean[7:0]);	// accumulate the vector of channel 2 * shifted channel 3
 					end
@@ -939,8 +939,8 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 			endcase			
 			SendCount = SendCount + 1;
 			rdaddress_slow = rdaddress_slow + 1;
-			if (SendCount[ram_width+1:ram_width]==1) rdaddress2_slow=rdaddress_slow-lockinnumtoshift;
-			else rdaddress2_slow=rdaddress_slow;
+			if (SendCount[ram_width+1:ram_width]==1) rdadtwo_slow=rdaddress_slow-lockinnumtoshift;
+			else rdadtwo_slow=rdaddress_slow;
 			state=LOCKIN2;
 			end // the counter
 		end
@@ -990,7 +990,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
         end
 		  else begin
 				rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
-				rdaddress2_slow = rdaddress_slow;
+				rdadtwo_slow = rdaddress_slow;
 				thecounterbit=thecounter[clockbitstowait];
 				if (do_usb) begin
 					if (do_fast_usb) begin
@@ -1016,12 +1016,12 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 				txStart<= 1;				
 				SendCount = SendCount + (2**sendincrement);
 				rdaddress_slow = rdaddress_slow + (2**sendincrement);
-				rdaddress2_slow = rdaddress_slow;
+				rdadtwo_slow = rdaddress_slow;
 				if (nsmp>0 && SendCount[ram_width-1:0]>=nsmp) begin
 					SendCount[ram_width-1:0]=0;
 					SendCount[ram_width+2:ram_width] = (SendCount[ram_width+2:ram_width] + 1);
 					rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
-					rdaddress2_slow = rdaddress_slow;
+					rdadtwo_slow = rdaddress_slow;
 				end
 				state=WRITE_EXT2;
 			end
@@ -1086,12 +1086,12 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 			if( (usb2counter>clockbitstowait) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles (usb2counter was set to 0 in last state)
 				SendCount = SendCount + (2**sendincrement);
 				rdaddress_slow = rdaddress_slow + (2**sendincrement);
-				rdaddress2_slow = rdaddress_slow;
+				rdadtwo_slow = rdaddress_slow;
 				if (nsmp>0 && SendCount[ram_width-1:0]>=nsmp) begin
 					SendCount[ram_width-1:0]=0;
 					SendCount[ram_width+2:ram_width] = (SendCount[ram_width+2:ram_width] + 1);
 					rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
-					rdaddress2_slow = rdaddress_slow;
+					rdadtwo_slow = rdaddress_slow;
 				end
 				state=WRITE_USB_EXT3;
 			end
@@ -1220,8 +1220,8 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 //for debugging
 assign debug1=send_fast_usb2;//state[0];
 assign debug2=send_fast_usb2_done;//state[1];
-assign spare1=(usb2state[0]);
-assign spare2=(usb2state[1]);
+assign debug3=(usb2state[0]);
+assign debug4=(usb2state[1]);
 
 //for fast usb2
 reg send_fast_usb2=0;
@@ -1233,7 +1233,7 @@ reg [ram_width:0] SendCount_fast=0;
 reg[1:0] usb2state;
 localparam USBFAST_IDLE=0, USBFAST_BUSY=1, USBFAST_WRITE=2, USBFAST_DONE=3;
 assign rdaddress = ((do_usb && do_fast_usb) ? rdaddress_fast : rdaddress_slow);
-assign rdaddress2 = ((do_usb && do_fast_usb) ? rdaddress_fast : rdaddress2_slow);
+assign rdadtwo = ((do_usb && do_fast_usb) ? rdaddress_fast : rdadtwo_slow);
 assign usb_dataio = ((do_usb && do_fast_usb) ? usb_dataio_fast : usb_dataio_slow);
 assign usb_wr = ((do_usb && do_fast_usb) ? usb_wr_fast : usb_wr_slow);
 assign usb_siwu = ((do_usb && do_fast_usb) ? usb_siwu_fast : usb_siwu_slow);

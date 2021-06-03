@@ -1,5 +1,5 @@
 IP Upgrade report for serial1
-Fri May 28 12:57:00 2021
+Wed Jun 02 21:48:53 2021
 Quartus Prime Version 18.0.0 Build 614 04/24/2018 SJ Lite Edition
 
 
@@ -8,9 +8,7 @@ Quartus Prime Version 18.0.0 Build 614 04/24/2018 SJ Lite Edition
 ---------------------
   1. Legal Notice
   2. IP Upgrade Summary
-  3. Successfully Upgraded IP Components
-  4. Failed Upgrade IP Components
-  5. IP Upgrade Messages
+  3. IP Upgrade Messages
 
 
 
@@ -36,7 +34,7 @@ refer to the applicable agreement for further details.
 +----------------------------------------------------------------------------+
 ; IP Upgrade Summary                                                         ;
 +------------------------------+---------------------------------------------+
-; IP Components Upgrade Status ; Failed - Fri May 28 12:57:00 2021           ;
+; IP Components Upgrade Status ; Failed - Wed Jun 02 21:48:53 2021           ;
 ; Quartus Prime Version        ; 18.0.0 Build 614 04/24/2018 SJ Lite Edition ;
 ; Revision Name                ; serial1                                     ;
 ; Top-level Entity Name        ; serial1                                     ;
@@ -44,110 +42,14 @@ refer to the applicable agreement for further details.
 +------------------------------+---------------------------------------------+
 
 
-+-------------------------------------------------------------------------------------------------------------------------------------+
-; Successfully Upgraded IP Components                                                                                                 ;
-+-------------+--------------------+---------+---------------------------+----------------------+---------------------------+---------+
-; Entity Name ; Component Name     ; Version ; Original Source File      ; Generation File Path ; New Source File           ; Message ;
-+-------------+--------------------+---------+---------------------------+----------------------+---------------------------+---------+
-; myadc       ; altera_modular_adc ; 15.0    ; myadc/synthesis/myadc.qip ; myadc.qsys           ; myadc/synthesis/myadc.qip ;         ;
-+-------------+--------------------+---------+---------------------------+----------------------+---------------------------+---------+
-
-
-+-----------------------------------------------------------------------------------------------------------------------------------------------------+
-; Failed Upgrade IP Components                                                                                                                        ;
-+-------------+----------------+---------+----------------------+----------------------+-----------------+--------------------------------------------+
-; Entity Name ; Component Name ; Version ; Original Source File ; Generation File Path ; New Source File ; Message                                    ;
-+-------------+----------------+---------+----------------------+----------------------+-----------------+--------------------------------------------+
-; uniqueid    ; altchip_id     ; 15.0    ; uniqueid.qip         ; uniqueid.v           ;                 ; Error upgrading IP component "uniqueid.v". ;
-+-------------+----------------+---------+----------------------+----------------------+-----------------+--------------------------------------------+
-
-
 +---------------------+
 ; IP Upgrade Messages ;
 +---------------------+
-Info (11902): Backing up file "myadc.qsys" to "myadc.BAK.qsys"
-Info (11902): Backing up file "myadc/synthesis/myadc.v" to "myadc.BAK.v"
-Info (11837): Started upgrading IP component altera_modular_adc with file "myadc.qsys"
-Info: 2021.05.28.12:56:30 Info: Starting to upgrade the IP cores in the Platform Designer system
-Info: 2021.05.28.12:56:30 Info: Finished upgrading the ip cores
-Info: 2021.05.28.12:56:38 Info: Saving generation log to C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc
-Info: 2021.05.28.12:56:38 Info: Starting: Create simulation model
-Info: 2021.05.28.12:56:38 Info: qsys-generate C:\Users\haas\Downloads\Haasoscope\max10_adc_firmware\myadc.qsys --simulation=VERILOG --allow-mixed-language-simulation --output-directory=C:\Users\haas\Downloads\Haasoscope\max10_adc_firmware\myadc\simulation --family="MAX 10" --part=10M08SAE144C8GES
-Info: 2021.05.28.12:56:38 Info: Loading max10_adc_firmware
-Info: 2021.05.28.12:56:39 Info: Reading input file
-Info: 2021.05.28.12:56:39 Info: Adding modular_adc_0 [altera_modular_adc 18.0]
-Info: 2021.05.28.12:56:39 Info: Parameterizing module modular_adc_0
-Info: 2021.05.28.12:56:39 Info: Building connections
-Info: 2021.05.28.12:56:39 Info: Parameterizing connections
-Info: 2021.05.28.12:56:39 Info: Validating
-Info: 2021.05.28.12:56:40 Info: Done reading input file
-Info: 2021.05.28.12:56:42 Info: myadc: Generating myadc "myadc" for SIM_VERILOG
-Info: 2021.05.28.12:56:46 Info: modular_adc_0: "myadc" instantiated altera_modular_adc "modular_adc_0"
-Info: 2021.05.28.12:56:46 Info: control_internal: "modular_adc_0" instantiated altera_modular_adc_control "control_internal"
-Info: 2021.05.28.12:56:46 Info: myadc: Done "myadc" with 3 modules, 8 files
-Info: 2021.05.28.12:56:46 Info: qsys-generate succeeded.
-Info: 2021.05.28.12:56:46 Info: Finished: Create simulation model
-Info: 2021.05.28.12:56:46 Info: Starting: Create Modelsim Project.
-Info: 2021.05.28.12:56:46 Info: sim-script-gen --spd=C:\Users\haas\Downloads\Haasoscope\max10_adc_firmware\myadc\myadc.spd --output-directory=C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc/simulation
-Info: 2021.05.28.12:56:46 Info: Doing: ip-make-simscript --spd=C:\Users\haas\Downloads\Haasoscope\max10_adc_firmware\myadc\myadc.spd --output-directory=C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc/simulation
-Info: 2021.05.28.12:56:47 Info: Generating the following file(s) for MODELSIM simulator in C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc/simulation
-Info: 2021.05.28.12:56:47 Info:     mentor
-Info: 2021.05.28.12:56:47 Info: Generating the following file(s) for VCS simulator in C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc/simulation
-Info: 2021.05.28.12:56:47 Info:     synopsys/vcs
-Info: 2021.05.28.12:56:47 Info: Generating the following file(s) for VCSMX simulator in C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc/simulation
-Info: 2021.05.28.12:56:47 Info:     synopsys/vcsmx
-Info: 2021.05.28.12:56:47 Info:     synopsys/vcsmx
-Info: 2021.05.28.12:56:47 Info: Generating the following file(s) for NCSIM simulator in C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc/simulation
-Info: 2021.05.28.12:56:47 Info:     cadence
-Info: 2021.05.28.12:56:47 Info:     cadence
-Info: 2021.05.28.12:56:47 Info:     cadence
-Info: 2021.05.28.12:56:47 Info:     2 .cds.lib files in cadence/cds_libs
-Info: 2021.05.28.12:56:47 Info: Generating the following file(s) for RIVIERA simulator in C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc/simulation
-Info: 2021.05.28.12:56:47 Info:     aldec
-Info: 2021.05.28.12:56:47 Info: For information on how to simulate your IP, see the explanatory comments in the simulator-specific subdirectories under C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc/simulation
-Info: 2021.05.28.12:56:47 Info: Regenerate these scripts whenever you make any change to any Quartus-generated IP in your project.
-Info: 2021.05.28.12:56:47 Info: Finished: Create Modelsim Project.
-Info: 2021.05.28.12:56:47 Info: Starting: Create block symbol file (.bsf)
-Info: 2021.05.28.12:56:47 Info: qsys-generate C:\Users\haas\Downloads\Haasoscope\max10_adc_firmware\myadc.qsys --block-symbol-file --output-directory=C:\Users\haas\Downloads\Haasoscope\max10_adc_firmware\myadc --family="MAX 10" --part=10M08SAE144C8GES
-Info: 2021.05.28.12:56:47 Info: Loading max10_adc_firmware
-Info: 2021.05.28.12:56:48 Info: Reading input file
-Info: 2021.05.28.12:56:48 Info: Adding modular_adc_0 [altera_modular_adc 18.0]
-Info: 2021.05.28.12:56:48 Info: Parameterizing module modular_adc_0
-Info: 2021.05.28.12:56:48 Info: Building connections
-Info: 2021.05.28.12:56:48 Info: Parameterizing connections
-Info: 2021.05.28.12:56:48 Info: Validating
-Info: 2021.05.28.12:56:49 Info: Done reading input file
-Info: 2021.05.28.12:56:51 Info: qsys-generate succeeded.
-Info: 2021.05.28.12:56:51 Info: Finished: Create block symbol file (.bsf)
-Info: 2021.05.28.12:56:51 Info:
-Info: 2021.05.28.12:56:51 Info: Starting: Create HDL design files for synthesis
-Info: 2021.05.28.12:56:51 Info: qsys-generate C:\Users\haas\Downloads\Haasoscope\max10_adc_firmware\myadc.qsys --synthesis=VERILOG --output-directory=C:\Users\haas\Downloads\Haasoscope\max10_adc_firmware\myadc\synthesis --family="MAX 10" --part=10M08SAE144C8GES
-Info: 2021.05.28.12:56:51 Info: Loading max10_adc_firmware
-Info: 2021.05.28.12:56:51 Info: Reading input file
-Info: 2021.05.28.12:56:51 Info: Adding modular_adc_0 [altera_modular_adc 18.0]
-Info: 2021.05.28.12:56:51 Info: Parameterizing module modular_adc_0
-Info: 2021.05.28.12:56:51 Info: Building connections
-Info: 2021.05.28.12:56:51 Info: Parameterizing connections
-Info: 2021.05.28.12:56:51 Info: Validating
-Info: 2021.05.28.12:56:52 Info: Done reading input file
-Info: 2021.05.28.12:56:54 Info: myadc: Generating myadc "myadc" for QUARTUS_SYNTH
-Info: 2021.05.28.12:56:58 Info: modular_adc_0: "myadc" instantiated altera_modular_adc "modular_adc_0"
-Info: 2021.05.28.12:56:58 Info: control_internal: "modular_adc_0" instantiated altera_modular_adc_control "control_internal"
-Info: 2021.05.28.12:56:58 Info: myadc: Done "myadc" with 3 modules, 9 files
-Info: 2021.05.28.12:56:58 Info: qsys-generate succeeded.
-Info: 2021.05.28.12:56:58 Info: Finished: Create HDL design files for synthesis
-Info (11902): Backing up file "uniqueid.v" to "uniqueid.BAK.v"
-Info (11837): Started upgrading IP component altchip_id with file "uniqueid.v"
-Info (11904): Restoring file "uniqueid.BAK.v" to "uniqueid.v"
-Error (14921): Error upgrading IP component "uniqueid.v".
-Info (11131): Completed upgrading IP component altera_modular_adc with file "myadc.qsys"
-Error (11133): IP component altchip_id with file "uniqueid.v" upgrade failed
-Error (11889): IP component upgrade failed
-Error (23031): Evaluation of Tcl script c:/intelfpga_lite/18.0/quartus/common/tcl/internal/ip_regen/ip_regen.tcl unsuccessful
-Error: Quartus Prime Shell was unsuccessful. 4 errors, 0 warnings
-    Error: Peak virtual memory: 5032 megabytes
-    Error: Processing ended: Fri May 28 12:57:00 2021
-    Error: Elapsed time: 00:00:52
-    Error: Total CPU time (on all processors): 00:01:21
+Info (23030): Evaluation of Tcl script c:/intelfpga_lite/18.0/quartus/common/tcl/internal/ip_regen/ip_regen.tcl was successful
+Info: Quartus Prime Shell was successful. 0 errors, 0 warnings
+    Info: Peak virtual memory: 4851 megabytes
+    Info: Processing ended: Wed Jun 02 21:48:53 2021
+    Info: Elapsed time: 00:00:10
+    Info: Total CPU time (on all processors): 00:00:23
 
 

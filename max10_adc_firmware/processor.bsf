@@ -264,22 +264,22 @@ refer to the applicable agreement for further details.
 	(port
 		(pt 360 160)
 		(output)
-		(text "spare1" (rect 0 0 25 12)(font "Arial" ))
-		(text "spare1" (rect 314 155 339 167)(font "Arial" ))
+		(text "debug3" (rect 0 0 28 12)(font "Arial" ))
+		(text "debug3" (rect 311 155 339 167)(font "Arial" ))
 		(line (pt 360 160)(pt 344 160)(line_width 1))
 	)
 	(port
 		(pt 360 176)
 		(output)
-		(text "spare2" (rect 0 0 27 12)(font "Arial" ))
-		(text "spare2" (rect 312 171 339 183)(font "Arial" ))
+		(text "debug4" (rect 0 0 29 12)(font "Arial" ))
+		(text "debug4" (rect 310 171 339 183)(font "Arial" ))
 		(line (pt 360 176)(pt 344 176)(line_width 1))
 	)
 	(port
 		(pt 360 192)
 		(output)
-		(text "spare3" (rect 0 0 27 12)(font "Arial" ))
-		(text "spare3" (rect 312 187 339 199)(font "Arial" ))
+		(text "spare" (rect 0 0 22 12)(font "Arial" ))
+		(text "spare" (rect 317 187 339 199)(font "Arial" ))
 		(line (pt 360 192)(pt 344 192)(line_width 1))
 	)
 	(port
@@ -516,15 +516,15 @@ refer to the applicable agreement for further details.
 	(port
 		(pt 360 736)
 		(output)
-		(text "rdaddress2[ram_width-1..0]" (rect 0 0 107 12)(font "Arial" ))
-		(text "rdaddress2[ram_width-1..0]" (rect 232 731 339 743)(font "Arial" ))
+		(text "rdadtwo[ram_width-1..0]" (rect 0 0 93 12)(font "Arial" ))
+		(text "rdadtwo[ram_width-1..0]" (rect 246 731 339 743)(font "Arial" ))
 		(line (pt 360 736)(pt 344 736)(line_width 3))
 	)
 	(port
 		(pt 360 752)
 		(output)
-		(text "trigthresh2[7..0]" (rect 0 0 61 12)(font "Arial" ))
-		(text "trigthresh2[7..0]" (rect 278 747 339 759)(font "Arial" ))
+		(text "trigthreshtwo[7..0]" (rect 0 0 69 12)(font "Arial" ))
+		(text "trigthreshtwo[7..0]" (rect 270 747 339 759)(font "Arial" ))
 		(line (pt 360 752)(pt 344 752)(line_width 3))
 	)
 	(port
