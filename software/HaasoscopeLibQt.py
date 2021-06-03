@@ -4,7 +4,7 @@ print("Loading HaasoscopeLibQt.py")
 # You might adjust these, just override them before calling construct()
 num_board = 1 # Number of Haasoscope boards to read out
 max_ram_width = 13
-max_slowadc_ram_width = 11
+max_slowadc_ram_width = 5 #could be 11, but there's issues with sending out more than 32 bytes fast over serial
 ram_width = 9 # width in bits of sample ram to use (e.g. 9==512 samples)
 max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
@@ -1231,8 +1231,8 @@ class Haasoscope():
         if self.dofastusb: padding = self.fastusbpadding
         else: padding = 0
         if len(self.usbser)>0:
-            for usb in np.arange(num_board):
-                if self.dofastusb: self.usbser[usb].setTimeouts(250,250)
+            for usb in np.arange(len(self.usbser)):
+                if self.dofastusb: self.usbser[usb].setTimeouts(50,1000)
                 else: self.usbser[usb].timeout=.25 # lower the timeout on the connections, temporarily
             foundusbs=[]
             self.ser.write(bytearray([100])) # prime the trigger (for all boards)
@@ -1242,7 +1242,7 @@ class Haasoscope():
                 else:
                     self.ser.write(bytearray([10+bn]))
                 foundit=False
-                time.sleep(0.5)
+                time.sleep(0.25) #wait for an event to happen, which should be 0.2s (5 Hz rolling trigger)
                 for usb in np.arange(len(self.usbser)):
                     if not usb in foundusbs: # it's not already known that this usb connection is assigned to a board
                         try:
@@ -1259,12 +1259,12 @@ class Haasoscope():
                                 rsltslow = self.ser.read(int(self.num_bytes))  # to cross-check the readout
                                 print("got", len(rsltslow), "bytes from slow serial readout")
                             break # already found which board this usb connection is used for, so bail out
-                        else: print("   got the wrong nbytes",len(rslt),"for board",bn,"from usb",usb)
+                        #else: print("   got the wrong nbytes",len(rslt),"for board",bn,"from usb",usb)
                     #else: print("   already know what usb",usb,"is for")
                 if not foundit:
                     print("could not find usb2 connection for board",bn)
                     return False
-            for usb in np.arange(num_board):
+            for usb in np.arange(len(self.usbser)):
                 if self.dofastusb: self.usbser[usb].setTimeouts(1000, 1000)
                 else: self.usbser[usb].timeout=self.sertimeout # put back the timeout on the connections
         print("usbsermap is",self.usbsermap)
