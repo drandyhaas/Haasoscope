@@ -22,9 +22,23 @@ print ('Argument List:', str(sys.argv))
 for a in sys.argv:
     if a[0]=="-":
         print(a)
-        if a[1]=="s":
+        if a[1:3]=="sr":
+            max_slowadc_ram_width=int(a[3:])
+            if max_slowadc_ram_width>HaasoscopeLibQt.max_slowadc_ram_width:
+                print("max_slowadc_ram_width",max_slowadc_ram_width,"too large")
+            elif max_slowadc_ram_width<1:
+                print("max_slowadc_ram_width",max_slowadc_ram_width,"too small")
+            else:
+                HaasoscopeLibQt.max_slowadc_ram_width = max_slowadc_ram_width
+                print("max_slowadc_ram_width set to", HaasoscopeLibQt.max_slowadc_ram_width)
+        elif a[1:8] == "fastusb":
+            dofastusb = True
+        elif a[1:4] == "adc":
+            exec("HaasoscopeLibQt.max10adcchans=" + a[4:])
+            print("max10adcchans set to", HaasoscopeLibQt.max10adcchans)
+        elif a[1]=="s":
             serialdelaytimerwait=int(a[2:])
-        if a[1]=="r":
+        elif a[1]=="r":
             ram_width=int(a[2:])
             if ram_width>HaasoscopeLibQt.max_ram_width:
                 print("ram_width",ram_width,"is bigger than the max allowed",HaasoscopeLibQt.max_ram_width)
@@ -34,18 +48,13 @@ for a in sys.argv:
                 HaasoscopeLibQt.ram_width = 1
             else: HaasoscopeLibQt.ram_width = ram_width
             print("ram_width set to",HaasoscopeLibQt.ram_width)
-        if a[1]=="b":
+        elif a[1]=="b":
             HaasoscopeLibQt.num_board=int(a[2:])
             print("num_board set to",HaasoscopeLibQt.num_board)
-        if a[1]=="p":
+        elif a[1]=="p":
             manserport=a[2:]
-        if a[1]=="t":
+        elif a[1]=="t":
             trigboardport=a[2:]
-        if a[1:8]=="fastusb":
-            dofastusb=True
-        if a[1:4]=="adc":
-            exec("HaasoscopeLibQt.max10adcchans="+a[4:])
-            print("max10adcchans set to",HaasoscopeLibQt.max10adcchans)
 
 d = HaasoscopeLibQt.Haasoscope()
 d.construct()
@@ -54,7 +63,6 @@ d.construct()
 if manserport!="":
     d.serport=manserport
     print("serial port manually set to", d.serport)
-
 if serialdelaytimerwait>-1:
     d.serialdelaytimerwait=serialdelaytimerwait
     print("serialdelaytimerwait set to", d.serialdelaytimerwait)

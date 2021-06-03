@@ -823,7 +823,7 @@ class Haasoscope():
             posi=chantodraw+num_board*num_chan_per_board
             if self.db: print(time.time()-self.oldtime,"drawing line",posi)
             #if self.db: print "ydata[0]=",theydata[0]
-            xdatanew=(self.xsampdata-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
+            xdatanew=(self.xsampdata*((self.num_samples-1)/self.nsamp)-self.num_samples/2.+1)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
             ydatanew=theydata*(3.3/256)#full scale is 3.3V
             self.xydataslow[chantodraw][0]=xdatanew
             self.xydataslow[chantodraw][1]=ydatanew
