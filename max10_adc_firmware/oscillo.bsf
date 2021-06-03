@@ -187,8 +187,8 @@ refer to the applicable agreement for further details.
 	(port
 		(pt 0 400)
 		(input)
-		(text "trigthresh2[7..0]" (rect 0 0 61 12)(font "Arial" ))
-		(text "trigthresh2[7..0]" (rect 21 395 82 407)(font "Arial" ))
+		(text "trigthreshtwo[7..0]" (rect 0 0 69 12)(font "Arial" ))
+		(text "trigthreshtwo[7..0]" (rect 21 395 90 407)(font "Arial" ))
 		(line (pt 0 400)(pt 16 400)(line_width 3))
 	)
 	(port
