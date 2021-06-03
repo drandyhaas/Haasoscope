@@ -13,9 +13,7 @@ import h5py
 import HaasoscopeLibQt
 import HaasoscopeTrigLibQt
 
-serialdelaytimerwait=100
-ram_width=9
-num_boardss=1
+serialdelaytimerwait=-1
 trigboardport=""
 manserport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
 dofastusb=False
@@ -26,44 +24,44 @@ for a in sys.argv:
         print(a)
         if a[1]=="s":
             serialdelaytimerwait=int(a[2:])
-            print("serialdelaytimerwait set to",serialdelaytimerwait)
         if a[1]=="r":
             ram_width=int(a[2:])
             if ram_width>HaasoscopeLibQt.max_ram_width:
                 print("ram_width",ram_width,"is bigger than the max allowed",HaasoscopeLibQt.max_ram_width)
-                ram_width = HaasoscopeLibQt.max_ram_width
-            if ram_width<1:
+                HaasoscopeLibQt.ram_width = HaasoscopeLibQt.max_ram_width
+            elif ram_width<1:
                 print("ram_width",ram_width,"is less than 1")
-                ram_width = 1
-            print("ram_width set to",ram_width)
+                HaasoscopeLibQt.ram_width = 1
+            else: HaasoscopeLibQt.ram_width = ram_width
+            print("ram_width set to",HaasoscopeLibQt.ram_width)
         if a[1]=="b":
-            num_boardss=int(a[2:])
-            print("num_board set to",num_boardss)
+            HaasoscopeLibQt.num_board=int(a[2:])
+            print("num_board set to",HaasoscopeLibQt.num_board)
         if a[1]=="p":
             manserport=a[2:]
-            print("serial port manually set to",manserport)
         if a[1]=="t":
             trigboardport=a[2:]
-            print("trigboardport set to",trigboardport)
         if a[1:8]=="fastusb":
             dofastusb=True
-            print("dofastusb",dofastusb)
-
-#Some pre-options
-HaasoscopeLibQt.num_board = num_boardss # Number of Haasoscope boards to read out (default is 1)
-HaasoscopeLibQt.ram_width = ram_width # width in bits of sample ram to use (e.g. 9==512 samples (default), 12(max)==4096 samples) (min is 2)
-#HaasoscopeLibQt.max10adcchans =  [(0,110),(0,118)] #[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp # default is none, []
+        if a[1:4]=="adc":
+            exec("HaasoscopeLibQt.max10adcchans="+a[4:])
+            print("max10adcchans set to",HaasoscopeLibQt.max10adcchans)
 
 d = HaasoscopeLibQt.Haasoscope()
 d.construct()
 
 #Some other options
-if manserport!="": d.serport=manserport
-d.serialdelaytimerwait=serialdelaytimerwait #50 #100 #150 #300 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
+if manserport!="":
+    d.serport=manserport
+    print("serial port manually set to", d.serport)
+
+if serialdelaytimerwait>-1:
+    d.serialdelaytimerwait=serialdelaytimerwait
+    print("serialdelaytimerwait set to", d.serialdelaytimerwait)
 d.dofastusb = dofastusb
-if dofastusb: d.dousbparallel=True
-#d.dolockin=True # whether to calculate the lockin info on the FPGA and read it out (off by default)
-#d.db=True #turn on debugging
+if dofastusb:
+    d.dousbparallel=True
+    print("dofastusb", d.dofastusb,"and dousbparallel",d.dousbparallel)
 
 #for talking with the trigger board
 if trigboardport!="":
@@ -72,6 +70,7 @@ if trigboardport!="":
     if not trigboard.get_firmware_version(): sys.exit()
     trigboard.setrngseed()
     trigboard.set_prescale(1.0)
+    print("trigboardport set to", trigboardport)
 
 app = QtGui.QApplication.instance()
 standalone = app is None

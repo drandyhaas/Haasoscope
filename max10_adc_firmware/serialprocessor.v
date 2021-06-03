@@ -115,6 +115,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
   reg [7:0] chanforscreen=0;
   reg autorearm=0;
   integer thecounter=0, timeoutcounter=0, serialdelaytimer=0,serialdelaytimerwait=0;
+  reg[4:0] serialdelaycounter=0;
   reg addonetoextradata=0;
   
   output wire clk_rd;
@@ -256,6 +257,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
         ioCount = 0;
 		  send_fast_usb2=0;
 		  addonetoextradata=0;
+		  serialdelaycounter=0;
         if (rxReady) begin
 			 readdata = rxData;
           state = SOLVING;
@@ -1014,6 +1016,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 			endcase
 			if( (!txBusy) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles				
 				txStart<= 1;				
+				serialdelaycounter=serialdelaycounter+1;
 				SendCount = SendCount + (2**sendincrement);
 				rdaddress_slow = rdaddress_slow + (2**sendincrement);
 				rdadtwo_slow = rdaddress_slow;
@@ -1032,7 +1035,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 		end
 		WRITE_EXT2: begin
 			if( thecounter[clockbitstowait]==thecounterbit ) begin
-				txStart<= 0;			
+				txStart<= 0;
 				if(SendCount[ram_width+2:ram_width]==blockstosend) begin // it's 5 (or more) blocks including the logic analyzer info
 					if (!checkfastusbwriting) begin
 						rden = 0;
@@ -1048,7 +1051,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 					end
 				end
 				else begin					
-					if(SendCount[4:0]==0 && serialdelaytimer<serialdelaytimerwait) begin // every 32 bytes, 50000 is 1 ms
+					if(serialdelaycounter==0 && serialdelaytimer<serialdelaytimerwait) begin // every 32 bytes, 50000 is 1 ms
 						serialdelaytimer=serialdelaytimer+1;
 					end
 					else begin
@@ -1160,15 +1163,22 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 				if (writebyte) txData=adcramdata[11:8];
 				else txData=adcramdata[7:0];
 				txStart=1;
+				serialdelaycounter=serialdelaycounter+1;
 				state=WRITE_BYTE2;
 			end
 		end
 		WRITE_BYTE2: begin
 			txStart=0;
-			if (writebyte) writesamp=writesamp+1;
-			writebyte = ~writebyte;
-			if (writesamp>(nsamp-1)) state=READ;
-			else state=WRITE_BYTE1;
+			if(serialdelaycounter==0 && serialdelaytimer<serialdelaytimerwait) begin // every 32 bytes, 50000 is 1 ms
+				serialdelaytimer=serialdelaytimer+1;
+			end
+			else begin
+				serialdelaytimer=0;
+				if (writebyte) writesamp=writesamp+1;
+				writebyte = ~writebyte;
+				if (writesamp>(nsamp-1)) state=READ;
+				else state=WRITE_BYTE1;
+			end
 		end
 		
 		//just writng out some data bytes over serial

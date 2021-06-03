@@ -3,8 +3,8 @@ print("Loading HaasoscopeLibQt.py")
 
 # You might adjust these, just override them before calling construct()
 num_board = 1 # Number of Haasoscope boards to read out
-max_ram_width = 13
-max_slowadc_ram_width = 5 #could be 11, but there's issues with sending out more than 32 bytes fast over serial
+max_ram_width = 13 # max size of the buffer rams (2*13=8096 bytes)
+max_slowadc_ram_width = 11 # max size of the adc ram (2*11=2048 bytes)
 ram_width = 9 # width in bits of sample ram to use (e.g. 9==512 samples)
 max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
@@ -45,11 +45,11 @@ class Haasoscope():
         self.num_samples = int(pow(2,ram_width)/pow(2,sendincrement)) # num samples per channel, max is pow(2,ram_width)/pow(2,0)=4096
         self.num_bytes = int(self.num_samples*num_chan_per_board) #num bytes per board
         self.nsamp=int(pow(2,min(ram_width,max_slowadc_ram_width))-1) #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
-        print("num main ADC and max10adc bytes for all boards = ",self.num_bytes*num_board,"and",len(max10adcchans)*self.nsamp)
+        print("num main ADC and max10adc bytes for all boards = ",self.num_bytes*num_board,"and",len(max10adcchans)*2*self.nsamp)
         self.serialdelaytimerwait=100 #150 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
-        if mearm: self.serialdelaytimerwait=600
+        if mearm: self.serialdelaytimerwait+=600
         self.brate = 1500000 #serial baud rate #1500000 #115200 #921600
-        self.sertimeout = 3.0 #time to wait for serial response #3.0, num_bytes*8*10.0/brate, or None
+        self.sertimeout = 0.25+self.num_bytes*8*11.0/self.brate #time to wait for serial response #3.0, 0.25+self.num_bytes*8*11.0/self.brate, or None
         self.clkrate=125.0 # ADC sample rate in MHz
         self.serport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
         self.usbport=[] # the names of the USB2 ports on your computer, connected to Haasoscope, leave blank to detect automatically!
@@ -460,7 +460,6 @@ class Haasoscope():
             self.dousb = not self.dousb
             self.ser.write(bytearray([137]))
             print("dousb toggled to",self.dousb,"and dofastusb is",self.dofastusb,"and dousbparallel is",self.dousbparallel)
-            #if self.dousb: print("rate theoretically",round(4000000./(self.num_bytes*num_board+len(max10adcchans)*self.nsamp),2),"Hz over USB2")
             self.telltickstowait()
     
     def togglehighres(self):#toggle whether to do highres averaging during downsampling or not
@@ -1589,7 +1588,7 @@ class Haasoscope():
     #For setting up serial and USB connections
     def setup_connections(self):
         adjustedbrate=1./(1./self.brate+2.*self.serialdelaytimerwait*1.e-6/(32.*11.)) # delay of 2*serialdelaytimerwait microseconds every 32*11 bits
-        serialrate=adjustedbrate/11./(self.num_bytes*num_board+len(max10adcchans)*self.nsamp) #including start+2stop bits
+        serialrate=adjustedbrate/11./(self.num_bytes*num_board+len(max10adcchans)*2*self.nsamp) #including start+2stop bits
         print("rate theoretically",round(serialrate,2),"Hz over serial")
         ports = list(serial.tools.list_ports.comports()); ports.sort(reverse=True)
         autofindusbports = len(self.usbport)==0
