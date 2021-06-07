@@ -92,6 +92,7 @@ class Haasoscope():
         self.chtext = "Ch." #the text in the legend for each channel
         self.noselftrig=False
         self.num_logic_inputs=5 #number of active logic analyzer bits on each board
+        self.flyingfast = False # to just read as fast as possible
         self.db = False #debugging #True #False
     
         self.dolockin=False # read lockin info
@@ -1310,6 +1311,7 @@ class Haasoscope():
                 return
         else:
             rslt = self.ser.read(int(self.num_bytes))
+        if self.flyingfast: return
         if self.db: print(time.time()-self.oldtime,"getdata wanted",self.num_bytes+padding*num_chan_per_board,"bytes and got",len(rslt),"from board",board)
         if len(rslt)==self.num_bytes+padding*num_chan_per_board:
             self.timedout = False
@@ -1464,7 +1466,7 @@ class Haasoscope():
         for bn in np.arange(num_board):
             if self.db: print(time.time()-self.oldtime,"getting board",bn)
             self.getdata(bn) #this sets all boards before this board into serial passthrough mode, so this and following calls for data will go to this board and then travel back over serial
-            #continue # to test flying fast
+            if self.flyingfast: continue # to test flying fast
             self.getmax10adc(bn) # get data from 1 MHz Max10 ADC channels
             if self.dogetotherdata: self.getotherdata(bn) # get other data, like TDC info, or other bytes
             if self.dofft: self.plot_fft(bn) #do the FFT plot
