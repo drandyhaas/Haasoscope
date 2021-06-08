@@ -832,11 +832,10 @@ class Haasoscope():
             if self.dologicanalyzer and self.logicline1>=0 and hasattr(self,"ydatalogic"): #this draws logic analyzer info
                 xlogicshift=12.0/pow(2,max(self.downsample,0)) # shift the logic analyzer data to the right by this number of samples (to account for the ADC delay) #downsample isn't less than 0 for xscaling
                 xdatanew = (self.xdata+xlogicshift-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
-                a=np.array(self.ydatalogic,dtype=np.uint8)
-                b=np.unpackbits(a)
                 theboard = num_board - 1 - int(self.selectedchannel / num_chan_per_board)
-                self.xydatalogicraw[theboard] = a
-                if board==theboard:
+                self.xydatalogicraw[theboard] = self.ydatalogic
+                if board==theboard and self.dodrawing:
+                    b = np.unpackbits(self.ydatalogic)
                     for l in np.arange(self.num_logic_inputs):
                         bl=b[7-l::8] # every 8th bit, starting at 7-l
                         ydatanew = bl*.3 + (l+1)*3.2/8. # scale it and shift it
@@ -1364,13 +1363,11 @@ class Haasoscope():
             else:
                 rslt = self.ser.read(logicbytes)
             if self.db: print(time.time()-self.oldtime,"getdata wanted",logicbytes,"logic bytes and got",len(rslt),"from board",board)
-            byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
             if len(rslt)==logicbytes+padding:
-                self.ydatalogic=np.reshape(byte_array[padding-endpadding:len(rslt)-endpadding],(1,self.num_samples))
+                self.ydatalogic=np.frombuffer(rslt,dtype=np.uint8,count=self.num_samples,offset=padding-endpadding)
             else:
                 if not self.db and self.rollingtrigger: print("getdata asked for",logicbytes,"logic bytes and got",len(rslt),"from board",board)
-                if len(rslt)>0 and self.rollingtrigger: print(byte_array[0:10])
-    
+
     def oversample(self,c1,c2):
         tempc1=127-self.ydata[c1]
         tempc2=127-self.ydata[c2]
