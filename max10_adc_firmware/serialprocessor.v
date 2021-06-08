@@ -1213,10 +1213,11 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 			if (send_fast_usb2_done) begin
 				rden=0;
 				if (usbdonecounterslow==0) begin
-					if (autorearm) begin
-						//tell them all to prime the trigger
-						get_ext_data=1;
-					end
+					//doesn't work reliably for some reason
+					//if (autorearm) begin
+					//	//tell them all to prime the trigger
+					//	get_ext_data=1;
+					//end
 					state=READ;
 				end
 				else usbdonecounterslow<=usbdonecounterslow-1;
