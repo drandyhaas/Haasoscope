@@ -1294,7 +1294,7 @@ class Haasoscope():
                 if self.dofastusb:
                     padding = self.fastusbpadding
                     endpadding = self.fastusbendpadding
-                    rslt = self.usbser[self.usbsermap[board]].read(self.num_bytes+padding*num_chan_per_board)
+                    rslt = self.usbser[self.usbsermap[board]].read(self.num_bytes+padding*num_chan_per_board,cache=True)
                     if not self.dologicanalyzer:
                         nq = self.usbser[self.usbsermap[board]].getQueueStatus()
                         if nq>0:
