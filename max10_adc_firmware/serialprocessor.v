@@ -846,6 +846,36 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 					data[0]=19; // this is the firmware version
 					state=WRITE1;
 				end
+				
+				//reset stuff!				
+				rden=0;
+				trigthresh = 8'h80;
+				trigthreshtwo=8'hff;
+				trigchannels = 4'b1111;
+				triggertype = 4'b0001;   
+				highres=0;
+				use_ext_trig=0;
+				outputclk=1;
+				ext_trig_delay=0;
+				noselftrig=0;
+				SendCount=0;
+				blockstosend=4;
+				nsamp = 6;
+				clockbitstowait=5;
+				sendincrement = 0;
+				nsmp = 0;
+				chanforscreen=0;
+				autorearm=0;
+				do_usb=0;
+				checkfastusbwriting=0;
+				rollingtrigger=1;
+				triggerpoint=(2**(ram_width-2));
+				downsample=1;
+				gainsw=4'b0000;
+				oversamp=4'b0011;
+				send_fast_usb2=0;
+				do_fast_usb=0;
+				usbdonecounterslow=0;
 			end
 			
 			else state=READ; // if we got some other command, just ignore it
