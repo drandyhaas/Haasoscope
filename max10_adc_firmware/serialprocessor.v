@@ -855,7 +855,6 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 				triggertype = 4'b0001;   
 				highres=0;
 				use_ext_trig=0;
-				outputclk=1;
 				ext_trig_delay=0;
 				noselftrig=0;
 				SendCount=0;
