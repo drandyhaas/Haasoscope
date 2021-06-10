@@ -28,6 +28,10 @@ if enable_ripyl:
     import ripyl.streaming as stream
     import ripyl.protocol.uart as uart
 
+enable_mt=True # set to True to use multi processors for multiple boards
+if enable_mt:
+    import multiprocessing
+
 class Haasoscope():
     
     def construct(self):
@@ -93,6 +97,7 @@ class Haasoscope():
         self.noselftrig=False
         self.num_logic_inputs=5 #number of active logic analyzer bits on each board
         self.flyingfast = False # to just read as fast as possible
+        self.domt=True
         self.db = False #debugging #True #False
     
         self.dolockin=False # read lockin info
@@ -101,7 +106,7 @@ class Haasoscope():
         self.debuglockin=False #debugging of lockin calculations #True #False
         self.reffreq = 0.008 #MHz of reference signal on chan 3 for lockin calculations
         self.refsinchan = 3 #the channel number of the ref input signal (for auto reffreq calculation via sin fit)
-        
+
         self.xscaling=1.e0 # for the x-axis scale
         self.lowdaclevel=np.ones(num_board*num_chan_per_board)*2050 # these hold the user set levels for each gain combination
         self.highdaclevel=np.ones(num_board*num_chan_per_board)*2800
@@ -1042,11 +1047,11 @@ class Haasoscope():
     def plot_fft(self,bn): # pass in the board number
         channumonboard = self.fftchan%num_chan_per_board # this is what channel (0--3) we want to draw fft from for the board
         chanonboardnum = num_board - int(self.fftchan/num_chan_per_board) - 1 # this is what board (0 -- (num_board-1)) we want to draw that fft channel from
-        if bn==chanonboardnum and len(self.ydata)>channumonboard: # select the right board check that the channel data is really there
+        if bn==chanonboardnum: # select the right board check that the channel data is really there
             twoforoversampling=1
             if self.dooversample[self.fftchan]==1: twoforoversampling=2
             if self.dooversample[self.fftchan]==9: twoforoversampling=4
-            y = self.ydata[channumonboard] # channel signal to take fft of
+            y = self.xydata[self.fftchan][1] # channel signal to take fft of
             n = len(y) # length of the signal
             k = np.arange(n)
             uspersample=(1.0/self.clkrate)*pow(2,max(self.downsample,0))/twoforoversampling # us per sample = 10 ns * 2^downsample, #downsample isn't less than 0 for xscaling
@@ -1142,12 +1147,12 @@ class Haasoscope():
     def lockinanalyzedata(self,board):
         if self.lockinanalyzedataboard!=board: return False
         y2 = self.ydata[2] # channel 2 signal
-        y3 = self.ydata[3] # channel 3 signal        
+        y3 = self.ydata[3] # channel 3 signal
         meany2=np.sum(y2)/self.num_samples
         meany3=np.sum(y3)/self.num_samples
         y2 = y2-meany2
         y3 = y3-meany3
-        y3shifted = np.roll(y3,self.numtoshift)        
+        y3shifted = np.roll(y3,self.numtoshift)
         res1=y2*y3
         res2=y2*y3shifted
         r1m=np.sum(res1)
@@ -1159,13 +1164,13 @@ class Haasoscope():
         phase = 180.*np.arctan2(r2m,r1m)/np.pi
         if self.debuglockin:
             print("no window:  ",r1m.round(2), r2m.round(2), self.numtoshift, meany2.round(1),meany3.round(1))
-            print(ampl.round(2), phase.round(2), "<------ offline no window")        
+            print(ampl.round(2), phase.round(2), "<------ offline no window")
         lowerwindowedge = self.numtoshift+1
-        upperwindowedge = self.num_samples-self.numtoshift        
+        upperwindowedge = self.num_samples-self.numtoshift
         if self.debuglockin:
             self.ydata[0]= y3shifted+127 # to see on screen, alter self.ydata here
             self.ydata[0][0:lowerwindowedge] = np.zeros((lowerwindowedge,), dtype=np.int)+127
-            self.ydata[0][upperwindowedge:self.num_samples] = np.zeros((self.num_samples-upperwindowedge,), dtype=np.int)+127        
+            self.ydata[0][upperwindowedge:self.num_samples] = np.zeros((self.num_samples-upperwindowedge,), dtype=np.int)+127
         y2window = y2[lowerwindowedge:upperwindowedge]
         y3window = y3[lowerwindowedge:upperwindowedge]
         y3shiftedwindow = y3shifted[lowerwindowedge:upperwindowedge]
@@ -1180,10 +1185,10 @@ class Haasoscope():
         phasewindow = 180.*np.arctan2(r2mwindow,r1mwindow)/np.pi
         if self.debuglockin:
             print("with window:",r1mwindow.round(2), r2mwindow.round(2), self.numtoshift, meany2.round(1),meany3.round(1))
-            print(amplwindow.round(2), phasewindow.round(2), "<------ offline with window")        
+            print(amplwindow.round(2), phasewindow.round(2), "<------ offline with window")
         meany2float=np.mean(self.ydata[2])
         meany3float=np.mean(self.ydata[3])
-        y3shiftedfloat = np.roll(self.ydata[3]-meany3float,self.numtoshift)        
+        y3shiftedfloat = np.roll(self.ydata[3]-meany3float,self.numtoshift)
         y2windowfloat = self.ydata[2][lowerwindowedge:upperwindowedge]-meany2float
         y3windowfloat = self.ydata[3][lowerwindowedge:upperwindowedge]-meany3float
         y3shiftedwindowfloat = y3shiftedfloat[lowerwindowedge:upperwindowedge]
@@ -1201,7 +1206,7 @@ class Haasoscope():
             print(amplwindowfloat.round(2), phasewindowfloat.round(2), "<------ offline with window float\n")
         self.lockinampo = amplwindowfloat
         self.lockinphaseo = phasewindowfloat
-    
+
     def getlockindata(self,board):
             rslt = self.ser.read(16)
             byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
@@ -1227,7 +1232,7 @@ class Haasoscope():
                 if False:
                     print(ampl_fpga.round(2), phase_fpga.round(2), "<------ fpga ")
             else: print("getlockindata asked for",16,"lockin bytes and got",len(rslt),"from board",board)
-    
+
     usbsermap=[]
     def makeusbsermap(self): # figure out which board is connected to which USB 2 connection
         self.usbsermap= -1 * np.ones(num_board, dtype=int)
@@ -1261,6 +1266,11 @@ class Haasoscope():
                             self.usbsermap[bn]=usb
                             foundusbs.append(usb) # remember that we already have figured out which board this usb connection is for, so we don't bother trying again for another board
                             foundit=True
+                            if self.domt:
+                                self.usbser[usb].close()
+                                self.parent_conn[bn].send(self.usbserser[usb])
+                                msg = self.parent_conn[bn].recv()
+                                if msg != "OK": print("pro_", bn, "said", msg)
                             if self.checkfastusbwriting:
                                 rsltslow = self.ser.read(int(self.num_bytes))  # to cross-check the readout
                                 print("got", len(rsltslow), "bytes from slow serial readout")
@@ -1270,12 +1280,13 @@ class Haasoscope():
                 if not foundit:
                     print("could not find usb2 connection for board",bn)
                     return False
-            for usb in np.arange(len(self.usbser)):
-                if self.dofastusb: self.usbser[usb].setTimeouts(1000, 1000)
-                else: self.usbser[usb].timeout=self.sertimeout # put back the timeout on the connections
+            if not self.domt:
+                for usb in np.arange(len(self.usbser)):
+                    if self.dofastusb: self.usbser[usb].setTimeouts(1000, 1000)
+                    else: self.usbser[usb].timeout=self.sertimeout # put back the timeout on the connections
         print("usbsermap is",self.usbsermap)
         return True
-    
+
     timedout = False
     def getdata(self,board):
         if not self.dousb or not self.dousbparallel:
@@ -1460,19 +1471,46 @@ class Haasoscope():
             self.ser.write(bytearray([100]))
         status = 0
         self.max10adcchan=1
-        for bn in np.arange(num_board):
-            if self.db: print(time.time()-self.oldtime,"getting board",bn)
-            self.getdata(bn) #this sets all boards before this board into serial passthrough mode, so this and following calls for data will go to this board and then travel back over serial
-            if self.flyingfast: continue # to test flying fast
-            self.getmax10adc(bn) # get data from 1 MHz Max10 ADC channels
-            if self.dogetotherdata: self.getotherdata(bn) # get other data, like TDC info, or other bytes
-            if self.dofft: self.plot_fft(bn) #do the FFT plot
-            if self.dolockin and self.debuglockin:
-                if sendincrement==0: self.lockinanalyzedata(bn)
-                else: print("you need to set sendincrement = 0 first before debugging lockin info"); return False
-            if self.dolockin and self.dolockinplot: self.plot_lockin()
-            self.on_running(self.ydata, bn) #update data in main window
-            if self.db: print(time.time()-self.oldtime,"done with board",bn)
+        if self.domt:
+            for bn in range(num_board):
+                if self.db: print(time.time()-self.oldtime,"getting board",bn)
+                self.parent_conn[bn].send([self.num_samples, self.fastusbpadding, self.fastusbendpadding, self.yscale, self.dologicanalyzer, self.rollingtrigger])
+                xboardshift=(11.0*bn/8.0)/pow(2,max(self.downsample,0)) # shift the board data to the right by this number of samples (to account for the readout delay) #downsample isn't less than 0 for xscaling
+                xdatanew = (self.xdata-xboardshift-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
+                xdatanew = xdatanew[1:len(xdatanew)]
+                for l in range(num_chan_per_board): self.xydata[bn*num_chan_per_board+l][0]=xdatanew # for printing out or other analysis
+                if self.db: print(time.time()-self.oldtime,"done with board",bn)
+            for bn in range(num_board):
+                msg = self.parent_conn[bn].recv()
+                if msg != "OK": print("pro_", bn, "said", msg)
+                self.getmax10adc(bn)  # get data from 1 MHz Max10 ADC channels
+                if self.dogetotherdata: self.getotherdata(bn)  # get other data, like TDC info, or other bytes
+                if self.dofft: self.plot_fft(bn)  # do the FFT plot
+                if self.dologicanalyzer:
+                    xlogicshift=12.0/pow(2,max(self.downsample,0)) # shift the logic analyzer data to the right by this number of samples (to account for the ADC delay) #downsample isn't less than 0 for xscaling
+                    xdatanew = (self.xdata+xlogicshift-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
+                    theboard = num_board - 1 - int(self.selectedchannel / num_chan_per_board)
+                    if bn==theboard and self.dodrawing:
+                        b = np.unpackbits(self.xydatalogicraw)
+                        for l in np.arange(self.num_logic_inputs):
+                            bl=b[7-l::8] # every 8th bit, starting at 7-l
+                            ydatanew = bl*.3 + (l+1)*3.2/8. # scale it and shift it
+                            self.xydatalogic[l][0]=xdatanew
+                            self.xydatalogic[l][1]=ydatanew
+        else: # not mt
+            for bn in np.arange(num_board):
+                if self.db: print(time.time()-self.oldtime,"getting board",bn)
+                self.getdata(bn) #this sets all boards before this board into serial passthrough mode, so this and following calls for data will go to this board and then travel back over serial
+                if self.flyingfast: continue # to test flying fast
+                self.getmax10adc(bn) # get data from 1 MHz Max10 ADC channels
+                if self.dogetotherdata: self.getotherdata(bn) # get other data, like TDC info, or other bytes
+                if self.dofft: self.plot_fft(bn) #do the FFT plot
+                if self.dolockin and self.debuglockin:
+                    if sendincrement==0: self.lockinanalyzedata(bn)
+                    else: print("you need to set sendincrement = 0 first before debugging lockin info"); return False
+                if self.dolockin and self.dolockinplot: self.plot_lockin()
+                self.on_running(self.ydata, bn) #update data in main window
+                if self.db: print(time.time()-self.oldtime,"done with board",bn)
         status=1
         if self.minfirmwareversion>=15 and self.dodrawing: #v9.0 and up
             thetime2=time.time()
@@ -1554,14 +1592,28 @@ class Haasoscope():
             self.setupi2c() # sets all ports to be outputs
             if self.dofastusb: self.toggle_fastusb()
             self.toggledousb() # switch to USB2 connection for readout of events, if available
-            if self.dousb:
-                if not self.makeusbsermap(): return False # figure out which usb connection has which board's data
-            self.getIDs() # get the unique ID of each board, for calibration etc.
-            self.readcalib() # get the calibrated DAC values for each board; if it fails then use defaults
             self.xydata=np.empty([int(num_chan_per_board*num_board),2,int(self.num_samples-1)],dtype=float)
             self.xydataslow=np.empty([len(max10adcchans),2,int(self.nsamp)],dtype=float)
             self.xydatalogic=np.empty([8,2,int(self.num_samples)],dtype=float)
             self.xydatalogicraw=np.empty([num_board,int(self.num_samples)],dtype=np.uint8) # the raw 8 digital input bits from each board for each sample - the x time values are in self.xydatalogic[0][0]
+            if self.domt:
+                self.xydata_array = multiprocessing.RawArray("f", self.xydata.size * 2)  # a float is 2 bytes
+                self.xydata = np.frombuffer(self.xydata_array, dtype=float).reshape(self.xydata.shape)
+                self.xydatalogicraw_array = multiprocessing.RawArray("B", self.xydatalogicraw.size)  # a byte is 1 byte
+                self.xydatalogicraw = np.frombuffer(self.xydatalogicraw_array, dtype=np.uint8).reshape(self.xydatalogicraw.shape)
+                self.parent_conn=[]
+                for bn in range(num_board):
+                    parent_conn, child_conn = multiprocessing.Pipe()
+                    self.parent_conn.append(parent_conn)
+                    pro = multiprocessing.Process(target=receiver, args=(bn, child_conn,num_board,self.num_samples,
+                                                                         self.xydata.shape,self.xydata_array,
+                                                                         self.xydatalogicraw.shape,self.xydatalogicraw_array))
+                    print("   starting process",bn)
+                    pro.start()
+            if self.dousb:
+                if not self.makeusbsermap(): return False # figure out which usb connection has which board's data
+            self.getIDs() # get the unique ID of each board, for calibration etc.
+            self.readcalib() # get the calibrated DAC values for each board; if it fails then use defaults
             return True
     
     #cleanup
@@ -1578,10 +1630,13 @@ class Haasoscope():
             if self.checkfastusbwriting: self.toggle_checkfastusbwriting()
             if self.serport!="" and hasattr(self,'ser'):
                 self.shutdownadcs()
-                for p in self.usbser: p.close()
+                if not self.domt:
+                    for p in self.usbser: p.close()
                 self.ser.close()
         except SerialException:
             print("failed to talk to board when cleaning up!")
+        if self.domt:
+            for bn in range(num_board): self.parent_conn[bn].send("END")
         print("bye bye!")
     
     #For setting up serial and USB connections
