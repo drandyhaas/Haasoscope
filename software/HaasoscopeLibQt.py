@@ -55,7 +55,7 @@ class Haasoscope():
         self.serport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
         self.usbport=[] # the names of the USB2 ports on your computer, connected to Haasoscope, leave blank to detect automatically!
         self.usbser=[]
-        self.usbserser = []
+        self.usbsern=[]
         self.texts = []
         self.xdata=np.arange(self.num_samples)
         self.xdata2=np.arange(self.num_samples*2) # for oversampling
@@ -1235,7 +1235,7 @@ class Haasoscope():
     def makeusbsermap(self): # figure out which board is connected to which USB 2 connection
         self.usbsermap= -1 * np.ones(num_board, dtype=int)
         if len(self.usbser)<num_board:
-            print("Not a USB2 connection for each board!")
+            print("There are only",len(self.usbser),"USB2 connections but",num_board,"boards requested!")
             return False
         if self.dofastusb: padding = self.fastusbpadding
         else: padding = 0
@@ -1245,14 +1245,14 @@ class Haasoscope():
                 else: self.usbser[usb].timeout=.25 # lower the timeout on the connections, temporarily
             foundusbs=[]
             self.ser.write(bytearray([100])) # prime the trigger (for all boards)
-            for bn in np.arange(num_board):
+            for bn in range(num_board):
                 if self.minfirmwareversion>=17:
                     self.ser.write(bytearray([51,bn]))
                 else:
                     self.ser.write(bytearray([10+bn]))
                 foundit=False
                 time.sleep(0.25) #wait for an event to happen, which should be 0.2s (5 Hz rolling trigger)
-                for usb in np.arange(len(self.usbser)):
+                for usb in range(len(self.usbser)):
                     if not usb in foundusbs: # it's not already known that this usb connection is assigned to a board
                         try:
                             rslt = self.usbser[usb].read(self.num_bytes+padding*num_chan_per_board) # try to get data from the board
@@ -1266,7 +1266,9 @@ class Haasoscope():
                             foundit=True
                             if self.domt:
                                 self.usbser[usb].close()
-                                self.parent_conn[bn].send(self.usbserser[usb])
+                                #print("sending usb number to process")
+                                self.parent_conn[bn].send(self.usbsern[usb])
+                                #print("waiting for response from process")
                                 msg = self.parent_conn[bn].recv()
                                 if msg != "OK": print("pro_", bn, "said", msg)
                             if self.checkfastusbwriting:
@@ -1279,7 +1281,7 @@ class Haasoscope():
                     print("could not find usb2 connection for board",bn)
                     return False
             if not self.domt:
-                for usb in np.arange(len(self.usbser)):
+                for usb in range(len(self.usbser)):
                     if self.dofastusb: self.usbser[usb].setTimeouts(1000, 1000)
                     else: self.usbser[usb].timeout=self.sertimeout # put back the timeout on the connections
         print("usbsermap is",self.usbsermap)
@@ -1600,6 +1602,7 @@ class Haasoscope():
                 self.xydatalogicraw_array = multiprocessing.RawArray("B", self.xydatalogicraw.size)  # a byte is 1 byte
                 self.xydatalogicraw = np.frombuffer(self.xydatalogicraw_array, dtype=np.uint8).reshape(self.xydatalogicraw.shape)
                 self.parent_conn=[]
+                multiprocessing.set_start_method('spawn')
                 for bn in range(num_board):
                     parent_conn, child_conn = multiprocessing.Pipe()
                     self.parent_conn.append(parent_conn)
@@ -1677,7 +1680,7 @@ class Haasoscope():
                     ftd_d.purge(ftd.defines.PURGE_RX)
                     ftd_d.purge(ftd.defines.PURGE_TX)
                     self.usbser.append(ftd_d)
-                    self.usbserser.append(ftd_d.getDeviceInfo()['serial'])
+                    self.usbsern.append(ftd_n)
             #print(self.usbser[0].getDeviceInfo())
         if self.serport=="": print("No serial COM port opened!"); return False
         return True
@@ -1685,9 +1688,9 @@ class Haasoscope():
 def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatalogicraw_shape,xydatalogicraw_array):
     usb = None
     board=name
-    print("   receiver for board", name)
     xydata=np.frombuffer(xydata_array, dtype=float).reshape(xydata_shape)
     xydatalogicraw = np.frombuffer(xydatalogicraw_array, dtype=np.dtype('b')).reshape(xydatalogicraw_shape)
+    print("   receiver for board", name)
     while True:
         msg = conn.recv()
         #print("   received message:", msg)
@@ -1698,18 +1701,18 @@ def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatal
 
         returnmsg = "OK"
         if usb == None:
-            for ftd_n in range(len(ftd.listDevices())):
-                if str(ftd.getDeviceInfoDetail(ftd_n)["serial"]).find(str(msg)) >= 0:
-                    ftd_d = ftd.open(ftd_n)
-                    print("   adding ftd usb2 device:", ftd_d.getDeviceInfo())
-                    ftd_d.setTimeouts(1000, 1000)
-                    ftd_d.setBitMode(0xff, 0x40)
-                    ftd_d.setUSBParameters(0x10000, 0x10000)
-                    ftd_d.setLatencyTimer(1)
-                    ftd_d.setFlowControl(ftd.defines.FLOW_RTS_CTS, 0, 0)
-                    ftd_d.purge(ftd.defines.PURGE_RX)
-                    ftd_d.purge(ftd.defines.PURGE_TX)
-                    usb=ftd_d
+            #print("   trying to open")
+            ftd_d = ftd.open(msg)
+            #print("   opened")
+            print("   adding ftd usb2 device:", ftd_d.getDeviceInfo())
+            ftd_d.setTimeouts(1000, 1000)
+            ftd_d.setBitMode(0xff, 0x40)
+            ftd_d.setUSBParameters(0x10000, 0x10000)
+            ftd_d.setLatencyTimer(1)
+            ftd_d.setFlowControl(ftd.defines.FLOW_RTS_CTS, 0, 0)
+            ftd_d.purge(ftd.defines.PURGE_RX)
+            ftd_d.purge(ftd.defines.PURGE_TX)
+            usb=ftd_d
         else:
             num_samples = int(msg[0])
             padding = int(msg[1])
@@ -1771,4 +1774,5 @@ def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatal
             if dologicanalyzer:
                 xydatalogicraw[board] = ydatalogic
 
+        #print("   sending",returnmsg)
         conn.send(returnmsg)
