@@ -9,10 +9,7 @@ ram_width = 9 # width in bits of sample ram to use (e.g. 9==512 samples)
 max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
-enable_ripyl=False # set to True to use ripyl serial decoding... have to get it from https://github.com/kevinpt/ripyl and then install it first!
-enable_fastusb=True # set to True to be able to use the fastusb2 writing
 
-if enable_fastusb: import ftd2xx as ftd
 from serial import Serial, SerialException
 from struct import unpack
 import numpy as np
@@ -21,16 +18,17 @@ import time, json, os
 from scipy.signal import resample
 import serial.tools.list_ports
 import scipy.optimize
+import multiprocessing
 
+enable_ripyl=False # set to True to use ripyl serial decoding... have to get it from https://github.com/kevinpt/ripyl and then install it first!
 if enable_ripyl:
     import ripyl.util.plot as rplot
     from collections import OrderedDict
     import ripyl.streaming as stream
     import ripyl.protocol.uart as uart
 
-enable_mt=True # set to True to use multi processors for multiple boards
-if enable_mt:
-    import multiprocessing
+enable_fastusb=True # set to True to be able to use the fastusb2 writing
+if enable_fastusb: import ftd2xx as ftd
 
 class Haasoscope():
     
@@ -97,7 +95,7 @@ class Haasoscope():
         self.noselftrig=False
         self.num_logic_inputs=5 #number of active logic analyzer bits on each board
         self.flyingfast = False # to just read as fast as possible
-        self.domt=True
+        self.domt=False
         self.db = False #debugging #True #False
     
         self.dolockin=False # read lockin info

@@ -745,15 +745,10 @@ if __name__ == '__main__':
     import HaasoscopeLibQt
     import HaasoscopeTrigLibQt
 
-    serialdelaytimerwait = -1
-    trigboardport = ""
-    manserport = ""  # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
-    dofastusb = False
-    print('Number of arguments:', len(sys.argv), 'arguments.')
     print('Argument List:', str(sys.argv))
     for a in sys.argv:
         if a[0] == "-":
-            print(a)
+            #print(a)
             if a[1:3] == "sr":
                 max_slowadc_ram_width = int(a[3:])
                 if max_slowadc_ram_width > HaasoscopeLibQt.max_slowadc_ram_width:
@@ -763,13 +758,9 @@ if __name__ == '__main__':
                 else:
                     HaasoscopeLibQt.max_slowadc_ram_width = max_slowadc_ram_width
                     print("max_slowadc_ram_width set to", HaasoscopeLibQt.max_slowadc_ram_width)
-            elif a[1:8] == "fastusb":
-                dofastusb = True
             elif a[1:4] == "adc":
                 exec("HaasoscopeLibQt.max10adcchans=" + a[4:])
                 print("max10adcchans set to", HaasoscopeLibQt.max10adcchans)
-            elif a[1] == "s":
-                serialdelaytimerwait = int(a[2:])
             elif a[1] == "r":
                 ram_width = int(a[2:])
                 if ram_width > HaasoscopeLibQt.max_ram_width:
@@ -784,34 +775,37 @@ if __name__ == '__main__':
             elif a[1] == "b":
                 HaasoscopeLibQt.num_board = int(a[2:])
                 print("num_board set to", HaasoscopeLibQt.num_board)
-            elif a[1] == "p":
-                manserport = a[2:]
-            elif a[1] == "t":
-                trigboardport = a[2:]
 
     d = HaasoscopeLibQt.Haasoscope()
     d.construct()
 
-    # Some other options
-    if manserport != "":
-        d.serport = manserport
-        print("serial port manually set to", d.serport)
-    if serialdelaytimerwait > -1:
-        d.serialdelaytimerwait = serialdelaytimerwait
-        print("serialdelaytimerwait set to", d.serialdelaytimerwait)
-    d.dofastusb = dofastusb
-    if dofastusb:
-        d.dousbparallel = True
-        print("dofastusb", d.dofastusb, "and dousbparallel", d.dousbparallel)
-
-    # for talking with the trigger board
-    if trigboardport != "":
-        trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig()
-        trigboard.construct(trigboardport)
-        if not trigboard.get_firmware_version(): sys.exit()
-        trigboard.setrngseed()
-        trigboard.set_prescale(1.0)
-        print("trigboardport set to", trigboardport)
+    trigboardport = ""
+    for a in sys.argv:
+        if a[0] == "-":
+            #print(a)
+            if a[1:3] == "mt":
+                d.domt=True
+                print("domt set to",d.domt)
+            elif a[1:8] == "fastusb":
+                d.dofastusb = True
+                d.dousbparallel = True
+                print("dofastusb", d.dofastusb, "and dousbparallel", d.dousbparallel)
+            elif a[1] == "s":
+                d.serialdelaytimerwait = int(a[2:])
+                print("serialdelaytimerwait set to", d.serialdelaytimerwait)
+            elif a[1] == "p":
+                d.serport = a[2:]
+                print("serial port manually set to", d.serport)
+            elif a[1] == "t":
+                trigboardport = a[2:]
+                print("trigboardport set to", trigboardport)
+                trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig()
+                trigboard.construct(trigboardport)
+                if not trigboard.get_firmware_version():
+                    print("couldn't get trigboard firmware version - exiting!")
+                    sys.exit()
+                trigboard.setrngseed()
+                trigboard.set_prescale(1.0)
 
     # can change some things after initialization
     # d.selectedchannel=0
