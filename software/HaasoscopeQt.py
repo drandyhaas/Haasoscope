@@ -807,6 +807,10 @@ if __name__ == '__main__':
                 trigboard.setrngseed()
                 trigboard.set_prescale(1.0)
 
+    if d.domt and not d.dofastusb:
+        print("mt option is only for fastusb - exiting!")
+        sys.exit()
+
     # can change some things after initialization
     # d.selectedchannel=0
     # d.tellswitchgain(d.selectedchannel)

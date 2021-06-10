@@ -1685,7 +1685,6 @@ class Haasoscope():
 def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatalogicraw_shape,xydatalogicraw_array):
     usb = None
     board=name
-    returnmsg = "OK"
     print("   receiver for board", name)
     xydata=np.frombuffer(xydata_array, dtype=float).reshape(xydata_shape)
     xydatalogicraw = np.frombuffer(xydatalogicraw_array, dtype=np.dtype('b')).reshape(xydatalogicraw_shape)
@@ -1697,6 +1696,7 @@ def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatal
                 usb.close()
             break
 
+        returnmsg = "OK"
         if usb == None:
             for ftd_n in range(len(ftd.listDevices())):
                 if str(ftd.getDeviceInfoDetail(ftd_n)["serial"]).find(str(msg)) >= 0:
