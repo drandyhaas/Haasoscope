@@ -7,7 +7,7 @@ max_ram_width = 13 # max size of the buffer rams (2*13=8096 bytes)
 max_slowadc_ram_width = 11 # max size of the adc ram (2*11=2048 bytes)
 ram_width = 9 # width in bits of sample ram to use (e.g. 9==512 samples)
 max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp
-sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes, 10 is good for lockin mode (sends just 4 samples)
+sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
 enable_ripyl=False # set to True to use ripyl serial decoding... have to get it from https://github.com/kevinpt/ripyl and then install it first!
 enable_fastusb=True # set to True to be able to use the fastusb2 writing
@@ -17,17 +17,6 @@ from serial import Serial, SerialException
 from struct import unpack
 import numpy as np
 import time, json, os
-
-mearm=False
-mewin=False
-try:
-    print(os.uname())
-    if os.uname()[4].startswith("arm") or os.uname()[4].startswith("aarch"):
-        print("On a raspberry pi?")
-        mearm=True
-except AttributeError:
-    mewin=True
-    print("Not on Linux?")
 
 from scipy.signal import resample
 import serial.tools.list_ports
@@ -42,6 +31,16 @@ if enable_ripyl:
 class Haasoscope():
     
     def construct(self):
+        mearm = False
+        mewin = False
+        try:
+            print(os.uname())
+            if os.uname()[4].startswith("arm") or os.uname()[4].startswith("aarch"):
+                print("On a raspberry pi?")
+                mearm = True
+        except AttributeError:
+            mewin = True
+            print("Not on Linux?")
         self.num_samples = int(pow(2,ram_width)/pow(2,sendincrement)) # num samples per channel, max is pow(2,ram_width)/pow(2,0)=4096
         self.num_bytes = int(self.num_samples*num_chan_per_board) #num bytes per board
         self.nsamp=int(pow(2,min(ram_width,max_slowadc_ram_width))-1) #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
@@ -54,6 +53,7 @@ class Haasoscope():
         self.serport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
         self.usbport=[] # the names of the USB2 ports on your computer, connected to Haasoscope, leave blank to detect automatically!
         self.usbser=[]
+        self.usbserser = []
         self.texts = []
         self.xdata=np.arange(self.num_samples)
         self.xdata2=np.arange(self.num_samples*2) # for oversampling
@@ -1624,6 +1624,98 @@ class Haasoscope():
                     ftd_d.purge(ftd.defines.PURGE_RX)
                     ftd_d.purge(ftd.defines.PURGE_TX)
                     self.usbser.append(ftd_d)
+                    self.usbserser.append(ftd_d.getDeviceInfo()['serial'])
             #print(self.usbser[0].getDeviceInfo())
         if self.serport=="": print("No serial COM port opened!"); return False
         return True
+
+def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatalogicraw_shape,xydatalogicraw_array):
+    usb = None
+    board=name
+    returnmsg = "OK"
+    print("   receiver for board", name)
+    xydata=np.frombuffer(xydata_array, dtype=float).reshape(xydata_shape)
+    xydatalogicraw = np.frombuffer(xydatalogicraw_array, dtype=np.dtype('b')).reshape(xydatalogicraw_shape)
+    while True:
+        msg = conn.recv()
+        #print("   received message:", msg)
+        if msg == "END":
+            if usb!=None:
+                usb.close()
+            break
+
+        if usb == None:
+            for ftd_n in range(len(ftd.listDevices())):
+                if str(ftd.getDeviceInfoDetail(ftd_n)["serial"]).find(str(msg)) >= 0:
+                    ftd_d = ftd.open(ftd_n)
+                    print("   adding ftd usb2 device:", ftd_d.getDeviceInfo())
+                    ftd_d.setTimeouts(1000, 1000)
+                    ftd_d.setBitMode(0xff, 0x40)
+                    ftd_d.setUSBParameters(0x10000, 0x10000)
+                    ftd_d.setLatencyTimer(1)
+                    ftd_d.setFlowControl(ftd.defines.FLOW_RTS_CTS, 0, 0)
+                    ftd_d.purge(ftd.defines.PURGE_RX)
+                    ftd_d.purge(ftd.defines.PURGE_TX)
+                    usb=ftd_d
+        else:
+            num_samples = int(msg[0])
+            padding = int(msg[1])
+            endpadding = int(msg[2])
+            yscale = float(msg[3])
+            dologicanalyzer = int(msg[4])
+            rollingtrigger = int(msg[5])
+            num_chan_per_board = 4
+            num_bytes = num_samples * num_chan_per_board
+            timedout = False
+            try:
+                rslt = usb.read(num_bytes+padding*num_chan_per_board,cache=True)
+                if not dologicanalyzer:
+                    nq = usb.getQueueStatus()
+                    if nq>0:
+                        print(nq,"bytes still available for usb on board",board,"...purging")
+                        usb.purge(ftd.defines.PURGE_RX)
+            except ftd.DeviceError as msgnum:
+                print("Error reading from USB2 on board", board, msgnum)
+                returnmsg = "read err"
+            if len(rslt)==num_bytes+padding*num_chan_per_board:
+                timedout = False
+                ydata=[ np.frombuffer(rslt,dtype=np.int8,count=num_samples,offset=0*num_samples+1*padding-endpadding), #need the int8 type because we'll later subtract it from 127 to flip it over
+                             np.frombuffer(rslt,dtype=np.int8,count=num_samples,offset=1*num_samples+2*padding-endpadding),
+                             np.frombuffer(rslt,dtype=np.int8,count=num_samples,offset=2*num_samples+3*padding-endpadding),
+                             np.frombuffer(rslt,dtype=np.int8,count=num_samples,offset=3*num_samples+4*padding-endpadding) ]
+                #if dooversample[num_chan_per_board*(num_board-board-1)]: oversample(0,2)
+                #if dooversample[num_chan_per_board*(num_board-board-1)+1]: oversample(1,3)
+                #if dooversample[num_chan_per_board*(num_board-board-1)]==9: overoversample(0,1)
+            else:
+                timedout = True
+                if rollingtrigger:
+                    print("getdata asked for",num_bytes+padding*num_chan_per_board,"bytes and got",len(rslt),"from board",board)
+                    returnmsg = "read timeout"
+            if dologicanalyzer and not timedout:
+                #get extra logic analyzer data, if needed
+                logicbytes=int(num_bytes/num_chan_per_board)
+                try:
+                    rslt = usb.read(logicbytes + padding)
+                    nq = usb.getQueueStatus()
+                    if nq > 0:
+                        print(nq, "bytes still available for usb on board", board, "...purging")
+                        usb.purge(ftd.defines.PURGE_RX)
+                except ftd.DeviceError as msgnum:
+                    print("Error reading from USB2 on board", board, msgnum)
+                    returnmsg = "read err"
+                if len(rslt)==logicbytes+padding:
+                    ydatalogic=np.frombuffer(rslt,dtype=np.uint8,count=num_samples,offset=padding-endpadding)
+                else:
+                    if rollingtrigger:
+                        print("getdata asked for",logicbytes+padding,"logic bytes and got",len(rslt),"from board",board)
+                        returnmsg = "read timeout"
+
+            for l in range(4): #this draws the 4 fast ADC data channels for each board
+                ydatanew=(127-ydata[l])*(yscale/256.) # got to flip it, since it's a negative feedback op amp
+                ydatanew = ydatanew[1:len(ydatanew)]
+                xydata[l + board*num_chan_per_board][1]=ydatanew
+
+            if dologicanalyzer:
+                xydatalogicraw[board] = ydatalogic
+
+        conn.send(returnmsg)
