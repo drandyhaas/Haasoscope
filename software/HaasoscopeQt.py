@@ -10,81 +10,6 @@ import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtWidgets, QtGui, loadUiType
 import h5py
 
-import HaasoscopeLibQt
-import HaasoscopeTrigLibQt
-
-serialdelaytimerwait=-1
-trigboardport=""
-manserport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
-dofastusb=False
-print ('Number of arguments:', len(sys.argv), 'arguments.')
-print ('Argument List:', str(sys.argv))
-for a in sys.argv:
-    if a[0]=="-":
-        print(a)
-        if a[1:3]=="sr":
-            max_slowadc_ram_width=int(a[3:])
-            if max_slowadc_ram_width>HaasoscopeLibQt.max_slowadc_ram_width:
-                print("max_slowadc_ram_width",max_slowadc_ram_width,"too large")
-            elif max_slowadc_ram_width<1:
-                print("max_slowadc_ram_width",max_slowadc_ram_width,"too small")
-            else:
-                HaasoscopeLibQt.max_slowadc_ram_width = max_slowadc_ram_width
-                print("max_slowadc_ram_width set to", HaasoscopeLibQt.max_slowadc_ram_width)
-        elif a[1:8] == "fastusb":
-            dofastusb = True
-        elif a[1:4] == "adc":
-            exec("HaasoscopeLibQt.max10adcchans=" + a[4:])
-            print("max10adcchans set to", HaasoscopeLibQt.max10adcchans)
-        elif a[1]=="s":
-            serialdelaytimerwait=int(a[2:])
-        elif a[1]=="r":
-            ram_width=int(a[2:])
-            if ram_width>HaasoscopeLibQt.max_ram_width:
-                print("ram_width",ram_width,"is bigger than the max allowed",HaasoscopeLibQt.max_ram_width)
-                HaasoscopeLibQt.ram_width = HaasoscopeLibQt.max_ram_width
-            elif ram_width<1:
-                print("ram_width",ram_width,"is less than 1")
-                HaasoscopeLibQt.ram_width = 1
-            else: HaasoscopeLibQt.ram_width = ram_width
-            print("ram_width set to",HaasoscopeLibQt.ram_width)
-        elif a[1]=="b":
-            HaasoscopeLibQt.num_board=int(a[2:])
-            print("num_board set to",HaasoscopeLibQt.num_board)
-        elif a[1]=="p":
-            manserport=a[2:]
-        elif a[1]=="t":
-            trigboardport=a[2:]
-
-d = HaasoscopeLibQt.Haasoscope()
-d.construct()
-
-#Some other options
-if manserport!="":
-    d.serport=manserport
-    print("serial port manually set to", d.serport)
-if serialdelaytimerwait>-1:
-    d.serialdelaytimerwait=serialdelaytimerwait
-    print("serialdelaytimerwait set to", d.serialdelaytimerwait)
-d.dofastusb = dofastusb
-if dofastusb:
-    d.dousbparallel=True
-    print("dofastusb", d.dofastusb,"and dousbparallel",d.dousbparallel)
-
-#for talking with the trigger board
-if trigboardport!="":
-    trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig()
-    trigboard.construct(trigboardport)
-    if not trigboard.get_firmware_version(): sys.exit()
-    trigboard.setrngseed()
-    trigboard.set_prescale(1.0)
-    print("trigboardport set to", trigboardport)
-
-app = QtGui.QApplication.instance()
-standalone = app is None
-if standalone:
-    app = QtGui.QApplication(sys.argv)
-
 # Define fft window class from template
 FFTWindowTemplate, FFTTemplateBaseClass = loadUiType("HaasoscopeFFT.ui")
 class FFTWindow(FFTTemplateBaseClass):
@@ -816,29 +741,114 @@ class MainWindow(TemplateBaseClass):
                 if not delaycounters[b]:
                     d.increment_clk_phase(b,30) # increment clk of that board by 30*100ps=3ns
 
-try:    
-    win = MainWindow()
-    win.setWindowTitle('Haasoscope Qt')
-    if not d.setup_connections(): sys.exit()
-    if not d.init():
-        d.cleanup()
-        sys.exit()
-    win.launch()
-    win.triggerposchanged(128) # center the trigger
-    win.dostartstop()
-except SerialException:
-    print("serial com failed!")
+if __name__ == '__main__':
+    import HaasoscopeLibQt
+    import HaasoscopeTrigLibQt
 
-#can change some things after initialization
-#d.selectedchannel=0
-#d.tellswitchgain(d.selectedchannel)
-#d.togglesupergainchan(d.selectedchannel)
-#d.toggletriggerchan(d.selectedchannel)
-#d.togglelogicanalyzer() # run the logic analyzer
-#d.sendi2c("21 13 f0") # set extra pins E24 B0,1,2,3 off and B4,5,6,7 on (works for v8 only)
+    serialdelaytimerwait = -1
+    trigboardport = ""
+    manserport = ""  # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
+    dofastusb = False
+    print('Number of arguments:', len(sys.argv), 'arguments.')
+    print('Argument List:', str(sys.argv))
+    for a in sys.argv:
+        if a[0] == "-":
+            print(a)
+            if a[1:3] == "sr":
+                max_slowadc_ram_width = int(a[3:])
+                if max_slowadc_ram_width > HaasoscopeLibQt.max_slowadc_ram_width:
+                    print("max_slowadc_ram_width", max_slowadc_ram_width, "too large")
+                elif max_slowadc_ram_width < 1:
+                    print("max_slowadc_ram_width", max_slowadc_ram_width, "too small")
+                else:
+                    HaasoscopeLibQt.max_slowadc_ram_width = max_slowadc_ram_width
+                    print("max_slowadc_ram_width set to", HaasoscopeLibQt.max_slowadc_ram_width)
+            elif a[1:8] == "fastusb":
+                dofastusb = True
+            elif a[1:4] == "adc":
+                exec("HaasoscopeLibQt.max10adcchans=" + a[4:])
+                print("max10adcchans set to", HaasoscopeLibQt.max10adcchans)
+            elif a[1] == "s":
+                serialdelaytimerwait = int(a[2:])
+            elif a[1] == "r":
+                ram_width = int(a[2:])
+                if ram_width > HaasoscopeLibQt.max_ram_width:
+                    print("ram_width", ram_width, "is bigger than the max allowed", HaasoscopeLibQt.max_ram_width)
+                    HaasoscopeLibQt.ram_width = HaasoscopeLibQt.max_ram_width
+                elif ram_width < 1:
+                    print("ram_width", ram_width, "is less than 1")
+                    HaasoscopeLibQt.ram_width = 1
+                else:
+                    HaasoscopeLibQt.ram_width = ram_width
+                print("ram_width set to", HaasoscopeLibQt.ram_width)
+            elif a[1] == "b":
+                HaasoscopeLibQt.num_board = int(a[2:])
+                print("num_board set to", HaasoscopeLibQt.num_board)
+            elif a[1] == "p":
+                manserport = a[2:]
+            elif a[1] == "t":
+                trigboardport = a[2:]
 
-if standalone:
-    sys.exit(app.exec_())
-else:
-    print("Done, but Qt window still active")
+    d = HaasoscopeLibQt.Haasoscope()
+    d.construct()
 
+    # Some other options
+    if manserport != "":
+        d.serport = manserport
+        print("serial port manually set to", d.serport)
+    if serialdelaytimerwait > -1:
+        d.serialdelaytimerwait = serialdelaytimerwait
+        print("serialdelaytimerwait set to", d.serialdelaytimerwait)
+    d.dofastusb = dofastusb
+    if dofastusb:
+        d.dousbparallel = True
+        print("dofastusb", d.dofastusb, "and dousbparallel", d.dousbparallel)
+
+    # for talking with the trigger board
+    if trigboardport != "":
+        trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig()
+        trigboard.construct(trigboardport)
+        if not trigboard.get_firmware_version(): sys.exit()
+        trigboard.setrngseed()
+        trigboard.set_prescale(1.0)
+        print("trigboardport set to", trigboardport)
+
+    # can change some things after initialization
+    # d.selectedchannel=0
+    # d.tellswitchgain(d.selectedchannel)
+    # d.togglesupergainchan(d.selectedchannel)
+    # d.toggletriggerchan(d.selectedchannel)
+    # d.togglelogicanalyzer() # run the logic analyzer
+    # d.sendi2c("21 13 f0") # set extra pins E24 B0,1,2,3 off and B4,5,6,7 on (works for v8 only)
+
+    app = QtGui.QApplication.instance()
+    standalone = app is None
+    if standalone:
+        app = QtGui.QApplication(sys.argv)
+
+    try:
+        win = MainWindow()
+        win.setWindowTitle('Haasoscope Qt')
+        if not d.setup_connections():
+            print("Exiting now - failed setup_connections!")
+            sys.exit()
+        if not d.init():
+            print("Exiting now - failed init!")
+            d.cleanup()
+            sys.exit()
+        win.launch()
+
+        #turns off drawing
+        #win.ui.drawingCheck.setCheckState(QtCore.Qt.Unchecked)
+        #win.drawing()
+
+        win.triggerposchanged(128)  # center the trigger
+        win.dostartstop()
+    except SerialException:
+        print("serial com failed!")
+
+    if standalone:
+        rv=app.exec_()
+        sys.exit(rv)
+    else:
+        print("Done, but Qt window still active")
