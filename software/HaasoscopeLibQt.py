@@ -28,7 +28,13 @@ if enable_ripyl:
     import ripyl.protocol.uart as uart
 
 enable_fastusb=True # set to True to be able to use the fastusb2 writing
-if enable_fastusb: import ftd2xx as ftd
+useftd2xx=False
+uselibftdi=False
+useftdi=True
+if enable_fastusb:
+    if useftd2xx: import ftd2xx as ftd
+    if uselibftdi: import pylibftdi as libftd
+    if useftdi: from pyftdi.ftdi import Ftdi
 
 class Haasoscope():
     
@@ -1241,7 +1247,7 @@ class Haasoscope():
         else: padding = 0
         if len(self.usbser)>0:
             for usb in np.arange(len(self.usbser)):
-                if self.dofastusb: self.usbser[usb].setTimeouts(50,1000)
+                if self.dofastusb and useftd2xx: self.usbser[usb].setTimeouts(50,1000)
                 else: self.usbser[usb].timeout=.25 # lower the timeout on the connections, temporarily
             foundusbs=[]
             self.ser.write(bytearray([100])) # prime the trigger (for all boards)
@@ -1255,12 +1261,22 @@ class Haasoscope():
                 for usb in range(len(self.usbser)):
                     if not usb in foundusbs: # it's not already known that this usb connection is assigned to a board
                         try:
-                            rslt = self.usbser[usb].read(self.num_bytes+padding*num_chan_per_board) # try to get data from the board
+                            print(time.time() - self.oldtime, "trying usb", usb)
+                            bwant = self.num_bytes+padding*num_chan_per_board
+                            if useftd2xx or uselibftdi: rslt = self.usbser[usb].read(bwant) # try to get data from the board
+                            if uselibftdi:
+                                starttime=time.time()
+                                while len(rslt)<bwant:
+                                    if self.db: print(time.time() - self.oldtime, "still trying usb", usb,"rslt len is",len(rslt))
+                                    rslt += self.usbser[usb].read(bwant)  # try to get data from the board
+                                    difftime=time.time() - starttime
+                                    if difftime>0.25: break
+                            if useftdi: rslt = self.usbser[usb].read_data_bytes(bwant, 1000)
                         except ftd.DeviceError as msgnum:
                             print("Error reading from USB2", usb, msgnum)
                             return
                         if len(rslt)==self.num_bytes+padding*num_chan_per_board:
-                            print("   got the right nbytes for board",bn,"from usb",usb)
+                            print(time.time() - self.oldtime,"   got the right nbytes for board",bn,"from usb",usb)
                             self.usbsermap[bn]=usb
                             foundusbs.append(usb) # remember that we already have figured out which board this usb connection is for, so we don't bother trying again for another board
                             foundit=True
@@ -1275,14 +1291,14 @@ class Haasoscope():
                                 rsltslow = self.ser.read(int(self.num_bytes))  # to cross-check the readout
                                 print("got", len(rsltslow), "bytes from slow serial readout")
                             break # already found which board this usb connection is used for, so bail out
-                        #else: print("   got the wrong nbytes",len(rslt),"for board",bn,"from usb",usb)
+                        else: print(time.time() - self.oldtime,"   got the wrong nbytes",len(rslt),"for board",bn,"from usb",usb)
                     #else: print("   already know what usb",usb,"is for")
                 if not foundit:
                     print("could not find usb2 connection for board",bn)
                     return False
             if not self.domt:
                 for usb in range(len(self.usbser)):
-                    if self.dofastusb: self.usbser[usb].setTimeouts(1000, 1000)
+                    if self.dofastusb and useftd2xx: self.usbser[usb].setTimeouts(1000, 1000)
                     else: self.usbser[usb].timeout=self.sertimeout # put back the timeout on the connections
         print("usbsermap is",self.usbsermap)
         return True
@@ -1304,8 +1320,20 @@ class Haasoscope():
                 if self.dofastusb:
                     padding = self.fastusbpadding
                     endpadding = self.fastusbendpadding
-                    rslt = self.usbser[self.usbsermap[board]].read(self.num_bytes+padding*num_chan_per_board,cache=True)
-                    if not self.dologicanalyzer:
+                    nb=int((self.num_bytes+padding*num_chan_per_board))
+                    #for n in range(0,4):
+                    if self.db: print(time.time() - self.oldtime, "read data from board",board,"nb",nb)
+                    if useftd2xx or uselibftdi: rslt = self.usbser[self.usbsermap[board]].read(nb)#,cache=True)
+                    if uselibftdi:
+                        starttime = time.time()
+                        while len(rslt) < nb:
+                            if self.db: print(time.time() - self.oldtime, "still trying board", board, "rslt len is", len(rslt))
+                            rslt += self.usbser[self.usbsermap[board]].read(nb)  # try to get data from the board
+                            difftime = time.time() - starttime
+                            if difftime > 1.0: break
+                    if useftdi: rslt = self.usbser[self.usbsermap[board]].read_data_bytes(nb,100)
+                    if self.db: print(time.time() - self.oldtime, "read data from board",board,"done")
+                    if useftd2xx and not self.dologicanalyzer and not self.flyingfast:
                         nq = self.usbser[self.usbsermap[board]].getQueueStatus()
                         if nq>0:
                             print(nq,"bytes still available for usb on board",board,"...purging")
@@ -1362,10 +1390,11 @@ class Haasoscope():
                         padding = self.fastusbpadding
                         endpadding = self.fastusbendpadding
                         rslt = self.usbser[self.usbsermap[board]].read(logicbytes + padding)
-                        nq = self.usbser[self.usbsermap[board]].getQueueStatus()
-                        if nq > 0:
-                            print(nq, "bytes still available for usb on board", board, "...purging")
-                            self.usbser[self.usbsermap[board]].purge(ftd.defines.PURGE_RX)
+                        if useftd2xx:
+                            nq = self.usbser[self.usbsermap[board]].getQueueStatus()
+                            if nq > 0:
+                                print(nq, "bytes still available for usb on board", board, "...purging")
+                                self.usbser[self.usbsermap[board]].purge(ftd.defines.PURGE_RX)
                     else:
                         rslt = self.usbser[self.usbsermap[board]].read(logicbytes)
                 except ftd.DeviceError as msgnum:
@@ -1460,6 +1489,7 @@ class Haasoscope():
     oldtime=time.time()
     oldtime2=time.time()
     def getchannels(self):
+        if self.db: print(time.time() - self.oldtime, "getchannels")
         if self.dousb and self.dousbparallel:
             if self.minfirmwareversion>=17:
                 self.ser.write(bytearray([100,51,255])) # prime, then get data... 255 gets data from ALL boards
@@ -1501,6 +1531,7 @@ class Haasoscope():
             for bn in np.arange(num_board):
                 if self.db: print(time.time()-self.oldtime,"getting board",bn)
                 self.getdata(bn) #this sets all boards before this board into serial passthrough mode, so this and following calls for data will go to this board and then travel back over serial
+                if self.db: print(time.time() - self.oldtime, "got data from board",bn)
                 if self.flyingfast: continue # to test flying fast
                 self.getmax10adc(bn) # get data from 1 MHz Max10 ADC channels
                 if self.dogetotherdata: self.getotherdata(bn) # get other data, like TDC info, or other bytes
@@ -1667,7 +1698,7 @@ class Haasoscope():
             except SerialException:
                 print("Could not open",p,"!"); return False
             print("connected USBserial to",p,", 32Mb/s, timeout",self.sertimeout,"seconds")
-        if self.dofastusb and ftd.listDevices():
+        if self.dofastusb and useftd2xx and ftd.listDevices():
             for ftd_n in range(len(ftd.listDevices())):
                 if str(ftd.getDeviceInfoDetail(ftd_n)["description"]).find("Haasoscope")>=0:
                     ftd_d = ftd.open(ftd_n)
@@ -1676,12 +1707,38 @@ class Haasoscope():
                     ftd_d.setBitMode(0xff, 0x40)
                     ftd_d.setUSBParameters(0x10000, 0x10000)
                     ftd_d.setLatencyTimer(1)
-                    ftd_d.setFlowControl(ftd.defines.FLOW_RTS_CTS, 0, 0)
                     ftd_d.purge(ftd.defines.PURGE_RX)
                     ftd_d.purge(ftd.defines.PURGE_TX)
                     self.usbser.append(ftd_d)
                     self.usbsern.append(ftd_n)
-            #print(self.usbser[0].getDeviceInfo())
+        if self.dofastusb and uselibftdi:
+            for devi in libftd.Driver().list_devices():
+                if str(devi[1]).find("Haasoscope") >= 0:
+                    ftd_n=devi[2]
+                    ftd_d = libftd.Device(ftd_n)
+                    print("Adding libftd usb2 device:", ftd_n)
+                    ftd_d.ftdi_fn.ftdi_usb_reset()
+                    #ftd_d.ftdi_fn.setTimeouts(1000, 1000)
+                    ftd_d.ftdi_fn.ftdi_set_bitmode(0xff, 0x40)
+                    #ftd_d.setUSBParameters(0x1000, 0x1000)
+                    ftd_d.ftdi_fn.ftdi_set_latency_timer(1)
+                    ftd_d.flush()
+                    self.usbser.append(ftd_d)
+                    self.usbsern.append(ftd_n)
+        if self.dofastusb and useftdi:
+            for devi in Ftdi.list_devices():
+                if str(devi[0].description).find("Haasoscope") >= 0:
+                    ftd_n = devi[0].sn
+                    ftd_d = Ftdi.create_from_url("ftdi://::"+ftd_n+"/1")
+                    print("Adding ftdi usb2 device:", ftd_n)
+                    ftd_d.reset()
+                    # ftd_d.ftdi_fn.setTimeouts(1000, 1000)
+                    ftd_d.set_bitmode(0xff,Ftdi.BitMode.SYNCFF)
+                    ftd_d.read_data_set_chunksize(34000)
+                    ftd_d.set_latency_timer(1)
+                    ftd_d.purge_buffers()
+                    self.usbser.append(ftd_d)
+                    self.usbsern.append(ftd_n)
         if self.serport=="": print("No serial COM port opened!"); return False
         return True
 
@@ -1724,7 +1781,7 @@ def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatal
             num_bytes = num_samples * num_chan_per_board
             timedout = False
             try:
-                rslt = usb.read(num_bytes+padding*num_chan_per_board,cache=True)
+                rslt = usb.read(num_bytes+padding*num_chan_per_board)#,cache=True)
                 if not dologicanalyzer:
                     nq = usb.getQueueStatus()
                     if nq>0:
