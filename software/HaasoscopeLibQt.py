@@ -1319,11 +1319,12 @@ class Haasoscope():
                     if useftd2xx: rslt = self.usbser[self.usbsermap[board]].read(nb)#,cache=True)
                     elif useftdi: rslt = self.usbser[self.usbsermap[board]].read_data_bytes(nb,100)
                     if self.db: print(time.time() - self.oldtime, "read data from board",board,"done")
-                    if useftd2xx and not self.dologicanalyzer and not self.flyingfast:
-                        nq = self.usbser[self.usbsermap[board]].getQueueStatus()
-                        if nq>0:
-                            print(nq,"bytes still available for usb on board",board,"...purging")
-                            self.usbser[self.usbsermap[board]].purge(ftd.defines.PURGE_RX)
+                    if not self.dologicanalyzer and useftd2xx and not self.flyingfast:
+                        nq =  self.usbser[self.usbsermap[board]].getQueueStatus()
+                        if nq > 0:
+                            print(nq, "bytes still available for usb on board", board, "...purging")
+                            if useftd2xx: self.usbser[self.usbsermap[board]].purge(ftd.defines.PURGE_RX)
+                            elif useftdi: self.usbser[self.usbsermap[board]].purge_rx_buffer()
                     if self.checkfastusbwriting:
                         rsltslow = self.ser.read(int(self.num_bytes)) # to cross-check the readout
                         #print("got",len(rsltslow),"bytes from slow serial readout")
@@ -1375,7 +1376,9 @@ class Haasoscope():
                     if self.dofastusb:
                         padding = self.fastusbpadding
                         endpadding = self.fastusbendpadding
-                        rslt = self.usbser[self.usbsermap[board]].read(logicbytes + padding)
+                        nb = logicbytes + padding
+                        if useftd2xx: rslt = self.usbser[self.usbsermap[board]].read(nb)#,cache=True)
+                        elif useftdi: rslt = self.usbser[self.usbsermap[board]].read_data_bytes(nb,100)
                         if useftd2xx:
                             nq = self.usbser[self.usbsermap[board]].getQueueStatus()
                             if nq > 0:
@@ -1710,7 +1713,7 @@ class Haasoscope():
                     ftd_d.reset()
                     # ftd_d.ftdi_fn.setTimeouts(1000, 1000)
                     ftd_d.set_bitmode(0xff,Ftdi.BitMode.SYNCFF)
-                    ftd_d.read_data_set_chunksize(34000)
+                    ftd_d.read_data_set_chunksize(42500) #34000, or 42500 with logicanalyzer
                     ftd_d.set_latency_timer(1)
                     ftd_d.purge_buffers()
                     self.usbser.append(ftd_d)
@@ -1751,7 +1754,7 @@ def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatal
                 ftd_d.reset()
                 # ftd_d.ftdi_fn.setTimeouts(1000, 1000)
                 ftd_d.set_bitmode(0xff, Ftdi.BitMode.SYNCFF)
-                ftd_d.read_data_set_chunksize(34000)
+                ftd_d.read_data_set_chunksize(42500)
                 ftd_d.set_latency_timer(1)
                 ftd_d.purge_buffers()
                 usb=ftd_d
@@ -1769,11 +1772,12 @@ def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatal
                 nb = num_bytes+padding*num_chan_per_board
                 if useftd2xx: rslt = usb.read(nb)#,cache=True)
                 elif useftdi: rslt = usb.read_data_bytes(nb, 100)
-                if useftd2xx and not dologicanalyzer:
+                if not dologicanalyzer and useftd2xx:
                     nq = usb.getQueueStatus()
-                    if nq>0:
-                        print(nq,"bytes still available for usb on board",board,"...purging")
-                        usb.purge(ftd.defines.PURGE_RX)
+                    if nq > 0:
+                        print(nq, "bytes still available for usb on board", board, "...purging")
+                        if useftd2xx: usb.purge(ftd.defines.PURGE_RX)
+                        elif useftdi: usb.purge_rx_buffer()
             except ftd.DeviceError as msgnum:
                 print("Error reading from USB2 on board", board, msgnum)
                 returnmsg = "read err"
@@ -1795,11 +1799,14 @@ def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatal
                 #get extra logic analyzer data, if needed
                 logicbytes=int(num_bytes/num_chan_per_board)
                 try:
-                    rslt = usb.read(logicbytes + padding)
-                    nq = usb.getQueueStatus()
-                    if nq > 0:
-                        print(nq, "bytes still available for usb on board", board, "...purging")
-                        usb.purge(ftd.defines.PURGE_RX)
+                    nb= logicbytes + padding
+                    if useftd2xx: rslt = usb.read(nb)  # ,cache=True)
+                    elif useftdi: rslt = usb.read_data_bytes(nb, 100)
+                    if useftd2xx:
+                        nq = usb.getQueueStatus()
+                        if nq > 0:
+                            print(nq, "bytes still available for usb on board", board, "...purging")
+                            usb.purge(ftd.defines.PURGE_RX)
                 except ftd.DeviceError as msgnum:
                     print("Error reading from USB2 on board", board, msgnum)
                     returnmsg = "read err"
