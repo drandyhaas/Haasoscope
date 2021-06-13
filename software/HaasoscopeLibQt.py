@@ -22,6 +22,17 @@ import serial.tools.list_ports
 import scipy.optimize
 import multiprocessing
 
+mearm = False
+mewin = False
+try:
+    print(os.uname())
+    if os.uname()[4].startswith("arm") or os.uname()[4].startswith("aarch"):
+        print("On a raspberry pi?")
+        mearm = True
+except AttributeError:
+    mewin = True
+    print("Not on Linux?")
+
 enable_ripyl=False # set to True to use ripyl serial decoding... have to get it from https://github.com/kevinpt/ripyl and then install it first!
 if enable_ripyl:
     import ripyl.util.plot as rplot
@@ -30,25 +41,21 @@ if enable_ripyl:
     import ripyl.protocol.uart as uart
 
 enable_fastusb=True # set to True to be able to use the fastusb2 writing
-useftd2xx=True
-useftdi=False
 if enable_fastusb:
+    if mewin:
+        useftd2xx = True
+        useftdi = False
+        print("Using ftd2xx driver on Windows")
+    else:
+        useftd2xx = False
+        useftdi = True
+        print("Using pyftdi on Linux")
     if useftd2xx: import ftd2xx as ftd
     if useftdi: from pyftdi.ftdi import Ftdi
 
 class Haasoscope():
     
     def construct(self):
-        mearm = False
-        mewin = False
-        try:
-            print(os.uname())
-            if os.uname()[4].startswith("arm") or os.uname()[4].startswith("aarch"):
-                print("On a raspberry pi?")
-                mearm = True
-        except AttributeError:
-            mewin = True
-            print("Not on Linux?")
         self.num_samples = int(pow(2,ram_width)/pow(2,sendincrement)) # num samples per channel, max is pow(2,ram_width)/pow(2,0)=4096
         self.num_bytes = int(self.num_samples*num_chan_per_board) #num bytes per board
         self.nsamp=int(pow(2,min(ram_width,max_slowadc_ram_width))-1) #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
