@@ -209,10 +209,16 @@ class Haasoscope():
             self.ser.write(bytearray([5]))
             #if len(self.lines)>=8+self.logicline1: # check that we're drawing
             #    for l in np.arange(8): self.lines[l+self.logicline1].set_visible(True)
+            if useftdi:
+                for usb in range(len(self.usbser)):
+                    self.usbser[usb].read_data_set_chunksize(42500)  # 34000, or 42500 with logicanalyzer
         else:
             self.ser.write(bytearray([4]))
             #if len(self.lines)>=8+self.logicline1: # check that we're drawing
             #    for l in np.arange(8): self.lines[l+self.logicline1].set_visible(False)
+            if useftdi:
+                for usb in range(len(self.usbser)):
+                    self.usbser[usb].read_data_set_chunksize(34000)  # 34000, or 42500 with logicanalyzer
         print("dologicanalyzer is now",self.dologicanalyzer)
 
     def toggle_fastusb(self):
@@ -1720,7 +1726,7 @@ class Haasoscope():
                     ftd_d.reset()
                     # ftd_d.ftdi_fn.setTimeouts(1000, 1000)
                     ftd_d.set_bitmode(0xff,Ftdi.BitMode.SYNCFF)
-                    ftd_d.read_data_set_chunksize(42500) #34000, or 42500 with logicanalyzer
+                    ftd_d.read_data_set_chunksize(34000) #34000, or 42500 with logicanalyzer
                     ftd_d.set_latency_timer(1)
                     ftd_d.purge_buffers()
                     self.usbser.append(ftd_d)
@@ -1733,6 +1739,7 @@ def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatal
     board=name
     xydata=np.frombuffer(xydata_array, dtype=float).reshape(xydata_shape)
     xydatalogicraw = np.frombuffer(xydatalogicraw_array, dtype=np.dtype('b')).reshape(xydatalogicraw_shape)
+    chunksize=34000
     print("   receiver for board", name)
     while True:
         msg = conn.recv()
@@ -1761,7 +1768,7 @@ def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatal
                 ftd_d.reset()
                 # ftd_d.ftdi_fn.setTimeouts(1000, 1000)
                 ftd_d.set_bitmode(0xff, Ftdi.BitMode.SYNCFF)
-                ftd_d.read_data_set_chunksize(42500)
+                ftd_d.read_data_set_chunksize(chunksize)
                 ftd_d.set_latency_timer(1)
                 ftd_d.purge_buffers()
                 usb=ftd_d
@@ -1775,6 +1782,12 @@ def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatal
             num_chan_per_board = 4
             num_bytes = num_samples * num_chan_per_board
             timedout = False
+            if dologicanalyzer and chunksize<42500:
+                usb.read_data_set_chunksize(42500)
+                chunksize=42500
+            elif not dologicanalyzer and chunksize>34000:
+                usb.read_data_set_chunksize(34000)
+                chunksize=34000
             try:
                 nb = num_bytes+padding*num_chan_per_board
                 if useftd2xx: rslt = usb.read(nb)#,cache=True)
