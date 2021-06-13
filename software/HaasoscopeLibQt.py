@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import sys
+
 print("Loading HaasoscopeLibQt.py")
 
 # You might adjust these, just override them before calling construct()
@@ -28,12 +30,10 @@ if enable_ripyl:
     import ripyl.protocol.uart as uart
 
 enable_fastusb=True # set to True to be able to use the fastusb2 writing
-useftd2xx=False
-uselibftdi=False
-useftdi=True
+useftd2xx=True
+useftdi=False
 if enable_fastusb:
     if useftd2xx: import ftd2xx as ftd
-    if uselibftdi: import pylibftdi as libftd
     if useftdi: from pyftdi.ftdi import Ftdi
 
 class Haasoscope():
@@ -1263,15 +1263,8 @@ class Haasoscope():
                         try:
                             print(time.time() - self.oldtime, "trying usb", usb)
                             bwant = self.num_bytes+padding*num_chan_per_board
-                            if useftd2xx or uselibftdi: rslt = self.usbser[usb].read(bwant) # try to get data from the board
-                            if uselibftdi:
-                                starttime=time.time()
-                                while len(rslt)<bwant:
-                                    if self.db: print(time.time() - self.oldtime, "still trying usb", usb,"rslt len is",len(rslt))
-                                    rslt += self.usbser[usb].read(bwant)  # try to get data from the board
-                                    difftime=time.time() - starttime
-                                    if difftime>0.25: break
-                            if useftdi: rslt = self.usbser[usb].read_data_bytes(bwant, 1000)
+                            if useftd2xx: rslt = self.usbser[usb].read(bwant) # try to get data from the board
+                            elif useftdi: rslt = self.usbser[usb].read_data_bytes(bwant, 1000)
                         except ftd.DeviceError as msgnum:
                             print("Error reading from USB2", usb, msgnum)
                             return
@@ -1323,15 +1316,8 @@ class Haasoscope():
                     nb=int((self.num_bytes+padding*num_chan_per_board))
                     #for n in range(0,4):
                     if self.db: print(time.time() - self.oldtime, "read data from board",board,"nb",nb)
-                    if useftd2xx or uselibftdi: rslt = self.usbser[self.usbsermap[board]].read(nb)#,cache=True)
-                    if uselibftdi:
-                        starttime = time.time()
-                        while len(rslt) < nb:
-                            if self.db: print(time.time() - self.oldtime, "still trying board", board, "rslt len is", len(rslt))
-                            rslt += self.usbser[self.usbsermap[board]].read(nb)  # try to get data from the board
-                            difftime = time.time() - starttime
-                            if difftime > 1.0: break
-                    if useftdi: rslt = self.usbser[self.usbsermap[board]].read_data_bytes(nb,100)
+                    if useftd2xx: rslt = self.usbser[self.usbsermap[board]].read(nb)#,cache=True)
+                    elif useftdi: rslt = self.usbser[self.usbsermap[board]].read_data_bytes(nb,100)
                     if self.db: print(time.time() - self.oldtime, "read data from board",board,"done")
                     if useftd2xx and not self.dologicanalyzer and not self.flyingfast:
                         nq = self.usbser[self.usbsermap[board]].getQueueStatus()
@@ -1504,7 +1490,11 @@ class Haasoscope():
         if self.domt:
             for bn in range(num_board):
                 if self.db: print(time.time()-self.oldtime,"getting board",bn)
-                self.parent_conn[bn].send([self.num_samples, self.fastusbpadding, self.fastusbendpadding, self.yscale, self.dologicanalyzer, self.rollingtrigger])
+                try:
+                    self.parent_conn[bn].send([self.num_samples, self.fastusbpadding, self.fastusbendpadding, self.yscale, self.dologicanalyzer, self.rollingtrigger])
+                except:
+                    print("could not send message to receiver - exiting!")
+                    sys.exit(-3)
                 xboardshift=(11.0*bn/8.0)/pow(2,max(self.downsample,0)) # shift the board data to the right by this number of samples (to account for the readout delay) #downsample isn't less than 0 for xscaling
                 xdatanew = (self.xdata-xboardshift-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
                 xdatanew = xdatanew[1:len(xdatanew)]
@@ -1711,21 +1701,7 @@ class Haasoscope():
                     ftd_d.purge(ftd.defines.PURGE_TX)
                     self.usbser.append(ftd_d)
                     self.usbsern.append(ftd_n)
-        if self.dofastusb and uselibftdi:
-            for devi in libftd.Driver().list_devices():
-                if str(devi[1]).find("Haasoscope") >= 0:
-                    ftd_n=devi[2]
-                    ftd_d = libftd.Device(ftd_n)
-                    print("Adding libftd usb2 device:", ftd_n)
-                    ftd_d.ftdi_fn.ftdi_usb_reset()
-                    #ftd_d.ftdi_fn.setTimeouts(1000, 1000)
-                    ftd_d.ftdi_fn.ftdi_set_bitmode(0xff, 0x40)
-                    #ftd_d.setUSBParameters(0x1000, 0x1000)
-                    ftd_d.ftdi_fn.ftdi_set_latency_timer(1)
-                    ftd_d.flush()
-                    self.usbser.append(ftd_d)
-                    self.usbsern.append(ftd_n)
-        if self.dofastusb and useftdi:
+        elif self.dofastusb and useftdi:
             for devi in Ftdi.list_devices():
                 if str(devi[0].description).find("Haasoscope") >= 0:
                     ftd_n = devi[0].sn
@@ -1758,18 +1734,27 @@ def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatal
 
         returnmsg = "OK"
         if usb == None:
-            #print("   trying to open")
-            ftd_d = ftd.open(msg)
-            #print("   opened")
-            print("   adding ftd usb2 device:", ftd_d.getDeviceInfo())
-            ftd_d.setTimeouts(1000, 1000)
-            ftd_d.setBitMode(0xff, 0x40)
-            ftd_d.setUSBParameters(0x10000, 0x10000)
-            ftd_d.setLatencyTimer(1)
-            ftd_d.setFlowControl(ftd.defines.FLOW_RTS_CTS, 0, 0)
-            ftd_d.purge(ftd.defines.PURGE_RX)
-            ftd_d.purge(ftd.defines.PURGE_TX)
-            usb=ftd_d
+            if useftd2xx:
+                ftd_d = ftd.open(msg)
+                print("   adding ftd usb2 device:", ftd_d.getDeviceInfo())
+                ftd_d.setTimeouts(1000, 1000)
+                ftd_d.setBitMode(0xff, 0x40)
+                ftd_d.setUSBParameters(0x10000, 0x10000)
+                ftd_d.setLatencyTimer(1)
+                ftd_d.purge(ftd.defines.PURGE_RX)
+                ftd_d.purge(ftd.defines.PURGE_TX)
+                usb=ftd_d
+            elif useftdi:
+                ftd_n = str(msg)
+                print("Adding ftdi usb2 device:", ftd_n)
+                ftd_d = Ftdi.create_from_url("ftdi://::" + ftd_n + "/1")
+                ftd_d.reset()
+                # ftd_d.ftdi_fn.setTimeouts(1000, 1000)
+                ftd_d.set_bitmode(0xff, Ftdi.BitMode.SYNCFF)
+                ftd_d.read_data_set_chunksize(34000)
+                ftd_d.set_latency_timer(1)
+                ftd_d.purge_buffers()
+                usb=ftd_d
         else:
             num_samples = int(msg[0])
             padding = int(msg[1])
@@ -1781,8 +1766,10 @@ def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatal
             num_bytes = num_samples * num_chan_per_board
             timedout = False
             try:
-                rslt = usb.read(num_bytes+padding*num_chan_per_board)#,cache=True)
-                if not dologicanalyzer:
+                nb = num_bytes+padding*num_chan_per_board
+                if useftd2xx: rslt = usb.read(nb)#,cache=True)
+                elif useftdi: rslt = usb.read_data_bytes(nb, 100)
+                if useftd2xx and not dologicanalyzer:
                     nq = usb.getQueueStatus()
                     if nq>0:
                         print(nq,"bytes still available for usb on board",board,"...purging")
