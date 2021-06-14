@@ -44,14 +44,16 @@ enable_fastusb=True # set to True to be able to use the fastusb2 writing
 if enable_fastusb:
     if mewin:
         useftd2xx = True
-        useftdi = False
         #print("Using ftd2xx driver on Windows")
     else:
         useftd2xx = False
-        useftdi = True
         #print("Using pyftdi on Linux")
-    if useftd2xx: import ftd2xx as ftd
-    if useftdi: from pyftdi.ftdi import Ftdi
+    useftdi = not useftd2xx
+    if useftd2xx:
+        import ftd2xx as ftd
+    if useftdi:
+        from pyftdi.ftdi import Ftdi
+        ftdiattempts=300 # number of times to try reading - basically a timeout
 
 class Haasoscope():
     
@@ -209,14 +211,14 @@ class Haasoscope():
             self.ser.write(bytearray([5]))
             #if len(self.lines)>=8+self.logicline1: # check that we're drawing
             #    for l in np.arange(8): self.lines[l+self.logicline1].set_visible(True)
-            if useftdi:
+            if useftdi and not self.domt:
                 for usb in range(len(self.usbser)):
                     self.usbser[usb].read_data_set_chunksize(42500)  # 34000, or 42500 with logicanalyzer
         else:
             self.ser.write(bytearray([4]))
             #if len(self.lines)>=8+self.logicline1: # check that we're drawing
             #    for l in np.arange(8): self.lines[l+self.logicline1].set_visible(False)
-            if useftdi:
+            if useftdi and not self.domt:
                 for usb in range(len(self.usbser)):
                     self.usbser[usb].read_data_set_chunksize(34000)  # 34000, or 42500 with logicanalyzer
         print("dologicanalyzer is now",self.dologicanalyzer)
@@ -1281,7 +1283,7 @@ class Haasoscope():
                             #print(time.time() - self.oldtime, "trying usb", usb)
                             bwant = self.num_bytes+padding*num_chan_per_board
                             if useftd2xx: rslt = self.usbser[usb].read(bwant) # try to get data from the board
-                            elif useftdi: rslt = self.usbser[usb].read_data_bytes(bwant, 200)
+                            elif useftdi: rslt = self.usbser[usb].read_data_bytes(bwant, ftdiattempts)
                         except ftd.DeviceError as msgnum:
                             print("Error reading from USB2", usb, msgnum)
                             return
@@ -1334,7 +1336,7 @@ class Haasoscope():
                     #for n in range(0,4):
                     if self.db: print(time.time() - self.oldtime, "read data from board",board,"nb",nb)
                     if useftd2xx: rslt = self.usbser[self.usbsermap[board]].read(nb)#,cache=True)
-                    elif useftdi: rslt = self.usbser[self.usbsermap[board]].read_data_bytes(nb,100)
+                    elif useftdi: rslt = self.usbser[self.usbsermap[board]].read_data_bytes(nb,ftdiattempts)
                     if self.db: print(time.time() - self.oldtime, "read data from board",board,"done")
                     if not self.dologicanalyzer and useftd2xx and not self.flyingfast:
                         nq =  self.usbser[self.usbsermap[board]].getQueueStatus()
@@ -1395,7 +1397,7 @@ class Haasoscope():
                         endpadding = self.fastusbendpadding
                         nb = logicbytes + padding
                         if useftd2xx: rslt = self.usbser[self.usbsermap[board]].read(nb)#,cache=True)
-                        elif useftdi: rslt = self.usbser[self.usbsermap[board]].read_data_bytes(nb,100)
+                        elif useftdi: rslt = self.usbser[self.usbsermap[board]].read_data_bytes(nb,ftdiattempts)
                         if useftd2xx:
                             nq = self.usbser[self.usbsermap[board]].getQueueStatus()
                             if nq > 0:
@@ -1786,16 +1788,17 @@ def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatal
             num_chan_per_board = 4
             num_bytes = num_samples * num_chan_per_board
             timedout = False
-            if dologicanalyzer and chunksize<42500:
-                usb.read_data_set_chunksize(42500)
-                chunksize=42500
-            elif not dologicanalyzer and chunksize>34000:
-                usb.read_data_set_chunksize(34000)
-                chunksize=34000
+            if useftdi:
+                if dologicanalyzer and chunksize<42500:
+                    usb.read_data_set_chunksize(42500)
+                    chunksize=42500
+                elif not dologicanalyzer and chunksize>34000:
+                    usb.read_data_set_chunksize(34000)
+                    chunksize=34000
             try:
                 nb = num_bytes+padding*num_chan_per_board
                 if useftd2xx: rslt = usb.read(nb)#,cache=True)
-                elif useftdi: rslt = usb.read_data_bytes(nb, 100)
+                elif useftdi: rslt = usb.read_data_bytes(nb, ftdiattempts)
                 if not dologicanalyzer and useftd2xx:
                     nq = usb.getQueueStatus()
                     if nq > 0:
@@ -1825,7 +1828,7 @@ def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatal
                 try:
                     nb= logicbytes + padding
                     if useftd2xx: rslt = usb.read(nb)  # ,cache=True)
-                    elif useftdi: rslt = usb.read_data_bytes(nb, 100)
+                    elif useftdi: rslt = usb.read_data_bytes(nb, ftdiattempts)
                     if useftd2xx:
                         nq = usb.getQueueStatus()
                         if nq > 0:
