@@ -213,14 +213,14 @@ class Haasoscope():
             #    for l in np.arange(8): self.lines[l+self.logicline1].set_visible(True)
             if useftdi and not self.domt:
                 for usb in range(len(self.usbser)):
-                    self.usbser[usb].read_data_set_chunksize(42500)  # 34000, or 42500 with logicanalyzer
+                    self.usbser[usb].read_data_set_chunksize( int((self.num_bytes + self.fastusbpadding*num_chan_per_board) * 514/512 * 5/4 + 100) )
         else:
             self.ser.write(bytearray([4]))
             #if len(self.lines)>=8+self.logicline1: # check that we're drawing
             #    for l in np.arange(8): self.lines[l+self.logicline1].set_visible(False)
             if useftdi and not self.domt:
                 for usb in range(len(self.usbser)):
-                    self.usbser[usb].read_data_set_chunksize(34000)  # 34000, or 42500 with logicanalyzer
+                    self.usbser[usb].read_data_set_chunksize( int((self.num_bytes + self.fastusbpadding*num_chan_per_board) * 514/512 + 100) )
         print("dologicanalyzer is now",self.dologicanalyzer)
 
     def toggle_fastusb(self):
@@ -1649,7 +1649,8 @@ class Haasoscope():
                 for bn in range(num_board):
                     parent_conn, child_conn = multiprocessing.Pipe()
                     self.parent_conn.append(parent_conn)
-                    pro = multiprocessing.Process(target=receiver, args=(bn, child_conn,num_board,self.num_samples,
+                    pro = multiprocessing.Process(target=receiver, args=(bn, child_conn,
+                                                                         self.fastusbpadding,self.num_samples,
                                                                          self.xydata.shape,self.xydata_array,
                                                                          self.xydatalogicraw.shape,self.xydatalogicraw_array))
                     print("   starting process",bn)
@@ -1732,7 +1733,7 @@ class Haasoscope():
                     ftd_d.reset()
                     # ftd_d.ftdi_fn.setTimeouts(1000, 1000)
                     ftd_d.set_bitmode(0xff,Ftdi.BitMode.SYNCFF)
-                    ftd_d.read_data_set_chunksize(34000) #34000, or 42500 with logicanalyzer
+                    ftd_d.read_data_set_chunksize( int((self.num_bytes + self.fastusbpadding*num_chan_per_board) * 514/512 + 100) )
                     ftd_d.set_latency_timer(1)
                     ftd_d.purge_buffers()
                     self.usbser.append(ftd_d)
@@ -1740,12 +1741,15 @@ class Haasoscope():
         if self.serport=="": print("No serial COM port opened!"); return False
         return True
 
-def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatalogicraw_shape,xydatalogicraw_array):
+def receiver(name, conn, padding,num_samples,xydata_shape,xydata_array,xydatalogicraw_shape,xydatalogicraw_array):
     usb = None
     board=name
+    num_chan_per_board=4
     xydata=np.frombuffer(xydata_array, dtype=float).reshape(xydata_shape)
     xydatalogicraw = np.frombuffer(xydatalogicraw_array, dtype=np.dtype('b')).reshape(xydatalogicraw_shape)
-    chunksize=34000
+    olddologic=False
+    num_bytes = num_samples*num_chan_per_board
+    fastusbpadding=padding
     print("   receiver for board", name)
     while True:
         msg = conn.recv()
@@ -1774,7 +1778,7 @@ def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatal
                 ftd_d.reset()
                 # ftd_d.ftdi_fn.setTimeouts(1000, 1000)
                 ftd_d.set_bitmode(0xff, Ftdi.BitMode.SYNCFF)
-                ftd_d.read_data_set_chunksize(chunksize)
+                ftd_d.read_data_set_chunksize( int((num_bytes + fastusbpadding*num_chan_per_board) * 514/512 + 100) )
                 ftd_d.set_latency_timer(1)
                 ftd_d.purge_buffers()
                 usb=ftd_d
@@ -1785,16 +1789,15 @@ def receiver(name, conn, num_board,num_samples,xydata_shape,xydata_array,xydatal
             yscale = float(msg[3])
             dologicanalyzer = int(msg[4])
             rollingtrigger = int(msg[5])
-            num_chan_per_board = 4
             num_bytes = num_samples * num_chan_per_board
             timedout = False
             if useftdi:
-                if dologicanalyzer and chunksize<42500:
-                    usb.read_data_set_chunksize(42500)
-                    chunksize=42500
-                elif not dologicanalyzer and chunksize>34000:
-                    usb.read_data_set_chunksize(34000)
-                    chunksize=34000
+                if dologicanalyzer and dologicanalyzer!=olddologic:
+                    olddologic=dologicanalyzer
+                    usb.read_data_set_chunksize( int((num_bytes + fastusbpadding*num_chan_per_board) * 514/512 * 5/4 + 100) )
+                elif not dologicanalyzer and dologicanalyzer!=olddologic:
+                    olddologic=dologicanalyzer
+                    usb.read_data_set_chunksize( int((num_bytes + fastusbpadding*num_chan_per_board) * 514/512 + 100) )
             try:
                 nb = num_bytes+padding*num_chan_per_board
                 if useftd2xx: rslt = usb.read(nb)#,cache=True)
