@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 
-print("Loading HaasoscopeLibQt.py")
+#print("Loading HaasoscopeLibQt.py")
 
 # You might adjust these, just override them before calling construct()
 num_board = 1 # Number of Haasoscope boards to read out
@@ -25,13 +25,13 @@ import multiprocessing
 mearm = False
 mewin = False
 try:
-    print(os.uname())
+    #print(os.uname())
     if os.uname()[4].startswith("arm") or os.uname()[4].startswith("aarch"):
         print("On a raspberry pi?")
         mearm = True
 except AttributeError:
     mewin = True
-    print("Not on Linux?")
+    #print("Not on Linux?")
 
 enable_ripyl=False # set to True to use ripyl serial decoding... have to get it from https://github.com/kevinpt/ripyl and then install it first!
 if enable_ripyl:
@@ -45,11 +45,11 @@ if enable_fastusb:
     if mewin:
         useftd2xx = True
         useftdi = False
-        print("Using ftd2xx driver on Windows")
+        #print("Using ftd2xx driver on Windows")
     else:
         useftd2xx = False
         useftdi = True
-        print("Using pyftdi on Linux")
+        #print("Using pyftdi on Linux")
     if useftd2xx: import ftd2xx as ftd
     if useftdi: from pyftdi.ftdi import Ftdi
 
@@ -247,7 +247,9 @@ class Haasoscope():
         byte_array = unpack('%dB'%len(rslt),rslt)
         firmwareversion=0
         if len(byte_array)>0: firmwareversion=byte_array[0]
-        print("got firmwareversion",firmwareversion,"for board",board,"in",round((time.time()-oldtime)*1000.,2),"ms")
+        tookms = (time.time()-oldtime)*1000.
+        print("got firmwareversion",firmwareversion,"for board",board,"in",round(tookms,2),"ms")
+        if firmwareversion==0 and tookms>50: sys.exit(-7)
         return firmwareversion # is 0 if not found (firmware version <5)
     
     def telltickstowait(self):
@@ -537,7 +539,9 @@ class Haasoscope():
                 byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
                 self.uniqueID.append( ''.join(format(x, '02x') for x in byte_array) )
                 if debug3: print("got uniqueID",self.uniqueID[board],"for board",board,", len is now",len(self.uniqueID))
-            else: print("getID asked for",num_other_bytes,"bytes and got",len(rslt),"from board",board)
+            else:
+                print("getID asked for",num_other_bytes,"bytes and got",len(rslt),"from board",board)
+                sys.exit(-4)
     
     def togglesupergainchan(self,chan):
         if self.supergain[chan]==1:
@@ -1274,10 +1278,10 @@ class Haasoscope():
                 for usb in range(len(self.usbser)):
                     if not usb in foundusbs: # it's not already known that this usb connection is assigned to a board
                         try:
-                            print(time.time() - self.oldtime, "trying usb", usb)
+                            #print(time.time() - self.oldtime, "trying usb", usb)
                             bwant = self.num_bytes+padding*num_chan_per_board
                             if useftd2xx: rslt = self.usbser[usb].read(bwant) # try to get data from the board
-                            elif useftdi: rslt = self.usbser[usb].read_data_bytes(bwant, 1000)
+                            elif useftdi: rslt = self.usbser[usb].read_data_bytes(bwant, 200)
                         except ftd.DeviceError as msgnum:
                             print("Error reading from USB2", usb, msgnum)
                             return
@@ -1297,7 +1301,7 @@ class Haasoscope():
                                 rsltslow = self.ser.read(int(self.num_bytes))  # to cross-check the readout
                                 print("got", len(rsltslow), "bytes from slow serial readout")
                             break # already found which board this usb connection is used for, so bail out
-                        else: print(time.time() - self.oldtime,"   got the wrong nbytes",len(rslt),"for board",bn,"from usb",usb)
+                        #else: print(time.time() - self.oldtime,"   got the wrong nbytes",len(rslt),"for board",bn,"from usb",usb)
                     #else: print("   already know what usb",usb,"is for")
                 if not foundit:
                     print("could not find usb2 connection for board",bn)
