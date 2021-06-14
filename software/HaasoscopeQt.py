@@ -124,7 +124,7 @@ class MainWindow(TemplateBaseClass):
         
         chanonboard = d.selectedchannel%HaasoscopeLibQt.num_chan_per_board
         theboard = HaasoscopeLibQt.num_board-1-int(d.selectedchannel/HaasoscopeLibQt.num_chan_per_board)
-        if trigboardport!="" and trigboard.extclock:
+        if trigboardport!="" and trigboardport!="auto" and trigboard.extclock:
             if trigboard.histostosend != theboard: trigboard.set_histostosend(theboard)
 
         if d.havereadswitchdata:
@@ -799,13 +799,6 @@ if __name__ == '__main__':
             elif a[1] == "t":
                 trigboardport = a[2:]
                 print("trigboardport set to", trigboardport)
-                trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig()
-                trigboard.construct(trigboardport)
-                if not trigboard.get_firmware_version():
-                    print("couldn't get trigboard firmware version - exiting!")
-                    sys.exit()
-                trigboard.setrngseed()
-                trigboard.set_prescale(1.0)
 
     if d.domt and not d.dofastusb:
         print("mt option is only for fastusb - exiting!")
@@ -830,6 +823,15 @@ if __name__ == '__main__':
         if not d.setup_connections():
             print("Exiting now - failed setup_connections!")
             sys.exit()
+        if trigboardport!="":
+            if trigboardport=="auto": trigboardport=d.trigserport
+            trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig()
+            trigboard.construct(trigboardport)
+            if not trigboard.get_firmware_version():
+                print("couldn't get trigboard firmware version - exiting!")
+                sys.exit()
+            trigboard.setrngseed()
+            trigboard.set_prescale(1.0)
         if not d.init():
             print("Exiting now - failed init!")
             d.cleanup()

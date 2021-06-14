@@ -68,6 +68,7 @@ class Haasoscope():
         self.sertimeout = 0.25+self.num_bytes*8*11.0/self.brate #time to wait for serial response #3.0, 0.25+self.num_bytes*8*11.0/self.brate, or None
         self.clkrate=125.0 # ADC sample rate in MHz
         self.serport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
+        self.trigserport=''
         self.usbport=[] # the names of the USB2 ports on your computer, connected to Haasoscope, leave blank to detect automatically!
         self.usbser=[]
         self.usbsern=[]
@@ -1515,7 +1516,7 @@ class Haasoscope():
                 try:
                     self.parent_conn[bn].send([self.num_samples, self.fastusbpadding, self.fastusbendpadding, self.yscale, self.dologicanalyzer, self.rollingtrigger])
                 except:
-                    print("could not send message to receiver - exiting!")
+                    print("could not send message to receiver",bn,"- exiting!")
                     sys.exit(-3)
                 xboardshift=(11.0*bn/8.0)/pow(2,max(self.downsample,0)) # shift the board data to the right by this number of samples (to account for the readout delay) #downsample isn't less than 0 for xscaling
                 xdatanew = (self.xdata-xboardshift-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
@@ -1692,12 +1693,14 @@ class Haasoscope():
         ports = list(serial.tools.list_ports.comports()); ports.sort(reverse=True)
         autofindusbports = len(self.usbport)==0
         if self.serport=="" or True:
-            for port_no, description, address in ports: print(port_no,":",description,":",address)
-        for port_no, description, address in ports:
-            if self.serport=="":
-                if '1A86:7523' in address or '1a86:7523' in address: self.serport = port_no
-            if autofindusbports:
-                if "Haasoscope" in description or "0403:6014" in address: self.usbport.append(port_no)
+            for port_no, description, address in ports:
+                print(port_no,":",description,":",address)
+                if self.serport=="":
+                    if '1A86:7523' in address or '1a86:7523' in address: self.serport = port_no
+                if self.trigserport=="":
+                    if '10C4:EA60' in address or '10c4:ea60' in address or 'CP2102 USB to UART Bridge Controller' in description: self.trigserport = port_no
+                if autofindusbports:
+                    if "Haasoscope" in description or "0403:6014" in address: self.usbport.append(port_no)
         if self.serport!="":
             try:
                 self.ser = Serial(self.serport,self.brate,timeout=self.sertimeout,stopbits=2)

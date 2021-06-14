@@ -11,6 +11,7 @@ class HaasoscopeTrig:
         self.extclock=0
         self.histostosend=-1
         self.dorolling=1
+        print("connected trigboard serial to", port)
     
     def togglerolling(self):
         self.dorolling = not self.dorolling
