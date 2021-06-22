@@ -656,13 +656,13 @@ class MainWindow(TemplateBaseClass):
             if d.xscale != self.oldxscale:
                 datatosave=d.xydata # since the x scale changed (or is the first event), save all data for this event
                 self.oldxscale=d.xscale
-            h5ds = self.outf.create_dataset(str(self.nevents), data=datatosave, compression="lzf") #compression="gzip", compression_opts=5)
+            h5ds = self.outf.create_dataset(str(self.nevents), data=datatosave, dtype='float16', compression="lzf") #compression="gzip", compression_opts=5)
             #about 3kB per event per board (4 channels) for 512 samples
             h5ds.attrs['time']=time_s
             h5ds.attrs['trigger_position']=str(self.vline*d.xscaling)
             h5ds.attrs['sample_period'] =str(2.*d.xscale/d.num_samples)
             h5ds.attrs['num_samples'] =str(d.num_samples)
-            if d.dologicanalyzer: h5ds = self.outf.create_dataset(str(self.nevents)+"_logic", data=d.xydatalogicraw, compression="lzf")
+            if d.dologicanalyzer: h5ds = self.outf.create_dataset(str(self.nevents)+"_logic", data=d.xydatalogicraw, dtype='uint8', compression="lzf")
             #Read like this:
             #import h5py
             #f=h5py.File('Haasoscope_out_20210506-103212.h5',"r")
