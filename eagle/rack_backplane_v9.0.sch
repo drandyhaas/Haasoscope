@@ -3187,6 +3187,28 @@ DIN A3, landscape with location and doc. field</description>
 </sheet>
 </sheets>
 <errors>
+<approved hash="106,1,340.36,165.1,3V3_1,,,,,"/>
+<approved hash="106,1,289.56,165.1,3V3_2,,,,,"/>
+<approved hash="106,1,332.74,167.64,AIN1,,,,,"/>
+<approved hash="106,1,281.94,167.64,AIN1_2,,,,,"/>
+<approved hash="106,1,347.98,209.55,CLKINFROMRIGHT_26,,,,,"/>
+<approved hash="106,1,340.36,152.4,IO_100_1,,,,,"/>
+<approved hash="106,1,289.56,152.4,IO_100_2,,,,,"/>
+<approved hash="106,1,340.36,162.56,IO_CLK_88_1,,,,,"/>
+<approved hash="106,1,289.56,162.56,IO_CLK_88_2,,,,,"/>
+<approved hash="106,1,340.36,160.02,IO_CLK_89_1,,,,,"/>
+<approved hash="106,1,289.56,160.02,IO_CLK_89_2,,,,,"/>
+<approved hash="106,1,340.36,157.48,IO_CLK_90_!,,,,,"/>
+<approved hash="106,1,289.56,157.48,IO_CLK_90_2,,,,,"/>
+<approved hash="106,1,340.36,154.94,IO_CLK_91_1,,,,,"/>
+<approved hash="106,1,289.56,154.94,IO_CLK_91_2,,,,,"/>
+<approved hash="106,1,332.74,165.1,L121,,,,,"/>
+<approved hash="106,1,281.94,165.1,L121_2,,,,,"/>
+<approved hash="106,1,347.98,222.25,SERIALFROMRIGHT_TX_93,,,,,"/>
+<approved hash="106,1,347.98,224.79,SERIALTORIGHT_RX_92,,,,,"/>
+<approved hash="106,1,347.98,212.09,SPARERIGHT_99,,,,,"/>
+<approved hash="106,1,347.98,219.71,TRIGINFROMRIGHT_86,,,,,"/>
+<approved hash="106,1,347.98,217.17,TRIGOUTORIGHT_87,,,,,"/>
 <approved hash="113,1,193.571,130.071,FRAME1,,,,,"/>
 </errors>
 </schematic>
