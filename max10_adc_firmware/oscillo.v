@@ -2,7 +2,7 @@ module oscillo(clk, startTrigger, clk_flash, data_flash1, data_flash2, data_flas
 data_ready, wraddress_triggerpoint, imthelast, imthefirst,rollingtrigger,trigDebug,triggerpoint,downsample,
 trigthresh,trigchannels,triggertype,triggertot,format_sdin_out,div_sclk_out,outsel_cs_out,clk_spi,SPIsend,SPIsenddata,
 wraddress,Acquiring,SPIstate,clk_flash2,trigthreshtwo,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig, nsmp, trigout, spareright, spareleft,
-delaycounter,ext_trig_delay, noselftrig);
+delaycounter,ext_trig_delay, noselftrig, nselftrigcoincidentreq, selftrigtempholdtime);
 input clk,clk_spi;
 input startTrigger;
 input [1:0] trig_in;
@@ -42,6 +42,8 @@ input [ram_width-1:0] nsmp;
 reg [ram_width-1:0] nsmp2; // to pass timing
 input [4:0] ext_trig_delay; // clk ticks to delay ext trigger by
 input noselftrig; 
+input [1:0] nselftrigcoincidentreq; // number of self trig channels required to be fired simultaneously
+input [7:0] selftrigtempholdtime; // how long to fire a channel for
 
 output reg [3:0] trigout;
 output wire spareright;
@@ -201,9 +203,22 @@ always @(posedge clk_flash) begin
 end
 
 reg[31:0] thecounter; // counter for the rolling trigger
-always @(posedge clk_flash) if (Trigger) thecounter<=0; else thecounter<=thecounter+1;
+reg[2:0] nselftrigstemp; // number of self trig channels fired
+reg[7:0] selftrigtemphold[4]; // will keep track of which channel have fired
+always @(posedge clk_flash) begin
+	if (Trigger) thecounter<=0; else thecounter<=thecounter+1;
+	i=0;
+	while (i<4) begin
+		if (selftrigtemp[i]) selftrigtemphold[i]<=selftrigtempholdtime; // trigger has fired
+		else if (selftrigtemphold[i]>0 && downsamplego) selftrigtemphold[i]<=selftrigtemphold[i]-1; // count down (paying attention to downsample) so the trigger stops firing after selftrigtempholdtime
+		i=i+1;
+	end
+	nselftrigstemp <= (trigchannels[0]&&selftrigtemphold[0]>0) + (trigchannels[1]&&selftrigtemphold[1]>0) + (trigchannels[2]&&selftrigtemphold[2]>0) + (trigchannels[3]&&selftrigtemphold[3]>0);
+end
+wire selfedgetrig; // currently on an edge
+assign selfedgetrig = (trigchannels[0]&&selftrigtemp[0])||(trigchannels[1]&&selftrigtemp[1])||(trigchannels[2]&&selftrigtemp[2])||(trigchannels[3]&&selftrigtemp[3]);
 wire selftrig; //trigger is an OR of all the channels which are active // also trigger every second or so (rolling)
-assign selftrig = (trigchannels[0]&&selftrigtemp[0])||(trigchannels[1]&&selftrigtemp[1])||(trigchannels[2]&&selftrigtemp[2])||(trigchannels[3]&&selftrigtemp[3]) ||(rollingtrigger&thecounter>=25000000) || (use_ext_trig&ext_trig_in_delayed);
+assign selftrig = (nselftrigstemp>=nselftrigcoincidentreq && selfedgetrig) ||(rollingtrigger&thecounter>=25000000) || (use_ext_trig&ext_trig_in_delayed);
 
 always @(posedge clk_flash)
 if (noselftrig) Trigger = trig_in[1]; // just trigger if we get a trigger in towards to right

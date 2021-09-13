@@ -62,6 +62,8 @@ class MainWindow(TemplateBaseClass):
         self.ui.risingedgeCheck.stateChanged.connect(self.risingfalling)
         self.ui.exttrigCheck.stateChanged.connect(self.exttrig)
         self.ui.totBox.valueChanged.connect(self.tot)
+        self.ui.coinBox.valueChanged.connect(self.coin)
+        self.ui.cointimeBox.valueChanged.connect(self.cointime)
         self.ui.autorearmCheck.stateChanged.connect(self.autorearm)
         self.ui.noselftrigCheck.stateChanged.connect(self.noselftrig)
         self.ui.avgCheck.stateChanged.connect(self.avg)
@@ -285,6 +287,11 @@ class MainWindow(TemplateBaseClass):
     def tot(self):
         d.triggertimethresh = self.ui.totBox.value()
         d.settriggertime(d.triggertimethresh)
+
+    def coin(self):
+        d.settrigcoin(self.ui.coinBox.value())
+    def cointime(self):
+        d.settrigcointime(self.ui.cointimeBox.value())
         
     def autorearm(self):
         d.toggleautorearm()

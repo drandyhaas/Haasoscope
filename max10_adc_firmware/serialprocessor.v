@@ -8,7 +8,8 @@ SPIsend,SPIsenddata,delaycounter,carrycounter,usb_siwu,SPIstate,offset,gainsw,do
 i2c_ena,i2c_addr,i2c_rw,i2c_datawr,i2c_datard,i2c_busy,i2c_ackerror,   usb_clk60,usb_dataio,usb_txe_busy,usb_wr,
 rdadtwo,trigthreshtwo, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_buffer1, nsmp, outputclk,
 phasecounterselect,phaseupdown,phasestep,scanclk,
-ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
+ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd,
+nselftrigcoincidentreq, selftrigtempholdtime
 );
    input clk;
 	input[7:0] rxData;
@@ -78,6 +79,8 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 	output reg outputclk=1;
 	output reg[4:0] ext_trig_delay=0;
 	output reg noselftrig=0;
+	output reg[1:0] nselftrigcoincidentreq=0; // how many additional coincident channels to require for self trigger
+	output reg[7:0] selftrigtempholdtime=10; // how long to fire a channel for
 	
 	output reg i2c_ena;
 	output reg [6:0] i2c_addr;
@@ -843,7 +846,7 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 				end
 				else begin
 					ioCountToSend = 1;
-					data[0]=19; // this is the firmware version
+					data[0]=20; // this is the firmware version
 					state=WRITE1;
 				end
 				
@@ -875,6 +878,28 @@ ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd
 				send_fast_usb2=0;
 				do_fast_usb=0;
 				usbdonecounterslow=0;
+				nselftrigcoincidentreq=0;
+				selftrigtempholdtime=10;
+			end
+			else if (readdata==148) begin
+				byteswanted=1;//wait for next byte which is the number of coincident channels to require for the self trigger
+				comdata=readdata;
+				newcomdata=1; //pass it on
+				if (bytesread<byteswanted) state=READMORE;
+				else begin
+					nselftrigcoincidentreq = extradata[0];
+					state=READ;
+				end
+			end
+			else if (readdata==149) begin
+				byteswanted=1;//wait for next byte which is how long to hold the self trigger active for (for coincidence purposes)
+				comdata=readdata;
+				newcomdata=1; //pass it on
+				if (bytesread<byteswanted) state=READMORE;
+				else begin
+					selftrigtempholdtime = extradata[0];
+					state=READ;
+				end
 			end
 			
 			else state=READ; // if we got some other command, just ignore it

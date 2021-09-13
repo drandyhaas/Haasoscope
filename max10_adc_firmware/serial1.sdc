@@ -102,7 +102,7 @@ set_output_delay -clock { usb_clk60 } 1 [get_ports pin_*] -add_delay
 
 set_output_delay -clock { clk_mainadc } -1 [get_ports spareright]
 set_output_delay -clock { clk_mainadc } -1 [get_ports trigout*]
-set_output_delay -clock { clk_mainadc } -1 [get_ports trig_out*]
+set_output_delay -clock { clk_mainadc } -2 [get_ports trig_out*]
 
 set_output_delay -clock { clk_50 } -min 1 {usb_wr usb_siwu usb_pwrsv usb_oe usb_rd}
 set_output_delay -clock { clk_50 } -max 1 {usb_wr usb_siwu usb_pwrsv usb_oe usb_rd}

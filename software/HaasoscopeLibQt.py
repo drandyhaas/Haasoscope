@@ -309,7 +309,30 @@ class Haasoscope():
         self.ser.write(bytearray([myb[0]]))
         self.ser.write(bytearray([myb[1]]))
         print("trigger time over/under thresh now",256*myb[0]+1*myb[1]-pow(2,max_ram_width),"and usedownsamplefortriggertot is",usedownsamplefortriggertot)
-    
+
+    def settrigcoin(self,coin):
+        #set the number of coincidence trigger channels required
+        if coin<0 or coin>3:
+            print("must require 0-3 coincident additional channels")
+            return
+        if self.minfirmwareversion<20:
+            print("must have firmware 20 or above to set N coincident channels")
+            return
+        self.ser.write(bytearray([148]))
+        self.ser.write(bytearray([coin]))
+        print("Requiring", coin, "coincident additional channels to trigger")
+    def settrigcointime(self,cointime):
+        #set the time self triggers are fired for (for coincidence purposes)
+        if cointime<1 or cointime>255:
+            print("must fire for 1-255 samples")
+            return
+        if self.minfirmwareversion<20:
+            print("must have firmware 20 or above to set coincidence time")
+            return
+        self.ser.write(bytearray([149]))
+        self.ser.write(bytearray([cointime]))
+        print("Setting", cointime, "samples for coincident channels to fire in")
+
     def writefirmchan(self,chan):
         theboard = num_board-1-int(chan/num_chan_per_board)
         chanonboard = chan%num_chan_per_board
