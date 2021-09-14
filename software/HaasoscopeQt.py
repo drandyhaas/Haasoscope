@@ -436,8 +436,10 @@ class MainWindow(TemplateBaseClass):
         d.settriggertype(d.fallingedge)
 
     def decode(self):
-        if self.ui.decodeCheck.checkState() == QtCore.Qt.Checked:
-            d.decode()
+        if self.ui.decodeCheck.checkState() != QtCore.Qt.Checked:
+            # delete all previous labels
+            for label in self.decodelabels:
+                self.ui.plot.removeItem(label)
 
     def fft(self):
         if self.ui.fftCheck.checkState() == QtCore.Qt.Checked:
@@ -600,7 +602,8 @@ class MainWindow(TemplateBaseClass):
             self.fftui.close()
         if hasattr(self,"persistui"):
             self.persistui.close()
-        
+
+    decodelabels = []
     def updateplot(self):
         self.mainloop()
         if not self.ui.drawingCheck.checkState() == QtCore.Qt.Checked: return
@@ -644,6 +647,25 @@ class MainWindow(TemplateBaseClass):
             if not self.persistui.isVisible(): # closed the fft window
                 d.recorddata = False
                 self.ui.persistCheck.setCheckState(QtCore.Qt.Unchecked)
+        if self.ui.decodeCheck.checkState() == QtCore.Qt.Checked:
+            # delete all previous labels
+            for label in self.decodelabels:
+                self.ui.plot.removeItem(label)
+            if d.downsample>=0:
+                resulttext,resultstart,resultend = d.decode()
+                #print(resulttext,resultstart, d.min_x, d.max_x, d.xscale, d.xscaling)
+                item=0
+                while item<len(resulttext):
+                    label = pg.TextItem(resulttext[item])
+                    label.setColor(self.linepens[d.selectedchannel].color())
+                    x=d.min_x+resultstart[item]*1e9/d.xscaling
+                    label.setPos( QtCore.QPointF(x, -1) )
+                    #print(x)
+                    self.ui.plot.addItem(label)
+                    self.decodelabels.append(label)
+                    item=item+1
+            else:
+                print("can't decode when downsample is <0... go slower!")
         now = time.time()
         dt = now - self.lastTime + 0.00001
         self.lastTime = now

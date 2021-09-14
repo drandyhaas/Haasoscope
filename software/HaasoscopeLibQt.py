@@ -33,7 +33,7 @@ except AttributeError:
     mewin = True
     #print("Not on Linux?")
 
-enable_ripyl=False # set to True to use ripyl serial decoding... have to get it from https://github.com/kevinpt/ripyl and then install it first!
+enable_ripyl=True # set to True to use ripyl serial decoding... have to get it from https://github.com/kevinpt/ripyl and then install it first!
 if enable_ripyl:
     import ripyl.util.plot as rplot
     from collections import OrderedDict
@@ -664,7 +664,7 @@ class Haasoscope():
         return True # successful (parameter within OK range)
 
     def setxaxis(self):
-        self.xscale =  self.num_samples/2.0*(1000.0*pow(2,self.downsample)/self.clkrate)
+        self.xscale = self.num_samples/2.0*(1000.0*pow(2,self.downsample)/self.clkrate)
         if self.xscale<1e3: 
             self.xlabel="Time (ns)"
             self.min_x = -self.xscale
@@ -850,26 +850,31 @@ class Haasoscope():
         raw_samples = self.xydata[self.selectedchannel][1] #ydata
         sample_period = (1e-6/self.clkrate)*pow(2,self.downsample)
         txd = stream.samples_to_sample_stream(raw_samples, sample_period)
-        bits = 8 # Anything, not just restricted to the standard 5,6,7,8,9
+        bits = 8 # anything, not just restricted to the standard 5,6,7,8,9
         parity = None # or 'odd' or None
-        stop_bits = 1 # Can be 1, 1.5, 2 or any non-standard value greater than 0.5
+        stop_bits = 1 # can be 1, 1.5, 2 or any non-standard value greater than 0.5
         polarity = uart.UARTConfig.IdleHigh # logic level when there's no data
-        baud=1500000 # baud rate -- can set to None if you want to try to determine it automatically!
+        baud=1500000 # 115200 # baud rate -- can set to None if you want to try to determine it automatically!
         levels=(1.0,1.5) # the low and high logic levels
-        format=stream.AnnotationFormat.Int # can be Hex, Int, or Bin
+        dohex = False # print as hex (otherwise print as decimal)
+        resulttext = []
+        resultstart = []
+        resultend = []
         try:
             records_it = uart.uart_decode(txd, bits, parity, stop_bits, polarity, baud_rate=baud, use_std_baud=False, logic_levels=levels)
             records = list(records_it) # This consumes the iterator and completes the decode
-            #for rec in records: print "rec: ",rec.nested_status()
-            txd2 = stream.samples_to_sample_stream(raw_samples, sample_period) # for some weird reason, we have to make this again!
-            channels = OrderedDict([('TX', txd2)]) # Define the channels ordered from top to bottom with the y-axis labels
-            title = 'Decoded UART plot'
-            if not hasattr(self,'plotter'):
-                self.plotter = rplot.Plotter()
-            self.plotter.plot(channels, records, title,label_format=format)
+            for rec in records:
+                if rec.nested_status() == stream.StreamStatus.Ok:
+                    #print("good chan", self.selectedchannel, "serial data found: ", rec.data)
+                    #print(rec.start_time, rec.end_time)
+                    if dohex: resulttext.append(hex(rec.data))
+                    else: resulttext.append(str(rec.data))
+                    resultstart.append(rec.start_time)
+                    resultend.append(rec.end_time)
         except stream.StreamError:
             print("No UART data found for channel",self.selectedchannel)
-    
+        return resulttext,resultstart,resultend
+
     def on_running(self, theydata, board): #update data for main plot for a board
         if board<0: #hack to tell it the max10adc channel
             chantodraw=-board-1 #draw chan 0 first (when board=-1)
