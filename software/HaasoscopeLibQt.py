@@ -33,7 +33,7 @@ except AttributeError:
     mewin = True
     #print("Not on Linux?")
 
-enable_ripyl=True # set to True to use ripyl serial decoding... have to get it from https://github.com/kevinpt/ripyl and then install it first!
+enable_ripyl=False # set to True to use ripyl serial decoding... have to get it from https://github.com/kevinpt/ripyl and then install it first!
 if enable_ripyl:
     import ripyl.util.plot as rplot
     from collections import OrderedDict
