@@ -1374,6 +1374,8 @@
      <string>Other</string>
     </property>
     <addaction name="actionOutput_clk_left"/>
+    <addaction name="separator"/>
+    <addaction name="actionAllow_same_chan_coin"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuCalibration"/>
@@ -1410,6 +1412,14 @@
    </property>
    <property name="text">
     <string>Output clk left</string>
+   </property>
+  </action>
+  <action name="actionAllow_same_chan_coin">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Allow same chan coin</string>
    </property>
   </action>
  </widget>

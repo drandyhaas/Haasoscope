@@ -84,6 +84,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.actionRead_from_file.triggered.connect(self.actionRead_from_file)
         self.ui.actionStore_to_file.triggered.connect(self.actionStore_to_file)
         self.ui.actionOutput_clk_left.triggered.connect(self.actionOutput_clk_left)
+        self.ui.actionAllow_same_chan_coin.triggered.connect(self.actionAllow_same_chan_coin)
         self.ui.actionDo_autocalibration.triggered.connect(self.actionDo_autocalibration)
         self.ui.chanonCheck.stateChanged.connect(self.chanon)
         self.ui.slowchanonCheck.stateChanged.connect(self.slowchanon)
@@ -280,6 +281,9 @@ class MainWindow(TemplateBaseClass):
     def actionOutput_clk_left(self):
         d.toggle_clk_last()
         if trigboardport!="": trigboard.setclock(True)
+
+    def actionAllow_same_chan_coin(self):
+        d.toggle_allow_same_chan_coin()
 
     def exttrig(self):
         d.toggleuseexttrig()
@@ -847,6 +851,9 @@ if __name__ == '__main__':
         app = QtGui.QApplication(sys.argv)
 
     try:
+        font = app.font();
+        font.setPixelSize(11);
+        app.setFont(font);
         win = MainWindow()
         win.setWindowTitle('Haasoscope Qt')
         if not d.setup_connections():

@@ -255,6 +255,13 @@ refer to the applicable agreement for further details.
 		(line (pt 0 544)(pt 16 544)(line_width 3))
 	)
 	(port
+		(pt 0 560)
+		(input)
+		(text "allowsamechancoin" (rect 0 0 74 12)(font "Arial" ))
+		(text "allowsamechancoin" (rect 21 555 95 567)(font "Arial" ))
+		(line (pt 0 560)(pt 16 560)(line_width 1))
+	)
+	(port
 		(pt 360 32)
 		(output)
 		(text "pwr1" (rect 0 0 17 12)(font "Arial" ))

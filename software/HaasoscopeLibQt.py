@@ -542,6 +542,12 @@ class Haasoscope():
         self.ser.write(bytearray([54]))
         print("Toggled clock output from the last board")
 
+    def toggle_allow_same_chan_coin(self):
+        if self.minfirmwareversion<21:
+            print("Need firmware 21 or greater to toggle allowance of same channel coincidence!")
+        self.ser.write(bytearray([150]))
+        print("Toggled allow same channel coincidence")
+
     def increment_clk_phase(self, board, times=1):
         if self.minfirmwareversion<17:
             print("incrementing clock phase requires firmware >=17")

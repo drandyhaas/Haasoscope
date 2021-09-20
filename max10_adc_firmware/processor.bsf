@@ -20,9 +20,9 @@ refer to the applicable agreement for further details.
 */
 (header "symbol" (version "1.1"))
 (symbol
-	(rect 16 16 376 1088)
+	(rect 16 16 376 1120)
 	(text "processor" (rect 5 0 45 12)(font "Arial" ))
-	(text "inst" (rect 8 1056 20 1068)(font "Arial" ))
+	(text "inst" (rect 8 1088 20 1100)(font "Arial" ))
 	(port
 		(pt 0 32)
 		(input)
@@ -653,13 +653,20 @@ refer to the applicable agreement for further details.
 		(text "selftrigtempholdtime[7..0]" (rect 242 1035 339 1047)(font "Arial" ))
 		(line (pt 360 1040)(pt 344 1040)(line_width 3))
 	)
+	(port
+		(pt 360 1056)
+		(output)
+		(text "allowsamechancoin" (rect 0 0 74 12)(font "Arial" ))
+		(text "allowsamechancoin" (rect 265 1051 339 1063)(font "Arial" ))
+		(line (pt 360 1056)(pt 344 1056)(line_width 1))
+	)
 	(parameter
 		"ram_width"
 		"12"
 		""
 		(type "PARAMETER_SIGNED_DEC")	)
 	(drawing
-		(rectangle (rect 16 16 344 1056)(line_width 1))
+		(rectangle (rect 16 16 344 1088)(line_width 1))
 	)
 	(annotation_block (parameter)(rect 376 -64 476 16))
 )
