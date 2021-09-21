@@ -659,6 +659,9 @@
         <property name="text">
          <string>Highres</string>
         </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
        </widget>
        <widget class="QCheckBox" name="usb2Check">
         <property name="geometry">
