@@ -487,7 +487,7 @@ class MainWindow(TemplateBaseClass):
             else:
                 fname="Haasoscope_out_" + time.strftime("%Y%m%d-%H%M%S") + ".csv"
                 self.outf = open(fname,"wt")
-            self.ui.statusBar.showMessage("now recording to file"+fname)
+            self.ui.statusBar.showMessage("now recording to file: "+fname)
             self.ui.actionRecord.setText("Stop recording")
         else:
             self.outf.close()
