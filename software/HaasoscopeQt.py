@@ -696,24 +696,7 @@ class MainWindow(TemplateBaseClass):
             h5ds.attrs['sample_period'] =str(2.*d.xscale/d.num_samples)
             h5ds.attrs['num_samples'] =str(d.num_samples)
             if d.dologicanalyzer: h5ds = self.outf.create_dataset(str(self.nevents)+"_logic", data=d.xydatalogicraw, dtype='uint8', compression="lzf")
-            #Read like this:
-            #import h5py
-            #f=h5py.File('Haasoscope_out_20210506-103212.h5',"r")
-            #len(f.keys()) #number of events stored
-            #events=list(f.items())
-            #def mysort(val): return int(val[0])
-            #events.sort(key=mysort)
-            #e=events[0] #first event
-            #e=events[-1] #last event
-            #evtnum=int(e[0])
-            #data=e[1]
-            #data=f["event_9"] # or you can get an event like this
-            #data.attrs.get("time")
-            #chan=1; samp=240
-            #print(data.shape) # the first event, or any following where the timebase has changed, will have x values stored too
-            #if data.shape == (4,2,511): print(data[chan][0][samp],data[chan][1][samp]) # x(time),y(voltage) of the data from that channel and sample
-            #if data.shape == (4,511): print(data[chan][samp]) # y(voltage) of the data from that channel and sample
-            #f.close()
+            # see h5py_analyze_example.py for how to read in python
         else:
             for c in range(HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board):
                 if self.lines[c].isVisible(): # only save the data for visible channels
