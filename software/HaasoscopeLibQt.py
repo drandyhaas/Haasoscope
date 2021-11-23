@@ -252,7 +252,9 @@ class Haasoscope():
         if len(byte_array)>0: firmwareversion=byte_array[0]
         tookms = (time.time()-oldtime)*1000.
         print("got firmwareversion",firmwareversion,"for board",board,"in",round(tookms,2),"ms")
-        if firmwareversion==0 and tookms>50: sys.exit(-7)
+        if firmwareversion==0 and tookms>50:
+            print("Could not read firmware version - Exiting!")
+            sys.exit(-7)
         return firmwareversion # is 0 if not found (firmware version <5)
     
     def telltickstowait(self):
@@ -508,6 +510,9 @@ class Haasoscope():
             self.dousb=False
             print("usb2 connection not available")
         else:
+            if self.dofastusb and self.minfirmwareversion<=17:
+                print("Need firmware >17 for fastusb! Exiting!")
+                sys.exit(-17)
             self.dousb = not self.dousb
             self.ser.write(bytearray([137]))
             print("dousb toggled to",self.dousb,"and dofastusb is",self.dofastusb,"and dousbparallel is",self.dousbparallel)
@@ -572,7 +577,7 @@ class Haasoscope():
                 self.uniqueID.append( ''.join(format(x, '02x') for x in byte_array) )
                 if debug3: print("got uniqueID",self.uniqueID[board],"for board",board,", len is now",len(self.uniqueID))
             else:
-                print("getID asked for",num_other_bytes,"bytes and got",len(rslt),"from board",board)
+                print("getID asked for",num_other_bytes,"bytes and got",len(rslt),"from board",board," - Exiting!")
                 sys.exit(-4)
     
     def togglesupergainchan(self,chan):
@@ -1550,7 +1555,7 @@ class Haasoscope():
                 try:
                     self.parent_conn[bn].send([self.num_samples, self.fastusbpadding, self.fastusbendpadding, self.yscale, self.dologicanalyzer, self.rollingtrigger])
                 except:
-                    print("could not send message to receiver",bn,"- exiting!")
+                    print("could not send message to receiver",bn,"- Exiting!")
                     sys.exit(-3)
                 xboardshift=(11.0*bn/8.0)/pow(2,max(self.downsample,0)) # shift the board data to the right by this number of samples (to account for the readout delay) #downsample isn't less than 0 for xscaling
                 xdatanew = (self.xdata-xboardshift-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
