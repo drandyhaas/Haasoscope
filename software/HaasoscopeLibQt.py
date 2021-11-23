@@ -212,14 +212,14 @@ class Haasoscope():
             self.ser.write(bytearray([5]))
             #if len(self.lines)>=8+self.logicline1: # check that we're drawing
             #    for l in np.arange(8): self.lines[l+self.logicline1].set_visible(True)
-            if useftdi and not self.domt:
+            if useftdi and self.dofastusb and not self.domt:
                 for usb in range(len(self.usbser)):
                     self.usbser[usb].read_data_set_chunksize( int((self.num_bytes + self.fastusbpadding*num_chan_per_board) * 514/512 * 5/4 + 100) )
         else:
             self.ser.write(bytearray([4]))
             #if len(self.lines)>=8+self.logicline1: # check that we're drawing
             #    for l in np.arange(8): self.lines[l+self.logicline1].set_visible(False)
-            if useftdi and not self.domt:
+            if useftdi and self.dofastusb and not self.domt:
                 for usb in range(len(self.usbser)):
                     self.usbser[usb].read_data_set_chunksize( int((self.num_bytes + self.fastusbpadding*num_chan_per_board) * 514/512 + 100) )
         print("dologicanalyzer is now",self.dologicanalyzer)
@@ -1317,7 +1317,7 @@ class Haasoscope():
                         try:
                             #print(time.time() - self.oldtime, "trying usb", usb)
                             bwant = self.num_bytes+padding*num_chan_per_board
-                            if useftd2xx: rslt = self.usbser[usb].read(bwant) # try to get data from the board
+                            if useftd2xx or not self.dofastusb: rslt = self.usbser[usb].read(bwant) # try to get data from the board
                             elif useftdi: rslt = self.usbser[usb].read_data_bytes(bwant, ftdiattempts)
                         except ftd.DeviceError as msgnum:
                             print("Error reading from USB2", usb, msgnum)
