@@ -7,10 +7,11 @@ print("Loading HaasoscopeTrigLibQt.py")
 class HaasoscopeTrig:
 
     def construct(self,port):
-        self.ser=Serial(port,115200,timeout=0.2)
+        self.ser=Serial(port,921600,timeout=0.2)
         self.extclock=0
         self.histostosend=-1
         self.dorolling=1
+        print("connected trigboard serial to", port)
     
     def togglerolling(self):
         self.dorolling = not self.dorolling

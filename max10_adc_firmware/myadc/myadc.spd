@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simPackage>
+ <file
+   path="simulation/submodules/altera_modular_adc_control.v"
+   type="VERILOG"
+   library="control_internal" />
+ <file
+   path="simulation/submodules/altera_modular_adc_control_avrg_fifo.v"
+   type="VERILOG"
+   library="control_internal" />
+ <file
+   path="simulation/submodules/altera_modular_adc_control_fsm.v"
+   type="VERILOG"
+   library="control_internal" />
+ <file
+   path="simulation/submodules/chsel_code_converter_sw_to_hw.v"
+   type="VERILOG"
+   library="control_internal" />
+ <file
+   path="simulation/submodules/fiftyfivenm_adcblock_primitive_wrapper.v"
+   type="VERILOG"
+   library="control_internal" />
+ <file
+   path="simulation/submodules/fiftyfivenm_adcblock_top_wrapper.v"
+   type="VERILOG"
+   library="control_internal" />
+ <file
+   path="simulation/submodules/myadc_modular_adc_0.v"
+   type="VERILOG"
+   library="modular_adc_0" />
+ <file path="simulation/myadc.v" type="VERILOG" />
+ <topLevel name="myadc" />
+ <deviceFamily name="max10" />
+</simPackage>

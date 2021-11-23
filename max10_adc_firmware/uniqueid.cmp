@@ -1,9 +1,0 @@
-	component uniqueid is
-		port (
-			clkin      : in  std_logic                     := 'X'; -- clk
-			reset      : in  std_logic                     := 'X'; -- reset
-			data_valid : out std_logic;                            -- valid
-			chip_id    : out std_logic_vector(63 downto 0)         -- data
-		);
-	end component uniqueid;
-

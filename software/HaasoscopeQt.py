@@ -10,62 +10,6 @@ import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtWidgets, QtGui, loadUiType
 import h5py
 
-import HaasoscopeLibQt
-import HaasoscopeTrigLibQt
-
-serialdelaytimerwait=100
-ram_width=9
-num_boardss=1
-trigboardport=""
-manserport="" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
-print ('Number of arguments:', len(sys.argv), 'arguments.')
-print ('Argument List:', str(sys.argv))
-for a in sys.argv:
-    if a[0]=="-":
-        print(a)
-        if a[1]=="s":
-            serialdelaytimerwait=int(a[2:])
-            print("serialdelaytimerwait set to",serialdelaytimerwait)
-        if a[1]=="r":
-            ram_width=int(a[2:])
-            print("ram_width set to",ram_width)
-        if a[1]=="b":
-            num_boardss=int(a[2:])
-            print("num_board set to",num_boardss)
-        if a[1]=="p":
-            manserport=a[2:]
-            print("serial port manually set to",manserport)
-        if a[1]=="t":
-            trigboardport=a[2:]
-            print("trigboardport set to",trigboardport)
-
-#Some pre-options
-HaasoscopeLibQt.num_board = num_boardss # Number of Haasoscope boards to read out (default is 1)
-HaasoscopeLibQt.ram_width = ram_width # width in bits of sample ram to use (e.g. 9==512 samples (default), 12(max)==4096 samples) (min is 2)
-#HaasoscopeLibQt.max10adcchans =  [(0,110),(0,118)] #[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp # default is none, []
-
-d = HaasoscopeLibQt.Haasoscope()
-d.construct()
-
-#Some other options
-if manserport!="": d.serport=manserport
-d.serialdelaytimerwait=serialdelaytimerwait #50 #100 #150 #300 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
-#d.dolockin=True # whether to calculate the lockin info on the FPGA and read it out (off by default)
-#d.db=True #turn on debugging
-
-#for talking with the trigger board
-if trigboardport!="":
-    trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig()
-    trigboard.construct(trigboardport)
-    if not trigboard.get_firmware_version(): sys.exit()
-    trigboard.setrngseed()
-    trigboard.set_prescale(1.0)
-
-app = QtGui.QApplication.instance()
-standalone = app is None
-if standalone:
-    app = QtGui.QApplication(sys.argv)
-
 # Define fft window class from template
 FFTWindowTemplate, FFTTemplateBaseClass = loadUiType("HaasoscopeFFT.ui")
 class FFTWindow(FFTTemplateBaseClass):
@@ -118,6 +62,8 @@ class MainWindow(TemplateBaseClass):
         self.ui.risingedgeCheck.stateChanged.connect(self.risingfalling)
         self.ui.exttrigCheck.stateChanged.connect(self.exttrig)
         self.ui.totBox.valueChanged.connect(self.tot)
+        self.ui.coinBox.valueChanged.connect(self.coin)
+        self.ui.cointimeBox.valueChanged.connect(self.cointime)
         self.ui.autorearmCheck.stateChanged.connect(self.autorearm)
         self.ui.noselftrigCheck.stateChanged.connect(self.noselftrig)
         self.ui.avgCheck.stateChanged.connect(self.avg)
@@ -138,6 +84,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.actionRead_from_file.triggered.connect(self.actionRead_from_file)
         self.ui.actionStore_to_file.triggered.connect(self.actionStore_to_file)
         self.ui.actionOutput_clk_left.triggered.connect(self.actionOutput_clk_left)
+        self.ui.actionAllow_same_chan_coin.triggered.connect(self.actionAllow_same_chan_coin)
         self.ui.actionDo_autocalibration.triggered.connect(self.actionDo_autocalibration)
         self.ui.chanonCheck.stateChanged.connect(self.chanon)
         self.ui.slowchanonCheck.stateChanged.connect(self.slowchanon)
@@ -147,6 +94,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.decodeCheck.clicked.connect(self.decode)
         self.ui.fftCheck.clicked.connect(self.fft)
         self.ui.persistCheck.clicked.connect(self.persist)
+        self.ui.drawingCheck.clicked.connect(self.drawing)
         self.db=False
         self.lastTime = time.time()
         self.fps = None
@@ -179,7 +127,7 @@ class MainWindow(TemplateBaseClass):
         
         chanonboard = d.selectedchannel%HaasoscopeLibQt.num_chan_per_board
         theboard = HaasoscopeLibQt.num_board-1-int(d.selectedchannel/HaasoscopeLibQt.num_chan_per_board)
-        if trigboardport!="" and trigboard.extclock:
+        if trigboardport!="" and trigboardport!="auto" and trigboard.extclock:
             if trigboard.histostosend != theboard: trigboard.set_histostosend(theboard)
 
         if d.havereadswitchdata:
@@ -209,9 +157,14 @@ class MainWindow(TemplateBaseClass):
         if d.oversamp(d.selectedchannel)>=0:
             self.prepareforsamplechange()
             self.timechanged()
-            #turn off chan+2
-            self.lines[d.selectedchannel+2].setVisible(False)
-            if d.trigsactive[d.selectedchannel+2]: d.toggletriggerchan(d.selectedchannel+2)
+            if d.dooversample[d.selectedchannel] > 0:
+                #turn off chan+2
+                self.lines[d.selectedchannel+2].setVisible(False)
+                if d.trigsactive[d.selectedchannel+2]: d.toggletriggerchan(d.selectedchannel+2)
+            else:
+                # turn on chan+2
+                self.lines[d.selectedchannel + 2].setVisible(True)
+                if not d.trigsactive[d.selectedchannel + 2]: d.toggletriggerchan(d.selectedchannel + 2)
     
     def overoversamp(self):
         if d.overoversamp()>=0:
@@ -300,14 +253,10 @@ class MainWindow(TemplateBaseClass):
             else: self.downpos()
     
     def keyPressEvent(self, event):
-        if event.key()==QtCore.Qt.Key_Up:
-            self.uppos()
-        if event.key()==QtCore.Qt.Key_Down:
-            self.downpos()
-        if event.key()==QtCore.Qt.Key_Left:
-            self.timefast()
-        if event.key()==QtCore.Qt.Key_Right:
-            self.timeslow()
+        if event.key()==QtCore.Qt.Key_Up: self.uppos()
+        if event.key()==QtCore.Qt.Key_Down: self.downpos()
+        if event.key()==QtCore.Qt.Key_Left: self.timefast()
+        if event.key()==QtCore.Qt.Key_Right: self.timeslow()
         modifiers = QtWidgets.QApplication.keyboardModifiers()
         if event.key()==QtCore.Qt.Key_I:
             if not modifiers == QtCore.Qt.ShiftModifier:
@@ -315,10 +264,9 @@ class MainWindow(TemplateBaseClass):
                 d.increment_clk_phase(theboard)
             else:
                 if trigboardport!="": trigboard.increment_trig_board_clock_phase()
-        if event.key()==QtCore.Qt.Key_1:
-            trigboard.set_prescale(0.1)
-        if event.key()==QtCore.Qt.Key_2:
-            trigboard.set_prescale(0.2)
+        if event.key()==QtCore.Qt.Key_1: trigboard.set_prescale(0.1)
+        if event.key()==QtCore.Qt.Key_2: trigboard.set_prescale(0.2)
+        if event.key()==QtCore.Qt.Key_C: d.toggle_checkfastusbwriting()
 
     def actionRead_from_file(self):
         d.readcalib()
@@ -334,12 +282,20 @@ class MainWindow(TemplateBaseClass):
         d.toggle_clk_last()
         if trigboardport!="": trigboard.setclock(True)
 
+    def actionAllow_same_chan_coin(self):
+        d.toggle_allow_same_chan_coin()
+
     def exttrig(self):
         d.toggleuseexttrig()
          
     def tot(self):
         d.triggertimethresh = self.ui.totBox.value()
         d.settriggertime(d.triggertimethresh)
+
+    def coin(self):
+        d.settrigcoin(self.ui.coinBox.value())
+    def cointime(self):
+        d.settrigcointime(self.ui.cointimeBox.value())
         
     def autorearm(self):
         d.toggleautorearm()
@@ -354,12 +310,12 @@ class MainWindow(TemplateBaseClass):
     def logic(self):
         d.togglelogicanalyzer()
         if d.dologicanalyzer:
-            for li in np.arange(8):
+            for li in np.arange(d.num_logic_inputs):
                 c=(0,0,0)
                 pen = pg.mkPen(color=c) # add linewidth=1.7, alpha=.65
                 self.lines[d.logicline1+li].setPen(pen)
         else:
-            for li in np.arange(8):
+            for li in np.arange(d.num_logic_inputs):
                 self.lines[d.logicline1+li].setPen(None)
         
     def highres(self):
@@ -383,6 +339,7 @@ class MainWindow(TemplateBaseClass):
         if self.ui.markerCheck.isChecked():
             for li in range(self.nlines):
                 self.lines[li].setSymbol("o")
+                self.lines[li].setSymbolSize(3)
         else:
             for li in range(self.nlines):
                 self.lines[li].setSymbol(None)
@@ -483,8 +440,10 @@ class MainWindow(TemplateBaseClass):
         d.settriggertype(d.fallingedge)
 
     def decode(self):
-        if self.ui.decodeCheck.checkState() == QtCore.Qt.Checked:
-            d.decode()
+        if self.ui.decodeCheck.checkState() != QtCore.Qt.Checked:
+            # delete all previous labels
+            for label in self.decodelabels:
+                self.ui.plot.removeItem(label)
 
     def fft(self):
         if self.ui.fftCheck.checkState() == QtCore.Qt.Checked:
@@ -510,6 +469,14 @@ class MainWindow(TemplateBaseClass):
             print("recorddata now",d.recorddata)
             self.persistui.close()
 
+    def drawing(self):
+        if self.ui.drawingCheck.checkState() == QtCore.Qt.Checked:
+            d.dodrawing=True
+            print("drawing now",d.dodrawing)
+        else:
+            d.dodrawing=False
+            print("drawing now",d.dodrawing)
+
     def record(self):
         self.savetofile = not self.savetofile
         if self.savetofile:
@@ -520,7 +487,7 @@ class MainWindow(TemplateBaseClass):
             else:
                 fname="Haasoscope_out_" + time.strftime("%Y%m%d-%H%M%S") + ".csv"
                 self.outf = open(fname,"wt")
-            self.ui.statusBar.showMessage("now recording to file"+fname)
+            self.ui.statusBar.showMessage("now recording to file: "+fname)
             self.ui.actionRecord.setText("Stop recording")
         else:
             self.outf.close()
@@ -597,7 +564,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.chanBox.setMaximum(HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board-1)
         self.ui.slowchanBox.setMaximum(len(HaasoscopeLibQt.max10adcchans)-1)
         #for the logic analyzer
-        for li in np.arange(8):
+        for li in np.arange(d.num_logic_inputs):
             line = self.ui.plot.plot(pen=None,name="logic_"+str(li)) # not drawn by default
             self.lines.append(line)
             if li==0: d.logicline1=len(self.lines)-1 # remember index where this first logic line is
@@ -639,7 +606,8 @@ class MainWindow(TemplateBaseClass):
             self.fftui.close()
         if hasattr(self,"persistui"):
             self.persistui.close()
-        
+
+    decodelabels = []
     def updateplot(self):
         self.mainloop()
         if not self.ui.drawingCheck.checkState() == QtCore.Qt.Checked: return
@@ -650,7 +618,7 @@ class MainWindow(TemplateBaseClass):
             else:
                 self.lines[li].setData(d.xydata[li][0],d.xydata[li][1])
         if d.dologicanalyzer:
-            for li in np.arange(8):
+            for li in np.arange(d.num_logic_inputs):
                 self.lines[d.logicline1+li].setData(d.xydatalogic[li][0],d.xydatalogic[li][1])
         if d.dofft:
             self.fftui.fftline.setPen(self.linepens[d.fftchan])
@@ -683,6 +651,25 @@ class MainWindow(TemplateBaseClass):
             if not self.persistui.isVisible(): # closed the fft window
                 d.recorddata = False
                 self.ui.persistCheck.setCheckState(QtCore.Qt.Unchecked)
+        if self.ui.decodeCheck.checkState() == QtCore.Qt.Checked:
+            # delete all previous labels
+            for label in self.decodelabels:
+                self.ui.plot.removeItem(label)
+            if d.downsample>=0:
+                resulttext,resultstart,resultend = d.decode()
+                #print(resulttext,resultstart, d.min_x, d.max_x, d.xscale, d.xscaling)
+                item=0
+                while item<len(resulttext):
+                    label = pg.TextItem(resulttext[item])
+                    label.setColor(self.linepens[d.selectedchannel].color())
+                    x=d.min_x+resultstart[item]*1e9/d.xscaling
+                    label.setPos( QtCore.QPointF(x, -1) )
+                    #print(x)
+                    self.ui.plot.addItem(label)
+                    self.decodelabels.append(label)
+                    item=item+1
+            else:
+                print("can't decode when downsample is <0... go slower!")
         now = time.time()
         dt = now - self.lastTime + 0.00001
         self.lastTime = now
@@ -702,30 +689,14 @@ class MainWindow(TemplateBaseClass):
             if d.xscale != self.oldxscale:
                 datatosave=d.xydata # since the x scale changed (or is the first event), save all data for this event
                 self.oldxscale=d.xscale
-            h5ds = self.outf.create_dataset(str(self.nevents), data=datatosave, compression="lzf") #compression="gzip", compression_opts=5)
+            h5ds = self.outf.create_dataset(str(self.nevents), data=datatosave, dtype='float32', compression="lzf") #compression="gzip", compression_opts=5)
             #about 3kB per event per board (4 channels) for 512 samples
             h5ds.attrs['time']=time_s
             h5ds.attrs['trigger_position']=str(self.vline*d.xscaling)
             h5ds.attrs['sample_period'] =str(2.*d.xscale/d.num_samples)
             h5ds.attrs['num_samples'] =str(d.num_samples)
-            #Read like this:
-            #import h5py
-            #f=h5py.File('Haasoscope_out_20210506-103212.h5',"r")
-            #len(f.keys()) #number of events stored
-            #events=list(f.items())
-            #def mysort(val): return int(val[0])
-            #events.sort(key=mysort)
-            #e=events[0] #first event
-            #e=events[-1] #last event
-            #evtnum=int(e[0])
-            #data=e[1]
-            #data=f["event_9"] # or you can get an event like this
-            #data.attrs.get("time")
-            #chan=1; samp=240
-            #print(data.shape) # the first event, or any following where the timebase has changed, will have x values stored too
-            #if data.shape == (4,2,511): print(data[chan][0][samp],data[chan][1][samp]) # x(time),y(voltage) of the data from that channel and sample
-            #if data.shape == (4,511): print(data[chan][samp]) # y(voltage) of the data from that channel and sample
-            #f.close()
+            if d.dologicanalyzer: h5ds = self.outf.create_dataset(str(self.nevents)+"_logic", data=d.xydatalogicraw, dtype='uint8', compression="lzf")
+            # see h5py_analyze_example.py for how to read in python
         else:
             for c in range(HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board):
                 if self.lines[c].isVisible(): # only save the data for visible channels
@@ -737,6 +708,10 @@ class MainWindow(TemplateBaseClass):
                     self.outf.write(str(d.num_samples)+",") # next column is the number of samples
                     d.xydata[c][1].tofile(self.outf,",",format="%.3f") # save y data (1) from fast adc channel c
                     self.outf.write("\n") # newline
+            if d.dologicanalyzer:
+                for b in range(HaasoscopeLibQt.num_board):
+                    d.xydatalogicraw[b].tofile(self.outf,",")
+                    self.outf.write("\n")  # newline
         # should also write out the 8 digital bits per board (if logic analyzer on)
         # stored in d.xydatalogicraw[board]
     
@@ -760,7 +735,9 @@ class MainWindow(TemplateBaseClass):
                 elapsedtime=now-self.oldtime
                 self.oldtime=now
                 lastrate = round(self.tinterval/elapsedtime,2)
-                print(self.nevents,"events,",lastrate,"Hz")
+                if d.dologicanalyzer: nchan = HaasoscopeLibQt.num_chan_per_board + 1
+                else: nchan = HaasoscopeLibQt.num_chan_per_board
+                print(self.nevents,"events,",lastrate,"Hz",round(lastrate*HaasoscopeLibQt.num_board*d.num_samples*nchan/1e6,3),"MB/s")
                 if lastrate>40: self.tinterval=500.
                 else: self.tinterval=100.
                 self.oldnevents=self.nevents
@@ -780,27 +757,117 @@ class MainWindow(TemplateBaseClass):
                 if not delaycounters[b]:
                     d.increment_clk_phase(b,30) # increment clk of that board by 30*100ps=3ns
 
-try:    
-    win = MainWindow()
-    win.setWindowTitle('Haasoscope Qt')
-    if not d.setup_connections(): sys.exit()
-    if not d.init(): sys.exit()
-    win.launch()
-    win.triggerposchanged(128) # center the trigger
-    win.dostartstop()
-except SerialException:
-    print("serial com failed!")
+if __name__ == '__main__':
+    import HaasoscopeLibQt
+    import HaasoscopeTrigLibQt
 
-#can change some things after initialization
-#d.selectedchannel=0
-#d.tellswitchgain(d.selectedchannel)
-#d.togglesupergainchan(d.selectedchannel)
-#d.toggletriggerchan(d.selectedchannel)
-#d.togglelogicanalyzer() # run the logic analyzer
-#d.sendi2c("21 13 f0") # set extra pins E24 B0,1,2,3 off and B4,5,6,7 on (works for v8 only)
+    print('Argument List:', str(sys.argv))
+    for a in sys.argv:
+        if a[0] == "-":
+            #print(a)
+            if a[1:3] == "sr":
+                max_slowadc_ram_width = int(a[3:])
+                if max_slowadc_ram_width > HaasoscopeLibQt.max_slowadc_ram_width:
+                    print("max_slowadc_ram_width", max_slowadc_ram_width, "too large")
+                elif max_slowadc_ram_width < 1:
+                    print("max_slowadc_ram_width", max_slowadc_ram_width, "too small")
+                else:
+                    HaasoscopeLibQt.max_slowadc_ram_width = max_slowadc_ram_width
+                    print("max_slowadc_ram_width set to", HaasoscopeLibQt.max_slowadc_ram_width)
+            elif a[1:4] == "adc":
+                exec("HaasoscopeLibQt.max10adcchans=" + a[4:])
+                print("max10adcchans set to", HaasoscopeLibQt.max10adcchans)
+            elif a[1] == "r":
+                ram_width = int(a[2:])
+                if ram_width > HaasoscopeLibQt.max_ram_width:
+                    print("ram_width", ram_width, "is bigger than the max allowed", HaasoscopeLibQt.max_ram_width)
+                    HaasoscopeLibQt.ram_width = HaasoscopeLibQt.max_ram_width
+                elif ram_width < 1:
+                    print("ram_width", ram_width, "is less than 1")
+                    HaasoscopeLibQt.ram_width = 1
+                else:
+                    HaasoscopeLibQt.ram_width = ram_width
+                print("ram_width set to", HaasoscopeLibQt.ram_width)
+            elif a[1] == "b":
+                HaasoscopeLibQt.num_board = int(a[2:])
+                print("num_board set to", HaasoscopeLibQt.num_board)
 
-if standalone:
-    sys.exit(app.exec_())
-else:
-    print("Done, but Qt window still active")
+    d = HaasoscopeLibQt.Haasoscope()
+    d.construct()
 
+    trigboardport = ""
+    for a in sys.argv:
+        if a[0] == "-":
+            #print(a)
+            if a[1:3] == "mt":
+                d.domt=True
+                print("domt set to",d.domt)
+            elif a[1:8] == "fastusb":
+                d.dofastusb = True
+                d.dousbparallel = True
+                print("dofastusb", d.dofastusb, "and dousbparallel", d.dousbparallel)
+            elif a[1] == "s":
+                d.serialdelaytimerwait = int(a[2:])
+                print("serialdelaytimerwait set to", d.serialdelaytimerwait)
+            elif a[1] == "p":
+                d.serport = a[2:]
+                print("serial port manually set to", d.serport)
+            elif a[1] == "t":
+                trigboardport = a[2:]
+                print("trigboardport set to", trigboardport)
+
+    if d.domt and not d.dofastusb:
+        print("mt option is only for fastusb - exiting!")
+        sys.exit()
+
+    # can change some things after initialization
+    # d.selectedchannel=0
+    # d.tellswitchgain(d.selectedchannel)
+    # d.togglesupergainchan(d.selectedchannel)
+    # d.toggletriggerchan(d.selectedchannel)
+    # d.togglelogicanalyzer() # run the logic analyzer
+    # d.sendi2c("21 13 f0") # set extra pins E24 B0,1,2,3 off and B4,5,6,7 on (works for v8 only)
+
+    app = QtGui.QApplication.instance()
+    standalone = app is None
+    if standalone:
+        app = QtGui.QApplication(sys.argv)
+
+    try:
+        font = app.font();
+        font.setPixelSize(11);
+        app.setFont(font);
+        win = MainWindow()
+        win.setWindowTitle('Haasoscope Qt')
+        if not d.setup_connections():
+            print("Exiting now - failed setup_connections!")
+            sys.exit()
+        if trigboardport!="":
+            if trigboardport=="auto": trigboardport=d.trigserport
+            trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig()
+            trigboard.construct(trigboardport)
+            if not trigboard.get_firmware_version():
+                print("couldn't get trigboard firmware version - exiting!")
+                sys.exit()
+            trigboard.setrngseed()
+            trigboard.set_prescale(1.0)
+        if not d.init():
+            print("Exiting now - failed init!")
+            d.cleanup()
+            sys.exit()
+        win.launch()
+
+        #turns off drawing
+        #win.ui.drawingCheck.setCheckState(QtCore.Qt.Unchecked)
+        #win.drawing()
+
+        win.triggerposchanged(128)  # center the trigger
+        win.dostartstop()
+    except SerialException:
+        print("serial com failed!")
+
+    if standalone:
+        rv=app.exec_()
+        sys.exit(rv)
+    else:
+        print("Done, but Qt window still active")

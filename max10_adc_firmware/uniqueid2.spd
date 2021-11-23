@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simPackage>
+ <file
+   path="uniqueid2_sim/altchip_id/altchip_id.v"
+   type="VERILOG"
+   library="uniqueid2" />
+ <file path="uniqueid2_sim/uniqueid2.v" type="VERILOG" />
+ <topLevel name="uniqueid2" />
+ <deviceFamily name="max10" />
+</simPackage>

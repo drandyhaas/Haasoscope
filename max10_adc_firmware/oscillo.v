@@ -1,8 +1,8 @@
 module oscillo(clk, startTrigger, clk_flash, data_flash1, data_flash2, data_flash3, data_flash4, pwr1, pwr2, shdn_out, spen_out, trig_in, trig_out, rden, rdaddress, 
 data_ready, wraddress_triggerpoint, imthelast, imthefirst,rollingtrigger,trigDebug,triggerpoint,downsample,
 trigthresh,trigchannels,triggertype,triggertot,format_sdin_out,div_sclk_out,outsel_cs_out,clk_spi,SPIsend,SPIsenddata,
-wraddress,Acquiring,SPIstate,clk_flash2,trigthresh2,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig, nsmp, trigout, spareright, spareleft,
-delaycounter,ext_trig_delay, noselftrig);
+wraddress,Acquiring,SPIstate,clk_flash2,trigthreshtwo,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig, nsmp, trigout, spareright, spareleft,
+delaycounter,ext_trig_delay, noselftrig, nselftrigcoincidentreq, selftrigtempholdtime, allowsamechancoin);
 input clk,clk_spi;
 input startTrigger;
 input [1:0] trig_in;
@@ -19,25 +19,32 @@ input [7:0] data_flash1, data_flash2, data_flash3, data_flash4;
 output reg [7:0] dout1, dout2, dout3, dout4;
 parameter ram_width=10;
 output reg[ram_width-1:0] wraddress_triggerpoint;
+reg[ram_width-1:0] wraddress_triggerpoint2;//to pass timing (need to send to slow clk domain)
 input wire [ram_width-1:0] rdaddress;
 input wire rden;//read enable
 output reg data_ready=0;
 input wire imthelast, imthefirst;
 input wire rollingtrigger;
 output reg trigDebug=1;
-input [7:0] trigthresh, trigthresh2;
+input [7:0] trigthresh, trigthreshtwo;
 input [3:0] trigchannels;
 input [ram_width-1:0] triggerpoint;
 input [7:0] downsample; // only record 1 out of every 2^downsample samples
+reg [7:0] downsample2; // to pass timing
 input [3:0] triggertype;
+reg [3:0] triggertype2; // to pass timing
 input [ram_width:0] triggertot; // the top bit says whether to do check every sample or only according to downsample
 input highres;
 parameter maxhighres=5;
 reg [7+maxhighres:0] highres1, highres2, highres3, highres4;
 input ext_trig_in, use_ext_trig;
 input [ram_width-1:0] nsmp;
+reg [ram_width-1:0] nsmp2; // to pass timing
 input [4:0] ext_trig_delay; // clk ticks to delay ext trigger by
 input noselftrig; 
+input [1:0] nselftrigcoincidentreq; // number of self trig channels required to be fired simultaneously
+input [7:0] selftrigtempholdtime; // how long to fire a channel for
+input allowsamechancoin; // whether to allow same channel, firing in the past, to count as coincidence
 
 output reg [3:0] trigout;
 output wire spareright;
@@ -111,9 +118,14 @@ reg [7:0] data_flash1_reg; always @(posedge clk_flash) data_flash1_reg <= data_f
 reg [7:0] data_flash2_reg; always @(posedge clk_flash) data_flash2_reg <= data_flash2; // no multiplexing
 //reg [7:0] data_flash2_reg; always @(negedge clk_flash) data_flash2_reg <= data_flash1; // for multiplexing
 
-reg [7:0] data_flash3_reg; always @(posedge clk_flash2) data_flash3_reg <= data_flash3;
-reg [7:0] data_flash4_reg; always @(posedge clk_flash2) data_flash4_reg <= data_flash4; // no multiplexing
-//reg [7:0] data_flash4_reg; always @(negedge clk_flash2) data_flash4_reg <= data_flash3; // for multiplexing
+reg [7:0] data_flash3_reg_temp; always @(posedge clk_flash2) data_flash3_reg_temp <= data_flash3;
+reg [7:0] data_flash4_reg_temp; always @(posedge clk_flash2) data_flash4_reg_temp <= data_flash4; // no multiplexing
+//reg [7:0] data_flash4_reg_temp; always @(negedge clk_flash2) data_flash4_reg_temp <= data_flash3; // for multiplexing
+
+//pipelines the reading in from clk2 to clk1, so we have a full clk1 cycle for calculations below
+reg [7:0] data_flash3_reg; always @(posedge clk_flash) data_flash3_reg <= data_flash3_reg_temp;
+reg [7:0] data_flash4_reg; always @(posedge clk_flash) data_flash4_reg <= data_flash4_reg_temp; // no multiplexing
+//reg [7:0] data_flash4_reg; always @(negedge clk_flash) data_flash4_reg <= data_flash3_reg_temp; // for multiplexing
 
 always @(posedge clk_flash) begin
 	i=0;
@@ -121,13 +133,13 @@ always @(posedge clk_flash) begin
 		//if (trigchannels[i]) begin // always calculate the trigger, for output, even if we won't self-trigger on it
 		
 			// above threshold now?
-			if (i==0) Threshold1[i] <= (data_flash1_reg>=trigthresh && data_flash1_reg<=trigthresh2);
-			if (i==1) Threshold1[i] <= (data_flash2_reg>=trigthresh && data_flash2_reg<=trigthresh2);
-			if (i==2) Threshold1[i] <= (data_flash3_reg>=trigthresh && data_flash3_reg<=trigthresh2);
-			if (i==3) Threshold1[i] <= (data_flash4_reg>=trigthresh && data_flash4_reg<=trigthresh2);
+			if (i==0) Threshold1[i] <= (data_flash1_reg>=trigthresh && data_flash1_reg<=trigthreshtwo);
+			if (i==1) Threshold1[i] <= (data_flash2_reg>=trigthresh && data_flash2_reg<=trigthreshtwo);
+			if (i==2) Threshold1[i] <= (data_flash3_reg>=trigthresh && data_flash3_reg<=trigthreshtwo);
+			if (i==3) Threshold1[i] <= (data_flash4_reg>=trigthresh && data_flash4_reg<=trigthreshtwo);
 			Threshold2[i] <= Threshold1[i]; // was above threshold?
 			
-			if (triggertype[0]) begin // if positive edge, trigger! (possibly after demanding a timeout)
+			if (triggertype2[0]) begin // if positive edge, trigger! (possibly after demanding a timeout)
 				if (triggertot[ram_width-1:0]) begin
 					selftrigtemp[i] = 0;//assume we are not firing
 					if (Threshold3[i]) begin
@@ -192,9 +204,26 @@ always @(posedge clk_flash) begin
 end
 
 reg[31:0] thecounter; // counter for the rolling trigger
-always @(posedge clk_flash) if (Trigger) thecounter<=0; else thecounter<=thecounter+1;
+reg[1:0] nselftrigstemp[4]; // number of self trig channels fired, other than this one
+reg[7:0] selftrigtemphold[4]; // will keep track of which channel have fired
+always @(posedge clk_flash) begin
+	if (Trigger) thecounter<=0; else thecounter<=thecounter+1;
+	i=0;
+	while (i<4) begin
+		if (selftrigtemp[i]) selftrigtemphold[i]<=selftrigtempholdtime; // trigger has fired
+		else if (selftrigtemphold[i]>0 && downsamplego) selftrigtemphold[i]<=selftrigtemphold[i]-1; // count down (paying attention to downsample) so the trigger stops firing after selftrigtempholdtime
+		if (allowsamechancoin) nselftrigstemp[i] <= (trigchannels[(i)%4]&&selftrigtemphold[(i)%4]>0) + (trigchannels[(i+1)%4]&&selftrigtemphold[(i+1)%4]>0) + (trigchannels[(i+2)%4]&&selftrigtemphold[(i+2)%4]>0) + (trigchannels[(i+3)%4]&&selftrigtemphold[(i+3)%4]>0);
+		else nselftrigstemp[i] <= (trigchannels[(i+1)%4]&&selftrigtemphold[(i+1)%4]>0) + (trigchannels[(i+2)%4]&&selftrigtemphold[(i+2)%4]>0) + (trigchannels[(i+3)%4]&&selftrigtemphold[(i+3)%4]>0);
+		i=i+1;
+	end
+end
+wire selfedgetrig; // currently on an edge
+assign selfedgetrig = (trigchannels[0]&&selftrigtemp[0]&&nselftrigstemp[0]>=nselftrigcoincidentreq)||
+							 (trigchannels[1]&&selftrigtemp[1]&&nselftrigstemp[1]>=nselftrigcoincidentreq)||
+							 (trigchannels[2]&&selftrigtemp[2]&&nselftrigstemp[2]>=nselftrigcoincidentreq)||
+							 (trigchannels[3]&&selftrigtemp[3]&&nselftrigstemp[3]>=nselftrigcoincidentreq);
 wire selftrig; //trigger is an OR of all the channels which are active // also trigger every second or so (rolling)
-assign selftrig = (trigchannels[0]&&selftrigtemp[0])||(trigchannels[1]&&selftrigtemp[1])||(trigchannels[2]&&selftrigtemp[2])||(trigchannels[3]&&selftrigtemp[3]) ||(rollingtrigger&thecounter>=25000000) || (use_ext_trig&ext_trig_in_delayed);
+assign selftrig = selfedgetrig || (rollingtrigger&thecounter>=25000000) || (use_ext_trig&ext_trig_in_delayed);
 
 always @(posedge clk_flash)
 if (noselftrig) Trigger = trig_in[1]; // just trigger if we get a trigger in towards to right
@@ -217,7 +246,7 @@ reg Ttrig[4]; // whether to fire each of the 4 trigger bits
 reg[3:0] Tcounter[4]; // counters for the output trigger bits (to hold them high for a while after a trigger)
 reg[7:0] Tcounter_test_countdown; // use for sending 50 test triggers
 output reg[7:0] delaycounter;
-integer spareleftcounter;
+reg[7:0] spareleftcounter;
 always @(posedge clk_flash) begin
 	if (spareleft) begin
 		if (spareleftcounter<205) begin
@@ -258,12 +287,16 @@ reg startAcquisition1; always @(posedge clk_flash) startAcquisition1 <= startAcq
 reg startAcquisition2; always @(posedge clk_flash) startAcquisition2 <= startAcquisition1;
 
 localparam INIT=0, PREACQ=1, WAITING=2, POSTACQ=3;
-integer state=INIT;
-reg [31:0] downsamplecounter;//max downsample is ?
+reg[2:0] state=INIT;
+reg [23:0] downsamplecounter;//max downsample is 22
 reg [maxhighres:0] highrescounter;//for counting highres
 wire downsamplego;
-assign downsamplego = downsamplecounter[downsample] || downsample==0; // pay attention to sample when downsamplego is true
+assign downsamplego = downsamplecounter[downsample2] || downsample2==0; // pay attention to sample when downsamplego is true
 always @(posedge clk_flash) begin
+	nsmp2<=nsmp;//to pass timing
+	triggertype2<=triggertype;//to pass timing
+	downsample2<=downsample;//to pass timing
+	
 	case (state)
 	INIT: begin // this is the beginning... wait for the go-ahead to start acquiring the pre-trigger samples
 		if (startAcquisition2) begin
@@ -290,12 +323,12 @@ always @(posedge clk_flash) begin
 		if(Trigger) begin // now we wait for the trigger, and then record the triggerpoint
 			AcquiringAndTriggered <= 1; // Trigger? Start getting the rest of the bytes
 			PreOrPostAcquiring <= 1;
-			wraddress_triggerpoint <= wraddress; // keep track of where the trigger happened
+			wraddress_triggerpoint2 <= wraddress; // keep track of where the trigger happened
 			state=POSTACQ;
 		end
 	end
 	POSTACQ: begin
-		if(samplecount==nsmp) begin // got the rest of the bytes? then stop acquiring
+		if(samplecount==nsmp2) begin // got the rest of the bytes? then stop acquiring
 			Acquiring <= 0;
 			AcquiringAndTriggered <= 0;
 			HaveFullData <= 1;
@@ -306,7 +339,7 @@ always @(posedge clk_flash) begin
 	endcase
 	
 	downsamplecounter=downsamplecounter+1;
-	if (highres && downsample>0) begin // doing highres mode (averaging over samples within each downsample)
+	if (highres) begin // doing highres mode (averaging over samples within each downsample)
 		highrescounter=highrescounter+1;
 		highres1=highres1+data_flash1_reg;
 		highres2=highres2+data_flash2_reg;
@@ -314,17 +347,17 @@ always @(posedge clk_flash) begin
 		highres4=highres4+data_flash4_reg;
 		if (downsamplego || highrescounter[maxhighres]) begin
 			highrescounter=0;
-			if (downsample>maxhighres) begin			
+			if (downsample2>maxhighres) begin			
 				dout1=highres1>>maxhighres;
 				dout2=highres2>>maxhighres;
 				dout3=highres3>>maxhighres;
 				dout4=highres4>>maxhighres;
 			end
 			else begin
-				dout1=highres1>>downsample;
-				dout2=highres2>>downsample;
-				dout3=highres3>>downsample;
-				dout4=highres4>>downsample;
+				dout1=highres1>>downsample2;
+				dout2=highres2>>downsample2;
+				dout3=highres3>>downsample2;
+				dout4=highres4>>downsample2;
 			end
 			highres1=0;
 			highres2=0;
@@ -352,6 +385,7 @@ reg HaveFullData1; always @(posedge clk) HaveFullData1 <= HaveFullData;
 reg HaveFullData2; always @(posedge clk) HaveFullData2 <= HaveFullData1;
 
 always @(posedge clk) begin
+	wraddress_triggerpoint=wraddress_triggerpoint2; // sends to slow clk domain
 	if (startAcquisition) data_ready=0; // waiting for trigger
 	else if (HaveFullData2) data_ready=1; // ready to read out
 end

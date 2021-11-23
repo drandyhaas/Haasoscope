@@ -4,20 +4,19 @@ editor if you plan to continue editing the block that represents it in
 the Block Editor! File corruption is VERY likely to occur.
 */
 /*
-Copyright (C) 1991-2015 Altera Corporation. All rights reserved.
-Your use of Altera Corporation's design tools, logic functions 
+Copyright (C) 2018  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
 and other software and tools, and its AMPP partner logic 
 functions, and any output files from any of the foregoing 
 (including device programming or simulation files), and any 
 associated documentation or information are expressly subject 
-to the terms and conditions of the Altera Program License 
-Subscription Agreement, the Altera Quartus II License Agreement,
-the Altera MegaCore Function License Agreement, or other 
-applicable license agreement, including, without limitation, 
-that your use is for the sole purpose of programming logic 
-devices manufactured by Altera and sold by Altera or its 
-authorized distributors.  Please refer to the applicable 
-agreement for further details.
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details.
 */
 (header "symbol" (version "1.2"))
 (symbol
@@ -41,8 +40,8 @@ agreement for further details.
 	(port
 		(pt 0 64)
 		(input)
-		(text "address[11..0]" (rect 0 0 81 14)(font "Arial" (font_size 8)))
-		(text "address[11..0]" (rect 4 50 71 63)(font "Arial" (font_size 8)))
+		(text "address[10..0]" (rect 0 0 82 14)(font "Arial" (font_size 8)))
+		(text "address[10..0]" (rect 4 50 72 63)(font "Arial" (font_size 8)))
 		(line (pt 0 64)(pt 88 64)(line_width 3))
 	)
 	(port
@@ -61,7 +60,7 @@ agreement for further details.
 	)
 	(drawing
 		(text "12 bits" (rect 109 24 194 159)(font "Arial" )(vertical))
-		(text "4096 words" (rect 120 12 214 177)(font "Arial" )(vertical))
+		(text "2048 words" (rect 120 12 214 177)(font "Arial" )(vertical))
 		(text "Block type: AUTO" (rect 48 114 170 239)(font "Arial" ))
 		(line (pt 104 24)(pt 136 24))
 		(line (pt 136 24)(pt 136 96))

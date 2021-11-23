@@ -1,21 +1,57 @@
-Info: Starting: Create block symbol file (.bsf)
-Info: qsys-generate C:\Users\ahaas\Dropbox\documents\FPGA\QuartusII\serial_vga_pong_max10_adc_tdc\myadc.qsys --block-symbol-file --output-directory=C:\Users\ahaas\Dropbox\documents\FPGA\QuartusII\serial_vga_pong_max10_adc_tdc\myadc --family="MAX 10" --part=10M08SAE144C8GES
-Progress: Loading serial_vga_pong_max10_adc_tdc/myadc.qsys
+Info: Starting: Create simulation model
+Info: qsys-generate C:\Users\haas\Downloads\Haasoscope\max10_adc_firmware\myadc.qsys --simulation=VERILOG --allow-mixed-language-simulation --output-directory=C:\Users\haas\Downloads\Haasoscope\max10_adc_firmware\myadc\simulation --family="MAX 10" --part=10M08SAE144C8GES
+Progress: Loading max10_adc_firmware/myadc.qsys
 Progress: Reading input file
-Progress: Adding modular_adc_0 [altera_modular_adc 15.0]
+Progress: Adding modular_adc_0 [altera_modular_adc 18.0]
 Progress: Parameterizing module modular_adc_0
 Progress: Building connections
 Progress: Parameterizing connections
 Progress: Validating
 Progress: Done reading input file
-Info: ip-generate succeeded.
+Info: myadc: Generating myadc "myadc" for SIM_VERILOG
+Info: modular_adc_0: "myadc" instantiated altera_modular_adc "modular_adc_0"
+Info: control_internal: "modular_adc_0" instantiated altera_modular_adc_control "control_internal"
+Info: myadc: Done "myadc" with 3 modules, 8 files
+Info: qsys-generate succeeded.
+Info: Finished: Create simulation model
+Info: Starting: Create Modelsim Project.
+Info: sim-script-gen --spd=C:\Users\haas\Downloads\Haasoscope\max10_adc_firmware\myadc\myadc.spd --output-directory=C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc/simulation/ --use-relative-paths=true
+Info: Doing: ip-make-simscript --spd=C:\Users\haas\Downloads\Haasoscope\max10_adc_firmware\myadc\myadc.spd --output-directory=C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc/simulation/ --use-relative-paths=true
+Info: Generating the following file(s) for MODELSIM simulator in C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc/simulation/ directory:
+Info: 	mentor/msim_setup.tcl
+Info: Generating the following file(s) for VCS simulator in C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc/simulation/ directory:
+Info: 	synopsys/vcs/vcs_setup.sh
+Info: Generating the following file(s) for VCSMX simulator in C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc/simulation/ directory:
+Info: 	synopsys/vcsmx/synopsys_sim.setup
+Info: 	synopsys/vcsmx/vcsmx_setup.sh
+Info: Generating the following file(s) for NCSIM simulator in C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc/simulation/ directory:
+Info: 	cadence/cds.lib
+Info: 	cadence/hdl.var
+Info: 	cadence/ncsim_setup.sh
+Info: 	2 .cds.lib files in cadence/cds_libs/ directory
+Info: Generating the following file(s) for RIVIERA simulator in C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc/simulation/ directory:
+Info: 	aldec/rivierapro_setup.tcl
+Info: For information on how to simulate your IP, see the explanatory comments in the simulator-specific subdirectories under C:/Users/haas/Downloads/Haasoscope/max10_adc_firmware/myadc/simulation/.
+Info: Regenerate these scripts whenever you make any change to any Quartus-generated IP in your project.
+Info: Finished: Create Modelsim Project.
+Info: Starting: Create block symbol file (.bsf)
+Info: qsys-generate C:\Users\haas\Downloads\Haasoscope\max10_adc_firmware\myadc.qsys --block-symbol-file --output-directory=C:\Users\haas\Downloads\Haasoscope\max10_adc_firmware\myadc --family="MAX 10" --part=10M08SAE144C8GES
+Progress: Loading max10_adc_firmware/myadc.qsys
+Progress: Reading input file
+Progress: Adding modular_adc_0 [altera_modular_adc 18.0]
+Progress: Parameterizing module modular_adc_0
+Progress: Building connections
+Progress: Parameterizing connections
+Progress: Validating
+Progress: Done reading input file
+Info: qsys-generate succeeded.
 Info: Finished: Create block symbol file (.bsf)
 Info: 
 Info: Starting: Create HDL design files for synthesis
-Info: qsys-generate C:\Users\ahaas\Dropbox\documents\FPGA\QuartusII\serial_vga_pong_max10_adc_tdc\myadc.qsys --synthesis=VERILOG --output-directory=C:\Users\ahaas\Dropbox\documents\FPGA\QuartusII\serial_vga_pong_max10_adc_tdc\myadc\synthesis --family="MAX 10" --part=10M08SAE144C8GES
-Progress: Loading serial_vga_pong_max10_adc_tdc/myadc.qsys
+Info: qsys-generate C:\Users\haas\Downloads\Haasoscope\max10_adc_firmware\myadc.qsys --synthesis=VERILOG --output-directory=C:\Users\haas\Downloads\Haasoscope\max10_adc_firmware\myadc\synthesis --family="MAX 10" --part=10M08SAE144C8GES
+Progress: Loading max10_adc_firmware/myadc.qsys
 Progress: Reading input file
-Progress: Adding modular_adc_0 [altera_modular_adc 15.0]
+Progress: Adding modular_adc_0 [altera_modular_adc 18.0]
 Progress: Parameterizing module modular_adc_0
 Progress: Building connections
 Progress: Parameterizing connections
@@ -25,5 +61,5 @@ Info: myadc: Generating myadc "myadc" for QUARTUS_SYNTH
 Info: modular_adc_0: "myadc" instantiated altera_modular_adc "modular_adc_0"
 Info: control_internal: "modular_adc_0" instantiated altera_modular_adc_control "control_internal"
 Info: myadc: Done "myadc" with 3 modules, 9 files
-Info: ip-generate succeeded.
+Info: qsys-generate succeeded.
 Info: Finished: Create HDL design files for synthesis

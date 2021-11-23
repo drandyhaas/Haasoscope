@@ -9,14 +9,6 @@
    categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
-   element $${FILENAME}
-   {
-      datum _originalDeviceFamily
-      {
-         value = "MAX 10";
-         type = "String";
-      }
-   }
    element modular_adc_0
    {
       datum _sortIndex
@@ -99,7 +91,7 @@
  <module
    name="modular_adc_0"
    kind="altera_modular_adc"
-   version="15.0"
+   version="18.0"
    enabled="1"
    autoexport="1">
   <parameter name="AUTO_DEVICE_SPEEDGRADE" value="8" />
@@ -146,12 +138,14 @@
   <parameter name="en_thmin_ch9" value="false" />
   <parameter name="en_tsd_max" value="false" />
   <parameter name="en_tsd_min" value="false" />
+  <parameter name="enable_usr_sim" value="0" />
   <parameter name="external_vref" value="2.5" />
   <parameter name="int_vref_vr" value="3.3" />
   <parameter name="ip_is_for_which_adc" value="1" />
   <parameter name="prescaler_ch16" value="false" />
   <parameter name="prescaler_ch8" value="false" />
   <parameter name="refsel" value="1" />
+  <parameter name="sample_rate" value="0" />
   <parameter name="seq_order_length" value="2" />
   <parameter name="seq_order_slot_1" value="0" />
   <parameter name="seq_order_slot_10" value="30" />
@@ -217,6 +211,23 @@
   <parameter name="seq_order_slot_7" value="30" />
   <parameter name="seq_order_slot_8" value="30" />
   <parameter name="seq_order_slot_9" value="30" />
+  <parameter name="simfilename_ch0" value="" />
+  <parameter name="simfilename_ch1" value="" />
+  <parameter name="simfilename_ch10" value="" />
+  <parameter name="simfilename_ch11" value="" />
+  <parameter name="simfilename_ch12" value="" />
+  <parameter name="simfilename_ch13" value="" />
+  <parameter name="simfilename_ch14" value="" />
+  <parameter name="simfilename_ch15" value="" />
+  <parameter name="simfilename_ch16" value="" />
+  <parameter name="simfilename_ch2" value="" />
+  <parameter name="simfilename_ch3" value="" />
+  <parameter name="simfilename_ch4" value="" />
+  <parameter name="simfilename_ch5" value="" />
+  <parameter name="simfilename_ch6" value="" />
+  <parameter name="simfilename_ch7" value="" />
+  <parameter name="simfilename_ch8" value="" />
+  <parameter name="simfilename_ch9" value="" />
   <parameter name="thmax_ch0" value="0.0" />
   <parameter name="thmax_ch1" value="0.0" />
   <parameter name="thmax_ch10" value="0.0" />
@@ -251,7 +262,6 @@
   <parameter name="thmin_ch7" value="0.0" />
   <parameter name="thmin_ch8" value="0.0" />
   <parameter name="thmin_ch9" value="0.0" />
-  <parameter name="tsclkdiv" value="1" />
   <parameter name="tsclksel" value="1" />
   <parameter name="tsd_max" value="125" />
   <parameter name="tsd_min" value="0" />
