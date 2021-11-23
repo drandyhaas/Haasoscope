@@ -1725,7 +1725,7 @@ class Haasoscope():
         serialrate=adjustedbrate/11./(self.num_bytes*num_board+len(max10adcchans)*2*self.nsamp) #including start+2stop bits
         print("rate theoretically",round(serialrate,2),"Hz over serial")
         ports = list(serial.tools.list_ports.comports()); ports.sort(reverse=True)
-        autofindusbports = len(self.usbport)==0
+        autofindusbports = len(self.usbport)==0 and not self.dofastusb
         if self.serport=="" or True:
             for port_no, description, address in ports:
                 print(port_no,":",description,":",address)
