@@ -2,7 +2,8 @@ module oscillo(clk, startTrigger, clk_flash, data_flash1, data_flash2, data_flas
 data_ready, wraddress_triggerpoint, imthelast, imthefirst,rollingtrigger,trigDebug,triggerpoint,downsample,
 trigthresh,trigchannels,triggertype,triggertot,format_sdin_out,div_sclk_out,outsel_cs_out,clk_spi,SPIsend,SPIsenddata,
 wraddress,Acquiring,SPIstate,clk_flash2,trigthreshtwo,dout1,dout2,dout3,dout4,highres,ext_trig_in,use_ext_trig, nsmp, trigout, spareright, spareleft,
-delaycounter,ext_trig_delay, noselftrig, nselftrigcoincidentreq, selftrigtempholdtime, allowsamechancoin);
+delaycounter,ext_trig_delay, noselftrig, nselftrigcoincidentreq, selftrigtempholdtime, allowsamechancoin,
+trigratecounter,trigratecountreset);
 input clk,clk_spi;
 input startTrigger;
 input [1:0] trig_in;
@@ -224,6 +225,13 @@ assign selfedgetrig = (trigchannels[0]&&selftrigtemp[0]&&nselftrigstemp[0]>=nsel
 							 (trigchannels[3]&&selftrigtemp[3]&&nselftrigstemp[3]>=nselftrigcoincidentreq);
 wire selftrig; //trigger is an OR of all the channels which are active // also trigger every second or so (rolling)
 assign selftrig = selfedgetrig || (rollingtrigger&thecounter>=25000000) || (use_ext_trig&ext_trig_in_delayed);
+
+output reg[31:0] trigratecounter=0;
+input trigratecountreset;
+always @(posedge clk_flash) begin
+	if (selfedgetrig) trigratecounter = trigratecounter+1;
+	if (trigratecountreset) trigratecounter=0;
+end
 
 always @(posedge clk_flash)
 if (noselftrig) Trigger = trig_in[1]; // just trigger if we get a trigger in towards to right

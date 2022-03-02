@@ -206,6 +206,13 @@ refer to the applicable agreement for further details.
 		(line (pt 0 432)(pt 16 432)(line_width 1))
 	)
 	(port
+		(pt 0 448)
+		(input)
+		(text "trigratecounter[31..0]" (rect 0 0 80 12)(font "Arial" ))
+		(text "trigratecounter[31..0]" (rect 21 443 101 455)(font "Arial" ))
+		(line (pt 0 448)(pt 16 448)(line_width 3))
+	)
+	(port
 		(pt 360 32)
 		(output)
 		(text "txStart" (rect 0 0 25 12)(font "Arial" ))
@@ -659,6 +666,13 @@ refer to the applicable agreement for further details.
 		(text "allowsamechancoin" (rect 0 0 74 12)(font "Arial" ))
 		(text "allowsamechancoin" (rect 265 1051 339 1063)(font "Arial" ))
 		(line (pt 360 1056)(pt 344 1056)(line_width 1))
+	)
+	(port
+		(pt 360 1072)
+		(output)
+		(text "trigratecountreset" (rect 0 0 68 12)(font "Arial" ))
+		(text "trigratecountreset" (rect 271 1067 339 1079)(font "Arial" ))
+		(line (pt 360 1072)(pt 344 1072)(line_width 1))
 	)
 	(parameter
 		"ram_width"

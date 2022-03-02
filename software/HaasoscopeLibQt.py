@@ -579,7 +579,24 @@ class Haasoscope():
             else:
                 print("getID asked for",num_other_bytes,"bytes and got",len(rslt),"from board",board," - Exiting!")
                 sys.exit(-4)
-    
+
+    def gettrigratecounter(self):
+        self.trigratecounter=[]
+        for board in range(num_board):
+            if self.minfirmwareversion>=17:
+                self.ser.write(bytearray([53, board]))  # make the next board active (serial_passthrough 0)
+            else:
+                self.ser.write(bytearray([30 + board]))  # make the next board active (serial_passthrough 0)
+            self.ser.write(bytearray([151])) #request the trigratecounter from the board
+            num_other_bytes = 4
+            rslt = self.ser.read(num_other_bytes)
+            if len(rslt)==num_other_bytes:
+                byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
+                self.trigratecounter.append( byte_array[0] + 256*byte_array[1] + 256*256*byte_array[2] + 256*256*256*byte_array[3] )
+                print("got trigratecounter",self.trigratecounter[board],"for board",board,", len is now",len(self.trigratecounter))
+            else:
+                print("gettrigratecounter asked for",num_other_bytes,"bytes and got",len(rslt),"from board",board)
+
     def togglesupergainchan(self,chan):
         if self.supergain[chan]==1:
             self.supergain[chan]=0 #x100 super gain on!
@@ -707,6 +724,7 @@ class Haasoscope():
             else: text +="\nRMS={0:1.3g} mV".format(1000.*self.Vrms[self.selectedchannel])        
         if self.dogetotherdata:
             text+="\nTDC: "+str(self.tdcdata)
+        #self.gettrigratecounter()
         return text
     
     def pickline(self,theline):
