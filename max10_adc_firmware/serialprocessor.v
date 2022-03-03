@@ -80,7 +80,7 @@ trigratecounter,trigratecountreset);
 	output reg[4:0] ext_trig_delay=0;
 	output reg noselftrig=0;
 	output reg[1:0] nselftrigcoincidentreq=0; // how many additional coincident channels to require for self trigger
-	output reg[7:0] selftrigtempholdtime=10; // how long to fire a channel for
+	output reg[7:0] selftrigtempholdtime=10; // how long to fire a channel for, to use for coincidence (and now the trigger rate counter too)
 	output reg allowsamechancoin=0; // whether to allow same channel, firing in the past, to count as coincidence
 	
 	input [31:0] trigratecounter;
@@ -898,7 +898,7 @@ trigratecounter,trigratecountreset);
 				end
 			end
 			else if (readdata==149) begin
-				byteswanted=1;//wait for next byte which is how long to hold the self trigger active for (for coincidence purposes)
+				byteswanted=1;//wait for next byte which is how long to hold the self trigger active for (for coincidence purposes, and now trigger rate counter deadtime too)
 				comdata=readdata;
 				newcomdata=1; //pass it on
 				if (bytesread<byteswanted) state=READMORE;

@@ -580,6 +580,7 @@ class Haasoscope():
                 print("getID asked for",num_other_bytes,"bytes and got",len(rslt),"from board",board," - Exiting!")
                 sys.exit(-4)
 
+    trigratecounter = []
     def gettrigratecounter(self):
         self.trigratecounter=[]
         for board in range(num_board):
@@ -593,7 +594,7 @@ class Haasoscope():
             if len(rslt)==num_other_bytes:
                 byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
                 self.trigratecounter.append( byte_array[0] + 256*byte_array[1] + 256*256*byte_array[2] + 256*256*256*byte_array[3] )
-                print("got trigratecounter",self.trigratecounter[board],"for board",board,", len is now",len(self.trigratecounter))
+                #print("got trigratecounter",self.trigratecounter[board],"for board",board,", len is now",len(self.trigratecounter))
             else:
                 print("gettrigratecounter asked for",num_other_bytes,"bytes and got",len(rslt),"from board",board)
 
@@ -715,6 +716,7 @@ class Haasoscope():
         self.ylabel="Volts" #("ADC value")
 
     mymod=1
+    dotriggercounter = 10 # how ofter to update trigger counter (in seconds) (set to 0 to turn off)
     def chantext(self):
         text ="Channel: "+str(self.selectedchannel)
         if self.ydatarefchan>=0: text += " - ref "+str(int(self.ydatarefchan))
@@ -725,11 +727,15 @@ class Haasoscope():
             else: text +="\nRMS={0:1.3g} mV".format(1000.*self.Vrms[self.selectedchannel])        
         if self.dogetotherdata:
             text+="\nTDC: "+str(self.tdcdata)
-        self.mymod = self.mymod + 1
-        #print("mymod is",self.mymod)
-        if self.mymod>=10: # every 10 seconds
-            self.mymod = 0
-            #self.gettrigratecounter()
+        if self.dotriggercounter>0:
+            self.mymod = self.mymod + 1
+            #print("mymod is",self.mymod)
+            if self.mymod>=self.dotriggercounter: # every dotriggercounter seconds
+                self.mymod = 0
+                self.gettrigratecounter()
+            text+="\n\nTrigger counts per board in last "+str(self.dotriggercounter)+"s: "
+            for board in range(len(self.trigratecounter)):
+                text+=str(self.trigratecounter[board])+" "
         return text
     
     def pickline(self,theline):

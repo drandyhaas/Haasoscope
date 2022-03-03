@@ -226,12 +226,19 @@ assign selfedgetrig = (trigchannels[0]&&selftrigtemp[0]&&nselftrigstemp[0]>=nsel
 wire selftrig; //trigger is an OR of all the channels which are active // also trigger every second or so (rolling)
 assign selftrig = selfedgetrig || (rollingtrigger&thecounter>=25000000) || (use_ext_trig&ext_trig_in_delayed);
 
+// trigger rate counter stuff
 output reg[31:0] trigratecounter=0;
 input trigratecountreset;
+reg [7:0] selfedgetrigdeadtime=0; // to keep track of deadtime for the trigger rate counter
 always @(posedge clk_flash) begin
-	if (selfedgetrig) trigratecounter = trigratecounter+1;
+	if (selfedgetrig && selfedgetrigdeadtime==0) begin // only count it if the counter is not dead because a trigger fired recently
+		trigratecounter = trigratecounter+1;
+		selfedgetrigdeadtime<=selftrigtempholdtime; // trigger has fired, start counting down deadtime, from selftrigtempholdtime (same as used for coincidence trigger)
+	end
+	if (selfedgetrigdeadtime>0 && downsamplego) selfedgetrigdeadtime<=selfedgetrigdeadtime-1; // count down deadtime (paying attention to downsample) so the trigger stops being dead after selftrigtempholdtime
 	if (trigratecountreset) trigratecounter=0;
 end
+// end trigger rate counter stuff
 
 always @(posedge clk_flash)
 if (noselftrig) Trigger = trig_in[1]; // just trigger if we get a trigger in towards to right
