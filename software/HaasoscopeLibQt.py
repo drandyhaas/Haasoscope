@@ -713,7 +713,8 @@ class Haasoscope():
     def setyaxis(self):
         #self.ax.set_ylim(self.min_y, self.max_y)
         self.ylabel="Volts" #("ADC value")
-    
+
+    mymod=1
     def chantext(self):
         text ="Channel: "+str(self.selectedchannel)
         if self.ydatarefchan>=0: text += " - ref "+str(int(self.ydatarefchan))
@@ -724,7 +725,11 @@ class Haasoscope():
             else: text +="\nRMS={0:1.3g} mV".format(1000.*self.Vrms[self.selectedchannel])        
         if self.dogetotherdata:
             text+="\nTDC: "+str(self.tdcdata)
-        #self.gettrigratecounter()
+        self.mymod = self.mymod + 1
+        #print("mymod is",self.mymod)
+        if self.mymod>=10: # every 10 seconds
+            self.mymod = 0
+            #self.gettrigratecounter()
         return text
     
     def pickline(self,theline):
