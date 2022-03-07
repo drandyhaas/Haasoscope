@@ -159,6 +159,8 @@ set_false_path -from [get_registers processor:inst|trigchannels*]
 set_false_path -from [get_registers processor:inst|myid*]
 set_false_path -from [get_registers processor:inst|triggerpoint*]
 set_false_path -from [get_registers processor:inst|trigthresh*]
+set_false_path -from [get_registers processor:inst|nselftrigcoincidentreq*]
+
 #ignore for now, don't understand it
 #set_false_path -from [get_registers processor:inst|clockbitstowaitlockin*]
 #ignore for now, not sure how to fix it
