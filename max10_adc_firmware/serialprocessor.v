@@ -851,7 +851,7 @@ trigratecounter,trigratecountreset);
 				end
 				else begin
 					ioCountToSend = 1;
-					data[0]=21; // this is the firmware version
+					data[0]=22; // this is the firmware version
 					state=WRITE1;
 				end
 				

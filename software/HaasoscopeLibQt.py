@@ -111,7 +111,8 @@ class Haasoscope():
         self.noselftrig=False
         self.num_logic_inputs=5 #number of active logic analyzer bits on each board
         self.flyingfast = False # to just read as fast as possible
-        self.domt=False
+        self.domt=False #whether to have separate threads per board
+        self.dotriggercounter = 10 # how ofter to update trigger counter (in seconds) (set to 0 to turn off)
         self.db = False #debugging #True #False
     
         self.dolockin=False # read lockin info
@@ -715,8 +716,6 @@ class Haasoscope():
         #self.ax.set_ylim(self.min_y, self.max_y)
         self.ylabel="Volts" #("ADC value")
 
-    mymod=1
-    dotriggercounter = 10 # how ofter to update trigger counter (in seconds) (set to 0 to turn off)
     def chantext(self):
         text ="Channel: "+str(self.selectedchannel)
         if self.ydatarefchan>=0: text += " - ref "+str(int(self.ydatarefchan))
@@ -727,15 +726,15 @@ class Haasoscope():
             else: text +="\nRMS={0:1.3g} mV".format(1000.*self.Vrms[self.selectedchannel])        
         if self.dogetotherdata:
             text+="\nTDC: "+str(self.tdcdata)
-        if self.dotriggercounter>0:
+        if self.dotriggercounter>0 and self.minfirmwareversion>=22:
             self.mymod = self.mymod + 1
             #print("mymod is",self.mymod)
             if self.mymod>=self.dotriggercounter: # every dotriggercounter seconds
                 self.mymod = 0
                 self.gettrigratecounter()
-            text+="\n\nTrigger counts per board in last "+str(self.dotriggercounter)+"s: "
+            text+="\n\nTrigger rates per board over last "+str(self.dotriggercounter)+"s (Hz):\n"
             for board in range(len(self.trigratecounter)):
-                text+=str(self.trigratecounter[board])+" "
+                text += " "+ str('{:,}'.format(self.trigratecounter[board]/float(self.dotriggercounter)))
         return text
     
     def pickline(self,theline):
@@ -1728,6 +1727,10 @@ class Haasoscope():
                 if not self.makeusbsermap(): return False # figure out which usb connection has which board's data
             self.getIDs() # get the unique ID of each board, for calibration etc.
             self.readcalib() # get the calibrated DAC values for each board; if it fails then use defaults
+            if self.dotriggercounter > 0 and self.minfirmwareversion >= 22: # initialize the trigger rate counter to 0
+                self.mymod = 0
+                self.gettrigratecounter()
+                self.trigratecounter = []
             return True
     
     #cleanup
