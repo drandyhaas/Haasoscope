@@ -562,7 +562,8 @@ class MainWindow(TemplateBaseClass):
             self.lines.append(line)
             self.linepens.append(pen)
         self.ui.chanBox.setMaximum(HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board-1)
-        self.ui.slowchanBox.setMaximum(len(HaasoscopeLibQt.max10adcchans)-1)
+        self.ui.slowchanBox.setMinimum(0)
+        self.ui.slowchanBox.setMaximum(max(len(HaasoscopeLibQt.max10adcchans)-1,0))
         #for the logic analyzer
         for li in np.arange(d.num_logic_inputs):
             line = self.ui.plot.plot(pen=None,name="logic_"+str(li)) # not drawn by default
@@ -765,19 +766,19 @@ if __name__ == '__main__':
     for a in sys.argv:
         if a[0] == "-":
             #print(a)
-            if a[1:3] == "sr":
-                max_slowadc_ram_width = int(a[3:])
-                if max_slowadc_ram_width > HaasoscopeLibQt.max_slowadc_ram_width:
-                    print("max_slowadc_ram_width", max_slowadc_ram_width, "too large")
-                elif max_slowadc_ram_width < 1:
-                    print("max_slowadc_ram_width", max_slowadc_ram_width, "too small")
+            if a[1:3] == "sr": #eg: -sr4
+                slowadc_ram_width = int(a[3:])
+                if slowadc_ram_width > HaasoscopeLibQt.max_slowadc_ram_width:
+                    print("slowadc_ram_width", slowadc_ram_width, "too large")
+                elif slowadc_ram_width < 1:
+                    print("slowadc_ram_width", slowadc_ram_width, "too small")
                 else:
-                    HaasoscopeLibQt.max_slowadc_ram_width = max_slowadc_ram_width
-                    print("max_slowadc_ram_width set to", HaasoscopeLibQt.max_slowadc_ram_width)
-            elif a[1:4] == "adc":
+                    HaasoscopeLibQt.slowadc_ram_width = slowadc_ram_width
+                    print("slowadc_ram_width set to", HaasoscopeLibQt.slowadc_ram_width)
+            elif a[1:4] == "adc": #eg: -adc[(0,110),(0,118)]
                 exec("HaasoscopeLibQt.max10adcchans=" + a[4:])
                 print("max10adcchans set to", HaasoscopeLibQt.max10adcchans)
-            elif a[1] == "r":
+            elif a[1] == "r": #eg: -r12
                 ram_width = int(a[2:])
                 if ram_width > HaasoscopeLibQt.max_ram_width:
                     print("ram_width", ram_width, "is bigger than the max allowed", HaasoscopeLibQt.max_ram_width)
@@ -788,7 +789,7 @@ if __name__ == '__main__':
                 else:
                     HaasoscopeLibQt.ram_width = ram_width
                 print("ram_width set to", HaasoscopeLibQt.ram_width)
-            elif a[1] == "b":
+            elif a[1] == "b": #eg: -b2
                 HaasoscopeLibQt.num_board = int(a[2:])
                 print("num_board set to", HaasoscopeLibQt.num_board)
 
@@ -806,7 +807,7 @@ if __name__ == '__main__':
                 d.dofastusb = True
                 d.dousbparallel = True
                 print("dofastusb", d.dofastusb, "and dousbparallel", d.dousbparallel)
-            elif a[1] == "s":
+            elif a[1] == "s" and a[2]!="r":
                 d.serialdelaytimerwait = int(a[2:])
                 print("serialdelaytimerwait set to", d.serialdelaytimerwait)
             elif a[1] == "p":

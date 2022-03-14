@@ -6,9 +6,10 @@ import sys
 # You might adjust these, just override them before calling construct()
 num_board = 1 # Number of Haasoscope boards to read out
 max_ram_width = 13 # max size of the buffer rams (2*13=8096 bytes)
-max_slowadc_ram_width = 11 # max size of the adc ram (2*11=2048 bytes)
 ram_width = 9 # width in bits of sample ram to use (e.g. 9==512 samples)
 max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp
+max_slowadc_ram_width = 11 # max size of the slow adc ram (2*11=2048 bytes)
+slowadc_ram_width = 4 # width in bits of slow adc sample ram to use (e.g. 4==16 samples)
 sendincrement=0 # 0 would skip 2**0=1 byte each time, i.e. send all bytes
 num_chan_per_board = 4 # number of high-speed ADC channels on a Haasoscope board
 
@@ -60,7 +61,7 @@ class Haasoscope():
     def construct(self):
         self.num_samples = int(pow(2,ram_width)/pow(2,sendincrement)) # num samples per channel, max is pow(2,ram_width)/pow(2,0)=4096
         self.num_bytes = int(self.num_samples*num_chan_per_board) #num bytes per board
-        self.nsamp=int(pow(2,min(ram_width,max_slowadc_ram_width))-1) #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
+        self.nsamp=int(pow(2,min(ram_width,slowadc_ram_width))-1) #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
         print("num main ADC and max10adc bytes for all boards = ",self.num_bytes*num_board,"and",len(max10adcchans)*2*self.nsamp)
         self.serialdelaytimerwait=100 #150 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
         if mearm: self.serialdelaytimerwait+=600
