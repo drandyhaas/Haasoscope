@@ -287,7 +287,7 @@ class Haasoscope():
         self.ser.write(bytearray([127]))
         tp=255-tp # need to flip it due to op amp
         self.ser.write(bytearray([tp]))
-        #print "Trigger threshold is",tp
+        #print("Trigger threshold is",tp)
         
     def settriggerthresh2(self,tp):
         #tell it the high trigger threshold (must be below this to trigger)

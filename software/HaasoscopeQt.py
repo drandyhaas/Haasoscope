@@ -371,7 +371,7 @@ class MainWindow(TemplateBaseClass):
         d.settriggerthresh(value)
         self.hline = (float(  value-128  )*d.yscale/256.)
         self.otherlines[1].setData( [d.min_x, d.max_x], [self.hline, self.hline] ) # horizontal line showing trigger threshold
-    
+
     def triggerlevel2changed(self,value):
         d.settriggerthresh2(value)                
         self.hline2 =(float(  value-128  )*d.yscale/256.)
@@ -750,9 +750,10 @@ class MainWindow(TemplateBaseClass):
 
     def drawtext(self): # happens once per second
         self.ui.textBrowser.setText(d.chantext())
+        self.ui.textBrowser.append("trigger threshold: " + str(round(self.hline,3)))
         if trigboardport!="" and trigboard.extclock:
             delaycounters = trigboard.get_delaycounters()
-            self.ui.textBrowser.append("delaycounters: "+str(delaycounters))
+            self.ui.textBrowser.append("delay counters: "+str(delaycounters))
             self.ui.textBrowser.append(trigboard.get_histos())
             for b in range(HaasoscopeLibQt.num_board):
                 if not delaycounters[b]:
