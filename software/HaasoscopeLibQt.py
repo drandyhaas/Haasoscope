@@ -113,7 +113,7 @@ class Haasoscope():
         self.num_logic_inputs=5 #number of active logic analyzer bits on each board
         self.flyingfast = False # to just read as fast as possible
         self.domt=False #whether to have separate threads per board
-        self.dotriggercounter = 10 # how ofter to update trigger counter (in seconds) (set to 0 to turn off)
+        self.dotriggercounter = 2 # how ofter to update trigger counter (in seconds) (set to 0 to turn off)
         self.db = False #debugging #True #False
     
         self.dolockin=False # read lockin info
@@ -730,7 +730,7 @@ class Haasoscope():
         if self.dotriggercounter>0 and self.minfirmwareversion>=22:
             self.mymod = self.mymod + 1
             #print("mymod is",self.mymod)
-            if self.mymod>=self.dotriggercounter: # every dotriggercounter seconds
+            if self.rollingtrigger and self.mymod>=self.dotriggercounter: # every dotriggercounter seconds
                 self.mymod = 0
                 self.gettrigratecounter()
             text+="\n\nTrigger rates per board over last "+str(self.dotriggercounter)+"s (Hz):\n"
@@ -1730,7 +1730,7 @@ class Haasoscope():
             self.readcalib() # get the calibrated DAC values for each board; if it fails then use defaults
             if self.dotriggercounter > 0 and self.minfirmwareversion >= 22: # initialize the trigger rate counter to 0
                 self.mymod = 0
-                self.gettrigratecounter()
+                if self.rollingtrigger: self.gettrigratecounter()
                 self.trigratecounter = []
             return True
     
