@@ -405,8 +405,7 @@ class MainWindow(TemplateBaseClass):
         self.ui.rollingButton.setChecked(d.rolltrigger)
         if d.rolltrigger: self.ui.rollingButton.setText("Rolling/Auto")
         else: self.ui.rollingButton.setText("Normal")
-        app.processEvents()
-        
+
     def single(self):
         d.getone = not d.getone
         self.ui.singleButton.setChecked(d.getone)
@@ -749,6 +748,7 @@ class MainWindow(TemplateBaseClass):
             if d.getone and not d.timedout: self.dostartstop()
 
     def drawtext(self): # happens once per second
+        d.tellrolltrig(d.rolltrigger) #because sometimes the message had been lost
         self.ui.textBrowser.setText(d.chantext())
         self.ui.textBrowser.append("trigger threshold: " + str(round(self.hline,3)))
         if trigboardport!="" and trigboard.extclock:

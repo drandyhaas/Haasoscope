@@ -157,8 +157,8 @@ class Haasoscope():
     
     def tellrolltrig(self,rt):
         #tell them to roll the trigger (a self-trigger each ~second), or not
-        if rt: self.ser.write(bytearray([101])); self.rollingtrigger=True; print("rolling trigger")
-        else:  self.ser.write(bytearray([102])); self.rollingtrigger=False; print("not rolling trigger")
+        if rt: self.ser.write(bytearray([101])); self.rollingtrigger=True; #print("rolling trigger")
+        else:  self.ser.write(bytearray([102])); self.rollingtrigger=False; #print("not rolling trigger")
 
     def tellsamplesmax10adc(self):
         #tell it the number of samples to use for the 1MHz internal Max10 ADC
@@ -1545,8 +1545,8 @@ class Haasoscope():
             if self.db: print(time.time()-self.oldtime,"getting max10adc chan",chan,"for bn",bn)
             rslt = self.ser.read(self.nsamp*2) #read N bytes (2 per sample)
             if self.db: print(time.time()-self.oldtime,"getmax10adc got bytes:",len(rslt))
-            if len(rslt)!=(self.nsamp*2): 
-                print(time.time()-self.oldtime,"getmax10adc got bytes:",len(rslt),"for board",bn,"and chan",chan)
+            if len(rslt)!=(self.nsamp*2):
+                if self.rollingtrigger: print(time.time()-self.oldtime,"getmax10adc got bytes:",len(rslt),"for board",bn,"and chan",chan)
                 return
             byte_array = unpack('%dB'%len(rslt),rslt) #Convert serial data to array of numbers
             db2=False #True #False
