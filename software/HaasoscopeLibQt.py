@@ -45,10 +45,10 @@ enable_fastusb=True # set to True to be able to use the fastusb2 writing
 if enable_fastusb:
     if mewin:
         useftd2xx = True
-        #print("Using ftd2xx driver on Windows")
+        print("Using ftd2xx driver on Windows")
     else:
         useftd2xx = False
-        #print("Using pyftdi on Linux")
+        print("Using pyftdi on Linux")
     useftdi = not useftd2xx
     if useftd2xx:
         import ftd2xx as ftd
