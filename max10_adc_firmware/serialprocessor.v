@@ -18,7 +18,7 @@ trigratecounter,trigratecountreset);
    output reg txStart;
    output reg[7:0] txData;
    output reg[7:0] readdata;//first byte we got
-   output wire spare,debug3,debug4;
+   output wire spare;
 	reg led1,led2,led3,led4;
 	reg io1,io2,io3,io4;
   	output reg get_ext_data;
@@ -72,7 +72,7 @@ trigratecounter,trigratecountreset);
 	output wire[3:0] offset;
 	output reg[3:0] gainsw;
 	reg[3:0] oversamp;
-	output wire debug1,debug2;
+	output reg debug1=0,debug2=0,debug3=0,debug4=0;
 	input [63:0] chip_id;
 	output reg highres=0;
 	output reg use_ext_trig=0;
@@ -1155,11 +1155,9 @@ trigratecounter,trigratecountreset);
 				usb2counter<=0;
 				state=WRITE_USB_EXT2;
 			end
-			//debug2<=1;
 			rden = 1;
 		end
 		WRITE_USB_EXT2: begin
-			//debug2<=0;
 			usb2counter<=usb2counter+1;
 			//rotate through the outputs
 			case(SendCount[ram_width+2:ram_width])
@@ -1311,11 +1309,6 @@ trigratecounter,trigratecountreset);
 	 
   end
 
-//for debugging
-assign debug1=send_fast_usb2;//state[0];
-assign debug2=send_fast_usb2_done;//state[1];
-assign debug3=(usb2state[0]);
-assign debug4=(usb2state[1]);
 
 //for fast usb2
 reg send_fast_usb2=0;
@@ -1443,8 +1436,30 @@ end
 		end
 	endcase
 	end
+	
+	// for image sensor
+	reg [20:0] imagesensorclkcounter=0,imagesensorclkcounter2=0; // max 2^20 = 1,048,576
+	always @(posedge clk) begin
+		// pin 100 (debug4) is 10 MHz clock
+		imagesensorclkcounter = imagesensorclkcounter + 1;
+		imagesensorclkcounter2 = imagesensorclkcounter2 + 1;
+		if (imagesensorclkcounter==50000) begin // 1 kHz
+			debug1=1;//pin 89
+		end
+		if (imagesensorclkcounter==50010) begin
+			imagesensorclkcounter=0;
+			debug1=0;
+		end
+		if (imagesensorclkcounter2==1000000) begin // 50 Hz
+			debug2=1; // pin 90
+		end
+		if (imagesensorclkcounter2==1000002) begin
+			imagesensorclkcounter2=0;
+			debug2=0;
+		end
+	end
   
-  	//update display
+  	// update display
 	reg [5:0] columndata;
 	reg [2:0] row;
 	reg [6:0] column;
