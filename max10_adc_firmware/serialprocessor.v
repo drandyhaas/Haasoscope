@@ -962,13 +962,8 @@ trigratecounter,trigratecountreset);
 				rdadtwo_slow = rdaddress_slow;
 				thecounterbit=thecounter[clockbitstowait];
 				thecounterbitlockin=thecounter[clockbitstowaitlockin];
-				if (lockinnumtoshift>0) begin
-					lockinresult1=0;
-					lockinresult2=0;
-					chan2mean=0;
-					chan3mean=0;
-					calcmeans=1;
-					state=LOCKIN1;
+				if (averagestodo>0) begin					
+					state=AVERAGING1;
 				end
 				else begin
 					if (do_usb) begin
@@ -991,101 +986,42 @@ trigratecounter,trigratecountreset);
 				//state=WRITE1;
 			end
 		end
-		LOCKIN1: begin
+		
+		AVERAGING1: begin
 			rden = 1;
-			if ( (thecounter[clockbitstowaitlockin]!=thecounterbitlockin) ) begin
-			case(SendCount[ram_width+1:ram_width]) // we go through the samples 4 times
-				0: begin
-					// first time through we calculate the means
-					chan2mean = chan2mean + ram_output3;
-					chan3mean = chan3mean + ram_output4;
-				end
-				1: begin
-					if (calcmeans) begin // do this just once - divide by the number of samples to get the average
-						calcmeans=0;
-						chan2mean = chan2mean/4096;
-						chan3mean = chan3mean/4096;
-					end
-					// next time through we calculate c2 * offset c3
-					// shift rdadtwo and then accumulate
-					if (SendCount[ram_width-1:0]>lockinnumtoshift && SendCount[ram_width-1:0]<(4096-lockinnumtoshift)) begin
-						lockinresult2 = lockinresult2 + (ram_output3-chan2mean[7:0])*(ram_output4-chan3mean[7:0]);	// accumulate the vector of channel 2 * shifted channel 3
-					end
-				end
-				2: begin
-					// next time through we calculate c2*c3
-					if (SendCount[ram_width-1:0]>lockinnumtoshift && SendCount[ram_width-1:0]<(4096-lockinnumtoshift)) begin
-						lockinresult1 = lockinresult1 + (ram_output3-chan2mean)*(ram_output4-chan3mean);	// accumulate the vector of channel 2 * channel 3	
-					end
-				end
-				3: begin
-						
-				end
+			//rotate through the outputs
+			case(SendCount[ram_width+2:ram_width])
+			0: txData<=ram_output1;
+			1: txData<=ram_output2;
+			2: txData<=ram_output3;
+			3: txData<=ram_output4;
+			4: txData<=digital_buffer1; // the digital logic analyzer buffer
 			endcase			
-			SendCount = SendCount + 1;
-			rdaddress_slow = rdaddress_slow + 1;
-			if (SendCount[ram_width+1:ram_width]==1) rdadtwo_slow=rdaddress_slow-lockinnumtoshift;
-			else rdadtwo_slow=rdaddress_slow;
-			state=LOCKIN2;
-			end // the counter
-		end
-		LOCKIN2: begin	
-			state=LOCKIN3;
-		end
-		LOCKIN3: begin
-			if ( (thecounter[clockbitstowaitlockin]==thecounterbitlockin) ) begin
-			if(SendCount[ram_width+1:0]==0) begin // we're done
-				ioCount = 0;
-				SendCount = 0; // have to reset that top bit
-				state=LOCKINWRITE1;
-			end
-			else begin
-				state=LOCKIN1;
-			end
-			end // the counter
-		end
-		LOCKINWRITE1: begin
-       if (!txBusy) begin
-          if (ioCount==0) txData = lockinresult1[7+8*0:0+8*0];
-          else if (ioCount==1) txData = lockinresult1[7+8*1:0+8*1];
-          else if (ioCount==2) txData = lockinresult1[7+8*2:0+8*2];
-          else if (ioCount==3) txData = lockinresult1[7+8*3:0+8*3];
-          else if (ioCount==4) txData = lockinresult2[7+8*0:0+8*0];
-          else if (ioCount==5) txData = lockinresult2[7+8*1:0+8*1];
-          else if (ioCount==6) txData = lockinresult2[7+8*2:0+8*2];
-          else if (ioCount==7) txData = lockinresult2[7+8*3:0+8*3];			 
-			 else if (ioCount==8) txData = chan2mean[7+8*0:0+8*0];
-          else if (ioCount==9) txData = chan2mean[7+8*1:0+8*1];
-          else if (ioCount==10) txData = chan2mean[7+8*2:0+8*2];
-          else if (ioCount==11) txData = chan2mean[7+8*3:0+8*3];
-			 else if (ioCount==12) txData = chan3mean[7+8*0:0+8*0];
-          else if (ioCount==13) txData = chan3mean[7+8*1:0+8*1];
-          else if (ioCount==14) txData = chan3mean[7+8*2:0+8*2];
-          else if (ioCount==15) txData = chan3mean[7+8*3:0+8*3];
-			 else txData = 0;
-          txStart = 1;
-          state = LOCKINWRITE2;
-        end
-      end
-      LOCKINWRITE2: begin
-        txStart = 0;
-        if (ioCount < numlockinbytes-1) begin
-          ioCount = ioCount + 1;
-          state = LOCKINWRITE1;
-        end
-		  else begin
+			SendCount = SendCount + (2**sendincrement);
+			rdaddress_slow = rdaddress_slow + (2**sendincrement);
+			rdadtwo_slow = rdaddress_slow;
+			if (nsmp>0 && SendCount[ram_width-1:0]>=nsmp) begin
+				SendCount[ram_width-1:0]=0;
+				SendCount[ram_width+2:ram_width] = (SendCount[ram_width+2:ram_width] + 1);
 				rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
 				rdadtwo_slow = rdaddress_slow;
-				thecounterbit=thecounter[clockbitstowait];
-				if (do_usb) begin
-					if (do_fast_usb) begin
-						state=WRITE_USBFAST_EXT1;
+			end
+			state=AVERAGING2;
+		end
+		AVERAGING2: begin
+			if(SendCount[ram_width+2:ram_width]==blockstosend) begin // it's 5 (or more) blocks including the logic analyzer info
+					rden = 0;
+					if (autorearm) begin
+						//tell them all to prime the trigger
+						get_ext_data=1;
 					end
-					else state=WRITE_USB_EXT1;
-				end
-				else state=WRITE_EXT1;
-        end
-      end
+					state=WAITING;
+			end
+			else begin
+				state=AVERAGING1;
+			end
+		end
+		
 		WRITE_EXT1: begin
 			timeoutcounter=timeoutcounter+1;
 			rden = 1;
