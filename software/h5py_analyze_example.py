@@ -1,8 +1,11 @@
 import h5py
 import time
 import matplotlib.pyplot as plt
+import sys
 
-f=h5py.File('Haasoscope_out_20210930-135106.h5',"r") # can get from https://www.dropbox.com/s/uzmqxn81o9c74e2/Haasoscope_out_20210930-135106.h5?dl=1
+filename = sys.argv[-1]
+
+f=h5py.File(filename,"r") # can get from https://www.dropbox.com/s/uzmqxn81o9c74e2/Haasoscope_out_20210930-135106.h5?dl=1
 nevents=len(f.keys()) #number of events stored
 print(nevents,"events")
 events=list(f.items())

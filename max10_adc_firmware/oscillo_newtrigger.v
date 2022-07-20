@@ -47,7 +47,7 @@ input [1:0] nselftrigcoincidentreq; // number of self trig channels required to 
 input [7:0] selftrigtempholdtime; // how long to fire a channel for
 input allowsamechancoin; // whether to allow same channel, firing in the past, to count as coincidence
 
-output wire [3:0] trigout;
+output reg [3:0] trigout;
 output wire spareright;
 input wire spareleft;
 
