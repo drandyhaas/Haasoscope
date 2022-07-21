@@ -962,10 +962,10 @@ averagein,averagewren,averageaddress,averageout
 		end
 		
 		WAITING: begin
-			get_ext_data=0;//unready the trigger
 			newcomdata<=0; //set this back, to just send out data once
 			timeoutcounter=timeoutcounter+1;
 			if (ext_data_ready) begin // can read out
+				get_ext_data=0;//unready the trigger
 				SendCount= 0;
 				averageaddress = 0;
 				rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
