@@ -10,7 +10,9 @@ rdadtwo,trigthreshtwo, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_b
 phasecounterselect,phaseupdown,phasestep,scanclk,
 ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd,
 nselftrigcoincidentreq, selftrigtempholdtime, allowsamechancoin,
-trigratecounter,trigratecountreset);
+trigratecounter,trigratecountreset,
+averagein,averagewren,averageaddress,averageout
+);
    input clk;
 	input[7:0] rxData;
    input rxReady;
@@ -97,11 +99,17 @@ trigratecounter,trigratecountreset);
 	reg [3:0] i2c_datacounttosend,i2c_datacount;
 	reg i2cgo=0;
 	reg i2cdoread=0;
+	
+	reg [7:0] averagestodo=20;
+	output reg [11:0] averageaddress=0;
+	output reg [7:0] averagein=0;
+	output reg averagewren;
+	input [7:0] averageout;
 
   localparam READ=0, SOLVING=1, WAITING=2, WRITE_EXT1=3, WRITE_EXT2=4, WAIT_ADC1=5, WAIT_ADC2=6, WRITE_BYTE1=7, WRITE_BYTE2=8, READMORE=9, 
 	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15,
 	WRITE_USBFAST_EXT1=16, WRITE_USBFAST_EXT2=17,
-	LOCKIN1=18,LOCKIN2=19,LOCKIN3=20,LOCKINWRITE1=21,LOCKINWRITE2=22,
+	AVERAGING1=18,AVERAGING2=19, // LOCKIN3=20,LOCKINWRITE1=21,LOCKINWRITE2=22,
 	WRITE_USB_EXT1=24, WRITE_USB_EXT2=25, WRITE_USB_EXT3=26, WRITE_USB_EXT4=27, WRITE_USB_EXT5=28,
 	PLLCLOCK=30;
   reg[4:0] state,i2cstate;
@@ -954,18 +962,22 @@ trigratecounter,trigratecountreset);
 		end
 		
 		WAITING: begin
+			get_ext_data=0;//unready the trigger
 			newcomdata<=0; //set this back, to just send out data once
 			timeoutcounter=timeoutcounter+1;
 			if (ext_data_ready) begin // can read out
 				SendCount= 0;
+				averageaddress = 0;
 				rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
 				rdadtwo_slow = rdaddress_slow;
 				thecounterbit=thecounter[clockbitstowait];
 				thecounterbitlockin=thecounter[clockbitstowaitlockin];
-				if (averagestodo>0) begin					
+				if (averagestodo>0) begin
+					averagestodo=averagestodo-1;
 					state=AVERAGING1;
 				end
 				else begin
+					averagestodo=20;
 					if (do_usb) begin
 						if (do_fast_usb) begin
 							if (checkfastusbwriting) begin
@@ -989,13 +1001,14 @@ trigratecounter,trigratecountreset);
 		
 		AVERAGING1: begin
 			rden = 1;
+			averagewren=0;
 			//rotate through the outputs
 			case(SendCount[ram_width+2:ram_width])
 			0: txData<=ram_output1;
 			1: txData<=ram_output2;
 			2: txData<=ram_output3;
 			3: txData<=ram_output4;
-			4: txData<=digital_buffer1; // the digital logic analyzer buffer
+			//4: txData<=digital_buffer1; // the digital logic analyzer buffer
 			endcase			
 			SendCount = SendCount + (2**sendincrement);
 			rdaddress_slow = rdaddress_slow + (2**sendincrement);
@@ -1006,15 +1019,18 @@ trigratecounter,trigratecountreset);
 				rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
 				rdadtwo_slow = rdaddress_slow;
 			end
+			averageaddress = averageaddress+1;
 			state=AVERAGING2;
 		end
 		AVERAGING2: begin
-			if(SendCount[ram_width+2:ram_width]==blockstosend) begin // it's 5 (or more) blocks including the logic analyzer info
+			averagewren=1;
+			averagein=txData;//+averageout;
+			if(SendCount[ram_width+2:ram_width]==4) begin // it's 5 (or more) blocks including the logic analyzer info
 					rden = 0;
-					if (autorearm) begin
-						//tell them all to prime the trigger
-						get_ext_data=1;
-					end
+					//if (autorearm) begin						
+						get_ext_data=1; //tell them all to prime the trigger
+					//end
+					averagewren=0;
 					state=WAITING;
 			end
 			else begin
@@ -1027,10 +1043,10 @@ trigratecounter,trigratecountreset);
 			rden = 1;
 			//rotate through the outputs
 			case(SendCount[ram_width+2:ram_width])
-			0: txData<=ram_output1;
-			1: txData<=ram_output2;
-			2: txData<=ram_output3;
-			3: txData<=ram_output4;
+			0: txData<=averageout;//ram_output1;
+			1: txData<=averageout;//ram_output2;
+			2: txData<=averageout;//ram_output3;
+			3: txData<=averageout;//ram_output4;
 			4: txData<=digital_buffer1; // the digital logic analyzer buffer
 			endcase
 			if( (!txBusy) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles				
@@ -1045,6 +1061,7 @@ trigratecounter,trigratecountreset);
 					rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
 					rdadtwo_slow = rdaddress_slow;
 				end
+				averageaddress = averageaddress+1;
 				state=WRITE_EXT2;
 			end
 			if ( timeoutcounter > 100000000 ) begin

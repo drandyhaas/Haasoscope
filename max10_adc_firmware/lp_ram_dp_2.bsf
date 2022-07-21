@@ -26,9 +26,9 @@ refer to the applicable agreement for further details.
 	(port
 		(pt 0 32)
 		(input)
-		(text "data[4..0]" (rect 0 0 53 14)(font "Arial" (font_size 8)))
-		(text "data[4..0]" (rect 4 18 47 31)(font "Arial" (font_size 8)))
-		(line (pt 0 32)(pt 112 32)(line_width 3))
+		(text "data[0]" (rect 0 0 38 14)(font "Arial" (font_size 8)))
+		(text "data[0]" (rect 4 18 35 31)(font "Arial" (font_size 8)))
+		(line (pt 0 32)(pt 112 32))
 	)
 	(port
 		(pt 0 48)
@@ -75,9 +75,9 @@ refer to the applicable agreement for further details.
 	(port
 		(pt 256 88)
 		(output)
-		(text "q[4..0]" (rect 0 0 35 14)(font "Arial" (font_size 8)))
-		(text "q[4..0]" (rect 223 74 251 87)(font "Arial" (font_size 8)))
-		(line (pt 256 88)(pt 192 88)(line_width 3))
+		(text "q[0]" (rect 0 0 21 14)(font "Arial" (font_size 8)))
+		(text "q[0]" (rect 235 74 251 87)(font "Arial" (font_size 8)))
+		(line (pt 256 88)(pt 192 88))
 	)
 	(drawing
 		(text "8192 Word(s)" (rect 137 11 244 203)(font "Arial" )(vertical))
@@ -94,7 +94,7 @@ refer to the applicable agreement for further details.
 		(line (pt 112 34)(pt 114 36))
 		(line (pt 114 36)(pt 112 38))
 		(line (pt 98 36)(pt 112 36))
-		(line (pt 120 32)(pt 128 32)(line_width 3))
+		(line (pt 120 32)(pt 128 32))
 		(line (pt 112 43)(pt 120 43))
 		(line (pt 120 43)(pt 120 55))
 		(line (pt 120 55)(pt 112 55))
@@ -137,7 +137,7 @@ refer to the applicable agreement for further details.
 		(line (pt 184 90)(pt 186 92))
 		(line (pt 186 92)(pt 184 94))
 		(line (pt 176 92)(pt 184 92))
-		(line (pt 168 88)(pt 184 88)(line_width 3))
+		(line (pt 168 88)(pt 184 88))
 		(line (pt 0 0)(pt 257 0))
 		(line (pt 257 0)(pt 257 178))
 		(line (pt 0 178)(pt 257 178))
