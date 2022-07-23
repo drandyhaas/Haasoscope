@@ -94,7 +94,7 @@ module ramavg (
 		altsyncram_component.outdata_aclr_a = "NONE",
 		altsyncram_component.outdata_reg_a = "UNREGISTERED",
 		altsyncram_component.power_up_uninitialized = "FALSE",
-		altsyncram_component.read_during_write_mode_port_a = "DONT_CARE",
+		altsyncram_component.read_during_write_mode_port_a = "OLD_DATA",
 		altsyncram_component.widthad_a = 12,
 		altsyncram_component.width_a = 8,
 		altsyncram_component.width_byteena_a = 1;
@@ -127,7 +127,7 @@ endmodule
 // Retrieval info: PRIVATE: MIFfilename STRING ""
 // Retrieval info: PRIVATE: NUMWORDS_A NUMERIC "4096"
 // Retrieval info: PRIVATE: RAM_BLOCK_TYPE NUMERIC "0"
-// Retrieval info: PRIVATE: READ_DURING_WRITE_MODE_PORT_A NUMERIC "2"
+// Retrieval info: PRIVATE: READ_DURING_WRITE_MODE_PORT_A NUMERIC "1"
 // Retrieval info: PRIVATE: RegAddr NUMERIC "1"
 // Retrieval info: PRIVATE: RegData NUMERIC "1"
 // Retrieval info: PRIVATE: RegOutput NUMERIC "0"
@@ -149,7 +149,7 @@ endmodule
 // Retrieval info: CONSTANT: OUTDATA_ACLR_A STRING "NONE"
 // Retrieval info: CONSTANT: OUTDATA_REG_A STRING "UNREGISTERED"
 // Retrieval info: CONSTANT: POWER_UP_UNINITIALIZED STRING "FALSE"
-// Retrieval info: CONSTANT: READ_DURING_WRITE_MODE_PORT_A STRING "DONT_CARE"
+// Retrieval info: CONSTANT: READ_DURING_WRITE_MODE_PORT_A STRING "OLD_DATA"
 // Retrieval info: CONSTANT: WIDTHAD_A NUMERIC "12"
 // Retrieval info: CONSTANT: WIDTH_A NUMERIC "8"
 // Retrieval info: CONSTANT: WIDTH_BYTEENA_A NUMERIC "1"

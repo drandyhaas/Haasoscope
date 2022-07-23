@@ -100,18 +100,19 @@ averagein,averagewren,averageaddress,averageout
 	reg i2cgo=0;
 	reg i2cdoread=0;
 	
-	reg [7:0] averagestodo=100; // max 2^8-1 = 255
-	reg [7:0] averageT=20;
-	reg [7:0] averageTmult;
+	reg [7:0] averagestodo=127;
+	reg [7:0] averageT=127;
+	//reg [7:0] averageTplus1=128; // should be 2**N ?
 	output reg [11:0] averageaddress=0;
 	output reg [7:0] averagein=0;
 	output reg averagewren;
 	input [7:0] averageout;
+	reg [15:0] averageouttemp; // use more bits??
 
   localparam READ=0, SOLVING=1, WAITING=2, WRITE_EXT1=3, WRITE_EXT2=4, WAIT_ADC1=5, WAIT_ADC2=6, WRITE_BYTE1=7, WRITE_BYTE2=8, READMORE=9, 
 	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15,
 	WRITE_USBFAST_EXT1=16, WRITE_USBFAST_EXT2=17,
-	AVERAGING1=18,AVERAGING2=19, // LOCKIN3=20,LOCKINWRITE1=21,LOCKINWRITE2=22,
+	AVERAGING1=18,AVERAGING2=19,AVERAGING3=20,AVERAGING4=21,AVERAGING5=22,
 	WRITE_USB_EXT1=24, WRITE_USB_EXT2=25, WRITE_USB_EXT3=26, WRITE_USB_EXT4=27, WRITE_USB_EXT5=28,
 	PLLCLOCK=30;
   reg[4:0] state,i2cstate;
@@ -969,18 +970,18 @@ averagein,averagewren,averageaddress,averageout
 			if (ext_data_ready) begin // can read out
 				get_ext_data=0;//unready the trigger
 				SendCount= 0;
-				averageaddress = 0;
+				averageaddress <= 0;
 				rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
 				rdadtwo_slow = rdaddress_slow;
 				thecounterbit=thecounter[clockbitstowait];
 				thecounterbitlockin=thecounter[clockbitstowaitlockin];
 				if (averagestodo>0) begin
 					averagestodo=averagestodo-1;
-					averageTmult = 1/((1/averageT)+1);
+
 					state=AVERAGING1;
 				end
 				else begin
-					averagestodo=100;
+					averagestodo=127;
 					if (do_usb) begin
 						if (do_fast_usb) begin
 							if (checkfastusbwriting) begin
@@ -1004,14 +1005,13 @@ averagein,averagewren,averageaddress,averageout
 		
 		AVERAGING1: begin
 			rden = 1;
-			averagewren=1;
+			averagewren=0;
 			//rotate through the outputs
 			case(SendCount[ram_width+2:ram_width])
 			0: txData<=ram_output1;
 			1: txData<=ram_output2;
 			2: txData<=ram_output3;
 			3: txData<=ram_output4;
-			//4: txData<=digital_buffer1; // the digital logic analyzer buffer
 			endcase			
 			SendCount = SendCount + (2**sendincrement);
 			rdaddress_slow = rdaddress_slow + (2**sendincrement);
@@ -1022,23 +1022,32 @@ averagein,averagewren,averageaddress,averageout
 				rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
 				rdadtwo_slow = rdaddress_slow;
 			end
-			averageaddress = averageaddress+1;
-			//state=AVERAGING2;
-		//end
-		//AVERAGING2: begin
-			//averagewren=1;
-			averagein=( (averageout*averageT) +txData) * averageTmult / averageT;
+			state=AVERAGING2;
+		end
+		AVERAGING2: begin
+			averageouttemp<= (averageout*averageT) +txData;
+			state=AVERAGING3;
+		end
+		AVERAGING3: begin
+			averageouttemp<= averageouttemp / 128; // was /averageTplus1, make constant for optimization of divide by 2**N
+			state=AVERAGING4;
+		end
+		AVERAGING4: begin
+			averagewren=1;
+			averagein<= averageouttemp;
+			state=AVERAGING5;
+		end
+		AVERAGING5: begin			
+			averageaddress <= averageaddress+1;
 			if(SendCount[ram_width+2:ram_width]==4) begin // it's just 4 blocks (no logic analyzer info)
 					rden = 0;
-					//if (autorearm) begin						
-						get_ext_data=1; //tell them all to prime the trigger
-					//end
+					get_ext_data=1; //tell them all to prime the trigger
 					averagewren=0;
 					state=WAITING;
 			end
-			//else begin
-				//state=AVERAGING1;
-			//end
+			else begin
+				state=AVERAGING1;
+			end
 		end
 		
 		WRITE_EXT1: begin
@@ -1064,7 +1073,7 @@ averagein,averagewren,averageaddress,averageout
 					rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
 					rdadtwo_slow = rdaddress_slow;
 				end
-				averageaddress = averageaddress+1;
+				averageaddress <= averageaddress+1;
 				state=WRITE_EXT2;
 			end
 			if ( timeoutcounter > 100000000 ) begin
