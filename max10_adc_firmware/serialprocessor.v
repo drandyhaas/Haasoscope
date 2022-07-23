@@ -100,7 +100,9 @@ averagein,averagewren,averageaddress,averageout
 	reg i2cgo=0;
 	reg i2cdoread=0;
 	
-	reg [7:0] averagestodo=20;
+	reg [7:0] averagestodo=100; // max 2^8-1 = 255
+	reg [7:0] averageT=20;
+	reg [7:0] averageTmult;
 	output reg [11:0] averageaddress=0;
 	output reg [7:0] averagein=0;
 	output reg averagewren;
@@ -974,10 +976,11 @@ averagein,averagewren,averageaddress,averageout
 				thecounterbitlockin=thecounter[clockbitstowaitlockin];
 				if (averagestodo>0) begin
 					averagestodo=averagestodo-1;
+					averageTmult = 1/((1/averageT)+1);
 					state=AVERAGING1;
 				end
 				else begin
-					averagestodo=20;
+					averagestodo=100;
 					if (do_usb) begin
 						if (do_fast_usb) begin
 							if (checkfastusbwriting) begin
@@ -1001,7 +1004,7 @@ averagein,averagewren,averageaddress,averageout
 		
 		AVERAGING1: begin
 			rden = 1;
-			averagewren=0;
+			averagewren=1;
 			//rotate through the outputs
 			case(SendCount[ram_width+2:ram_width])
 			0: txData<=ram_output1;
@@ -1020,12 +1023,12 @@ averagein,averagewren,averageaddress,averageout
 				rdadtwo_slow = rdaddress_slow;
 			end
 			averageaddress = averageaddress+1;
-			state=AVERAGING2;
-		end
-		AVERAGING2: begin
-			averagewren=1;
-			averagein=txData;//+averageout;
-			if(SendCount[ram_width+2:ram_width]==4) begin // it's 5 (or more) blocks including the logic analyzer info
+			//state=AVERAGING2;
+		//end
+		//AVERAGING2: begin
+			//averagewren=1;
+			averagein=( (averageout*averageT) +txData) * averageTmult / averageT;
+			if(SendCount[ram_width+2:ram_width]==4) begin // it's just 4 blocks (no logic analyzer info)
 					rden = 0;
 					//if (autorearm) begin						
 						get_ext_data=1; //tell them all to prime the trigger
@@ -1033,9 +1036,9 @@ averagein,averagewren,averageaddress,averageout
 					averagewren=0;
 					state=WAITING;
 			end
-			else begin
-				state=AVERAGING1;
-			end
+			//else begin
+				//state=AVERAGING1;
+			//end
 		end
 		
 		WRITE_EXT1: begin
