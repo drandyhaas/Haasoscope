@@ -100,14 +100,15 @@ averagein,averagewren,averageaddress,averageout
 	reg i2cgo=0;
 	reg i2cdoread=0;
 	
-	reg [7:0] averagestodo=127;
-	reg [7:0] averageT=127;
-	//reg [7:0] averageTplus1=128; // should be 2**N ?
+	parameter averagestodo_init=100; // the "M" for exp average, number of samples to average exponentially
+	parameter averageT=15; // the "T" for exp average, should be 2**N -1, for easy division
+	reg [7:0] averagestodo=0;
+	parameter averageTplus1=averageT+1;
 	output reg [11:0] averageaddress=0;
 	output reg [7:0] averagein=0;
 	output reg averagewren;
 	input [7:0] averageout;
-	reg [15:0] averageouttemp; // use more bits??
+	reg [15:0] averageouttemp; // use enough bits to hold multiplication answer of averageout*averageT
 
   localparam READ=0, SOLVING=1, WAITING=2, WRITE_EXT1=3, WRITE_EXT2=4, WAIT_ADC1=5, WAIT_ADC2=6, WRITE_BYTE1=7, WRITE_BYTE2=8, READMORE=9, 
 	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15,
@@ -977,11 +978,10 @@ averagein,averagewren,averageaddress,averageout
 				thecounterbitlockin=thecounter[clockbitstowaitlockin];
 				if (averagestodo>0) begin
 					averagestodo=averagestodo-1;
-
 					state=AVERAGING1;
 				end
 				else begin
-					averagestodo=127;
+					averagestodo=averagestodo_init;
 					if (do_usb) begin
 						if (do_fast_usb) begin
 							if (checkfastusbwriting) begin
@@ -1025,19 +1025,14 @@ averagein,averagewren,averageaddress,averageout
 			state=AVERAGING2;
 		end
 		AVERAGING2: begin
-			averageouttemp<= (averageout*averageT) +txData;
-			state=AVERAGING3;
-		end
-		AVERAGING3: begin
-			averageouttemp<= averageouttemp / 128; // was /averageTplus1, make constant for optimization of divide by 2**N
-			state=AVERAGING4;
-		end
-		AVERAGING4: begin
+			if (averagestodo==averagestodo_init-1) averageouttemp = txData;
+			else averageouttemp = (averageout*averageT) + txData;
+			averageouttemp = averageouttemp / averageTplus1; // optimization of divide by 2**N
 			averagewren=1;
 			averagein<= averageouttemp;
-			state=AVERAGING5;
+			state=AVERAGING3;
 		end
-		AVERAGING5: begin			
+		AVERAGING3: begin			
 			averageaddress <= averageaddress+1;
 			if(SendCount[ram_width+2:ram_width]==4) begin // it's just 4 blocks (no logic analyzer info)
 					rden = 0;
