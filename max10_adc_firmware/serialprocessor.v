@@ -10,8 +10,7 @@ rdadtwo,trigthreshtwo, debug1,debug2,chip_id, highres,  use_ext_trig,  digital_b
 phasecounterselect,phaseupdown,phasestep,scanclk,
 ext_trig_delay, noselftrig, usb_oe, usb_rd, usb_rxf, usb_pwrsv, clk_rd,
 nselftrigcoincidentreq, selftrigtempholdtime, allowsamechancoin,
-trigratecounter,trigratecountreset,
-averagein,averagewren,averageaddress,averageout
+trigratecounter,trigratecountreset
 );
    input clk;
 	input[7:0] rxData;
@@ -104,11 +103,9 @@ averagein,averagewren,averageaddress,averageout
 	parameter averageT=15; // the "T" for exp average, should be 2**N -1, for easy division
 	reg [7:0] averagestodo=0;
 	parameter averageTplus1=averageT+1;
-	output reg [11:0] averageaddress=0;
-	output reg [7:0] averagein=0;
-	output reg averagewren;
-	input [7:0] averageout;
+	reg [11:0] averageaddress=0;
 	reg [15:0] averageouttemp; // use enough bits to hold multiplication answer of averageout*averageT
+	reg [7:0] ramavg1 [1024*4-1:0]; // 1024*4 by 8 bit RAM
 
   localparam READ=0, SOLVING=1, WAITING=2, WRITE_EXT1=3, WRITE_EXT2=4, WAIT_ADC1=5, WAIT_ADC2=6, WRITE_BYTE1=7, WRITE_BYTE2=8, READMORE=9, 
 	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15,
@@ -1005,7 +1002,6 @@ averagein,averagewren,averageaddress,averageout
 		
 		AVERAGING1: begin
 			rden = 1;
-			averagewren=0;
 			//rotate through the outputs
 			case(SendCount[ram_width+2:ram_width])
 			0: txData<=ram_output1;
@@ -1026,18 +1022,16 @@ averagein,averagewren,averageaddress,averageout
 		end
 		AVERAGING2: begin
 			if (averagestodo==averagestodo_init-1) averageouttemp = txData;
-			else averageouttemp = (averageout*averageT) + txData;
+			else averageouttemp = (ramavg1[averageaddress]*averageT) + txData;
 			averageouttemp = averageouttemp / averageTplus1; // optimization of divide by 2**N
-			averagewren=1;
-			averagein<= averageouttemp;
-			state=AVERAGING3;
-		end
-		AVERAGING3: begin			
+			ramavg1[averageaddress]<= averageouttemp;
+			//state=AVERAGING3;
+		//end
+		//AVERAGING3: begin			
 			averageaddress <= averageaddress+1;
 			if(SendCount[ram_width+2:ram_width]==4) begin // it's just 4 blocks (no logic analyzer info)
 					rden = 0;
 					get_ext_data=1; //tell them all to prime the trigger
-					averagewren=0;
 					state=WAITING;
 			end
 			else begin
@@ -1050,10 +1044,10 @@ averagein,averagewren,averageaddress,averageout
 			rden = 1;
 			//rotate through the outputs
 			case(SendCount[ram_width+2:ram_width])
-			0: txData<=averageout;//ram_output1;
-			1: txData<=averageout;//ram_output2;
-			2: txData<=averageout;//ram_output3;
-			3: txData<=averageout;//ram_output4;
+			0: txData<=ramavg1[averageaddress];//ram_output1;
+			1: txData<=ramavg1[averageaddress];//ram_output2;
+			2: txData<=ramavg1[averageaddress];//ram_output3;
+			3: txData<=ramavg1[averageaddress];//ram_output4;
 			4: txData<=digital_buffer1; // the digital logic analyzer buffer
 			endcase
 			if( (!txBusy) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles				
