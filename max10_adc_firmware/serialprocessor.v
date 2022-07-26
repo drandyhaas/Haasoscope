@@ -105,7 +105,10 @@ trigratecounter,trigratecountreset
 	parameter averageTplus1=averageT+1;
 	reg [11:0] averageaddress=0;
 	reg [15:0] averageouttemp; // use enough bits to hold multiplication answer of averageout*averageT
-	reg [7:0] ramavg1 [1024*4-1:0]; // 1024*4 by 8 bit RAM
+	reg [7:0] ramavg1 [1024-1:0]; // 1024*4 by 8 bit RAMs
+	reg [7:0] ramavg2 [1024-1:0];
+	reg [7:0] ramavg3 [1024-1:0];
+	reg [7:0] ramavg4 [1024-1:0];
 
   localparam READ=0, SOLVING=1, WAITING=2, WRITE_EXT1=3, WRITE_EXT2=4, WAIT_ADC1=5, WAIT_ADC2=6, WRITE_BYTE1=7, WRITE_BYTE2=8, READMORE=9, 
 	WRITE1=10, WRITE2=11,SPIWAIT=12,I2CWAIT=13,I2CSEND1=14,I2CSEND2=15,
@@ -1001,14 +1004,7 @@ trigratecounter,trigratecountreset
 		end
 		
 		AVERAGING1: begin
-			rden = 1;
-			//rotate through the outputs
-			case(SendCount[ram_width+2:ram_width])
-			0: txData<=ram_output1;
-			1: txData<=ram_output2;
-			2: txData<=ram_output3;
-			3: txData<=ram_output4;
-			endcase			
+			rden = 1;	
 			SendCount = SendCount + (2**sendincrement);
 			rdaddress_slow = rdaddress_slow + (2**sendincrement);
 			rdadtwo_slow = rdaddress_slow;
@@ -1021,15 +1017,20 @@ trigratecounter,trigratecountreset
 			state=AVERAGING2;
 		end
 		AVERAGING2: begin
-			if (averagestodo==averagestodo_init-1) averageouttemp = txData;
-			else averageouttemp = (ramavg1[averageaddress]*averageT) + txData;
-			averageouttemp = averageouttemp / averageTplus1; // optimization of divide by 2**N
-			ramavg1[averageaddress]<= averageouttemp;
-			//state=AVERAGING3;
-		//end
-		//AVERAGING3: begin			
+			if (averagestodo==averagestodo_init-1) begin
+				ramavg1[averageaddress]<= ram_output1 / averageTplus1;
+				ramavg2[averageaddress]<= ram_output2 / averageTplus1;
+				ramavg3[averageaddress]<= ram_output3 / averageTplus1;
+				ramavg4[averageaddress]<= ram_output4 / averageTplus1;
+			end
+			else begin
+				ramavg1[averageaddress]<= ((ramavg1[averageaddress]*averageT) + ram_output1) / averageTplus1;
+				ramavg2[averageaddress]<= ((ramavg2[averageaddress]*averageT) + ram_output2) / averageTplus1;
+				ramavg3[averageaddress]<= ((ramavg3[averageaddress]*averageT) + ram_output3) / averageTplus1;
+				ramavg4[averageaddress]<= ((ramavg4[averageaddress]*averageT) + ram_output4) / averageTplus1;
+			end
 			averageaddress <= averageaddress+1;
-			if(SendCount[ram_width+2:ram_width]==4) begin // it's just 4 blocks (no logic analyzer info)
+			if(SendCount[ram_width+2:ram_width]==1) begin
 					rden = 0;
 					get_ext_data=1; //tell them all to prime the trigger
 					state=WAITING;
@@ -1045,9 +1046,9 @@ trigratecounter,trigratecountreset
 			//rotate through the outputs
 			case(SendCount[ram_width+2:ram_width])
 			0: txData<=ramavg1[averageaddress];//ram_output1;
-			1: txData<=ramavg1[averageaddress];//ram_output2;
-			2: txData<=ramavg1[averageaddress];//ram_output3;
-			3: txData<=ramavg1[averageaddress];//ram_output4;
+			1: txData<=ramavg2[averageaddress];//ram_output2;
+			2: txData<=ramavg3[averageaddress];//ram_output3;
+			3: txData<=ramavg4[averageaddress];//ram_output4;
 			4: txData<=digital_buffer1; // the digital logic analyzer buffer
 			endcase
 			if( (!txBusy) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles				
