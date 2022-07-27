@@ -99,8 +99,8 @@ trigratecounter,trigratecountreset
 	reg i2cgo=0;
 	reg i2cdoread=0;
 	
-	parameter averagestodo_init=100; // the "M" for exp average, number of samples to average exponentially
-	parameter averageT=15; // the "T" for exp average, should be 2**N -1, for easy division
+	parameter averagestodo_init=50; // the "M" for exp average, number of samples to average exponentially
+	parameter averageT=7; // the "T" for exp average, should be 2**N -1, for easy division
 	reg [7:0] averagestodo=0;
 	parameter averageTplus1=averageT+1;
 	reg [11:0] averageaddress=0;
@@ -1045,10 +1045,14 @@ trigratecounter,trigratecountreset
 			rden = 1;
 			//rotate through the outputs
 			case(SendCount[ram_width+2:ram_width])
-			0: txData<=ramavg1[averageaddress];//ram_output1;
-			1: txData<=ramavg2[averageaddress];//ram_output2;
-			2: txData<=ramavg3[averageaddress];//ram_output3;
-			3: txData<=ramavg4[averageaddress];//ram_output4;
+			0: txData<=ram_output1;
+			1: txData<=ram_output2;
+			2: txData<=ram_output3;
+			3: txData<=ram_output4;
+			//0: txData<=ramavg1[averageaddress];//ram_output1;
+			//1: txData<=ramavg2[averageaddress];//ram_output2;
+			//2: txData<=ramavg3[averageaddress];//ram_output3;
+			//3: txData<=ramavg4[averageaddress];//ram_output4;
 			4: txData<=digital_buffer1; // the digital logic analyzer buffer
 			endcase
 			if( (!txBusy) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles				
@@ -1063,7 +1067,7 @@ trigratecounter,trigratecountreset
 					rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
 					rdadtwo_slow = rdaddress_slow;
 				end
-				averageaddress <= averageaddress+1;
+				//averageaddress <= averageaddress+1;
 				state=WRITE_EXT2;
 			end
 			if ( timeoutcounter > 100000000 ) begin
@@ -1118,10 +1122,14 @@ trigratecounter,trigratecountreset
 			usb2counter<=usb2counter+1;
 			//rotate through the outputs
 			case(SendCount[ram_width+2:ram_width])
-				0: usb_dataio_slow<=ram_output1;
-				1: usb_dataio_slow<=ram_output2;
-				2: usb_dataio_slow<=ram_output3;
-				3: usb_dataio_slow<=ram_output4;
+				//0: usb_dataio_slow<=ram_output1;
+				//1: usb_dataio_slow<=ram_output2;
+				//2: usb_dataio_slow<=ram_output3;
+				//3: usb_dataio_slow<=ram_output4;
+				0: usb_dataio_slow<=ramavg1[averageaddress];//ram_output1;
+				1: usb_dataio_slow<=ramavg2[averageaddress];//ram_output2;
+				2: usb_dataio_slow<=ramavg3[averageaddress];//ram_output3;
+				3: usb_dataio_slow<=ramavg4[averageaddress];//ram_output4;
 				4: usb_dataio_slow<=digital_buffer1; // the digital logic analyzer buffer
 			endcase
 			if( (usb2counter>clockbitstowait) && (thecounter[clockbitstowait]!=thecounterbit)) begin // wait a few clock cycles (usb2counter was set to 0 in last state)
@@ -1134,6 +1142,7 @@ trigratecounter,trigratecountreset
 					rdaddress_slow = wraddress_triggerpoint - triggerpoint;// - 1;
 					rdadtwo_slow = rdaddress_slow;
 				end
+				averageaddress <= averageaddress+1;
 				state=WRITE_USB_EXT3;
 			end
 		end
