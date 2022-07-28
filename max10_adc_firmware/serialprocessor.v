@@ -99,8 +99,8 @@ trigratecounter,trigratecountreset
 	reg i2cgo=0;
 	reg i2cdoread=0;
 	
-	parameter averagestodo_init=50; // the "M" for exp average, number of samples to average exponentially
-	parameter averageT=7; // the "T" for exp average, should be 2**N -1, for easy division
+	parameter averagestodo_init=100; // the "M" for exp average, number of samples to average exponentially
+	parameter averageT=15; // the "T" for exp average, should be 2**N -1, for easy division
 	reg [7:0] averagestodo=0;
 	parameter averageTplus1=averageT+1;
 	reg [11:0] averageaddress=0;
