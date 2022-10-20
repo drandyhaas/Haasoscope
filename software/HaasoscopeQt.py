@@ -830,10 +830,11 @@ if __name__ == '__main__':
     # d.togglelogicanalyzer() # run the logic analyzer
     # d.sendi2c("21 13 f0") # set extra pins E24 B0,1,2,3 off and B4,5,6,7 on (works for v8 only)
 
-    app = QtGui.QApplication.instance()
+    print("Python version", sys.version)
+    app = QtWidgets.QApplication.instance()
     standalone = app is None
     if standalone:
-        app = QtGui.QApplication(sys.argv)
+        app = QtWidgets.QApplication(sys.argv)
 
     try:
         font = app.font();
