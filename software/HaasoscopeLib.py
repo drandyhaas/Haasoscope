@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 print "Loading HaasoscopeLib.py"
 
-# You might adjust these, just override them before calling construct()
+# You might adjust these, just override them before instantianting a class
 num_board = 1 # Number of Haasoscope boards to read out
 ram_width = 9 # width in bits of sample ram to use (e.g. 9==512 samples, 12(max)==4096 samples)
 max10adcchans = []#[(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp
@@ -74,7 +74,7 @@ if enable_ripyl:
 
 class Haasoscope():
     
-    def construct(self):
+    def __init__(self):
         self.num_samples = pow(2,ram_width)/pow(2,sendincrement) # num samples per channel, max is pow(2,ram_width)/pow(2,0)=4096
         self.num_bytes = self.num_samples*num_chan_per_board #num bytes per board
         self.nsamp=pow(2,ram_width)-1 #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))

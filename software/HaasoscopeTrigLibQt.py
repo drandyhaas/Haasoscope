@@ -6,7 +6,7 @@ print("Loading HaasoscopeTrigLibQt.py")
 
 class HaasoscopeTrig:
 
-    def construct(self,port):
+    def __init__(self,port):
         self.ser=Serial(port,921600,timeout=0.2)
         self.extclock=0
         self.histostosend=-1

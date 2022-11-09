@@ -11,7 +11,6 @@ from serial import SerialException
 #HaasoscopeLib.max10adcchans = [(0,110),(0,118),(1,110),(1,118)] #max10adc channels to draw (board, channel on board), channels: 110=ain1, 111=pin6, ..., 118=pin14, 119=temp # default is none, []
 
 d = HaasoscopeLib.Haasoscope()
-d.construct()
 
 #Some other options
 #d.serport="COM7" # the name of the serial port on your computer, connected to Haasoscope, like /dev/ttyUSB0 or COM8, leave blank to detect automatically!
