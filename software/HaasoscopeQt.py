@@ -795,7 +795,6 @@ if __name__ == '__main__':
                 print("num_board set to", HaasoscopeLibQt.num_board)
 
     d = HaasoscopeLibQt.Haasoscope()
-    d.construct()
 
     trigboardport = ""
     for a in sys.argv:
@@ -847,8 +846,7 @@ if __name__ == '__main__':
             sys.exit()
         if trigboardport!="":
             if trigboardport=="auto": trigboardport=d.trigserport
-            trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig()
-            trigboard.construct(trigboardport)
+            trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig(trigboardport)
             if not trigboard.get_firmware_version():
                 print("couldn't get trigboard firmware version - exiting!")
                 sys.exit()

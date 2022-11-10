@@ -3,7 +3,7 @@ import sys
 
 #print("Loading HaasoscopeLibQt.py")
 
-# You might adjust these, just override them before calling construct()
+# You might adjust these, just override them before instantianting a class
 num_board = 1 # Number of Haasoscope boards to read out
 max_ram_width = 13 # max size of the buffer rams (2*13=8096 bytes)
 ram_width = 9 # width in bits of sample ram to use (e.g. 9==512 samples)
@@ -58,7 +58,7 @@ if enable_fastusb:
 
 class Haasoscope():
     
-    def construct(self):
+    def __init__(self):
         self.num_samples = int(pow(2,ram_width)/pow(2,sendincrement)) # num samples per channel, max is pow(2,ram_width)/pow(2,0)=4096
         self.num_bytes = int(self.num_samples*num_chan_per_board) #num bytes per board
         self.nsamp=int(pow(2,min(ram_width,slowadc_ram_width))-1) #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
