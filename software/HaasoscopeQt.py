@@ -760,8 +760,8 @@ class MainWindow(TemplateBaseClass):
                     d.increment_clk_phase(b,30) # increment clk of that board by 30*100ps=3ns
 
 if __name__ == '__main__':
-    import HaasoscopeLibQt
-    import HaasoscopeTrigLibQt
+    import libs.HaasoscopeLibQt as HaasoscopeLibQt
+    import libs.HaasoscopeTrigLibQt as HaasoscopeTrigLibQt
 
     print('Argument List:', str(sys.argv))
     for a in sys.argv:

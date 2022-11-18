@@ -1,4 +1,4 @@
-import HaasoscopeLib
+import libs.HaasoscopeLib as HaasoscopeLib
 reload(HaasoscopeLib) # in case you changed it, and to always load some defaults
 import time, sys
 import matplotlib.pyplot as plt
