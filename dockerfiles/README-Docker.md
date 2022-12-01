@@ -6,37 +6,22 @@ https://www.docker.com/why-docker
 
 Containers allow you to run or test software without installing it.  This allows you to test new versions or old versions without messing with the version you have installed natively on your machine.  In fact, you can run the software without installing any version natively on your machine.
 
-###  Build a container image locally from the Dockerfile
+## Building a container image to run the HaasoscopeQt.py application
 
-The Dockerfile in this repo starts with a Python container image and installs the necessary dependencies for running the Haasoscope software.  It clones the Haasoscope software and checks out the python3 branch.  You can create and tag a local image with a Docker command like:
+The following command will create a container locally named
+"haasoscope" that can be used to run the HaasocopeQt.py graphical
+tool:
 ```
-docker build . -t haasoscope
-```
-### Running Haasoscope in a container under Linux
-Once you have a haasoscope container image, you can run the container interactively.  In order to start the GUI, you may need to disable xhost authentication for local containers:
-
-``` 
-$ xhost +local:docker
-```
-To work with the USB hardware, you may need to run the container 
-privileged with a command like:
-```
-$ docker run --privileged -it --rm -e DISPLAY=$DISPLAY -v "/tmp/.X11-unix:/tmp/.X11-unix" haasoscope bash
-``` 
-The above will execute bash within the running container.  Any
-tools called through bash will run within the container.
-
-The binary is in /root/Haasoscope/software.  Execute it with:
-
-```
-root@b8f80c88570:~/Haasoscope/software# python3 HaasoscopeQt.py
-```
-Closing the app brings you back to the bash shell prompt.  To exit the interactive bash session and the container type 'exit.'
-```
-root@b8f80c88570:~/Haasoscope/software# exit
-```
-When you are finished, it would be wise to re-enable xhost authentication: 
-```
-$ xhost -local:docker
+docker build -t haasoscope -f haasoscope.docker
 ```
 
+The [haasoscope.sh](./haasoscope.sh) script may be used to run
+HaasoscopeQt.py once the above "haasoscope" container is built:
+```
+./haasoscope.sh
+```
+This script attempts to map the Haasoscope USB devices, X-Windows
+display socket, and the `../software/` directory into the container
+prior to running HaasoscopeQt.py.  It may be necessary to copy and
+modify this script to work on your machine.  See the script for
+details.
