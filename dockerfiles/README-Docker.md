@@ -25,3 +25,39 @@ display socket, and the `../software/` directory into the container
 prior to running HaasoscopeQt.py.  It may be necessary to copy and
 modify this script to work on your machine.  See the script for
 details.
+
+## Building a container image for the Intel Quartus FPGA software
+
+The Quartus software is used to compile the FPGA firmware.  It can
+also be used to program that firmware into the Haasoscope hardware.
+
+The following command will create a container locally named
+"quartus" that can be used to run the Quartus tool:
+```
+docker build -t quartus -f quartus.docker
+```
+
+Important! Building this container involves a download of over 6GB and
+the full installation requires around 25GB of disk space!
+
+Once the container is built one can run the Quartus GUI in the
+container. See the [quartus.sh](./quartus.sh) file for details.  For
+example:
+```
+./quartus.sh
+```
+
+It is also possible to run an FPGA simulation and compilation from the
+command line:
+```
+./quartus_compile.sh
+```
+
+The firmware image can also be uploaded to the Haasoscope hardware
+from the command line:
+```
+./quartus_flash.sh
+```
+
+The above scripts are examples - it may be necessary to copy and
+modify these scripts for your machine.

@@ -1,0 +1,65 @@
+# This is a dockerfile for installing and running the Intel Quartus
+# fpga design tool (version 22.1).
+#
+# Build this docker container with something like:
+#  docker build -t quartus -f quartus.docker
+#
+# Important! The Quartus software is over 6GB to download and the
+# installation size is ~25GB!
+#
+# See quartus.sh, quartus_compile.sh, and quartus_flash.sh for
+# information on running the container.
+
+FROM ubuntu:20.04
+
+ARG QUARTUS_URL=https://downloads.intel.com/akdlm/software/acdsinst/22.1std/915/ib_tar/Quartus-lite-22.1std.0.915-linux.tar
+
+# First, get wget so we can download Quartus
+RUN apt-get update && apt-get install -y wget
+
+# Make an install directory, download Quartus and extract Quartus into it.
+RUN mkdir quartus_install \
+    && wget ${QUARTUS_URL} -O quartus.tar \
+    && tar -C quartus_install -xf quartus.tar \
+    && rm quartus.tar
+
+# Define items we don't need in the image. By default, we turn off
+# help and update to keep the image small. The following are valid
+# options: quartus quartus_help devinfo arria_lite cyclone cyclone10lp
+# cyclonev max max10 quartus_update
+ARG QUARTUS_DISABLED="quartus_help,quartus_update"
+
+# Run the Quartus installer and cleanup the install directory when done
+RUN quartus_install/setup.sh --mode unattended --accept_eula 1 --installdir /quartus --disable-components ${QUARTUS_DISABLED}\
+    && rm -rf quartus_install
+
+# Install packages necessary for Quartus to work
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libglib2.0-0 \
+    libpng-dev \
+    libfreetype6 \
+    libsm6 \
+    libxrender1 \
+    libfontconfig1 \
+    libxext6 \
+# for installing locales
+    locales \
+# java needed for platform designer / qsys
+    default-jre \
+# needed for normal init environment
+    dumb-init \
+# Generate the en_US locale
+    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+    && locale-gen en_US.UTF-8 \
+    && update-locale LANG=en_US.UTF-8 \
+# cleanup apt-list
+    && rm -rf /var/lib/apt/lists/*
+
+# Set environment so Quartus is in the path
+ENV PATH="${PATH}:/quartus/quartus/bin"
+
+# Force en_US.UTF8
+ENV LC_ALL="en_US.UTF-8"
+
+# Use dumb-init as an entry point (for proper Unix signal handling)
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
