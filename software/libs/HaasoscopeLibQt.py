@@ -1624,7 +1624,7 @@ class Haasoscope():
                 self.on_running(self.ydata, bn) #update data in main window
                 if self.db: print(time.time()-self.oldtime,"done with board",bn)
         status=1
-        if self.minfirmwareversion>=15 and self.dodrawing: #v9.0 and up
+        if self.minfirmwareversion>=15 and self.dodrawing and self.rollingtrigger: #v9.0 and up
             thetime2=time.time()
             elapsedtime=thetime2-self.oldtime2
             if elapsedtime>1.0:
