@@ -1148,7 +1148,7 @@
           </font>
          </property>
          <property name="maximum">
-          <number>8181</number>
+          <number>8191</number>
          </property>
         </widget>
         <widget class="QToolButton" name="upposButton">
