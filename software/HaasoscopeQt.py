@@ -101,7 +101,7 @@ class MainWindow(TemplateBaseClass):
         self.lines = []
         self.otherlines = []
         self.savetofile=False # save scope data to file
-        self.doh5=True # use the h5 binary file format
+        self.doh5=False # use the h5 binary file format
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.updateplot)
         self.timer2 = QtCore.QTimer()
@@ -702,7 +702,7 @@ class MainWindow(TemplateBaseClass):
                 if self.lines[c].isVisible(): # only save the data for visible channels
                     self.outf.write(str(self.nevents)+",") # start of each line is the event number
                     self.outf.write(time_s+",") # next column is the time in seconds of the current event
-                    self.outf.write(str(c)) # next column is the channel number
+                    self.outf.write(str(c)+",") # next column is the channel number
                     self.outf.write(str(self.vline*d.xscaling)+",") # next column is the trigger time
                     self.outf.write(str(2.*d.xscale/d.num_samples)+",") # next column is the time between samples, in ns
                     self.outf.write(str(d.num_samples)+",") # next column is the number of samples
