@@ -614,6 +614,7 @@ class MainWindow(TemplateBaseClass):
     def updateplot(self):
         self.mainloop()
         if d.timedout: return # don't draw old junk if there was a timeout getting data (as often the case with no rolling trigger)
+        if self.savetofile: self.dosavetofile()
         if not self.ui.drawingCheck.checkState() == QtCore.Qt.Checked: return
         for li in range(self.nlines):
             maxchan=li-HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board
@@ -731,7 +732,6 @@ class MainWindow(TemplateBaseClass):
                 print("Serial exception getting channels!!")
                 sys.exit(1)
             if status==2: self.selectchannel() #we updated the switch data
-            if self.savetofile: self.dosavetofile()
             if d.db: print(time.time()-d.oldtime,"done with evt",self.nevents)
             self.nevents += 1
             if self.nevents-self.oldnevents >= self.tinterval:
