@@ -1427,7 +1427,7 @@ class Haasoscope():
         if self.flyingfast: return
         if self.db: print(time.time()-self.oldtime,"getdata wanted",self.num_bytes+padding*num_chan_per_board,"bytes and got",len(rslt),"from board",board)
         if len(rslt)==self.num_bytes+padding*num_chan_per_board:
-            self.timedout = False
+            #self.timedout = False # we assume it is False already
             #byte_arrayold = unpack('%dB' % len(rslt), rslt)  # Convert serial data to array of numbers
             #self.ydataold=np.reshape(byte_arrayold,(num_chan_per_board,self.num_samples)) #slow!
             self.ydata=[ np.frombuffer(rslt,dtype=np.int8,count=self.num_samples,offset=0*self.num_samples+1*padding-endpadding), #need the int8 type because we'll later subtract it from 127 to flip it over
@@ -1577,6 +1577,7 @@ class Haasoscope():
             if self.db: print(time.time()-self.oldtime,"priming trigger")
             self.ser.write(bytearray([100]))
         status = 0
+        self.timedout=False
         self.max10adcchan=1
         if self.domt:
             for bn in range(num_board):
