@@ -610,6 +610,7 @@ class MainWindow(TemplateBaseClass):
     decodelabels = []
     def updateplot(self):
         self.mainloop()
+        if d.timedout: return # don't draw old junk if there was a timeout getting data (as often the case with no rolling trigger)
         if not self.ui.drawingCheck.checkState() == QtCore.Qt.Checked: return
         for li in range(self.nlines):
             maxchan=li-HaasoscopeLibQt.num_chan_per_board*HaasoscopeLibQt.num_board
