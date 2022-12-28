@@ -340,6 +340,9 @@ class MainWindow(TemplateBaseClass):
             for li in range(self.nlines):
                 self.lines[li].setSymbol("o")
                 self.lines[li].setSymbolSize(3)
+                #self.lines[li].setSymbolPen("black")
+                self.lines[li].setSymbolPen(self.linepens[li].color())
+                self.lines[li].setSymbolBrush(self.linepens[li].color())
         else:
             for li in range(self.nlines):
                 self.lines[li].setSymbol(None)
