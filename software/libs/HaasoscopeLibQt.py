@@ -43,18 +43,22 @@ if enable_ripyl:
 
 enable_fastusb=True # set to True to be able to use the fastusb2 writing
 if enable_fastusb:
-    if mewin:
-        useftd2xx = True
-        print("Using ftd2xx driver on Windows")
-    else:
-        useftd2xx = False
-        print("Using pyftdi on Linux")
-    useftdi = not useftd2xx
-    if useftd2xx:
-        import ftd2xx as ftd
-    if useftdi:
-        from pyftdi.ftdi import Ftdi
-        ftdiattempts=300 # number of times to try reading - basically a timeout
+    try:
+        if mewin:
+            useftd2xx = True
+            print("Using ftd2xx driver on Windows")
+        else:
+            useftd2xx = False
+            print("Using pyftdi on Linux")
+        useftdi = not useftd2xx
+        if useftd2xx:
+            import ftd2xx as ftd
+        if useftdi:
+            from pyftdi.ftdi import Ftdi
+            ftdiattempts=300 # number of times to try reading - basically a timeout
+    except:
+        print("Warning... fastusb drivers not installed?")
+        enable_fastusb=False
 
 class Haasoscope():
     
@@ -1787,7 +1791,7 @@ class Haasoscope():
             except SerialException:
                 print("Could not open",p,"!"); return False
             print("connected USBserial to",p,", 32Mb/s, timeout",self.sertimeout,"seconds")
-        if self.dofastusb and useftd2xx and ftd.listDevices():
+        if enable_fastusb and self.dofastusb and useftd2xx and ftd.listDevices():
             for ftd_n in range(len(ftd.listDevices())):
                 if str(ftd.getDeviceInfoDetail(ftd_n)["description"]).find("Haasoscope")>=0:
                     ftd_d = ftd.open(ftd_n)
