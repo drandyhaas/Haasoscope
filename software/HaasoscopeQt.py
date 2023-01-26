@@ -596,6 +596,7 @@ class MainWindow(TemplateBaseClass):
         d.setxaxis()
         d.setyaxis()
         self.timechanged()
+        self.ui.totBox.setMaximum(d.num_samples)
         self.ui.plot.showGrid(x=True, y=True)
     
     def closeEvent(self, event):
