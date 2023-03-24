@@ -286,8 +286,20 @@ always @(posedge clk_flash) begin
 	end
 end
 reg[1:0] Pulsecounter=0;
+reg[3:0] trig_ext_out=4'd0;
 always @(posedge clk_flash) begin
-	trigout[0]<=(Ttrig[Pulsecounter]);
+	if (noselftrig) trigout[0]<=(Ttrig[Pulsecounter]);
+	else begin
+		if (Trigger) begin
+			trig_ext_out<=4'd10;//time to fire trig_ext_out for (max 15)
+			trigout[0]<=1'b1;
+		end
+		else if (trig_ext_out>4'd0) begin
+			trig_ext_out<=trig_ext_out-4'd1;
+			trigout[0]<=1'b1;
+		end
+		else trigout[0]<=1'b0;
+	end
 	Pulsecounter<=Pulsecounter+1; // for iterating through the trigger bins
 end
 assign spareright = spareleft; // pass the calibration signal along to the right
