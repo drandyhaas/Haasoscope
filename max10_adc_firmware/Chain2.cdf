@@ -4,7 +4,7 @@ JedecChain;
 	DefaultMfr(6E);
 
 	P ActionCode(Cfg)
-		Device PartName(10M08SAE144ES) Path("C:/gitwork/head/Haasoscope/max10_adc_firmware/output_files/") File("serial1.pof") MfrSpec(OpMask(7) Child_OpMask(2 7 7));
+		Device PartName(10M08SAE144ES) Path("C:/gitwork/master/Haasoscope/max10_adc_firmware/output_files/") File("serial1.pof") MfrSpec(OpMask(1) Child_OpMask(2 1 1));
 
 ChainEnd;
 
