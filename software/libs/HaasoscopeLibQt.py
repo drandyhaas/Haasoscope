@@ -118,6 +118,7 @@ class Haasoscope():
         self.flyingfast = False # to just read as fast as possible
         self.domt=False #whether to have separate threads per board
         self.dotriggercounter = 2 # how ofter to update trigger counter (in seconds) (set to 0 to turn off)
+        self.doswitchdata = True # whether to read the switch data
         self.db = False #debugging #True #False
     
         self.dolockin=False # read lockin info
@@ -1629,7 +1630,7 @@ class Haasoscope():
                 self.on_running(self.ydata, bn) #update data in main window
                 if self.db: print(time.time()-self.oldtime,"done with board",bn)
         status=1
-        if self.minfirmwareversion>=15 and self.dodrawing and self.rollingtrigger: #v9.0 and up
+        if self.minfirmwareversion>=15 and self.dodrawing and self.rollingtrigger and self.doswitchdata: #v9.0 and up
             thetime2=time.time()
             elapsedtime=thetime2-self.oldtime2
             if elapsedtime>1.0:
@@ -1642,6 +1643,7 @@ class Haasoscope():
 
     #get the positions of the dpdt switches from IO expander 2B, and then take action (v9.0 and up!)
     havereadswitchdata=False
+    switchdebug = False
     def getswitchdata(self,board):
         if self.minfirmwareversion>=17:
             self.ser.write(bytearray([53,board]))  # make the next board active (serial_passthrough 0)
@@ -1654,12 +1656,12 @@ class Haasoscope():
         rslt = self.ser.read(1)
         if len(rslt)>0:# and i==1:
             byte_array = unpack('%dB'%len(rslt),rslt)
-            #print("i2c data from board",board,"IO 2B",bin(byte_array[0]))
+            if self.switchdebug: print("i2c data from board",board,"IO 2B",bin(byte_array[0]))
             newswitchpos=byte_array[0]
             if newswitchpos!=self.switchpos[board] or not self.havereadswitchdata:
                 for b in range(8):
                     if self.testBit(newswitchpos,b) != self.testBit(self.switchpos[board],b) or not self.havereadswitchdata:
-                        #print "switch",b,"is now",self.testBit(newswitchpos,b)
+                        if self.switchdebug: print("switch",b,"is now",self.testBit(newswitchpos,b))
                         #switch 0-3 is 50/1M Ohm termination on channels 0-3, on is 1M, off is 50
                         #switch 4-7 is super/normal gain on channels 0-3, on is super, off is normal
                         if b>=4:

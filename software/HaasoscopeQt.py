@@ -801,6 +801,7 @@ if __name__ == '__main__':
 
     d = HaasoscopeLibQt.Haasoscope()
 
+    script=""
     trigboardport = ""
     for a in sys.argv:
         if a[0] == "-":
@@ -812,6 +813,9 @@ if __name__ == '__main__':
                 d.dofastusb = True
                 d.dousbparallel = True
                 print("dofastusb", d.dofastusb, "and dousbparallel", d.dousbparallel)
+            elif a[1:7] == "script": #eg: -scriptmysetup.py will run those commands after setup
+                script = str(a[7:])
+                print("script set to", script)
             elif a[1] == "s" and a[2]!="r":
                 d.serialdelaytimerwait = int(a[2:])
                 print("serialdelaytimerwait set to", d.serialdelaytimerwait)
@@ -820,7 +824,7 @@ if __name__ == '__main__':
                 print("serial port manually set to", d.serport)
             elif a[1] == "t":
                 trigboardport = a[2:]
-                print("trigboardport set to", trigboardport)
+                print("trigboardport set to", trigboardport)            
 
     if d.domt and not d.dofastusb:
         print("mt option is only for fastusb - exiting!")
@@ -833,6 +837,10 @@ if __name__ == '__main__':
     # d.toggletriggerchan(d.selectedchannel)
     # d.togglelogicanalyzer() # run the logic analyzer
     # d.sendi2c("21 13 f0") # set extra pins E24 B0,1,2,3 off and B4,5,6,7 on (works for v8 only)
+    
+    if script!="":
+    	print("Excecuting file",script)
+    	exec(open(script).read())
 
     print("Python version", sys.version)
     app = QtWidgets.QApplication.instance()
