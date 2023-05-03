@@ -1358,8 +1358,8 @@ class Haasoscope():
                             bwant = self.num_bytes+padding*num_chan_per_board
                             if useftd2xx or not self.dofastusb: rslt = self.usbser[usb].read(bwant) # try to get data from the board
                             elif useftdi: rslt = self.usbser[usb].read_data_bytes(bwant, ftdiattempts)
-                        except ftd.DeviceError as msgnum:
-                            print("Error reading from USB2", usb, msgnum)
+                        except:
+                            print("Error reading from USB2", usb)
                             return
                         if len(rslt)==self.num_bytes+padding*num_chan_per_board:
                             print(time.time() - self.oldtime,"   got the right nbytes for board",bn,"from usb",usb)
@@ -1424,9 +1424,9 @@ class Haasoscope():
                 else:
                     rslt = self.usbser[self.usbsermap[board]].read(self.num_bytes)
                 # self.ser.write(bytearray([40+board])) # for debugging timing, does nuttin
-            except ftd.DeviceError as msgnum:
-                print("Error reading from USB2", self.usbsermap[board], msgnum)
-                return
+            except:
+                print("Error reading from USB2", self.usbsermap[board])
+                return                
         else:
             rslt = self.ser.read(int(self.num_bytes))
         if self.flyingfast: return
@@ -1479,8 +1479,8 @@ class Haasoscope():
                                 self.usbser[self.usbsermap[board]].purge(ftd.defines.PURGE_RX)
                     else:
                         rslt = self.usbser[self.usbsermap[board]].read(logicbytes)
-                except ftd.DeviceError as msgnum:
-                    print("Error reading from USB2", self.usbsermap[board], msgnum)
+                except:
+                    print("Error reading from USB2", self.usbsermap[board])
                     return
             else:
                 rslt = self.ser.read(logicbytes)
