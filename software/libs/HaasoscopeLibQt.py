@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
-
+import traceback
 #print("Loading HaasoscopeLibQt.py")
 
 # You might adjust these, just override them before instantianting a class
@@ -22,6 +22,8 @@ from scipy.signal import resample
 import serial.tools.list_ports
 import scipy.optimize
 import multiprocessing
+
+from ftd2xx.ftd2xx import DeviceError
 
 mearm = False
 mewin = False
@@ -1358,8 +1360,11 @@ class Haasoscope():
                             bwant = self.num_bytes+padding*num_chan_per_board
                             if useftd2xx or not self.dofastusb: rslt = self.usbser[usb].read(bwant) # try to get data from the board
                             elif useftdi: rslt = self.usbser[usb].read_data_bytes(bwant, ftdiattempts)
-                        except:
-                            print("Error reading from USB2", usb)
+                        except DeviceError as e:
+                            print("Exception Message:", str(e))
+                            traceback.print_exc()
+                        except Exception as e:
+                            print(type(e).__name__, "Error reading from USB2", usb)
                             return
                         if len(rslt)==self.num_bytes+padding*num_chan_per_board:
                             print(time.time() - self.oldtime,"   got the right nbytes for board",bn,"from usb",usb)
@@ -1424,9 +1429,13 @@ class Haasoscope():
                 else:
                     rslt = self.usbser[self.usbsermap[board]].read(self.num_bytes)
                 # self.ser.write(bytearray([40+board])) # for debugging timing, does nuttin
-            except:
-                print("Error reading from USB2", self.usbsermap[board])
-                return                
+            except DeviceError as e:
+                print("Exception occurred in getdata()")
+                traceback.print_exc()
+                raise DeviceError(str(e))
+            except Exception as e:
+                print(type(e).__name__, "Error reading from USB2", self.usbsermap[board])
+                return
         else:
             rslt = self.ser.read(int(self.num_bytes))
         if self.flyingfast: return
@@ -1479,8 +1488,11 @@ class Haasoscope():
                                 self.usbser[self.usbsermap[board]].purge(ftd.defines.PURGE_RX)
                     else:
                         rslt = self.usbser[self.usbsermap[board]].read(logicbytes)
-                except:
-                    print("Error reading from USB2", self.usbsermap[board])
+                except DeviceError as e:
+                    print("Exception Message:", str(e))
+                    traceback.print_exc()
+                except Exception as e:
+                    print(type(e).__name__, "Error reading from USB2", self.usbsermap[board])
                     return
             else:
                 rslt = self.ser.read(logicbytes)

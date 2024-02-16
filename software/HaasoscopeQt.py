@@ -6,6 +6,7 @@ pyqtgraph widget with UI template created with Qt Designer
 import numpy as np
 import sys, time
 from serial import SerialException
+from ftd2xx.ftd2xx import DeviceError
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtWidgets, QtGui, loadUiType
 import h5py
@@ -732,6 +733,9 @@ class MainWindow(TemplateBaseClass):
             except SerialException:
                 print("Serial exception getting channels!!")
                 sys.exit(1)
+            except DeviceError:
+                print("Device error")
+                sys.exit(1)
             if status==2: self.selectchannel() #we updated the switch data
             if d.db: print(time.time()-d.oldtime,"done with evt",self.nevents)
             self.nevents += 1
@@ -830,22 +834,11 @@ if __name__ == '__main__':
         print("mt option is only for fastusb - exiting!")
         sys.exit()
 
-    # can change some things after initialization
-    # d.selectedchannel=0
-    # d.tellswitchgain(d.selectedchannel)
-    # d.togglesupergainchan(d.selectedchannel)
-    # d.toggletriggerchan(d.selectedchannel)
-    # d.togglelogicanalyzer() # run the logic analyzer
-    # d.sendi2c("21 13 f0") # set extra pins E24 B0,1,2,3 off and B4,5,6,7 on (works for v8 only)
-    
-    if script!="":
-    	print("Excecuting file",script)
-    	exec(open(script).read())
-
     print("Python version", sys.version)
     app = QtWidgets.QApplication.instance()
     standalone = app is None
     if standalone:
+        print('INSIDE STANDALONE')
         app = QtWidgets.QApplication(sys.argv)
 
     try:
@@ -856,7 +849,7 @@ if __name__ == '__main__':
         win.setWindowTitle('Haasoscope Qt')
         if not d.setup_connections():
             print("Exiting now - failed setup_connections!")
-            sys.exit()
+            sys.exit(1)
         if trigboardport!="":
             if trigboardport=="auto": trigboardport=d.trigserport
             trigboard = HaasoscopeTrigLibQt.HaasoscopeTrig(trigboardport)
@@ -871,9 +864,9 @@ if __name__ == '__main__':
             sys.exit()
         win.launch()
 
-        #turns off drawing
-        #win.ui.drawingCheck.setCheckState(QtCore.Qt.Unchecked)
-        #win.drawing()
+        if script != "":
+            print("Excecuting file", script)
+            exec(open(script).read())
 
         win.triggerposchanged(128)  # center the trigger
         win.dostartstop()
