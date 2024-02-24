@@ -6,7 +6,6 @@ pyqtgraph widget with UI template created with Qt Designer
 import numpy as np
 import sys, time
 from serial import SerialException
-from ftd2xx.ftd2xx import DeviceError
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtWidgets, QtGui, loadUiType
 import h5py
@@ -838,7 +837,7 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication.instance()
     standalone = app is None
     if standalone:
-        print('INSIDE STANDALONE')
+        #print('INSIDE STANDALONE')
         app = QtWidgets.QApplication(sys.argv)
 
     try:

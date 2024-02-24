@@ -1,0 +1,2 @@
+pip install pyserial numpy scipy pyqtgraph pyqt5 h5py pyftdi ftd2xx
+python HaasoscopeQt.py

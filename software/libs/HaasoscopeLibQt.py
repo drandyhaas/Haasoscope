@@ -23,8 +23,6 @@ import serial.tools.list_ports
 import scipy.optimize
 import multiprocessing
 
-from ftd2xx.ftd2xx import DeviceError
-
 mearm = False
 mewin = False
 try:
@@ -55,6 +53,7 @@ if enable_fastusb:
         useftdi = not useftd2xx
         if useftd2xx:
             import ftd2xx as ftd
+            from ftd2xx.ftd2xx import DeviceError
         if useftdi:
             from pyftdi.ftdi import Ftdi
             ftdiattempts=300 # number of times to try reading - basically a timeout
