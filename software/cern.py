@@ -5,7 +5,7 @@ win.triggerlevelchanged(200)
 #win.ui.drawingCheck.setCheckState(QtCore.Qt.Unchecked)
 #win.drawing()
 
-# ToT -> 100
+d.settriggertime(100)  # Time over Threshold -> 100
 # trigger time aligned closer to the left
 # time sample timebase ->0
 # no rolling trigger [button]
