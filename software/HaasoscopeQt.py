@@ -102,6 +102,7 @@ class MainWindow(TemplateBaseClass):
         self.otherlines = []
         self.savetofile=False # save scope data to file
         self.doh5=False # use the h5 binary file format
+        self.numrecordeventsperfile=1000 # number of events in each file to record before opening new file
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.updateplot)
         self.timer2 = QtCore.QTimer()
@@ -752,7 +753,12 @@ class MainWindow(TemplateBaseClass):
                 newrecordedchannellength=int(max(10,5*lastrate)) #the number of events to show on the persist plot
                 if newrecordedchannellength<len(d.recordedchannel):
                     del d.recordedchannel[0:len(d.recordedchannel)-newrecordedchannellength]
-                d.recordedchannellength=newrecordedchannellength 
+                d.recordedchannellength=newrecordedchannellength
+            if self.nevents%self.numrecordeventsperfile==0:
+                if self.savetofile: # if writing, close and open new file
+                    self.record()
+                    if self.doh5: self.oldxscale=0 #to force writing the time header info in h5
+                    self.record()
             if d.getone and not d.timedout: self.dostartstop()
 
     def drawtext(self): # happens once per second
@@ -862,12 +868,12 @@ if __name__ == '__main__':
             d.cleanup()
             sys.exit()
         win.launch()
+        win.triggerposchanged(128)  # center the trigger
 
         if script != "":
             print("Excecuting file", script)
             exec(open(script).read())
 
-        win.triggerposchanged(128)  # center the trigger
         win.dostartstop()
     except SerialException:
         print("serial com failed!")
