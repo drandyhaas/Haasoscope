@@ -24,12 +24,12 @@ def power_cycle():
     sleep(5)
     print('sending haasoscope on')
     ser.write(b'haasoscope on')
-    sleep(15)
+    sleep(10)
 
 
 def run():
     # Command to run
-    cmd = 'python HaasoscopeQt.py -r13 -b3 -fastusb -scriptcern.py'.split(' ')
+    cmd = 'python HaasoscopeQt.py -r13 -b6 -fastusb -scriptcern.py'.split(' ')
 
     while True:
         sleep(5)
