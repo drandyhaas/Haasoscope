@@ -69,7 +69,11 @@ class Haasoscope():
         self.nsamp=int(pow(2,min(ram_width,slowadc_ram_width))-1) #samples for each max10 adc channel (4095 max (not sure why it's 1 less...))
         print("num main ADC and max10adc bytes for all boards = ",self.num_bytes*num_board,"and",len(max10adcchans)*2*self.nsamp)
         self.serialdelaytimerwait=100 #150 # 600 # delay (in 2 us steps) between each 32 bytes of serial output (set to 600 for some slow USB serial setups, but 0 normally)
-        if mearm: self.serialdelaytimerwait+=600
+        # Previously this was bumped by +600 on Linux/Raspberry Pi to keep the host
+        # from dropping bytes over the (flow-control-less) CH340 link, at the cost of
+        # throughput. The real cause of byte loss is the driver's RX latency timer;
+        # we now fix that host-side with serial low-latency mode (see try_low_latency)
+        # plus an accumulating read (read_serial_exact), so no throttling is needed.
         self.brate = 1500000 #serial baud rate #1500000 #115200 #921600
         self.sertimeout = 0.25+self.num_bytes*8*11.0/self.brate #time to wait for serial response #3.0, 0.25+self.num_bytes*8*11.0/self.brate, or None
         self.clkrate=125.0 # ADC sample rate in MHz
@@ -1394,6 +1398,55 @@ class Haasoscope():
         return True
 
     timedout = False
+
+    def try_low_latency(self):
+        # Enable serial low-latency mode where supported (Linux/pyserial>=3.5).
+        # On Linux this clears the CH340/FTDI ~16 ms RX latency timer so the host
+        # drains the RX FIFO promptly - the real cause of byte loss at 1.5 Mbaud.
+        # No-op on platforms/versions that don't support it.
+        try:
+            self.ser.set_low_latency_mode(True)
+            print("enabled serial low-latency mode")
+        except (NotImplementedError, ValueError, OSError, AttributeError) as e:
+            print("serial low-latency mode unavailable:",e)
+
+    def read_serial_exact(self,n):
+        # Accumulate exactly n bytes from the serial port, tolerating bursty
+        # delivery (the board streams an event in chunks). Returns fewer than n
+        # only if an overall deadline elapses (a genuine overrun/incomplete event),
+        # instead of mis-counting a slow-but-complete event as a timeout.
+        transfer_s = n*11.0/self.brate
+        delay_s = (n/32.0)*(2e-6*self.serialdelaytimerwait) # per-32-byte FPGA delay
+        deadline = time.time() + self.sertimeout + 2.0*(transfer_s+delay_s)
+        old_timeout = self.ser.timeout
+        self.ser.timeout = 0.05 # short poll; the overall deadline bounds the loop
+        try:
+            buf = bytearray()
+            while len(buf) < n:
+                chunk = self.ser.read(n-len(buf)) # up to the poll timeout
+                if chunk:
+                    buf.extend(chunk)
+                elif time.time() > deadline:
+                    break
+        finally:
+            self.ser.timeout = old_timeout
+        return bytes(buf)
+
+    def drain_serial(self):
+        # Discard buffered input AND drain until the line is idle, so a late tail
+        # of an aborted/incomplete event can't prepend to (desync) the next read.
+        # reset_input_buffer() alone is a one-shot flush; the read loop catches
+        # bytes that arrive just after it.
+        try:
+            old_timeout = self.ser.timeout
+            self.ser.timeout = 0.05
+            self.ser.reset_input_buffer()
+            while self.ser.read(4096): # exits ~one poll after the line goes quiet
+                pass
+            self.ser.timeout = old_timeout
+        except Exception:
+            pass
+
     def getdata(self,board):
         if not self.dousb or not self.dousbparallel:
             if self.minfirmwareversion>=17:
@@ -1436,7 +1489,7 @@ class Haasoscope():
                 print(type(e).__name__, "Error reading from USB2", self.usbsermap[board])
                 return
         else:
-            rslt = self.ser.read(int(self.num_bytes))
+            rslt = self.read_serial_exact(int(self.num_bytes))
         if self.flyingfast: return
         if self.db: print(time.time()-self.oldtime,"getdata wanted",self.num_bytes+padding*num_chan_per_board,"bytes and got",len(rslt),"from board",board)
         if len(rslt)==self.num_bytes+padding*num_chan_per_board:
@@ -1469,6 +1522,7 @@ class Haasoscope():
         else:
             self.timedout = True
             if not self.db and self.rollingtrigger: print("getdata asked for",self.num_bytes,"bytes and got",len(rslt),"from board",board)
+            if not self.dousb: self.drain_serial() # re-sync the serial link before the next event
         if self.dologicanalyzer:
             #get extra logic analyzer data, if needed
             logicbytes=int(self.num_bytes/num_chan_per_board)
@@ -1494,12 +1548,13 @@ class Haasoscope():
                     print(type(e).__name__, "Error reading from USB2", self.usbsermap[board])
                     return
             else:
-                rslt = self.ser.read(logicbytes)
+                rslt = self.read_serial_exact(logicbytes)
             if self.db: print(time.time()-self.oldtime,"getdata wanted",logicbytes,"logic bytes and got",len(rslt),"from board",board)
             if len(rslt)==logicbytes+padding:
                 self.ydatalogic=np.frombuffer(rslt,dtype=np.uint8,count=self.num_samples,offset=padding-endpadding)
             else:
                 if not self.db and self.rollingtrigger: print("getdata asked for",logicbytes,"logic bytes and got",len(rslt),"from board",board)
+                if not self.dousb: self.drain_serial() # re-sync the serial link before the next event
 
     def oversample(self,c1,c2):
         tempc1=127-self.ydata[c1]
@@ -1797,6 +1852,7 @@ class Haasoscope():
             except SerialException:
                 print("Could not open",self.serport,"!"); return False
             print("connected serial to",self.serport,", timeout",self.sertimeout,"seconds")
+            self.try_low_latency() # proper host-side fix for high-baud byte loss (no throttling)
         else: self.ser=""
         for p in self.usbport:
             try:
