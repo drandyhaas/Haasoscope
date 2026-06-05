@@ -155,11 +155,15 @@ endcase
 always @(posedge clk)
 if(sampleNow && RxD_state[3]) RxD_data <= {RxD_bit, RxD_data[7:1]};
 
-//reg RxD_data_error = 0;
+reg RxD_data_error = 0;
 always @(posedge clk)
 begin
-	RxD_data_ready <= (sampleNow && RxD_state==4'b0010 && RxD_bit);  // make sure a stop bit is received
-	//RxD_data_error <= (sampleNow && RxD_state==4'b0010 && ~RxD_bit);  // error if a stop bit is not received
+	// Deliver a byte ONLY on a clean stop bit. A framing error (stop bit low, e.g.
+	// from line noise at 1.5 Mbaud) drops the byte instead of passing a corrupted
+	// value up to the command processor; the dropped byte then shows up as a gap
+	// that the processor's READMORE idle-resync recovers from.
+	RxD_data_ready <= (sampleNow && RxD_state==4'b0010 &&  RxD_bit);  // good stop bit -> valid byte
+	RxD_data_error <= (sampleNow && RxD_state==4'b0010 && ~RxD_bit);  // bad stop bit  -> framing error, dropped
 end
 
 `ifdef SIMULATION
@@ -168,7 +172,9 @@ assign RxD_idle = 0;
 reg [l2o+1:0] GapCnt = 0;
 always @(posedge clk) if (RxD_state!=0) GapCnt<=0; else if(OversamplingTick & ~GapCnt[log2(Oversampling)+1]) GapCnt <= GapCnt + 1'h1;
 assign RxD_idle = GapCnt[l2o+1];
-always @(posedge clk) RxD_endofpacket <= OversamplingTick & ~GapCnt[l2o+1] & &GapCnt[l2o:0];
+// A framing error is an abnormal packet boundary too: OR it in so end-of-packet
+// fires on a corrupted byte, not only on an inter-byte idle gap.
+always @(posedge clk) RxD_endofpacket <= (OversamplingTick & ~GapCnt[l2o+1] & &GapCnt[l2o:0]) | RxD_data_error;
 `endif
 
 endmodule

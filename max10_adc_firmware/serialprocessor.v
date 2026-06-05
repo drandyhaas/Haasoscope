@@ -123,6 +123,13 @@ trigratecounter,trigratecountreset);
   reg autorearm=0;
   integer thecounter=0, timeoutcounter=0, serialdelaytimer=0,serialdelaytimerwait=0;
   reg[4:0] serialdelaycounter=0;
+  // Cycles since the last received byte. The host streams the bytes of a command
+  // back-to-back, so a long gap part-way through a multi-byte command means a byte
+  // was lost or corrupted (the UART drops framing-error bytes). Used to resync the
+  // command FSM out of READMORE instead of swallowing the next command's bytes.
+  integer rxgapcounter=0;
+  localparam READMORE_IDLE_TIMEOUT = 12500000; // 0.25 s at 50 MHz - far longer than any
+                                               // valid inter-byte gap, much shorter than a hang
   reg addonetoextradata=0;
   
   output wire clk_rd;
@@ -248,6 +255,11 @@ trigratecounter,trigratecountreset);
   
   always @(posedge clk) begin
     usb_txe_not_busy <= ~usb_txe_busy;
+    // Idle-gap detector (equivalent to the UART's RxD_endofpacket, derived here from
+    // rxReady so no extra port/schematic wiring is needed): reset on every byte, and
+    // saturate at the timeout so the integer can't run away.
+    if (rxReady) rxgapcounter = 0;
+    else if (rxgapcounter < READMORE_IDLE_TIMEOUT) rxgapcounter = rxgapcounter + 1;
     case (state)
 	 
       READ: begin
@@ -296,6 +308,13 @@ trigratecounter,trigratecountreset);
 				newcomdata=1; //pass it on
 				bytesread = bytesread+1;
 				if (bytesread>=byteswanted) state=SOLVING;
+			end
+			else if (rxgapcounter>=READMORE_IDLE_TIMEOUT) begin
+				// The host paused part-way through a command (an argument byte was lost
+				// or corrupted). Abandon the partial command and resync to the idle READ
+				// state, rather than consuming the next command's bytes as arguments -
+				// which would silently misframe the whole command stream until reset.
+				state=READ;
 			end
 		end
 
@@ -851,7 +870,7 @@ trigratecounter,trigratecountreset);
 				end
 				else begin
 					ioCountToSend = 1;
-					data[0]=22; // this is the firmware version
+					data[0]=23; // this is the firmware version (23: READMORE resync + framing-error drop)
 					state=WRITE1;
 				end
 				
