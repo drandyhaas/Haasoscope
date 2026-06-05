@@ -1407,6 +1407,7 @@ class Haasoscope():
         return True
 
     timedout = False
+    nbadevents = 0 # count of short/timed-out reads since the last status print (shown in the status line)
 
     def try_low_latency(self):
         # Enable serial low-latency mode where supported (Linux/pyserial>=3.5).
@@ -1531,7 +1532,7 @@ class Haasoscope():
             if self.dooversample[num_chan_per_board*(num_board-board-1)]==9: self.overoversample(0,1)
         else:
             self.timedout = True
-            if not self.db and self.rollingtrigger: print("getdata asked for",self.num_bytes,"bytes and got",len(rslt),"from board",board)
+            if not self.db and self.rollingtrigger: self.nbadevents += 1 # short read; counted in the status line instead of printed
             if not self.dousb: self.drain_serial() # re-sync the serial link before the next event
         if self.dologicanalyzer:
             #get extra logic analyzer data, if needed
@@ -1563,7 +1564,7 @@ class Haasoscope():
             if len(rslt)==logicbytes+padding:
                 self.ydatalogic=np.frombuffer(rslt,dtype=np.uint8,count=self.num_samples,offset=padding-endpadding)
             else:
-                if not self.db and self.rollingtrigger: print("getdata asked for",logicbytes,"logic bytes and got",len(rslt),"from board",board)
+                if not self.db and self.rollingtrigger: self.nbadevents += 1 # short logic read; counted in the status line instead of printed
                 if not self.dousb: self.drain_serial() # re-sync the serial link before the next event
 
     def oversample(self,c1,c2):
