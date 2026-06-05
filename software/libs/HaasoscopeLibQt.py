@@ -815,7 +815,7 @@ class Haasoscope():
         print("toggling acdc for chan",chan,"which is chan",chanonboard,"on board",theboard)
         self.acdc[int(chan)] = not self.acdc[int(chan)]
         self.b20= int('00',16)  # shdn (set first char to 0 to turn on) / ac coupling (set second char to f for DC, 0 for AC)
-        for c in range(0,3):
+        for c in range(0,num_chan_per_board): # all 4 channels (was range(0,3), which never drove channel 3's coupling bit)
             realchan = (num_board-1-theboard)*num_chan_per_board+c
             if self.acdc[int(realchan)]: 
                 self.b20 = self.toggleBit(self.b20,int(c)) # 1 is dc, 0 is ac
