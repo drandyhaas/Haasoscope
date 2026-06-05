@@ -11,7 +11,14 @@ class HaasoscopeTrig:
         self.extclock=0
         self.histostosend=-1
         self.dorolling=1
+        self.delaycounters=(0,)*16 # last known counters; safe default if a read is short
         print("connected trigboard serial to", port)
+
+    def _drain(self):
+        # Discard any leftover bytes after a short read so the next command's
+        # response doesn't get prepended with this one's tail (serial desync).
+        try: self.ser.reset_input_buffer()
+        except Exception: pass
     
     def togglerolling(self):
         self.dorolling = not self.dorolling
@@ -32,6 +39,7 @@ class HaasoscopeTrig:
             self.ser.write(bytearray([4]))  # toggle use other clk input
         self.ser.write(bytearray([8]))  # active clock info
         res = self.ser.read(1)
+        if len(res)==0: return # short read on timeout - don't index an empty buffer
         b = unpack('%dB' % len(res), res)
         print("trig board now using clock", b[0])
         self.extclock = b[0]
@@ -75,6 +83,10 @@ class HaasoscopeTrig:
     def get_delaycounters(self):
         self.ser.write(bytearray([11]))  # delaycounter trigger info
         res = self.ser.read(16)
+        if len(res)!=16: # short read - keep the last good counters and resync the link
+            print("trigboard get_delaycounters short read:",len(res),"bytes")
+            self._drain()
+            return self.delaycounters
         self.delaycounters = unpack('%dB' % len(res), res)
         #print("all delaycounters:",self.delaycounters)
         return self.delaycounters
@@ -87,6 +99,10 @@ class HaasoscopeTrig:
     def get_histos(self):
         self.ser.write(bytearray([10])) # get histos
         res = self.ser.read(32)
+        if len(res)!=32: # short read - don't index past the buffer; resync the link
+            print("trigboard get_histos short read:",len(res),"bytes")
+            self._drain()
+            return "histos for board"+str(self.histostosend)+": (short read)"
         b = unpack('%dB' % len(res), res)
         mystr="histos for board"+str(self.histostosend)+": "
         myint=[]
@@ -97,7 +113,9 @@ class HaasoscopeTrig:
         return mystr
 
     def cleanup(self):
-        self.setclock(False)
-        if not self.dorolling: self.togglerolling()
-        self.ser.close()
+        try:
+            self.setclock(False)
+            if not self.dorolling: self.togglerolling()
+        finally:
+            self.ser.close() # always release the port, even if a command above failed
     

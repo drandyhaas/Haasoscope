@@ -61,6 +61,15 @@ if enable_fastusb:
         print("Warning... fastusb drivers not installed?")
         enable_fastusb=False
 
+# Always provide a module-level DeviceError so `except DeviceError` clauses (here
+# and in HaasoscopeQt.py) never raise NameError on platforms/builds where ftd2xx
+# isn't imported - on macOS/Linux we use pyftdi, which doesn't define DeviceError.
+try:
+    DeviceError
+except NameError:
+    class DeviceError(Exception):
+        pass
+
 class Haasoscope():
     
     def __init__(self):
@@ -1487,6 +1496,7 @@ class Haasoscope():
                 raise DeviceError(str(e))
             except Exception as e:
                 print(type(e).__name__, "Error reading from USB2", self.usbsermap[board])
+                self.timedout = True # so the caller doesn't redraw/save the previous (stale) event
                 return
         else:
             rslt = self.read_serial_exact(int(self.num_bytes))
@@ -1655,9 +1665,10 @@ class Haasoscope():
                 if self.db: print(time.time()-self.oldtime,"getting board",bn)
                 try:
                     self.parent_conn[bn].send([self.num_samples, self.fastusbpadding, self.fastusbendpadding, self.yscale, self.dologicanalyzer, self.rollingtrigger])
-                except:
-                    print("could not send message to receiver",bn,"- Exiting!")
-                    sys.exit(-3)
+                except Exception as e:
+                    # A dead worker means we can't read this cycle; raise so the GUI's
+                    # timer handler stops acquisition cleanly instead of hard-exiting.
+                    raise RuntimeError("could not send message to receiver "+str(bn)) from e
                 xboardshift=(11.0*bn/8.0)/pow(2,max(self.downsample,0)) # shift the board data to the right by this number of samples (to account for the readout delay) #downsample isn't less than 0 for xscaling
                 xdatanew = (self.xdata-xboardshift-self.num_samples/2.)*(1000.0*pow(2,max(self.downsample,0))/self.clkrate/self.xscaling) #downsample isn't less than 0 for xscaling
                 xdatanew = xdatanew[1:len(xdatanew)]
@@ -1787,7 +1798,10 @@ class Haasoscope():
                 self.xydatalogicraw_array = multiprocessing.RawArray("B", self.xydatalogicraw.size)  # a byte is 1 byte
                 self.xydatalogicraw = np.frombuffer(self.xydatalogicraw_array, dtype=np.uint8).reshape(self.xydatalogicraw.shape)
                 self.parent_conn=[]
-                multiprocessing.set_start_method('spawn')
+                try:
+                    multiprocessing.set_start_method('spawn')
+                except RuntimeError:
+                    pass # already set (e.g. on a re-init) - setting it twice raises
                 for bn in range(num_board):
                     parent_conn, child_conn = multiprocessing.Pipe()
                     self.parent_conn.append(parent_conn)
@@ -1947,6 +1961,7 @@ def receiver(name, conn, padding,num_samples,xydata_shape,xydata_array,xydatalog
                 elif not dologicanalyzer and dologicanalyzer!=olddologic:
                     olddologic=dologicanalyzer
                     usb.read_data_set_chunksize( int((num_bytes + fastusbpadding*num_chan_per_board) * 514/512 + 100) )
+            rslt = b"" # so a read exception below can't leave it unbound (UnboundLocalError)
             try:
                 nb = num_bytes+padding*num_chan_per_board
                 if useftd2xx: rslt = usb.read(nb)#,cache=True)
@@ -1957,7 +1972,7 @@ def receiver(name, conn, padding,num_samples,xydata_shape,xydata_array,xydatalog
                         print(nq, "bytes still available for usb on board", board, "...purging")
                         if useftd2xx: usb.purge(ftd.defines.PURGE_RX)
                         elif useftdi: usb.purge_rx_buffer()
-            except ftd.DeviceError as msgnum:
+            except Exception as msgnum: # ftd.DeviceError isn't defined on the pyftdi path
                 print("Error reading from USB2 on board", board, msgnum)
                 returnmsg = "read err"
             if len(rslt)==num_bytes+padding*num_chan_per_board:
@@ -1986,7 +2001,7 @@ def receiver(name, conn, padding,num_samples,xydata_shape,xydata_array,xydatalog
                         if nq > 0:
                             print(nq, "bytes still available for usb on board", board, "...purging")
                             usb.purge(ftd.defines.PURGE_RX)
-                except ftd.DeviceError as msgnum:
+                except Exception as msgnum: # ftd.DeviceError isn't defined on the pyftdi path
                     print("Error reading from USB2 on board", board, msgnum)
                     returnmsg = "read err"
                 if len(rslt)==logicbytes+padding:

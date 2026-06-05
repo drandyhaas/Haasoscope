@@ -4,7 +4,7 @@ pyqtgraph widget with UI template created with Qt Designer
 """
 
 import numpy as np
-import sys, time
+import sys, time, traceback
 from serial import SerialException
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtWidgets, QtGui, loadUiType
@@ -265,8 +265,8 @@ class MainWindow(TemplateBaseClass):
                 d.increment_clk_phase(theboard)
             else:
                 if trigboardport!="": trigboard.increment_trig_board_clock_phase()
-        if event.key()==QtCore.Qt.Key_1: trigboard.set_prescale(0.1)
-        if event.key()==QtCore.Qt.Key_2: trigboard.set_prescale(0.2)
+        if event.key()==QtCore.Qt.Key_1 and trigboardport!="": trigboard.set_prescale(0.1)
+        if event.key()==QtCore.Qt.Key_2 and trigboardport!="": trigboard.set_prescale(0.2)
         if event.key()==QtCore.Qt.Key_C: d.toggle_checkfastusbwriting()
 
     def actionRead_from_file(self):
@@ -456,7 +456,7 @@ class MainWindow(TemplateBaseClass):
             self.fftui.show()
             d.dofft = True
         else:
-            self.fftui.close()
+            if hasattr(self,"fftui"): self.fftui.close() # may be unchecked before ever opened
             d.dofft = False
 
     def persist(self):
@@ -470,7 +470,7 @@ class MainWindow(TemplateBaseClass):
         else:
             d.recorddata=False; d.recorddatachan=d.selectedchannel; d.recordedchannel=[]
             print("recorddata now",d.recorddata)
-            self.persistui.close()
+            if hasattr(self,"persistui"): self.persistui.close() # may be unchecked before ever opened
 
     def drawing(self):
         if self.ui.drawingCheck.checkState() == QtCore.Qt.Checked:
@@ -481,19 +481,22 @@ class MainWindow(TemplateBaseClass):
             print("drawing now",d.dodrawing)
 
     def record(self):
-        self.savetofile = not self.savetofile
-        if self.savetofile:
-            fname="xxx"
-            if self.doh5:
-                fname="Haasoscope_out_" + time.strftime("%Y%m%d-%H%M%S") + ".h5"
-                self.outf = h5py.File(fname,"w")
-            else:
-                fname="Haasoscope_out_" + time.strftime("%Y%m%d-%H%M%S") + ".csv"
-                self.outf = open(fname,"wt")
+        if not self.savetofile: # start recording
+            fname="Haasoscope_out_" + time.strftime("%Y%m%d-%H%M%S") + (".h5" if self.doh5 else ".csv")
+            try:
+                self.outf = h5py.File(fname,"w") if self.doh5 else open(fname,"wt")
+            except Exception as e:
+                # don't flip savetofile until the file is actually open, or later
+                # outf.close()/writes hit an undefined/half-open self.outf
+                print("could not open record file",fname,":",e)
+                self.ui.statusBar.showMessage("could not open record file: "+fname)
+                return
+            self.savetofile = True
             self.ui.statusBar.showMessage("now recording to file: "+fname)
             self.ui.actionRecord.setText("Stop recording")
-        else:
-            self.outf.close()
+        else: # stop recording
+            self.savetofile = False
+            if hasattr(self,"outf"): self.outf.close()
             self.ui.statusBar.showMessage("stopped recording to file")
             self.ui.actionRecord.setText("Record to file")
     
@@ -612,8 +615,32 @@ class MainWindow(TemplateBaseClass):
         if hasattr(self,"persistui"):
             self.persistui.close()
 
+    def stopacquisition(self):
+        # Cleanly halt the acquisition timers (e.g. after a fatal serial/device error)
+        # instead of sys.exit() from inside a Qt timer callback, which Qt swallows and
+        # leaves the GUI in a zombie state.
+        self.timer.stop()
+        self.timer2.stop()
+        d.paused=True
+        d.timedout=True # so the rest of updateplot doesn't draw/save stale data
+        self.ui.runButton.setChecked(False)
+        self.ui.statusBar.showMessage("Acquisition stopped (see console for the error)")
+
     decodelabels = []
+    firstpersist = True # default so the persist-draw path never reads it unset
+    _busy = False # reentrancy guard: app.processEvents() can re-fire the timers mid-update
     def updateplot(self):
+        if self._busy: return # don't let processEvents() re-enter while we're mid-update
+        self._busy = True
+        try:
+            self._updateplot()
+        except Exception:
+            traceback.print_exc()
+            self.stopacquisition() # stop rather than let the timer storm-repeat the error
+        finally:
+            self._busy = False
+
+    def _updateplot(self):
         self.mainloop()
         if d.timedout: return # don't draw old junk if there was a timeout getting data (as often the case with no rolling trigger)
         if self.savetofile: self.dosavetofile()
@@ -653,7 +680,8 @@ class MainWindow(TemplateBaseClass):
                 self.image1.setImage(image=d.recorded2d,opacity=0.5)
             self.image1.setRect(QtCore.QRectF(d.min_x,d.min_y,d.max_x-d.min_x,d.max_y-d.min_y))
             self.persistui.ui.plot.setLabel('bottom', d.xlabel)
-            self.bar = pg.ColorBarItem(interactive=False, values= (0, np.max(d.recorded2d)), cmap=self.cmap)
+            barmax = np.max(d.recorded2d) if d.recorded2d.size else 1 # np.max raises on an empty array
+            self.bar = pg.ColorBarItem(interactive=False, values= (0, barmax), cmap=self.cmap)
             self.bar.setImageItem(self.image1)
             if not self.persistui.isVisible(): # closed the fft window
                 d.recorddata = False
@@ -666,7 +694,7 @@ class MainWindow(TemplateBaseClass):
                 resulttext,resultstart,resultend = d.decode()
                 #print(resulttext,resultstart, d.min_x, d.max_x, d.xscale, d.xscaling)
                 item=0
-                while item<len(resulttext):
+                while item<min(len(resulttext),len(resultstart)): # lists can differ on partial data
                     label = pg.TextItem(resulttext[item])
                     label.setColor(self.linepens[d.selectedchannel].color())
                     x=d.min_x+resultstart[item]*1e9/d.xscaling
@@ -732,10 +760,10 @@ class MainWindow(TemplateBaseClass):
             try: status=d.getchannels()
             except SerialException:
                 print("Serial exception getting channels!!")
-                sys.exit(1)
-            except DeviceError:
+                self.stopacquisition(); return
+            except HaasoscopeLibQt.DeviceError: # qualified - DeviceError isn't a global in this module
                 print("Device error")
-                sys.exit(1)
+                self.stopacquisition(); return
             if status==2: self.selectchannel() #we updated the switch data
             if d.db: print(time.time()-d.oldtime,"done with evt",self.nevents)
             self.nevents += 1
@@ -762,16 +790,23 @@ class MainWindow(TemplateBaseClass):
             if d.getone and not d.timedout: self.dostartstop()
 
     def drawtext(self): # happens once per second
-        d.tellrolltrig(d.rolltrigger) #because sometimes the message had been lost
-        self.ui.textBrowser.setText(d.chantext())
-        self.ui.textBrowser.append("trigger threshold: " + str(round(self.hline,3)))
-        if trigboardport!="" and trigboard.extclock:
-            delaycounters = trigboard.get_delaycounters()
-            self.ui.textBrowser.append("delay counters: "+str(delaycounters))
-            self.ui.textBrowser.append(trigboard.get_histos())
-            for b in range(HaasoscopeLibQt.num_board):
-                if not delaycounters[b]:
-                    d.increment_clk_phase(b,30) # increment clk of that board by 30*100ps=3ns
+        if self._busy: return # don't run while updateplot is talking to the same serial port
+        self._busy = True
+        try:
+            d.tellrolltrig(d.rolltrigger) #because sometimes the message had been lost
+            self.ui.textBrowser.setText(d.chantext())
+            self.ui.textBrowser.append("trigger threshold: " + str(round(self.hline,3)))
+            if trigboardport!="" and trigboard.extclock:
+                delaycounters = trigboard.get_delaycounters()
+                self.ui.textBrowser.append("delay counters: "+str(delaycounters))
+                self.ui.textBrowser.append(trigboard.get_histos())
+                for b in range(HaasoscopeLibQt.num_board):
+                    if b<len(delaycounters) and not delaycounters[b]:
+                        d.increment_clk_phase(b,30) # increment clk of that board by 30*100ps=3ns
+        except Exception:
+            traceback.print_exc() # a hiccup here shouldn't kill the once-a-second timer
+        finally:
+            self._busy = False
 
 if __name__ == '__main__':
     import libs.HaasoscopeLibQt as HaasoscopeLibQt
