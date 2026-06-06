@@ -25,14 +25,16 @@ import multiprocessing
 
 mearm = False
 mewin = False
+memac = sys.platform == "darwin"
 try:
     #print(os.uname())
-    if os.uname()[4].startswith("arm") or os.uname()[4].startswith("aarch"):
+    if not memac and (os.uname()[4].startswith("arm") or os.uname()[4].startswith("aarch")):
         print("On a raspberry pi?")
         mearm = True
 except AttributeError:
     mewin = True
     #print("Not on Linux?")
+if memac: print("On a Mac")
 
 enable_ripyl=False # set to True to use ripyl serial decoding... have to get it from https://github.com/kevinpt/ripyl and then install it first!
 if enable_ripyl:
@@ -1365,6 +1367,7 @@ class Haasoscope():
                         except Exception as e:
                             print(type(e).__name__, "Error reading from USB2", usb)
                             return
+                        print(time.time() - self.oldtime,"   DEBUG board",bn,"usb",usb,"wanted",bwant,"got",len(rslt),"bytes; first bytes:",bytes(rslt[:16]).hex() if len(rslt) else "")
                         if len(rslt)==self.num_bytes+padding*num_chan_per_board:
                             print(time.time() - self.oldtime,"   got the right nbytes for board",bn,"from usb",usb)
                             self.usbsermap[bn]=usb
@@ -1426,7 +1429,9 @@ class Haasoscope():
                         rsltslow = self.ser.read(int(self.num_bytes)) # to cross-check the readout
                         #print("got",len(rsltslow),"bytes from slow serial readout")
                 else:
+                    if memac: time.sleep(0.25) # DEBUG: macOS FTDI VCP read() seems not to block-wait for data
                     rslt = self.usbser[self.usbsermap[board]].read(self.num_bytes)
+                    if memac: print("DEBUG getdata board",board,"in_waiting",self.usbser[self.usbsermap[board]].in_waiting,"got",len(rslt))
                 # self.ser.write(bytearray([40+board])) # for debugging timing, does nuttin
             except DeviceError as e:
                 print("Exception occurred in getdata()")
@@ -1798,12 +1803,15 @@ class Haasoscope():
                 print("Could not open",self.serport,"!"); return False
             print("connected serial to",self.serport,", timeout",self.sertimeout,"seconds")
         else: self.ser=""
+        # macOS's FTDI VCP driver rejects custom baud rates above the FT232H's real
+        # 12Mbaud UART ceiling (IOSSIOSPEED -> EINVAL); Windows/Linux tolerate the 32M request.
+        usbbrate = 12*1000000 if memac else 8*4000000
         for p in self.usbport:
             try:
-                self.usbser.append(Serial(p,8*4000000,timeout=self.sertimeout))
+                self.usbser.append(Serial(p,usbbrate,timeout=self.sertimeout))
             except SerialException:
                 print("Could not open",p,"!"); return False
-            print("connected USBserial to",p,", 32Mb/s, timeout",self.sertimeout,"seconds")
+            print("connected USBserial to",p,",",round(usbbrate/1e6),"Mb/s, timeout",self.sertimeout,"seconds")
         if enable_fastusb and self.dofastusb and useftd2xx and ftd.listDevices():
             for ftd_n in range(len(ftd.listDevices())):
                 if str(ftd.getDeviceInfoDetail(ftd_n)["description"]).find("Haasoscope")>=0:
