@@ -1429,9 +1429,8 @@ class Haasoscope():
                         rsltslow = self.ser.read(int(self.num_bytes)) # to cross-check the readout
                         #print("got",len(rsltslow),"bytes from slow serial readout")
                 else:
-                    if memac: time.sleep(0.25) # DEBUG: macOS FTDI VCP read() seems not to block-wait for data
                     rslt = self.usbser[self.usbsermap[board]].read(self.num_bytes)
-                    if memac: print("DEBUG getdata board",board,"in_waiting",self.usbser[self.usbsermap[board]].in_waiting,"got",len(rslt))
+                    #if memac: print("DEBUG getdata board",board,"in_waiting",self.usbser[self.usbsermap[board]].in_waiting,"got",len(rslt))
                 # self.ser.write(bytearray([40+board])) # for debugging timing, does nuttin
             except DeviceError as e:
                 print("Exception occurred in getdata()")
